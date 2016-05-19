@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "dubbingModel", "dubbingMode
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "dubbingApp", "dubbingApp\dubbingApp.csproj", "{5F6A3758-58E4-4F01-BB02-1180D54C5254}"
 EndProject
+Project("{00D1A9C2-B5F0-4AF3-8072-F6C62B433612}") = "dubbingDatabase", "dubbingDatabase\dubbingDatabase.sqlproj", "{880CFEE3-50A0-4FF8-A10D-52A9F279B1CB}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,12 @@ Global
 		{5F6A3758-58E4-4F01-BB02-1180D54C5254}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5F6A3758-58E4-4F01-BB02-1180D54C5254}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5F6A3758-58E4-4F01-BB02-1180D54C5254}.Release|Any CPU.Build.0 = Release|Any CPU
+		{880CFEE3-50A0-4FF8-A10D-52A9F279B1CB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{880CFEE3-50A0-4FF8-A10D-52A9F279B1CB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{880CFEE3-50A0-4FF8-A10D-52A9F279B1CB}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{880CFEE3-50A0-4FF8-A10D-52A9F279B1CB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{880CFEE3-50A0-4FF8-A10D-52A9F279B1CB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{880CFEE3-50A0-4FF8-A10D-52A9F279B1CB}.Release|Any CPU.Deploy.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
