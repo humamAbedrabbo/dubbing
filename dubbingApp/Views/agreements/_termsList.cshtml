@@ -1,0 +1,43 @@
+﻿@model IEnumerable<dubbingModel.agreementTerm>
+@using dubbingApp.Models;
+
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <div class="row">
+            <div class="col-sm-11">
+                <label>Critical Terms &amp; Conditions</label>
+            </div>
+            <div class="col-sm-1">
+                <button class="btn btn-default btn-xs" onclick="onTermsAddNewClick(@ViewBag.agreementIntno)" title="Add New">
+                    <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+                </button>
+            </div>
+        </div>
+    </div>
+    <div class="panel-body">
+        <table class="table-hover">
+            <thead>
+                <tr>
+                    <td class="col-sm-1"><label><small>Serial</small></label></td>
+                    <td class="col-sm-10"><label><small>Term</small></label></td>
+                    <td class="col-sm-1"></td>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (dubbingModel.agreementTerm item in Model)
+                {
+                    <tr>
+                        <td class="col-sm-1"><small>@item.sortOrder</small></td>
+                        <td class="col-sm-10"><small>@item.termDesc</small></td>
+                        <td class="col-sm-1">
+                            <button class="btn btn-default btn-xs" onclick="onTermsDeleteClick(@item.termIntno)" title="Remove">
+                                <span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
+                            </button>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+

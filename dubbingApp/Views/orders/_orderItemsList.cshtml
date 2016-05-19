@@ -1,0 +1,153 @@
+﻿@model IEnumerable<dubbingModel.orderTrnHdr>
+@{ 
+    string panelHeaderClass;
+    string episode;
+}
+
+<div class="container-fluid">
+    @foreach (dubbingModel.orderTrnHdr item in Model)
+    {
+        if(item.status == "03") { panelHeaderClass = "panel-danger"; }
+        else if (item.priority == "03") { panelHeaderClass = "panel-warning"; }
+        else { panelHeaderClass = "panel-default"; }
+
+        episode = item.agreementWork.workName + "/" + item.episodeNo;
+
+        <div class="panel @panelHeaderClass">
+            <div class="panel-heading">
+                <div class="row">
+                    <div class="col-sm-1">
+                        <button class="btn btn-default btn-sm" onclick="onOrderItemSelectClick(@item.orderTrnHdrIntno, '@episode')" title="Select">
+                            <span class="glyphicon glyphicon-triangle-right" aria-hidden="true"></span>
+                        </button>
+                    </div>
+                    <div class="col-sm-3">
+                        <label class="alert-info" style="width:30px; height:30px; font-size:30px; font-weight:bolder; text-align:center">@item.episodeNo</label>
+                        <small>&nbsp;/@item.orderIntno</small>
+                    </div>
+                    <div class="col-sm-5">
+                        <label><small>@item.agreementWork.workName</small></label>
+                    </div>
+                    <div class="col-sm-3">
+                        @{ 
+                            string issuesColor;
+                            if (item.orderChecks.Count() != 0) { issuesColor = "btn-warning"; }
+                            else { issuesColor = "btn-default"; }
+                        }
+                        <button class="btn btn-danger btn-xs pull-right" onclick="onOrderItemDetailsClick(@item.orderTrnHdrIntno)" title="Client Feedback">
+                            <span class="glyphicon glyphicon-wrench" aria-hidden="true"></span>
+                        </button>
+                        <button class="btn @issuesColor btn-xs pull-right" onclick="onOrderItemIssueClick(@item.orderTrnHdrIntno)" title="Issues">
+                            <span class="glyphicon glyphicon-bell" aria-hidden="true"></span>
+                        </button>
+                        <button class="btn btn-default btn-xs pull-right" onclick="onOrderItemDetailsClick(@item.orderTrnHdrIntno)" title="Details">
+                            <span class="glyphicon glyphicon-bookmark" aria-hidden="true"></span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="panel-body">
+                <table class="table-condensed">
+                    <thead>
+                        <tr>
+                            <td class="col-sm-2"><label><small>Received</small></label></td>
+                            <td class="col-sm-2"><label><small>On Air</small></label></td>
+                            <td class="col-sm-2"><label><small>Adaptation</small></label></td>
+                            <td class="col-sm-2"><label><small>Dubbing</small></label></td>
+                            <td class="col-sm-2"><label><small>Upload</small></label></td>
+                            <td class="col-sm-2"><label><small>Shipment</small></label></td>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="col-sm-2"><small>
+                                @{
+                                    if (item.orderReceivedDate.HasValue)
+                                    {
+                                        if (!item.startAdaptation.HasValue)
+                                        {
+                                            <label class="badge alert-success">@item.orderReceivedDate.Value.ToShortDateString()</label>
+                                        }
+                                        else
+                                        {
+                                            @item.orderReceivedDate.Value.ToShortDateString()
+                                        }
+                                    }
+                                }
+                            </small></td>
+                            <td class="col-sm-2"><small>
+                                @{ 
+                                    if(item.expectedDeliveryDate.HasValue)
+                                    {
+                                        @item.expectedDeliveryDate.Value.ToShortDateString()
+                                    }
+                                }
+                            </small></td>
+                            <td class="col-sm-2">
+                                <small>
+                                    @{
+                                        if (item.startAdaptation.HasValue)
+                                        {
+                                            if (!item.startDubbing.HasValue)
+                                            {
+                                                <label class="badge alert-success">@item.startAdaptation.Value.ToShortDateString()</label>
+                                            }
+                                            else
+                                            {
+                                                @item.startAdaptation.Value.ToShortDateString()
+                                            }
+                                        }
+                                    }
+                                </small>
+                            </td>
+                            <td class="col-sm-2"><small>
+                                @{
+                                    if (item.startDubbing.HasValue && !item.shipmentLowRes.HasValue)
+                                    {
+                                        <label class="badge alert-success">@item.startDubbing.Value.ToShortDateString()</label>
+                                    }
+                                    else if (!item.startDubbing.HasValue && item.plannedDubbing.HasValue)
+                                    {
+                                        @item.plannedDubbing.Value.ToShortDateString()
+                                    }
+                                }
+                            </small></td>
+                            <td class="col-sm-2"><small>
+                                @{
+                                    if (item.endDubbing.HasValue && !item.shipmentLowRes.HasValue && item.plannedUpload.HasValue)
+                                    {
+                                        <label class="badge alert-success">@item.plannedUpload.Value.ToShortDateString()</label>
+                                    }
+                                    else if (item.shipmentLowRes.HasValue)
+                                    {
+                                        @item.shipmentLowRes.Value.ToShortDateString()
+                                    }
+                                    else if (!item.endDubbing.HasValue && item.plannedUpload.HasValue)
+                                    {
+                                        @item.plannedUpload.Value.ToShortDateString()
+                                    }
+                                }
+                            </small></td>
+                            <td class="col-sm-2"><small>
+                                @{
+                                    if (item.shipmentLowRes.HasValue && !item.shipmentFinal.HasValue && item.plannedShipment.HasValue)
+                                    {
+                                        <label class="badge alert-success">@item.plannedShipment.Value.ToShortDateString()</label>
+                                    }
+                                    else if (item.shipmentFinal.HasValue)
+                                    {
+                                        @item.shipmentFinal.Value.ToShortDateString()
+                                    }
+                                    else if (!item.shipmentFinal.HasValue && item.plannedShipment.HasValue)
+                                    {
+                                        @item.plannedShipment.Value.ToShortDateString()
+                                    }
+                                }    
+                            </small></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    }
+</div>

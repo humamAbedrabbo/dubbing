@@ -1,0 +1,370 @@
+﻿@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container-fluid">
+    <div class="jumbotron" style="padding:5px">
+        <h2>Dubbing Contracts</h2>
+        <p class="lead"><h5>Define and Manage Clients, Agreements and Contracts.</h5></p>
+        <label><a href="#" onclick="onContractAddNewClick()">Add New Contract ...</a></label>
+    </div>
+
+    <div class="row">
+        <div class="col-sm-2">
+            <label class="badge alert-info">Clients:</label>
+            <div>
+                @Html.DropDownList("clientsList", ViewBag.clientsList as SelectList, "Select Client ...", new { @style = "width:170px" })
+            </div>
+            <div>
+                <a href="#" onclick="onClientUpdateClick()"><small>Edit Client</small></a>
+            </div>
+            <div>
+                <a href="#" onclick="onClientContactsClick()"><small>Client Contacts ...</small></a>
+            </div>
+            <br />
+
+            <label class="badge alert-info">Agreements:</label>
+            <div>
+                @Html.DropDownList("agreementsList", ViewBag.agreementsList as SelectList, "Select Agreement ...", new { @style = "width:170px" })
+            </div>
+            <div>
+                <a href="#" onclick="onAgreementUpdateClick()"><small>Edit Agreement</small></a>
+            </div>
+            <div>
+                <a href="#" onclick="onAgreementsClick()"><small>Agreement Details ...</small></a>
+            </div>
+            <br /><br />
+
+            <label class="badge alert-info">Add ...</label>
+            <div>
+                <a href="#" onclick="onClientAddNewClick()">New Client</a>
+            </div>
+            <div>
+                <a href="#" onclick="onAgreementAddNewClick()">New Agreement</a>
+            </div>
+        </div>
+        
+        <div class="col-sm-6" id="cList">
+            @Html.Action("contractsList", "contracts")
+        </div>
+        <div class="col-sm-4" id="allDetails"></div>
+        <div class="col-sm-4" id="pDetails"></div>
+    </div>
+</div>
+
+@section Scripts
+{
+    @Scripts.Render("~/bundles/jqueryval")
+
+    <script>
+        $(document).ready(function () {
+
+            document.saveData = function (client1, agreement1) {
+                if (!sessionStorage)
+                    return;
+                var data = {
+                    client: client1,
+                    agreement: agreement1,
+                    html: $("#cList").html(),
+                    dtl: $("#allDetails").html()
+                };
+                sessionStorage.setItem("contracts_html", JSON.stringify(data));
+            };
+            document.restoreData = function () {
+                if (!sessionStorage)
+                    return;
+                var data = sessionStorage.getItem("contracts_html");
+                if (!data)
+                    return null;
+                return JSON.parse(data);
+            };
+            $(window).on('load', function () {
+                var data = document.restoreData();
+                if (data) {
+                    $("#cList").html(data.html);
+                    $("#allDetails").html(data.dtl);
+                    $('#clientsList').prop('selected', false).filter(function () {
+                        return $(this).val(data.client);
+                    }).prop('selected', true);
+                    $('#agreementsList').prop('selected', false).filter(function () {
+                        return $(this).val(data.agreement);
+                    }).prop('selected', true);
+                    sessionStorage.clear();
+                }
+            });
+
+            $('#clientsList').change(function ()
+            {
+                $("#agreementsList").empty();
+                $("#agreementsList").append('<option value="">Select Agreement ...</option>');
+                $.ajax({
+                    url: '@Url.Action("populateAgreementsListCombo", "contracts")',
+                    type: 'POST',
+                    data: { id: $('#clientsList').val() },
+                    dataType: 'json',
+                    success: function (agreements) {
+                        $.each(agreements, function (i, item) {
+                            $("#agreementsList").append('<option value="' + item.Value + '">' +
+                            item.Text + '</option>');
+                        });
+
+                        $.ajax({
+                            url: '@Url.Action("contractsList", "contracts")',
+                            type: 'GET',
+                            data: { client: $('#clientsList').val(), agreement: null },
+                            success: function (result) {
+                                $('#cList').html(result);
+                            }
+                        });
+
+                        $.ajax({
+                            url: '@Url.Action("clientContactsList", "contracts")',
+                            type: 'GET',
+                            data: { client: $('#clientsList').val() },
+                            success: function (result) {
+                                $('#allDetails').html(result);
+                            }
+                        });
+                    }
+                });
+                return false;
+            })
+
+            $('#agreementsList').change(function () {
+                if ($('#clientsList').val() === "") {
+                    $.ajax({
+                        url: '@Url.Action("agreementChanged", "contracts")',
+                        type: 'POST',
+                        data: { id: $('#agreementsList').val() },
+                        dataType: 'json',
+                        success: function (client1) {
+                            $('#clientsList').prop('selected', false).filter(function () {
+                                return $(this).val(client1);
+                            }).prop('selected', true);
+                            $.ajax({
+                                url: '@Url.Action("clientContactsList", "contracts")',
+                                type: 'GET',
+                                data: { client: client1 },
+                                success: function (result) {
+                                    $('#allDetails').html(result);
+                                }
+                            });
+                        }
+                    });
+                }
+                $.ajax({
+                    url: '@Url.Action("contractsList", "contracts")',
+                    type: 'GET',
+                    data: { client: $('#clientsList').val(), agreement: $('#agreementsList').val() },
+                    success: function (result) {
+                        $('#cList').html(result);
+                    }
+                });
+            })
+        })
+
+        function onNavigateAway() {
+            document.saveData($('#clientsList').val(), $('#agreementsList').val());
+        }
+
+        function onClientAddNewClick() {
+            $.ajax({
+                url: '@Url.Action("clientAddNew", "contracts")',
+                type: 'GET',
+                success: function (result) {
+                    $('#allDetails').html(result);
+                }
+            })
+        }
+        function onClientUpdateClick() {
+            var client = $('#clientsList').val();
+            if (client === "") {
+                alert("Please Select a Client from the List.")
+                return false;
+            }
+            else {
+                $.ajax({
+                    url: '@Url.Action("clientUpdate", "contracts")',
+                    type: 'GET',
+                    data: { id: client },
+                    success: function (result) {
+                        $('#allDetails').html(result);
+                    }
+                })
+            }
+        }
+        function onClientContactsClick() {
+            var c = $('#clientsList').val();
+            if (c === "") {
+                alert("Please Select a Client from the List.")
+                return false;
+            }
+            else {
+                onNavigateAway();
+                window.location.href = "/clientContacts/Index?client=" + c;
+            }
+        }
+
+        function onAgreementAddNewClick() {
+            $.ajax({
+                url: '@Url.Action("agreementAddNew", "contracts")',
+                type: 'GET',
+                success: function (result) {
+                    $('#allDetails').html(result);
+                }
+            })
+        }
+        function onAgreementUpdateClick() {
+            var agr = $('#agreementsList').val();
+            if (agr === "") {
+                alert("Please Select An Agreement from the List.")
+                return false;
+            }
+            else {
+                $.ajax({
+                    url: '@Url.Action("agreementUpdate", "contracts")',
+                    type: 'GET',
+                    data: { id: agr },
+                    success: function (result) {
+                        $('#allDetails').html(result);
+                    }
+                })
+            }
+        }
+        function onAgreementsClick() {
+            var agr = $('#agreementsList').val();
+            if (agr === "") {
+                alert("Please Select an Agreement from the List.")
+                return false;
+            }
+            else {
+                onNavigateAway();
+                window.location.href = "/agreements/Index?id=" + agr;
+            }
+        }
+
+        function onContractAddNewClick() {
+            var x = $('#clientsList').val();
+            if (x === "") {
+                alert("Please Select a Client from the List.")
+                return false;
+            }
+            else {
+                $.ajax({
+                    url: '@Url.Action("contractAddNew", "contracts")',
+                    type: 'GET',
+                    data: {client: x},
+                    success: function (result) {
+                        $('#allDetails').html(result);
+                    }
+                })
+            }
+        }
+        function onContractUpdateClick(contract) {
+            $.ajax({
+                url: '@Url.Action("contractUpdate", "contracts")',
+                type: 'GET',
+                data: { id: contract },
+                success: function (result) {
+                    $('#allDetails').html(result);
+                }
+            })
+        }
+        function onContractStatusClick(wrk, st) {
+            if (confirm('Please Confirm! About to Remove the Selected Item from the Active Contracts List.')) {
+                $.ajax({
+                    url: '@Url.Action("contractStatusChange", "contracts")',
+                    type: 'GET',
+                    data: { client: $('#clientsList').val(), agreement: $('#agreementsList').val(), work: wrk, newStatus: st },
+                    success: function (result) {
+                        $('#cList').html(result);
+                    }
+                })
+            }
+        }
+
+        function onStudioClick(work) {
+            $.ajax({
+                url: '@Url.Action("teamList", "contracts")',
+                type: 'GET',
+                data: { id: work },
+                success: function (result) {
+                    $('#allDetails').html(result);
+                }
+            })
+        }
+        function onPersonnelAddNewClick(work) {
+            $.ajax({
+                url: '@Url.Action("teamAddNew", "contracts")',
+                type: 'GET',
+                data: { id: work },
+                success: function (result) {
+                    $('#pDetails').html(result);
+                }
+            })
+        }
+        function onPersonnelDeleteClick(person) {
+            if (confirm('Please Confirm! About to Delete the Selected Item.')) {
+                $.ajax({
+                    url: '@Url.Action("teamDelete", "contracts")',
+                    type: 'GET',
+                    data: { id: person },
+                    success: function (result) {
+                        $('#allDetails').html(result);
+                    }
+                })
+            }
+        }
+        function onTeamDismissClick(work) {
+            $('#pDetails').html(null);
+            $.ajax({
+                url: '@Url.Action("teamList", "contracts")',
+                type: 'GET',
+                data: { id: work },
+                success: function (result) {
+                    $('#allDetails').html(result);
+                }
+            })
+        }
+
+        function onDismissClick() {
+            var x = $('#clientsList').val();
+            $('#allDetails').html(null);
+            $.ajax({
+                url: '@Url.Action("contractsList", "contracts")',
+                type: 'GET',
+                data: { client: x },
+                success: function (result) {
+                    $('#cList').html(result);
+                }
+            });
+            if (x != "") {
+                $.ajax({
+                    url: '@Url.Action("clientContactsList", "contracts")',
+                    type: 'GET',
+                    data: { client: x },
+                    success: function (result) {
+                        $('#allDetails').html(result);
+                    }
+                });
+            }
+        }
+
+        function onCastingClick(work) {
+            onNavigateAway();
+            window.location.href = "/casting/Index?work=" + work;
+        }
+
+        function onHistoryClick(work) {
+            $.ajax({
+                url: '@Url.Action("contractHistory", "contracts")',
+                type: 'GET',
+                data: { id: work },
+                success: function (result) {
+                    $('#allDetails').html(result);
+                }
+            })
+        }
+    </script>
+}

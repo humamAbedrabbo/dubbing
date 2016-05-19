@@ -1,0 +1,49 @@
+﻿@model IEnumerable<dubbingModel.agreementSpec>
+@using dubbingApp.Models;
+@{ string specsSubtype; }
+
+@foreach(string grp in Model.Select(b => b.specsType).Distinct())
+{
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <div class="row">
+                <div class="col-sm-11">
+                    <label>@LookupModels.decodeDictionaryItem("specsType", grp)</label>
+                </div>
+                <div class="col-sm-1">
+                    <button class="btn btn-default btn-xs" onclick="onSpecsAddNewClick(@ViewBag.agreementIntno, '@grp')" title="Add New">
+                        <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div class="panel-body">
+            <table class="table-hover">
+                <thead>
+                    <tr>
+                        <td class="col-sm-4"><label><small>Specification</small></label></td>
+                        <td class="col-sm-7"><label><small>Requirement</small></label></td>
+                        <td class="col-sm-1"></td>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach(dubbingModel.agreementSpec item in Model.Where(b => b.specsType == grp))
+                    {
+                        if (grp == "01") { specsSubtype = "videoSpecsSubtype"; }
+                        else if (grp == "02") { specsSubtype = "audioSpecsSubtype"; }
+                        else { specsSubtype = "otherSpecsSubtype"; }
+                        <tr>
+                            <td class="col-sm-4"><label><small>@LookupModels.decodeDictionaryItem(specsSubtype, item.specsSubtype)</small></label></td>
+                            <td class="col-sm-7"><small>@item.specsValue</small></td>
+                            <td class="col-sm-1">
+                                <button class="btn btn-default btn-xs" onclick="onSpecsDeleteClick(@item.specsIntno)" title="Remove">
+                                    <span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
+                                </button>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+}

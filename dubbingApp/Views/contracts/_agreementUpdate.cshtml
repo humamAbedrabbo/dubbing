@@ -1,0 +1,102 @@
+﻿@model dubbingModel.agreement
+@{
+    string thruDate = Model.thruDate.HasValue ? Model.thruDate.Value.ToString("yyyy-MM-dd") : null;
+}
+
+<div class="container-fluid">
+    @using (Ajax.BeginForm("agreementUpdate", "contracts",
+                                                new AjaxOptions()
+                                                {
+                                                    HttpMethod = "POST",
+                                                    UpdateTargetId = "result"
+                                                },
+                                                new { @class = "form-horizontal" }
+                                                ))
+    {
+        @Html.AntiForgeryToken()
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+        @Html.HiddenFor(model => model.agreementIntno)
+        @Html.HiddenFor(model => model.clientIntno)
+        
+        <div class="form-group">
+            @Html.LabelFor(model => model.agreementType, "Type", htmlAttributes: new { @class = "control-label col-sm-4" })
+            <div class="col-sm-8">
+                @Html.DropDownListFor(model => model.agreementType, new SelectList(ViewBag.agreementTypesList, "key", "value"), string.Empty, htmlAttributes : new { @class = "form-control" })
+                @Html.ValidationMessageFor(model => model.agreementType, "", new { @class = "text-danger" })
+            </div>
+        </div>
+        
+        <div class="form-group">
+            @Html.LabelFor(model => model.agreementName, "Name", htmlAttributes: new { @class = "control-label col-sm-4" })
+            <div class="col-sm-8">
+                @Html.EditorFor(model => model.agreementName, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.agreementName, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.othAgreementName, "Other Name", htmlAttributes: new { @class = "control-label col-sm-4" })
+            <div class="col-sm-8">
+                @Html.EditorFor(model => model.othAgreementName, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.othAgreementName, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.fromDate, "From Date", htmlAttributes: new { @class = "control-label col-sm-4" })
+            <div class="col-sm-8">
+                <input type="date" name="fromDate" class="form-control"  value="@Model.fromDate.ToString("yyyy-MM-dd")" />
+                @Html.ValidationMessageFor(model => model.fromDate, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.agreementDuration, "Duration", htmlAttributes: new { @class = "control-label col-sm-4" })
+            <div class="col-sm-8">
+                @Html.EditorFor(model => model.agreementDuration, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.agreementDuration, "", new { @class = "text-danger" })
+            </div>
+        </div>
+        
+        <div class="form-group">
+            @Html.LabelFor(model => model.durationUom, "Unit", htmlAttributes: new { @class = "control-label col-sm-4" })
+            <div class="col-sm-8">
+                @Html.DropDownListFor(model => model.durationUom, new SelectList(ViewBag.durationUomList, "key", "value"), string.Empty, htmlAttributes : new { @class = "form-control" })
+                @Html.ValidationMessageFor(model => model.durationUom, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.thruDate, "Till Date", htmlAttributes: new { @class = "control-label col-sm-4" })
+            <div class="col-sm-8">
+                <input type="date" name="thruDate" class="form-control"  value="@thruDate" />
+                @Html.ValidationMessageFor(model => model.thruDate, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.remarks, "Remarks", htmlAttributes: new { @class = "control-label col-sm-4" })
+            <div class="col-sm-8">
+                @Html.EditorFor(model => model.remarks, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.remarks, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.status, "Status", htmlAttributes: new { @class = "control-label col-sm-4" })
+            <div class="col-sm-8">
+                @Html.DropDownListFor(model => model.status, new SelectList(ViewBag.statusList, "key", "value"), string.Empty, htmlAttributes: new { @class = "form-control" })
+                @Html.ValidationMessageFor(model => model.status, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="col-sm-offset-4 col-sm-8">
+                <button type="submit" class="btn btn-default btn-sm">Submit</button>
+                &nbsp;
+                <a class="btn btn-default btn-sm" onclick="onDismissClick()" role="button">Dismiss</a>
+                <label class="alert-success" id="result"></label>
+            </div>
+        </div>
+    }
+</div>

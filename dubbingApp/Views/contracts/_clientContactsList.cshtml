@@ -1,0 +1,35 @@
+﻿@model IEnumerable<dubbingModel.contact>
+@using dubbingApp.Models;
+
+@foreach (dubbingModel.contact item in Model)
+{
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <div class="row">
+                <div class="col-sm-12">
+                    <label>@LookupModels.decodeDictionaryItem("salutation", item.salutation)</label>
+                    <span><label>@item.contactName @item.othContactName, @item.contactTitle</label></span>
+                </div>
+            </div>
+        </div>
+        <div class="panel-body">
+            <div class="row">
+                <div class="col-sm-6">
+                    <label><small>Phone:</small></label>&nbsp;&nbsp;
+                    <label><small>@item.contactPhoneNbr</small></label>
+                </div>
+
+                <div class="col-sm-6">
+                    <label><small>email:</small></label>&nbsp;&nbsp;
+                    <label><small>@item.mailingAddr</small></label>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-12">
+                    <label><small>Remarks:</small></label>&nbsp;&nbsp;
+                    <label><small>@item.remarks</small></label>
+                </div>
+            </div>
+        </div>
+    </div>
+}

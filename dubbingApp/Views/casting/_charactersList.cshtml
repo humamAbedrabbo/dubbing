@@ -1,0 +1,67 @@
+﻿@model IEnumerable<dubbingModel.workCharacter>
+@using dubbingApp.Models;
+
+
+<div class="container-fluid">
+    @foreach (dubbingModel.workCharacter item in Model)
+    {
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <div class="row">
+                    <div class="col-sm-1">
+                        <button class="btn btn-default btn-xs" onclick="onCharacterUpdateClick(@item.workCharacterIntno)" title="Modify">
+                            <span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
+                        </button>
+                    </div>
+                    <div class="col-sm-5">
+                        <label class="badge alert-info">@item.sortOrder</label>
+                        <label>@item.characterName</label>
+                    </div>
+                    <div class="col-sm-5">
+                        <small>
+                            Casting By: &nbsp;
+                                @{
+                                    var x = item.workActors.FirstOrDefault(b => b.status == true);
+                                    if (x != null)
+                                    {
+                                        <button class="btn btn-default btn-xs" onclick="onCastingDetailsClick(@item.workIntno, @item.workCharacterIntno)" title="@item.remarks">@x.voiceActor.fullName</button>
+                                        <label class="alert-info pull-right" style="width:30px; height:30px; text-align:center; font-size:large">@x.scenesPerHour &nbsp;</label><label class="pull-right"><small>S/H</small></label>
+                                    }
+                                    else
+                                    {
+                                        <button class="btn-default btn-xs" onclick="onCastingDetailsClick(@item.workIntno, @item.workCharacterIntno)">Cast ...</button>
+                                    }
+                                }
+                        </small>
+                        
+                    </div>
+                    <div class="col-sm-1">
+                        <small>@item.characterCode</small>
+                    </div>
+                </div>
+            </div>
+            <div class="panel-body">
+                <div class="row">
+                    <div class="col-sm-4">
+                        <label><small>Other Name: </small></label>
+                        <small>@item.othCharacterName</small>
+                    </div>
+                    <div class="col-sm-3">
+                        <label><small>Gender: </small></label>
+                        <small>@LookupModels.decodeDictionaryItem("characterGender", item.characterGender)</small>
+                    </div>
+                    <div class="col-sm-5">
+                        <label><small>Desc: </small></label>
+                        <small>@item.characterDesc</small>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-12">
+                        <label><small>Remarks: </small></label>
+                        <small>@item.remarks</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+                            }
+</div>

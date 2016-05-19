@@ -1,0 +1,238 @@
+﻿
+@{
+    ViewBag.Title = "Dubbing Orders";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container-fluid">
+    <div class="jumbotron" style="padding:5px">
+        <h2>Dubbing Orders Management</h2>
+        <p class="lead"><h5>Register New Client Orders for Dubbing and Capture First Quality Check Results. Plan Order Episodes for Dubbing, Upload &amp; Shipment. Register Client Feedback on Uploaded Episodes and Track Corrective Actions.</h5></p>
+        <label><a href="#" onclick="onOrderAddNewClick()">Register New Order ...</a></label>
+    </div>
+    <div class="col-sm-2">
+        @Html.Hidden("workIntnoHF")
+        @Html.Hidden("selectedItemsHF")
+        <div>
+            <button class="btn btn-info btn-xs work" value="0" title="Select">
+                <span class="glyphicon glyphicon-pushpin" aria-hidden="true"></span>
+            </button>
+            <label class="workLbl" id="w0"><small>All ...</small></label>
+        </div>
+        @foreach (SelectListItem item in ViewBag.worksList)
+        {
+            <div>
+                <button class="btn btn-info btn-xs work" value="@item.Value" title="Select">
+                    <span class="glyphicon glyphicon-pushpin" aria-hidden="true"></span>
+                </button>
+                @{ string work = "w" + @item.Value.ToString(); }
+                <label class="workLbl" id="@work"><small>@item.Text</small></label>
+            </div>
+        }
+    </div>
+    <div class="col-sm-6">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-sm-4">
+                    <label><small>Episodes</small></label>
+                    <span><small><input class="episodeFilter" id="fromEpisode" style="width:30px" /></small>&nbsp;-</span>
+                    <span><small><input class="episodeFilter" id="thruEpisode" style="width:30px" /></small></span>
+                </div>
+                <div class="col-sm-8">
+                    <div class="btn-group pull-right" style="padding-bottom:10px">
+                        <button class="btn btn-default btn-xs" onclick="onFilterClick()" title="Filter">All</button>&nbsp;
+                        <button class="btn btn-danger btn-xs" onclick="onFilterClick('01')" title="Filter">New</button>&nbsp;
+                        <button class="btn btn-primary btn-xs" onclick="onFilterClick('02')" title="Filter">Dubbing</button>&nbsp;
+                        <button class="btn btn-info btn-xs" onclick="onFilterClick('03')" title="Filter">Upload</button>&nbsp;
+                        <button class="btn btn-success btn-xs" onclick="onFilterClick('04')" title="Filter">Shipment</button>
+                        <button class="btn btn-default btn-xs" onclick="onFilterClick('05')" title="Filter">Archive</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="oList">
+            @Html.Action("orderItemsList", "orders")
+        </div>
+    </div>
+    <div class="col-sm-4" id="allDetails"></div>
+</div>
+
+@section Scripts
+{
+    @Scripts.Render("~/bundles/jqueryval")
+
+    <script>
+        $(document).ready(function () {
+            $(window).on('load', function () {
+                $('#w0').css('background-color', 'silver');
+                $('#selectedItemsHF').val(0);
+            })
+
+            $(".work").click(function () {
+                $('#fromEpisode').val(null);
+                $('#thruEpisode').val(null);
+                $('.workLbl').css('background-color', 'white');
+                var workIntno = $(this).attr('value');
+                var work = 'w' + workIntno;
+                $('#' + work).css('background-color', 'silver');
+
+                if (workIntno === '0') {
+                    workIntno = null;
+                }
+
+                $('#workIntnoHF').val(workIntno);
+                $.ajax({
+                    url: '@Url.Action("orderItemsList", "orders")',
+                    type: 'GET',
+                    data: { work: workIntno },
+                    success: function (result) {
+                        $('#oList').html(result);
+                    }
+                })
+            })
+
+            $('.episodeFilter').change(function () {
+                $.ajax({
+                    url: '@Url.Action("orderItemsList", "orders")',
+                    type: 'GET',
+                    data: { work: $('#workIntnoHF').val(), stage: null, fromEpisode: $('#fromEpisode').val(), thruEpisode: $('#thruEpisode').val() },
+                    success: function (result) {
+                        $('#oList').html(result);
+                    }
+                })
+            })
+        })
+
+        function onClientComboChanged() {
+            $("#workCombo").empty();
+            $("#workCombo").append('<option value="">Select Work ...</option>');
+            $.ajax({
+                url: '@Url.Action("clientComboChanged", "orders")',
+                type: 'POST',
+                data: { client: $('#clientCombo').val() },
+                dataType: 'json',
+                success: function (works) {
+                    $.each(works, function (i, item) {
+                        $("#workCombo").append('<option value="' + item.Value + '">' +
+                        item.Text + '</option>');
+                    });
+                }
+            })
+        }
+        function onFilterClick(filter) {
+            $('#fromEpisode').val(null);
+            $('#thruEpisode').val(null);
+            $.ajax({
+                url: '@Url.Action("orderItemsList", "orders")',
+                type: 'GET',
+                data: { work: $('#workIntnoHF').val(), stage: filter },
+                success: function (result) {
+                    $('#oList').html(result);
+                }
+            })
+        }
+
+        function onOrderAddNewClick() {
+            $('#fromEpisode').val(null);
+            $('#thruEpisode').val(null);
+            $.ajax({
+                url: '@Url.Action("orderAddNew", "orders")',
+                type: 'GET',
+                success: function (result) {
+                    $('#allDetails').html(result);
+                }
+            })
+        }
+        function onDismissClick() {
+            $('#allDetails').html(null);
+            $.ajax({
+                url: '@Url.Action("orderItemsList", "orders")',
+                type: 'GET',
+                data: { work: $('#workIntnoHF').val() },
+                success: function (result) {
+                    $('#oList').html(result);
+                }
+            })
+        }
+
+        function onOrderItemIssueClick(oItem) {
+            $.ajax({
+                url: '@Url.Action("orderItemIssuesList", "orders")',
+                type: 'GET',
+                data: { id: oItem },
+                success: function (result) {
+                    $('#allDetails').html(result);
+                }
+            })
+        }
+        function onOrderItemIssueAddNewClick(oItem) {
+            $.ajax({
+                url: '@Url.Action("orderItemIssueAddNew", "orders")',
+                type: 'GET',
+                data: { id: oItem },
+                success: function (result) {
+                    $('#qualityDetails').html(result);
+                }
+            })
+        }
+        function onOrderItemIssueRemoveClick(chk) {
+            if (confirm('Please Confirm! About to Remove the Selected Item from Issues List.')) {
+                $.ajax({
+                    url: '@Url.Action("orderItemIssueDelete", "orders")',
+                    type: 'GET',
+                    data: { id: chk },
+                    success: function (result) {
+                        $('#allDetails').html(result);
+                    }
+                })
+            }
+        }
+        function onIssuesDismissClick(oItem) {
+            $('#qualityDetails').html(null);
+            $.ajax({
+                url: '@Url.Action("orderItemIssuesList", "orders")',
+                type: 'GET',
+                data: { id: oItem },
+                success: function (result) {
+                    $('#allDetails').html(result);
+                }
+            })
+        }
+
+        function onOrderItemSelectClick(oItem, ep) {
+            if ($('#selectedItemsHF').val() === '0') {
+                $.ajax({
+                    url: '@Url.Action("orderItemSelectList", "orders")',
+                    type: 'GET',
+                    data: { id: 1 },
+                    success: function (result) {
+                        $('#allDetails').html(result);
+                        $('#selectedItemsHF').val(1);
+                        $('#oiCard').append($('<li/>', { id: oItem, text: ep }));
+                    }
+                })
+            }
+            else {
+                var itm = "#" + oItem;
+                var listItem = $('itm');
+                var ep1 = ep + '<span class="glyphicon glyphicon-remove pull-right"></span>';
+                // alert($('#oiCard').find("li:contains(oItem)").index());
+                if (!$('#oiCard li[id=' + oItem + ']').length) {
+                    var cnt = $('#selectedItemsHF').val() + 1;
+                    $('#selectedItemsHF').val(cnt);
+                    $('#oiCard').append($('<li/>', { id: oItem, html: ep1 }));
+                }
+            }
+            
+        }
+        function onCloseClick() {
+            $('#selectedItemsHF').val(0);
+            $('#oiCard').removeData();
+            $('#allDetails').html(null);
+        }
+        function onOrderItemDetailsClick(oItem) {
+
+        }
+        
+    </script>
+}

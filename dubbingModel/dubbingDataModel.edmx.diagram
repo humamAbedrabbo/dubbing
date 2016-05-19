@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+ <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <!-- Diagram content (shape and connector positions) -->
+    <edmx:Diagrams>
+      <Diagram DiagramId="f86500cc867247d1bfdf66221ad39a95" Name="Diagram1">
+        <EntityTypeShape EntityType="DUBBDBModel.agreement" Width="1.5" PointX="3" PointY="33.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="DUBBDBModel.agreementSpec" Width="1.5" PointX="5.25" PointY="33.125" IsExpanded="true" />
+        <EntityTypeShape EntityType="DUBBDBModel.agreementTerm" Width="1.5" PointX="5.25" PointY="36" IsExpanded="true" />
+        <EntityTypeShape EntityType="DUBBDBModel.agreementWork" Width="1.5" PointX="8.25" PointY="32.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="DUBBDBModel.carrier" Width="1.5" PointX="18.5" PointY="26.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="DUBBDBModel.carrierSchedule" Width="1.5" PointX="18.5" PointY="22.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="DUBBDBModel.client" Width="1.5" PointX="0.75" PointY="34.125" IsExpanded="true" />
+        <EntityTypeShape EntityType="DUBBDBModel.contact" Width="1.5" PointX="6" PointY="28.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="DUBBDBModel.deliveryFeedback" Width="1.5" PointX="15.75" PointY="30.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="DUBBDBModel.dubbDomain" Width="1.5" PointX="0.75" PointY="0.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="DUBBDBModel.dubbingAppointment" Width="1.5" PointX="18" PointY="44.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="DUBBDBModel.dubbingSheetDtl" Width="1.5" PointX="18.75" PointY="34.625" IsExpanded="true" />
+        <EntityTypeShape EntityType="DUBBDBModel.dubbingSheetHdr" Width="1.5" PointX="15.75" PointY="44.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="DUBBDBModel.dubbingTrnDtl" Width="1.5" PointX="15.75" PointY="38.625" IsExpanded="true" />
+        <EntityTypeShape EntityType="DUBBDBModel.dubbingTrnHdr" Width="1.5" PointX="8.25" PointY="23.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="DUBBDBModel.employee" Width="1.5" PointX="8.25" PointY="26.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="DUBBDBModel.feedbackAction" Width="1.5" PointX="18" PointY="30.375" IsExpanded="true" />
+        <EntityTypeShape EntityType="DUBBDBModel.orderBatchTrnHdr" Width="1.5" PointX="10.5" PointY="33.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="DUBBDBModel.orderCheck" Width="1.5" PointX="18.75" PointY="40" IsExpanded="true" />
+        <EntityTypeShape EntityType="DUBBDBModel.orderTrnDtl" Width="1.5" PointX="15.75" PointY="53.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="DUBBDBModel.orderTrnHdr" Width="1.5" PointX="13.5" PointY="31.625" IsExpanded="true" />
+        <EntityTypeShape EntityType="DUBBDBModel.payment" Width="1.5" PointX="10.5" PointY="26.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="DUBBDBModel.shipment" Width="1.5" PointX="20.75" PointY="29.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="DUBBDBModel.voiceActor" Width="1.5" PointX="8.25" PointY="39.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="DUBBDBModel.workActor" Width="1.5" PointX="12.75" PointY="45.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="DUBBDBModel.workCharacter" Width="1.5" PointX="10.5" PointY="57.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="DUBBDBModel.workCharge" Width="1.5" PointX="2.75" PointY="0.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="DUBBDBModel.workOrder" Width="1.5" PointX="10.5" PointY="39.125" IsExpanded="true" />
+        <EntityTypeShape EntityType="DUBBDBModel.workPersonnel" Width="1.5" PointX="16.5" PointY="34.125" IsExpanded="true" />
+        <AssociationConnector Association="DUBBDBModel.FK_agreements_agreements" ManuallyRouted="false" />
+        <AssociationConnector Association="DUBBDBModel.FK_agreements_clients" ManuallyRouted="false" />
+        <AssociationConnector Association="DUBBDBModel.FK_agreementSpecs_agreements" ManuallyRouted="false" />
+        <AssociationConnector Association="DUBBDBModel.FK_agreementTerms_agreements" ManuallyRouted="false" />
+        <AssociationConnector Association="DUBBDBModel.FK_agreementWorks_agreements" ManuallyRouted="false" />
+        <AssociationConnector Association="DUBBDBModel.FK_agreementWorks_contacts" ManuallyRouted="false" />
+        <AssociationConnector Association="DUBBDBModel.FK_orderBatchTrnHdrs_agreementWorks" ManuallyRouted="false" />
+        <AssociationConnector Association="DUBBDBModel.FK_orderTrnHdrs_agreementWorks" ManuallyRouted="false" />
+        <AssociationConnector Association="DUBBDBModel.FK_payments_agreementWorks" ManuallyRouted="false" />
+        <AssociationConnector Association="DUBBDBModel.FK_workActors_agreementWorks" ManuallyRouted="false" />
+        <AssociationConnector Association="DUBBDBModel.FK_workCharacters_agreementWorks" ManuallyRouted="false" />
+        <AssociationConnector Association="DUBBDBModel.FK_workOrders_agreementWorks" ManuallyRouted="false" />
+        <AssociationConnector Association="DUBBDBModel.FK_workPersonnels_agreementWorks" ManuallyRouted="false" />
+        <AssociationConnector Association="DUBBDBModel.FK_carrierSchedules_carriers" ManuallyRouted="false" />
+        <AssociationConnector Association="DUBBDBModel.FK_shipments_carriers" ManuallyRouted="false" />
+        <AssociationConnector Association="DUBBDBModel.FK_shipments_carrierSchedules" ManuallyRouted="false" />
+        <AssociationConnector Association="DUBBDBModel.FK_shipments_clients" ManuallyRouted="false" />
+        <AssociationConnector Association="DUBBDBModel.FK_workOrders_clients" ManuallyRouted="false" />
+        <AssociationConnector Association="DUBBDBModel.FK_deliveryFeedbacks_orderTrnHdrs" ManuallyRouted="false" />
+        <AssociationConnector Association="DUBBDBModel.FK_feedbackActions_deliveryFeedbacks" ManuallyRouted="false" />
+        <AssociationConnector Association="DUBBDBModel.FK_dubbingAppointments_dubbingSheetHdrs1" ManuallyRouted="false" />
+        <AssociationConnector Association="DUBBDBModel.FK_dubbingAppointments_dubbingTrnDtls" ManuallyRouted="false" />
+        <AssociationConnector Association="DUBBDBModel.FK_dubbingSheetDtls_dubbingSheetHdrs" ManuallyRouted="false" />
+        <AssociationConnector Association="DUBBDBModel.FK_dubbingSheetDtls_employees" ManuallyRouted="false" />
+        <AssociationConnector Association="DUBBDBModel.FK_dubbingSheetDtls_employees1" ManuallyRouted="false" />
+        <AssociationConnector Association="DUBBDBModel.FK_dubbingSheetDtls_employees2" ManuallyRouted="false" />
+        <AssociationConnector Association="DUBBDBModel.FK_dubbingSheetDtls_orderTrnHdrs" ManuallyRouted="false" />
+        <AssociationConnector Association="DUBBDBModel.FK_dubbingSheetHdrs_orderTrnHdrs" ManuallyRouted="false" />
+        <AssociationConnector Association="DUBBDBModel.FK_dubbingSheetHdrs_voiceActors" ManuallyRouted="false" />
+        <AssociationConnector Association="DUBBDBModel.FK_dubbingSheetHdrs_workCharacters" ManuallyRouted="false" />
+        <AssociationConnector Association="DUBBDBModel.FK_dubbingTrnDtls_dubbingTrnHdrs" ManuallyRouted="false" />
+        <AssociationConnector Association="DUBBDBModel.FK_dubbingTrnDtls_employees" ManuallyRouted="false" />
+        <AssociationConnector Association="DUBBDBModel.FK_dubbingTrnDtls_employees1" ManuallyRouted="false" />
+        <AssociationConnector Association="DUBBDBModel.FK_dubbingTrnDtls_employees2" ManuallyRouted="false" />
+        <AssociationConnector Association="DUBBDBModel.FK_dubbingTrnDtls_orderTrnHdrs" ManuallyRouted="false" />
+        <AssociationConnector Association="DUBBDBModel.FK_payments_dubbingTrnHdrs" ManuallyRouted="false" />
+        <AssociationConnector Association="DUBBDBModel.FK_orderBatchTrnHdrs_employees" ManuallyRouted="false" />
+        <AssociationConnector Association="DUBBDBModel.FK_payments_employees" ManuallyRouted="false" />
+        <AssociationConnector Association="DUBBDBModel.FK_workPersonnels_employees" ManuallyRouted="false" />
+        <AssociationConnector Association="DUBBDBModel.FK_orderBatchTrnHdrs_workOrders" ManuallyRouted="false" />
+        <AssociationConnector Association="DUBBDBModel.FK_orderChecks_orderTrnHdrs" ManuallyRouted="false" />
+        <AssociationConnector Association="DUBBDBModel.FK_orderTrnDtls_orderTrnHdrs" ManuallyRouted="false" />
+        <AssociationConnector Association="DUBBDBModel.FK_orderTrnHdrs_workOrders" ManuallyRouted="false" />
+        <AssociationConnector Association="DUBBDBModel.FK_shipments_orderTrnHdrs" ManuallyRouted="false" />
+        <AssociationConnector Association="DUBBDBModel.FK_payments_voiceActors" ManuallyRouted="false" />
+        <AssociationConnector Association="DUBBDBModel.FK_workActors_voiceActors" ManuallyRouted="false" />
+        <AssociationConnector Association="DUBBDBModel.FK_workActors_workCharacters" ManuallyRouted="false" />
+      </Diagram>
+    </edmx:Diagrams>
+  </edmx:Designer>
+</edmx:Edmx>

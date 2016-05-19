@@ -1,0 +1,47 @@
+﻿@model IEnumerable<dubbingModel.workActor>
+
+<br /><br />
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <div class="row">
+            <label class="col-sm-12">Casting Details</label>
+            
+        </div>
+    </div>
+    <div class="panel-body">
+        <table class="table-condensed">
+            <thead>
+                <tr>
+                    <td class="col-sm-6"><label><small>Actor</small></label></td>
+                    <td class="col-sm-3"><label><small>Since</small></label></td>
+                    <td class="col-sm-3"><label><small>Scene/Hour</small></label></td>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (dubbingModel.workActor item in Model)
+                {
+                    <tr>
+                        <td class="col-sm-6"><small>@item.voiceActor.fullName</small></td>
+                        <td class="col-sm-3"><small>@item.fromDate.ToShortDateString()</small></td>
+                        <td class="col-sm-3"><small>@item.scenesPerHour</small></td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+    <div class="panel-footer">
+        <div class="row">
+            <div class="col-sm-3 col-sm-offset-2">
+                <button class="btn btn-default btn-xs" onclick="onActorUpdateClick(@ViewBag.workIntno, @ViewBag.workCharacterIntno)" title="Modify">
+                    Edit Current
+                </button>
+            </div>
+            <div class="col-sm-3">
+                <button class="btn btn-default btn-xs" onclick="onActorAddNewClick(@ViewBag.workIntno, @ViewBag.workCharacterIntno)" title="Replace">
+                    Replace Current
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+

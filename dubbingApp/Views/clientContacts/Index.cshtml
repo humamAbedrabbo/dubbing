@@ -1,0 +1,70 @@
+﻿@model IEnumerable<dubbingModel.contact>
+@using dubbingApp.Models;
+@{
+    ViewBag.Title = "Contacts";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container-fluid">
+    <div class="jumbotron" style="padding:5px">
+        <div class="row">
+            <div class="col-sm-11">
+                <h2>Client Contacts</h2>
+            </div>
+            <div class="col-sm-1">
+                <a class="btn btn-default btn-xs" href="@ViewBag.returnUrl" role="button" title="Back">
+                    <span class="glyphicon glyphicon-home" aria-hidden="true"></span>
+                </a>
+            </div>
+        </div>
+        <p class="lead"><h5>Maintain Accurate Contacts by Updating Client's Contacts. Uncheck the Active Status to Remove the Contact.</h5></p>
+        <label><a href="#" onclick="onContactAddNewClick(@ViewBag.clientIntno)">Add New Contact ...</a></label>
+    </div>
+
+    <div class="col-sm-8" id="cList">
+        @Html.Action("clientContactsList", new { id = ViewBag.clientIntno })
+    </div>
+
+    <div class="col-sm-4" id="cDetails"></div>
+</div>
+
+@section Scripts
+{
+    @Scripts.Render("~/bundles/jqueryval")
+
+    <script>
+        function onContactAddNewClick(client) {
+            $.ajax({
+                url: '@Url.Action("clientContactAddNew", "clientContacts")',
+                data: { id: client },
+                type: 'GET',
+                success: function (result) {
+                    $('#cDetails').html(result);
+                }
+            })
+        }
+        function onContactUpdateClick(cnt) {
+            $.ajax({
+                url: '@Url.Action("clientContactUpdate", "clientContacts")',
+                data: { id: cnt },
+                type: 'GET',
+                success: function (result) {
+                    $('#cDetails').html(result);
+                }
+            })
+        }
+
+        function onDismissClick(client) {
+            $('#cDetails').html(null);
+            $.ajax({
+                url: '@Url.Action("clientContactsList", "clientContacts")',
+                data: { id: client },
+                type: 'GET',
+                success: function (result) {
+                    $('#cList').html(result);
+                }
+            })
+        }
+
+    </script>
+}

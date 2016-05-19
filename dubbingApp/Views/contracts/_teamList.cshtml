@@ -1,0 +1,31 @@
+﻿@model IEnumerable<dubbingModel.workPersonnel>
+@using dubbingApp.Models;
+
+@foreach (dubbingModel.workPersonnel item in Model)
+{
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <div class="row">
+            <label class="col-sm-9">@LookupModels.decodeDictionaryItem("titleType", item.titleType)</label>
+            <div class="col-sm-3">
+                <button class="btn btn-default btn-xs" onclick="onPersonnelAddNewClick(@ViewBag.workIntno)" title="Add New">
+                    <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+                </button>
+                <button class="btn btn-default btn-xs" onclick="onPersonnelDeleteClick(@item.workPersonnelIntno)" title="Remove">
+                    <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+                </button>
+            </div>
+        </div>
+    </div>
+    <div class="panel-body">
+        <div class="row">
+            <div class="col-sm-6">
+                <small>@item.employee.fullName</small>
+            </div>
+            <div class="col-sm-6">
+                <small>Since: @item.fromDate.ToShortDateString()</small>
+            </div>
+        </div>
+    </div>
+</div>
+}

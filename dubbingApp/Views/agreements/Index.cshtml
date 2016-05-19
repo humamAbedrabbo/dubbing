@@ -1,0 +1,108 @@
+﻿@{
+    ViewBag.Title = "Agreements";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container-fluid">
+    <div class="jumbotron" style="padding:5px">
+        <div class="row">
+            <div class="col-sm-11">
+                <h2>Client Agreements</h2>
+            </div>
+            <div class="col-sm-1">
+                <a class="btn btn-default btn-xs" href="@ViewBag.returnUrl" role="button" title="Back">
+                    <span class="glyphicon glyphicon-home" aria-hidden="true"></span>
+                </a>
+            </div>
+        </div>
+        <p class="lead"><h5>An Agreement is the Legal Document which binds All Contracted Works like Series, Documentaries, Movies or Any Other Dubbing Work. An Agreement Encompasses Technical Specs and Terms &amp; Conditions for the Contracted Dubbing Works.</h5></p>
+    </div>
+
+    <div class="col-sm-8" id="aList">
+        <div id="tList">
+            @Html.Action("termsList", new { id = ViewBag.agreementIntno })
+        </div>
+        <br />
+        <div id="sList">
+            @Html.Action("specsList", new { id = ViewBag.agreementIntno })
+        </div>
+    </div>
+
+    <div class="col-sm-4" id="aDetails"></div>
+</div>
+
+@section Scripts
+{
+    @Scripts.Render("~/bundles/jqueryval")
+
+    <script>
+        function onSpecsAddNewClick(agr, tp) {
+            $.ajax({
+                url: '@Url.Action("specsAddNew", "agreements")',
+                data: { id: agr, sType: tp },
+                type: 'GET',
+                success: function (result) {
+                    $('#aDetails').html(result);
+                }
+            })
+        }
+        function onSpecsDeleteClick(spec) {
+            if (confirm('Please Confirm! About to Delete the Selected Item.')) {
+                $.ajax({
+                    url: '@Url.Action("specsDelete", "agreements")',
+                    data: { id: spec },
+                    type: 'GET',
+                    success: function (result) {
+                        $('#sList').html(result);
+                    }
+                })
+            }
+        }
+        function onSpecsDismissClick(agr) {
+            $('#aDetails').html(null);
+            $.ajax({
+                url: '@Url.Action("specsList", "agreements")',
+                data: { id: agr },
+                type: 'GET',
+                success: function (result) {
+                    $('#sList').html(result);
+                }
+            })
+        }
+
+        function onTermsAddNewClick(agr) {
+            $.ajax({
+                url: '@Url.Action("termsAddNew", "agreements")',
+                data: { id: agr },
+                type: 'GET',
+                success: function (result) {
+                    $('#aDetails').html(result);
+                }
+            })
+        }
+        function onTermsDeleteClick(term) {
+            if (confirm('Please Confirm! About to Delete the Selected Item.')) {
+                $.ajax({
+                    url: '@Url.Action("termsDelete", "agreements")',
+                    data: { id: term },
+                    type: 'GET',
+                    success: function (result) {
+                        $('#tList').html(result);
+                    }
+                })
+            }
+        }
+        function onTermsDismissClick(agr) {
+            $('#aDetails').html(null);
+            $.ajax({
+                url: '@Url.Action("termsList", "agreements")',
+                data: { id: agr },
+                type: 'GET',
+                success: function (result) {
+                    $('#tList').html(result);
+                }
+            })
+        }
+
+    </script>
+}

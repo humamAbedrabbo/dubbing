@@ -1,0 +1,35 @@
+﻿@model IEnumerable<dubbingModel.contact>
+@using dubbingApp.Models;
+
+@foreach (dubbingModel.contact item in Model)
+{
+    <div class="row">
+        <div class="col-sm-1">
+            <button class="btn btn-default btn-xs" onclick="onContactUpdateClick('@item.contactIntno')" title="Modify">
+                <span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
+            </button>
+        </div>
+        <div class="col-sm-11"><label>@item.contactTitle, @LookupModels.decodeDictionaryItem("salutation", @item.salutation) @item.contactName @item.othContactName</label></div>
+    </div>
+    <div class="row">
+        <div class="col-sm-3"><label>Phone:</label></div>
+        <div class="col-sm-9"><small>@item.contactPhoneNbr</small></div>
+    </div>
+    <div class="row">
+        <div class="col-sm-3"><label>email:</label></div>
+        <div class="col-sm-9"><small>@item.contactEmailAddr</small></div>
+    </div>
+    <div class="row">
+        <div class="col-sm-3"><label>Mailing Address:</label></div>
+        <div class="col-sm-9"><small>@item.mailingAddr</small></div>
+    </div>
+    <div class="row">
+        <div class="col-sm-3"><label>Remarks:</label></div>
+        <div class="col-sm-9"><small>@item.remarks</small></div>
+    </div>
+    <div class="row">
+        <div class="col-sm-3"><label>Active?</label></div>
+        <div class="col-sm-9">@Html.CheckBoxFor(modelItem => item.status)</div>
+    </div>
+    <br />
+}

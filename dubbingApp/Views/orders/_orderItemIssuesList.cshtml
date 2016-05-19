@@ -1,0 +1,36 @@
+﻿@model IEnumerable<dubbingModel.orderCheck>
+@using dubbingApp.Models;
+
+<div class="container-fluid">
+    <div>
+        <label class="col-sm-12">Received Quality Issues</label>
+        <label><a href="#" onclick="onOrderItemIssueAddNewClick(@ViewBag.orderItem)">Add New Issue ...</a></label>
+    </div>
+    @{ if (Model.Count() != 0) { 
+        <table class="table-condensed">
+            <thead>
+                <tr>
+                    <td class="col-sm-10"><label><small>Issue</small></label></td>
+                    <td class="col-sm-1"><label><small>Ok?</small></label></td>
+                    <td class="col-sm-1"><label><small>#</small></label></td>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (dubbingModel.orderCheck item in Model)
+                {
+                    <tr>
+                        <td class="col-sm-10"><small>@LookupModels.decodeDictionaryItem("checkType", @item.checkType)</small></td>
+                        <td class="col-sm-1"><small>@Html.CheckBoxFor(m => @item.isAccepted)</small></td>
+                        <td class="col-sm-1">
+                            <button class="btn btn-default btn-xs pull-right" onclick="onOrderItemIssueRemoveClick(@item.orderCheckIntno)" title="Remove">
+                                <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+                            </button>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+        <br />
+    } }
+    <div id="qualityDetails"></div>
+</div>

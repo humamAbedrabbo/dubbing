@@ -1,0 +1,92 @@
+﻿@model IEnumerable<dubbingModel.agreementWork>
+@using dubbingApp.Models;
+@{ string panelHeaderClass; }
+
+@foreach (dubbingModel.agreementWork item in Model)
+{
+    if (item.status == "02")
+    {
+        panelHeaderClass = "panel-warning";
+    }
+    else
+    {
+        panelHeaderClass = "panel-default";
+    }
+    <div class="panel @panelHeaderClass">
+        <div class="panel-heading">
+            <div class="row">
+                <div class="col-sm-2">
+                    <label class="badge label-info">@LookupModels.decodeDictionaryItem("workType", item.workType)</label>
+                </div>
+                <div class="col-sm-7">
+                    <label>Work Name:</label>&nbsp;&nbsp;
+                    <label>@Html.DisplayFor(model => item.workName)</label>
+                </div>
+                <div class="col-sm-3">
+                    <div class="pull-right">
+                        <button class="btn btn-default btn-xs" onclick="onContractUpdateClick(@item.workIntno)" title="Modify">
+                            <span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
+                        </button>
+                        <button class="btn btn-warning btn-xs" onclick="onStudioClick(@item.workIntno)" title="Studio">
+                            <span class="glyphicon glyphicon-film" aria-hidden="true"></span>
+                        </button>
+                        <button class="btn btn-warning btn-xs" onclick="onCastingClick(@item.workIntno)" title="Casting">
+                            <span class="glyphicon glyphicon-user" aria-hidden="true"></span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="panel-body">
+            <div class="row">
+                <div class="col-sm-12">
+                    <label><small>Arabic Name:</small></label>&nbsp;&nbsp;
+                    <label><small>@item.othWorkName</small></label>
+                    <div class="pull-right">
+                        <button class="btn btn-success btn-sm" onclick="onHistoryClick(@item.workIntno)" style="text-align:center" title="Last Shipped. Click for History.">
+                            <span style="font-weight:bold">
+                                @{
+                                    if (item.orderTrnHdrs.Where(b => b.shipmentFinal.HasValue).Count() != 0)
+                                    {
+                                        @item.orderTrnHdrs.Where(b => b.shipmentFinal.HasValue).Select(b => new { b.episodeNo }).Max(b => b.episodeNo)
+                                    }
+                                    else
+                                    {
+                                        int sh = 0;
+                                        @sh
+                                    }
+                                }
+                            </span>
+                        </button>
+                    </div>
+
+
+
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-4">
+                    <label><small>Total Episodes:</small></label>&nbsp;&nbsp;
+                    <label><small>@item.totalNbrEpisodes</small></label>
+                </div>
+
+                <div class="col-sm-4">
+                    <label><small>Weekly Episodes:</small></label>&nbsp;&nbsp;
+                    <label><small>@item.totalWeekNbrEpisodes</small></label>
+                </div>
+
+                <div class="col-sm-4">
+                    <label><small>First Show:</small></label>&nbsp;&nbsp;
+                    @{
+                        if (item.firstEpisodeShowDate.HasValue)
+                        {
+                            <label>
+                                <small>@item.firstEpisodeShowDate.Value.ToShortDateString()</small>
+                            </label>
+                        }
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+}
