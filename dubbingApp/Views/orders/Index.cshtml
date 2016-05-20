@@ -1,5 +1,4 @@
-﻿
-@{
+﻿@{
     ViewBag.Title = "Dubbing Orders";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
@@ -12,7 +11,6 @@
     </div>
     <div class="col-sm-2">
         @Html.Hidden("workIntnoHF")
-        @Html.Hidden("selectedItemsHF")
         <div>
             <button class="btn btn-info btn-xs work" value="0" title="Select">
                 <span class="glyphicon glyphicon-pushpin" aria-hidden="true"></span>
@@ -67,7 +65,7 @@
                 $('#w0').css('background-color', 'silver');
                 $('#selectedItemsHF').val(0);
             })
-
+            
             $(".work").click(function () {
                 $('#fromEpisode').val(null);
                 $('#thruEpisode').val(null);
@@ -200,39 +198,64 @@
         }
 
         function onOrderItemSelectClick(oItem, ep) {
-            if ($('#selectedItemsHF').val() === '0') {
+            var x = '<small>' + ep + '</small>' + '<button class="btn btn-default btn-xs pull-right" onclick="' + "onSelectedItemRemoveClick('" + oItem + "')" + '" title="Remove">'
+                        + '<span class="glyphicon glyphicon-remove pull-right" aria-hidden="true"></span></button>';
+            if (!$('#oiCard').length) {
                 $.ajax({
                     url: '@Url.Action("orderItemSelectList", "orders")',
                     type: 'GET',
-                    data: { id: 1 },
+                    data: { id: oItem },
                     success: function (result) {
                         $('#allDetails').html(result);
-                        $('#selectedItemsHF').val(1);
-                        $('#oiCard').append($('<li/>', { id: oItem, text: ep }));
+                        $('#cardAction').hide();
+                        $('#cardPersonnel').hide();
+                        $('#oiCard').append($('<li/>', { id: oItem, html: x }));
                     }
                 })
             }
             else {
-                var itm = "#" + oItem;
-                var listItem = $('itm');
-                var ep1 = ep + '<span class="glyphicon glyphicon-remove pull-right"></span>';
-                // alert($('#oiCard').find("li:contains(oItem)").index());
                 if (!$('#oiCard li[id=' + oItem + ']').length) {
-                    var cnt = $('#selectedItemsHF').val() + 1;
-                    $('#selectedItemsHF').val(cnt);
-                    $('#oiCard').append($('<li/>', { id: oItem, html: ep1 }));
+                    $('#oiCard').append($('<li/>', { id: oItem, html: x }));
                 }
             }
-            
+
+        }
+        function onSelectedItemRemoveClick(oItem) {
+            $('#oiCard li[id=' + oItem + ']').remove();
+        }
+        function onListSubmitClick() {
+            $('#oiListHF').val(null);
+            $('#oiCard li').each(function (index) {
+                if ($('#oiListHF').val() === "") {
+                    $('#oiListHF').val($(this).attr('id'));
+                }
+                else {
+                    var x = $('#oiListHF').val() + ';' + $(this).attr('id');
+                    $('#oiListHF').val(x);
+                }
+            });
+            $('#cardAction').hide();
+            $('#cardPersonnel').hide();
         }
         function onCloseClick() {
-            $('#selectedItemsHF').val(0);
             $('#oiCard').removeData();
-            $('#allDetails').html(null);
+            onDismissClick();
         }
+        function onScheduleClick(op) {
+            $('#result').html(null);
+            $('#cardAction').show();
+            $('#scheduleTypeHF').val(op);
+        }
+        function onAdaptationClick(op) {
+            $('#result').html(null);
+            $('#cardAction').show();
+            $('#cardPersonnel').show();
+            $('#scheduleTypeHF').val(op);
+        }
+
         function onOrderItemDetailsClick(oItem) {
 
         }
-        
+
     </script>
 }

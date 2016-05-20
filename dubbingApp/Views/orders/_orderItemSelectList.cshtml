@@ -1,4 +1,4 @@
-﻿<br /><br />
+﻿<br />
 <div class="container-fluid">
     <div class="panel panel-default">
         <div class="panel-heading">
@@ -14,13 +14,48 @@
             </div>
         </div>
         <div class="panel-body">
-            <ol id="oiCard">
-                
-            </ol>
+            @using (Ajax.BeginForm("scheduleAddNew", "orders",
+                            new AjaxOptions()
+                            {
+                                HttpMethod = "POST",
+                                UpdateTargetId = "result"
+                            },
+                            new { @class = "form-horizontal" }
+                            ))
+            {
+                @Html.AntiForgeryToken()
+                @Html.Hidden("oiListHF")
+                @Html.Hidden("scheduleTypeHF")
+
+                <div class="form-group-sm">
+                    <ol id="oiCard"></ol>
+                </div>
+                <br />
+
+                <div>
+                    <a href="#" onclick="onScheduleClick('01')">Add to Dubbing Schedule</a><label>|</label>
+                    <a href="#" onclick="onScheduleClick('02')">Add to Upload Schedule</a><label>|</label>
+                    <a href="#" onclick="onScheduleClick('03')">Add to Shipment Schedule</a><label>|</label>
+                    <a href="#" onclick="onAdaptationClick('04')">Send to Adaptation</a>
+                </div>
+                <br />
+
+                <div class="form-group-sm" id="cardPersonnel">
+                    <label class="alert-warning"><small>For Adaptation, Selected Episodes MUST Belong to ONLY ONE Work</small></label>
+                    <label><small>Personnel</small></label>
+                    <span>
+                        @Html.DropDownList("personnel", ViewBag.personnelList as SelectList, "Select Name ...", htmlAttributes: new { @class = "form-control" })
+                    </span>
+                </div>
+                <div class="form-group-sm" id="cardAction">
+                    <label><small>Select Date</small></label>
+                    <span><input type="date" name="scheduleDate" style="width:140px" /></span>
+                    <button type="submit" class="btn btn-default btn-xs" onclick="onListSubmitClick()">Submit</button>
+                </div>
+                <div class="form-group">
+                    <small><label class="alert-success" id="result"></label></small>
+                </div>
+            }
         </div>
     </div>
-    <a href="#">Add to Dubbing Schedule</a><label>|</label>
-    <a href="#">Add to Upload Schedule</a><label>|</label>
-    <a href="#">Add to Shipment Schedule</a><label>|</label>
-    <a href="#">Send to Adaptation</a>
 </div>
