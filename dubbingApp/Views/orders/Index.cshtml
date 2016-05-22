@@ -149,13 +149,13 @@
         }
         function onDismissClick() {
             $('#allDetails').html(null);
+            $('#tips').fadeIn();
             $.ajax({
                 url: '@Url.Action("orderItemsList", "orders")',
                 type: 'GET',
                 data: { work: $('#workIntnoHF').val() },
                 success: function (result) {
                     $('#oList').html(result);
-                    $('#tips').fadeIn();
                 }
             })
         }
@@ -166,6 +166,7 @@
                 type: 'GET',
                 data: { id: oItem },
                 success: function (result) {
+                    $('#tips').fadeOut();
                     $('#allDetails').html(result);
                 }
             })
@@ -217,6 +218,7 @@
                         type: 'GET',
                         data: { id: oItem },
                         success: function (result) {
+                            $('#tips').fadeOut();
                             $('#allDetails').html(result);
                             $('#cardAction').hide();
                             $('#adaptors').hide();
@@ -278,6 +280,7 @@
                 type: 'GET',
                 data: { id: oItem },
                 success: function (result) {
+                    $('#tips').fadeOut();
                     $('#allDetails').html(result);
                 }
             })
@@ -301,6 +304,7 @@
                 type: 'GET',
                 data: { id: oItem },
                 success: function (result) {
+                    $('#tips').fadeOut();
                     $('#allDetails').html(result);
                 }
             })
@@ -323,6 +327,7 @@
                 data: { id: oItem },
                 success: function (result) {
                     $('#allDetails').html(result);
+                    $('#tips').fadeIn();
                 }
             })
         }
