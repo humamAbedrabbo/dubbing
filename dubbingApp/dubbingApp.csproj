@@ -290,6 +290,10 @@
     <Content Include="Views\orders\_orderItemIssuesList.cshtml" />
     <Content Include="Views\orders\_orderItemIssueAddNew.cshtml" />
     <Content Include="Views\orders\_orderItemSelectList.cshtml" />
+    <Content Include="Views\orders\_orderItemDetails.cshtml" />
+    <Content Include="Views\orders\_orderItemComplainsList.cshtml" />
+    <Content Include="Views\orders\_orderItemComplainAddNew.cshtml" />
+    <Content Include="Views\orders\_tips.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

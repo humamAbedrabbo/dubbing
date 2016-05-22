@@ -36,15 +36,23 @@
                     <a href="#" onclick="onScheduleClick('01')">Add to Dubbing Schedule</a><label>|</label>
                     <a href="#" onclick="onScheduleClick('02')">Add to Upload Schedule</a><label>|</label>
                     <a href="#" onclick="onScheduleClick('03')">Add to Shipment Schedule</a><label>|</label>
+                    <a href="#" onclick="onTranslationClick('05')">Record Translation Info</a><label>|</label>
                     <a href="#" onclick="onAdaptationClick('04')">Send to Adaptation</a>
                 </div>
                 <br />
 
-                <div class="form-group-sm" id="cardPersonnel">
+                <div class="form-group-sm" id="adaptors">
                     <label class="alert-warning"><small>For Adaptation, Selected Episodes MUST Belong to ONLY ONE Work</small></label>
-                    <label><small>Personnel</small></label>
+                    <label><small>Assigned To</small></label>
                     <span>
-                        @Html.DropDownList("personnel", ViewBag.personnelList as SelectList, "Select Name ...", htmlAttributes: new { @class = "form-control" })
+                        @Html.DropDownList("adaptor", ViewBag.adaptorsList as SelectList, "Select Personnel ...", htmlAttributes: new { @class = "form-control" })
+                    </span>
+                </div>
+                <div class="form-group-sm" id="translators">
+                    <label class="alert-warning"><small>For Translation, Selected Episodes MUST Belong to ONLY ONE Work</small></label>
+                    <label><small>Assigned To</small></label>
+                    <span>
+                        @Html.DropDownList("translator", ViewBag.translatorsList as SelectList, "Select Personnel ...", htmlAttributes: new { @class = "form-control" })
                     </span>
                 </div>
                 <div class="form-group-sm" id="cardAction">

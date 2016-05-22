@@ -1,0 +1,73 @@
+﻿@model dubbingModel.deliveryFeedback
+
+<div class="container-fluid">
+    @using (Ajax.BeginForm("orderItemComplainAddNew", "orders", new { id = ViewBag.orderItem },
+                                                new AjaxOptions()
+                                                {
+                                                    HttpMethod = "POST",
+                                                    UpdateTargetId = "result"
+                                                },
+                                                new { @class = "form-horizontal" }
+                                                ))
+    {
+        @Html.AntiForgeryToken()
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+        
+        <div class="form-group">
+            <small>@Html.LabelFor(model => model.feedbackType, "Material", htmlAttributes: new { @class = "control-label col-sm-4" })</small>
+            <div class="col-sm-8">
+                @Html.DropDownListFor(model => model.feedbackType, new SelectList(ViewBag.feedbackTypesList, "key", "value"), string.Empty, htmlAttributes: new { @class = "form-control" })
+                @Html.ValidationMessageFor(model => model.feedbackType, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            <small>@Html.LabelFor(model => model.receivedDate, "Received Date", htmlAttributes: new { @class = "control-label col-sm-4" })</small>
+            <div class="col-sm-8">
+                <input type="date" name="receivedDate" />
+                @Html.ValidationMessageFor(model => model.receivedDate, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            <small>@Html.LabelFor(model => model.clientRefNo, "Ref. No.", htmlAttributes: new { @class = "control-label col-sm-4" })</small>
+            <div class="col-sm-8">
+                @Html.EditorFor(model => model.clientRefNo, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.clientRefNo, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            <small>@Html.LabelFor(model => model.feedbackDesc, "Desc", htmlAttributes: new { @class = "control-label col-sm-4" })</small>
+            <div class="col-sm-8">
+                @Html.EditorFor(model => model.feedbackDesc, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.feedbackDesc, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            <small>@Html.LabelFor(model => model.refLocation, "Ref. Location", htmlAttributes: new { @class = "control-label col-sm-4" })</small>
+            <div class="col-sm-8">
+                @Html.EditorFor(model => model.refLocation, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.refLocation, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            <small>@Html.LabelFor(model => model.remarks, "Required Action", htmlAttributes: new { @class = "control-label col-sm-4" })</small>
+            <div class="col-sm-8">
+                @Html.EditorFor(model => model.remarks, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.remarks, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="col-sm-offset-4 col-sm-8">
+                <button type="submit" class="btn btn-default btn-xs">Submit</button>
+                &nbsp;
+                <a class="btn btn-default btn-xs" onclick="onComplainsDismissClick(@ViewBag.orderItem)" role="button">Dismiss</a>
+                <label class="alert-success" id="result"></label>
+            </div>
+        </div>
+    }
+</div>

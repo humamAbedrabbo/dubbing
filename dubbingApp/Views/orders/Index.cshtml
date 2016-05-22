@@ -52,7 +52,12 @@
             @Html.Action("orderItemsList", "orders")
         </div>
     </div>
-    <div class="col-sm-4" id="allDetails"></div>
+    <div class="col-sm-4">
+        <div id="tips">
+            @Html.Action("tips", "orders")
+        </div>
+        <div id="allDetails"></div>
+    </div>
 </div>
 
 @section Scripts
@@ -65,7 +70,7 @@
                 $('#w0').css('background-color', 'silver');
                 $('#selectedItemsHF').val(0);
             })
-            
+
             $(".work").click(function () {
                 $('#fromEpisode').val(null);
                 $('#thruEpisode').val(null);
@@ -133,6 +138,7 @@
         function onOrderAddNewClick() {
             $('#fromEpisode').val(null);
             $('#thruEpisode').val(null);
+            $('#tips').fadeOut();
             $.ajax({
                 url: '@Url.Action("orderAddNew", "orders")',
                 type: 'GET',
@@ -149,6 +155,7 @@
                 data: { work: $('#workIntnoHF').val() },
                 success: function (result) {
                     $('#oList').html(result);
+                    $('#tips').fadeIn();
                 }
             })
         }
@@ -197,28 +204,33 @@
             })
         }
 
-        function onOrderItemSelectClick(oItem, ep) {
-            var x = '<small>' + ep + '</small>' + '<button class="btn btn-default btn-xs pull-right" onclick="' + "onSelectedItemRemoveClick('" + oItem + "')" + '" title="Remove">'
-                        + '<span class="glyphicon glyphicon-remove pull-right" aria-hidden="true"></span></button>';
-            if (!$('#oiCard').length) {
-                $.ajax({
-                    url: '@Url.Action("orderItemSelectList", "orders")',
-                    type: 'GET',
-                    data: { id: oItem },
-                    success: function (result) {
-                        $('#allDetails').html(result);
-                        $('#cardAction').hide();
-                        $('#cardPersonnel').hide();
-                        $('#oiCard').append($('<li/>', { id: oItem, html: x }));
-                    }
-                })
+        function onOrderItemSelectClick(oItem, ep, status) {
+            if (status === '03') {
+                alert('Rejected Episode CANNOT be Selected for Planning Activities.');
             }
             else {
-                if (!$('#oiCard li[id=' + oItem + ']').length) {
-                    $('#oiCard').append($('<li/>', { id: oItem, html: x }));
+                var x = '<small>' + ep + '</small>' + '<button class="btn btn-default btn-xs pull-right" onclick="' + "onSelectedItemRemoveClick('" + oItem + "')" + '" title="Remove">'
+                            + '<span class="glyphicon glyphicon-remove pull-right" aria-hidden="true"></span></button>';
+                if (!$('#oiCard').length) {
+                    $.ajax({
+                        url: '@Url.Action("orderItemSelectList", "orders")',
+                        type: 'GET',
+                        data: { id: oItem },
+                        success: function (result) {
+                            $('#allDetails').html(result);
+                            $('#cardAction').hide();
+                            $('#adaptors').hide();
+                            $('#translators').hide();
+                            $('#oiCard').append($('<li/>', { id: oItem, html: x }));
+                        }
+                    })
+                }
+                else {
+                    if (!$('#oiCard li[id=' + oItem + ']').length) {
+                        $('#oiCard').append($('<li/>', { id: oItem, html: x }));
+                    }
                 }
             }
-
         }
         function onSelectedItemRemoveClick(oItem) {
             $('#oiCard li[id=' + oItem + ']').remove();
@@ -235,27 +247,94 @@
                 }
             });
             $('#cardAction').hide();
-            $('#cardPersonnel').hide();
+            $('#adaptors').hide();
+            $('#translators').hide();
         }
         function onCloseClick() {
             $('#oiCard').removeData();
             onDismissClick();
         }
         function onScheduleClick(op) {
+            $('#scheduleTypeHF').val(op);
             $('#result').html(null);
             $('#cardAction').show();
-            $('#scheduleTypeHF').val(op);
         }
         function onAdaptationClick(op) {
+            $('#scheduleTypeHF').val(op);
             $('#result').html(null);
             $('#cardAction').show();
-            $('#cardPersonnel').show();
+            $('#adaptors').show();
+        }
+        function onTranslationClick(op) {
             $('#scheduleTypeHF').val(op);
+            $('#result').html(null);
+            $('#cardAction').show();
+            $('#translators').show();
         }
 
         function onOrderItemDetailsClick(oItem) {
-
+            $.ajax({
+                url: '@Url.Action("orderItemDetails", "orders")',
+                type: 'GET',
+                data: { id: oItem },
+                success: function (result) {
+                    $('#allDetails').html(result);
+                }
+            })
+        }
+        function onOrderItemUpdateClick(oItem, op1) {
+            if (confirm('Please Confirm! About to Change the Selected Episode Status.')) {
+                $.ajax({
+                    url: '@Url.Action("orderItemDetailsUpdate", "orders")',
+                    type: 'GET',
+                    data: { id: oItem, op: op1 },
+                    success: function (result) {
+                        $('#allDetails').html(result);
+                    }
+                })
+            }
         }
 
+        function onOrderItemComplainsClick(oItem) {
+            $.ajax({
+                url: '@Url.Action("orderItemComplainsList", "orders")',
+                type: 'GET',
+                data: { id: oItem },
+                success: function (result) {
+                    $('#allDetails').html(result);
+                }
+            })
+        }
+        function onOrderItemComplainAddNewClick(oItem) {
+            $.ajax({
+                url: '@Url.Action("orderItemComplainAddNew", "orders")',
+                type: 'GET',
+                data: { id: oItem },
+                success: function (result) {
+                    $('#complainDetails').html(result);
+                }
+            })
+        }
+        function onComplainsDismissClick(oItem) {
+            $('#complainDetails').html(null);
+            $.ajax({
+                url: '@Url.Action("orderItemComplainsList", "orders")',
+                type: 'GET',
+                data: { id: oItem },
+                success: function (result) {
+                    $('#allDetails').html(result);
+                }
+            })
+        }
+        function onOrderItemComplainEndorseClick(fb) {
+            $.ajax({
+                url: '@Url.Action("orderItemComplainEndorse", "orders")',
+                type: 'GET',
+                data: { id: fb },
+                success: function (result) {
+                    $('#allDetails').html(result);
+                }
+            })
+        }
     </script>
 }

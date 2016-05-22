@@ -17,7 +17,7 @@
             <div class="panel-heading">
                 <div class="row">
                     <div class="col-sm-1">
-                        <button class="btn btn-default btn-sm" onclick="onOrderItemSelectClick(@item.orderTrnHdrIntno, '@episode')" title="Select">
+                        <button class="btn btn-default btn-sm" onclick="onOrderItemSelectClick(@item.orderTrnHdrIntno, '@episode', '@item.status')" title="Select">
                             <span class="glyphicon glyphicon-triangle-right" aria-hidden="true"></span>
                         </button>
                     </div>
@@ -34,7 +34,13 @@
                             if (item.orderChecks.Count() != 0) { issuesColor = "btn-warning"; }
                             else { issuesColor = "btn-default"; }
                         }
-                        <button class="btn btn-danger btn-xs pull-right" onclick="onOrderItemDetailsClick(@item.orderTrnHdrIntno)" title="Client Feedback">
+                        @{
+                            string complainsColor;
+                            if (item.deliveryFeedbacks.Where(b => b.status == true).Count() != 0) { complainsColor = "btn-danger"; }
+                            else if (item.deliveryFeedbacks.Count() != 0) { complainsColor = "btn-success"; }
+                            else { complainsColor = "btn-default"; }
+                        }
+                        <button class="btn @complainsColor btn-xs pull-right" onclick="onOrderItemComplainsClick(@item.orderTrnHdrIntno)" title="Client Feedback">
                             <span class="glyphicon glyphicon-wrench" aria-hidden="true"></span>
                         </button>
                         <button class="btn @issuesColor btn-xs pull-right" onclick="onOrderItemIssueClick(@item.orderTrnHdrIntno)" title="Issues">
