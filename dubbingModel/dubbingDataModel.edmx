@@ -341,6 +341,13 @@
           <Property Name="status" Type="nvarchar" MaxLength="50" Nullable="false" />
           <Property Name="clientIntno" Type="bigint" Nullable="false" />
         </EntityType>
+        <EntityType Name="UserProfile">
+          <Key>
+            <PropertyRef Name="UserId" />
+          </Key>
+          <Property Name="UserId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="UserName" Type="nvarchar" MaxLength="56" Nullable="false" />
+        </EntityType>
         <EntityType Name="voiceActors">
           <Key>
             <PropertyRef Name="voiceActorIntno" />
@@ -353,6 +360,46 @@
           <Property Name="email" Type="nvarchar" MaxLength="50" Nullable="false" />
           <Property Name="status" Type="bit" Nullable="false" />
           <Property Name="accountNo" Type="nvarchar" MaxLength="50" />
+        </EntityType>
+        <EntityType Name="webpages_Membership">
+          <Key>
+            <PropertyRef Name="UserId" />
+          </Key>
+          <Property Name="UserId" Type="int" Nullable="false" />
+          <Property Name="CreateDate" Type="datetime" />
+          <Property Name="ConfirmationToken" Type="nvarchar" MaxLength="128" />
+          <Property Name="IsConfirmed" Type="bit" />
+          <Property Name="LastPasswordFailureDate" Type="datetime" />
+          <Property Name="PasswordFailuresSinceLastSuccess" Type="int" Nullable="false" />
+          <Property Name="Password" Type="nvarchar" MaxLength="128" Nullable="false" />
+          <Property Name="PasswordChangedDate" Type="datetime" />
+          <Property Name="PasswordSalt" Type="nvarchar" MaxLength="128" Nullable="false" />
+          <Property Name="PasswordVerificationToken" Type="nvarchar" MaxLength="128" />
+          <Property Name="PasswordVerificationTokenExpirationDate" Type="datetime" />
+        </EntityType>
+        <EntityType Name="webpages_OAuthMembership">
+          <Key>
+            <PropertyRef Name="Provider" />
+            <PropertyRef Name="ProviderUserId" />
+          </Key>
+          <Property Name="Provider" Type="nvarchar" MaxLength="30" Nullable="false" />
+          <Property Name="ProviderUserId" Type="nvarchar" MaxLength="100" Nullable="false" />
+          <Property Name="UserId" Type="int" Nullable="false" />
+        </EntityType>
+        <EntityType Name="webpages_Roles">
+          <Key>
+            <PropertyRef Name="RoleId" />
+          </Key>
+          <Property Name="RoleId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="RoleName" Type="nvarchar" MaxLength="256" Nullable="false" />
+        </EntityType>
+        <EntityType Name="webpages_UsersInRoles">
+          <Key>
+            <PropertyRef Name="UserId" />
+            <PropertyRef Name="RoleId" />
+          </Key>
+          <Property Name="UserId" Type="int" Nullable="false" />
+          <Property Name="RoleId" Type="int" Nullable="false" />
         </EntityType>
         <EntityType Name="workActors">
           <Key>
@@ -428,6 +475,16 @@
           <Property Name="fromDate" Type="date" Nullable="false" />
           <Property Name="thruDate" Type="date" />
           <Property Name="status" Type="bit" Nullable="false" />
+        </EntityType>
+        <!--Errors Found During Generation:
+warning 6002: The table/view 'DUBBDB.dbo.userRolesView' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+        <EntityType Name="userRolesView">
+          <Key>
+            <PropertyRef Name="UserId" />
+            <PropertyRef Name="RoleId" />
+          </Key>
+          <Property Name="UserId" Type="int" Nullable="false" />
+          <Property Name="RoleId" Type="int" Nullable="false" />
         </EntityType>
         <Association Name="FK_agreements_agreements">
           <End Role="agreements" Type="Self.agreements" Multiplicity="0..1" />
@@ -849,6 +906,18 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="fk_RoleId">
+          <End Role="webpages_Roles" Type="Self.webpages_Roles" Multiplicity="1" />
+          <End Role="webpages_UsersInRoles" Type="Self.webpages_UsersInRoles" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="webpages_Roles">
+              <PropertyRef Name="RoleId" />
+            </Principal>
+            <Dependent Role="webpages_UsersInRoles">
+              <PropertyRef Name="RoleId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK_shipments_carriers">
           <End Role="carriers" Type="Self.carriers" Multiplicity="0..1" />
           <End Role="shipments" Type="Self.shipments" Multiplicity="*" />
@@ -894,6 +963,18 @@
             </Principal>
             <Dependent Role="shipments">
               <PropertyRef Name="orderTrnHdrIntno" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="fk_UserId">
+          <End Role="UserProfile" Type="Self.UserProfile" Multiplicity="1" />
+          <End Role="webpages_UsersInRoles" Type="Self.webpages_UsersInRoles" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="UserProfile">
+              <PropertyRef Name="UserId" />
+            </Principal>
+            <Dependent Role="webpages_UsersInRoles">
+              <PropertyRef Name="UserId" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -1017,12 +1098,23 @@
           <EntitySet Name="orderTrnHdrs" EntityType="Self.orderTrnHdrs" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="payments" EntityType="Self.payments" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="shipments" EntityType="Self.shipments" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="UserProfile" EntityType="Self.UserProfile" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="voiceActors" EntityType="Self.voiceActors" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="webpages_Membership" EntityType="Self.webpages_Membership" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="webpages_OAuthMembership" EntityType="Self.webpages_OAuthMembership" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="webpages_Roles" EntityType="Self.webpages_Roles" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="webpages_UsersInRoles" EntityType="Self.webpages_UsersInRoles" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="workActors" EntityType="Self.workActors" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="workCharacters" EntityType="Self.workCharacters" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="workCharges" EntityType="Self.workCharges" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="workOrders" EntityType="Self.workOrders" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="workPersonnels" EntityType="Self.workPersonnels" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="userRolesView" EntityType="Self.userRolesView" store:Type="Views" store:Schema="dbo">
+            <DefiningQuery>SELECT 
+    [userRolesView].[UserId] AS [UserId], 
+    [userRolesView].[RoleId] AS [RoleId]
+    FROM [dbo].[userRolesView] AS [userRolesView]</DefiningQuery>
+          </EntitySet>
           <AssociationSet Name="FK_agreements_agreements" Association="Self.FK_agreements_agreements">
             <End Role="agreements" EntitySet="agreements" />
             <End Role="agreements1" EntitySet="agreements" />
@@ -1163,6 +1255,10 @@
             <End Role="voiceActors" EntitySet="voiceActors" />
             <End Role="payments" EntitySet="payments" />
           </AssociationSet>
+          <AssociationSet Name="fk_RoleId" Association="Self.fk_RoleId">
+            <End Role="webpages_Roles" EntitySet="webpages_Roles" />
+            <End Role="webpages_UsersInRoles" EntitySet="webpages_UsersInRoles" />
+          </AssociationSet>
           <AssociationSet Name="FK_shipments_carriers" Association="Self.FK_shipments_carriers">
             <End Role="carriers" EntitySet="carriers" />
             <End Role="shipments" EntitySet="shipments" />
@@ -1178,6 +1274,10 @@
           <AssociationSet Name="FK_shipments_orderTrnHdrs" Association="Self.FK_shipments_orderTrnHdrs">
             <End Role="orderTrnHdrs" EntitySet="orderTrnHdrs" />
             <End Role="shipments" EntitySet="shipments" />
+          </AssociationSet>
+          <AssociationSet Name="fk_UserId" Association="Self.fk_UserId">
+            <End Role="UserProfile" EntitySet="UserProfile" />
+            <End Role="webpages_UsersInRoles" EntitySet="webpages_UsersInRoles" />
           </AssociationSet>
           <AssociationSet Name="FK_workActors_agreementWorks" Association="Self.FK_workActors_agreementWorks">
             <End Role="agreementWorks" EntitySet="agreementWorks" />
@@ -1216,28 +1316,256 @@
     <!-- CSDL content -->
     <edmx:ConceptualModels>
       <Schema Namespace="DUBBDBModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityContainer Name="DUBBDBEntities" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="agreements" EntityType="DUBBDBModel.agreement" />
+          <EntitySet Name="agreementSpecs" EntityType="DUBBDBModel.agreementSpec" />
+          <EntitySet Name="agreementTerms" EntityType="DUBBDBModel.agreementTerm" />
+          <EntitySet Name="agreementWorks" EntityType="DUBBDBModel.agreementWork" />
+          <EntitySet Name="carriers" EntityType="DUBBDBModel.carrier" />
+          <EntitySet Name="carrierSchedules" EntityType="DUBBDBModel.carrierSchedule" />
+          <EntitySet Name="clients" EntityType="DUBBDBModel.client" />
+          <EntitySet Name="contacts" EntityType="DUBBDBModel.contact" />
+          <EntitySet Name="deliveryFeedbacks" EntityType="DUBBDBModel.deliveryFeedback" />
+          <EntitySet Name="dubbDomains" EntityType="DUBBDBModel.dubbDomain" />
+          <EntitySet Name="dubbingAppointments" EntityType="DUBBDBModel.dubbingAppointment" />
+          <EntitySet Name="dubbingSheetDtls" EntityType="DUBBDBModel.dubbingSheetDtl" />
+          <EntitySet Name="dubbingSheetHdrs" EntityType="DUBBDBModel.dubbingSheetHdr" />
+          <EntitySet Name="dubbingTrnDtls" EntityType="DUBBDBModel.dubbingTrnDtl" />
+          <EntitySet Name="dubbingTrnHdrs" EntityType="DUBBDBModel.dubbingTrnHdr" />
+          <EntitySet Name="employees" EntityType="DUBBDBModel.employee" />
+          <EntitySet Name="feedbackActions" EntityType="DUBBDBModel.feedbackAction" />
+          <EntitySet Name="orderBatchTrnHdrs" EntityType="DUBBDBModel.orderBatchTrnHdr" />
+          <EntitySet Name="orderChecks" EntityType="DUBBDBModel.orderCheck" />
+          <EntitySet Name="orderTrnDtls" EntityType="DUBBDBModel.orderTrnDtl" />
+          <EntitySet Name="orderTrnHdrs" EntityType="DUBBDBModel.orderTrnHdr" />
+          <EntitySet Name="payments" EntityType="DUBBDBModel.payment" />
+          <EntitySet Name="shipments" EntityType="DUBBDBModel.shipment" />
+          <EntitySet Name="UserProfiles" EntityType="DUBBDBModel.UserProfile" />
+          <EntitySet Name="voiceActors" EntityType="DUBBDBModel.voiceActor" />
+          <EntitySet Name="webpages_Membership" EntityType="DUBBDBModel.webpages_Membership" />
+          <EntitySet Name="webpages_OAuthMembership" EntityType="DUBBDBModel.webpages_OAuthMembership" />
+          <EntitySet Name="webpages_Roles" EntityType="DUBBDBModel.webpages_Roles" />
+          <EntitySet Name="workActors" EntityType="DUBBDBModel.workActor" />
+          <EntitySet Name="workCharacters" EntityType="DUBBDBModel.workCharacter" />
+          <EntitySet Name="workCharges" EntityType="DUBBDBModel.workCharge" />
+          <EntitySet Name="workOrders" EntityType="DUBBDBModel.workOrder" />
+          <EntitySet Name="workPersonnels" EntityType="DUBBDBModel.workPersonnel" />
+          <EntitySet Name="userRolesViews" EntityType="DUBBDBModel.userRolesView" />
+          <AssociationSet Name="FK_agreements_agreements" Association="DUBBDBModel.FK_agreements_agreements">
+            <End Role="agreement" EntitySet="agreements" />
+            <End Role="agreement1" EntitySet="agreements" />
+          </AssociationSet>
+          <AssociationSet Name="FK_agreements_clients" Association="DUBBDBModel.FK_agreements_clients">
+            <End Role="client" EntitySet="clients" />
+            <End Role="agreement" EntitySet="agreements" />
+          </AssociationSet>
+          <AssociationSet Name="FK_agreementSpecs_agreements" Association="DUBBDBModel.FK_agreementSpecs_agreements">
+            <End Role="agreement" EntitySet="agreements" />
+            <End Role="agreementSpec" EntitySet="agreementSpecs" />
+          </AssociationSet>
+          <AssociationSet Name="FK_agreementTerms_agreements" Association="DUBBDBModel.FK_agreementTerms_agreements">
+            <End Role="agreement" EntitySet="agreements" />
+            <End Role="agreementTerm" EntitySet="agreementTerms" />
+          </AssociationSet>
+          <AssociationSet Name="FK_agreementWorks_agreements" Association="DUBBDBModel.FK_agreementWorks_agreements">
+            <End Role="agreement" EntitySet="agreements" />
+            <End Role="agreementWork" EntitySet="agreementWorks" />
+          </AssociationSet>
+          <AssociationSet Name="FK_agreementWorks_contacts" Association="DUBBDBModel.FK_agreementWorks_contacts">
+            <End Role="contact" EntitySet="contacts" />
+            <End Role="agreementWork" EntitySet="agreementWorks" />
+          </AssociationSet>
+          <AssociationSet Name="FK_orderBatchTrnHdrs_agreementWorks" Association="DUBBDBModel.FK_orderBatchTrnHdrs_agreementWorks">
+            <End Role="agreementWork" EntitySet="agreementWorks" />
+            <End Role="orderBatchTrnHdr" EntitySet="orderBatchTrnHdrs" />
+          </AssociationSet>
+          <AssociationSet Name="FK_orderTrnHdrs_agreementWorks" Association="DUBBDBModel.FK_orderTrnHdrs_agreementWorks">
+            <End Role="agreementWork" EntitySet="agreementWorks" />
+            <End Role="orderTrnHdr" EntitySet="orderTrnHdrs" />
+          </AssociationSet>
+          <AssociationSet Name="FK_payments_agreementWorks" Association="DUBBDBModel.FK_payments_agreementWorks">
+            <End Role="agreementWork" EntitySet="agreementWorks" />
+            <End Role="payment" EntitySet="payments" />
+          </AssociationSet>
+          <AssociationSet Name="FK_workActors_agreementWorks" Association="DUBBDBModel.FK_workActors_agreementWorks">
+            <End Role="agreementWork" EntitySet="agreementWorks" />
+            <End Role="workActor" EntitySet="workActors" />
+          </AssociationSet>
+          <AssociationSet Name="FK_workCharacters_agreementWorks" Association="DUBBDBModel.FK_workCharacters_agreementWorks">
+            <End Role="agreementWork" EntitySet="agreementWorks" />
+            <End Role="workCharacter" EntitySet="workCharacters" />
+          </AssociationSet>
+          <AssociationSet Name="FK_workOrders_agreementWorks" Association="DUBBDBModel.FK_workOrders_agreementWorks">
+            <End Role="agreementWork" EntitySet="agreementWorks" />
+            <End Role="workOrder" EntitySet="workOrders" />
+          </AssociationSet>
+          <AssociationSet Name="FK_workPersonnels_agreementWorks" Association="DUBBDBModel.FK_workPersonnels_agreementWorks">
+            <End Role="agreementWork" EntitySet="agreementWorks" />
+            <End Role="workPersonnel" EntitySet="workPersonnels" />
+          </AssociationSet>
+          <AssociationSet Name="FK_carrierSchedules_carriers" Association="DUBBDBModel.FK_carrierSchedules_carriers">
+            <End Role="carrier" EntitySet="carriers" />
+            <End Role="carrierSchedule" EntitySet="carrierSchedules" />
+          </AssociationSet>
+          <AssociationSet Name="FK_shipments_carriers" Association="DUBBDBModel.FK_shipments_carriers">
+            <End Role="carrier" EntitySet="carriers" />
+            <End Role="shipment" EntitySet="shipments" />
+          </AssociationSet>
+          <AssociationSet Name="FK_shipments_carrierSchedules" Association="DUBBDBModel.FK_shipments_carrierSchedules">
+            <End Role="carrierSchedule" EntitySet="carrierSchedules" />
+            <End Role="shipment" EntitySet="shipments" />
+          </AssociationSet>
+          <AssociationSet Name="FK_shipments_clients" Association="DUBBDBModel.FK_shipments_clients">
+            <End Role="client" EntitySet="clients" />
+            <End Role="shipment" EntitySet="shipments" />
+          </AssociationSet>
+          <AssociationSet Name="FK_workOrders_clients" Association="DUBBDBModel.FK_workOrders_clients">
+            <End Role="client" EntitySet="clients" />
+            <End Role="workOrder" EntitySet="workOrders" />
+          </AssociationSet>
+          <AssociationSet Name="FK_deliveryFeedbacks_orderTrnHdrs" Association="DUBBDBModel.FK_deliveryFeedbacks_orderTrnHdrs">
+            <End Role="orderTrnHdr" EntitySet="orderTrnHdrs" />
+            <End Role="deliveryFeedback" EntitySet="deliveryFeedbacks" />
+          </AssociationSet>
+          <AssociationSet Name="FK_feedbackActions_deliveryFeedbacks" Association="DUBBDBModel.FK_feedbackActions_deliveryFeedbacks">
+            <End Role="deliveryFeedback" EntitySet="deliveryFeedbacks" />
+            <End Role="feedbackAction" EntitySet="feedbackActions" />
+          </AssociationSet>
+          <AssociationSet Name="FK_dubbingAppointments_dubbingSheetHdrs1" Association="DUBBDBModel.FK_dubbingAppointments_dubbingSheetHdrs1">
+            <End Role="dubbingSheetHdr" EntitySet="dubbingSheetHdrs" />
+            <End Role="dubbingAppointment" EntitySet="dubbingAppointments" />
+          </AssociationSet>
+          <AssociationSet Name="FK_dubbingAppointments_dubbingTrnDtls" Association="DUBBDBModel.FK_dubbingAppointments_dubbingTrnDtls">
+            <End Role="dubbingTrnDtl" EntitySet="dubbingTrnDtls" />
+            <End Role="dubbingAppointment" EntitySet="dubbingAppointments" />
+          </AssociationSet>
+          <AssociationSet Name="FK_dubbingSheetDtls_dubbingSheetHdrs" Association="DUBBDBModel.FK_dubbingSheetDtls_dubbingSheetHdrs">
+            <End Role="dubbingSheetHdr" EntitySet="dubbingSheetHdrs" />
+            <End Role="dubbingSheetDtl" EntitySet="dubbingSheetDtls" />
+          </AssociationSet>
+          <AssociationSet Name="FK_dubbingSheetDtls_employees" Association="DUBBDBModel.FK_dubbingSheetDtls_employees">
+            <End Role="employee" EntitySet="employees" />
+            <End Role="dubbingSheetDtl" EntitySet="dubbingSheetDtls" />
+          </AssociationSet>
+          <AssociationSet Name="FK_dubbingSheetDtls_employees1" Association="DUBBDBModel.FK_dubbingSheetDtls_employees1">
+            <End Role="employee" EntitySet="employees" />
+            <End Role="dubbingSheetDtl" EntitySet="dubbingSheetDtls" />
+          </AssociationSet>
+          <AssociationSet Name="FK_dubbingSheetDtls_employees2" Association="DUBBDBModel.FK_dubbingSheetDtls_employees2">
+            <End Role="employee" EntitySet="employees" />
+            <End Role="dubbingSheetDtl" EntitySet="dubbingSheetDtls" />
+          </AssociationSet>
+          <AssociationSet Name="FK_dubbingSheetDtls_orderTrnHdrs" Association="DUBBDBModel.FK_dubbingSheetDtls_orderTrnHdrs">
+            <End Role="orderTrnHdr" EntitySet="orderTrnHdrs" />
+            <End Role="dubbingSheetDtl" EntitySet="dubbingSheetDtls" />
+          </AssociationSet>
+          <AssociationSet Name="FK_dubbingSheetHdrs_orderTrnHdrs" Association="DUBBDBModel.FK_dubbingSheetHdrs_orderTrnHdrs">
+            <End Role="orderTrnHdr" EntitySet="orderTrnHdrs" />
+            <End Role="dubbingSheetHdr" EntitySet="dubbingSheetHdrs" />
+          </AssociationSet>
+          <AssociationSet Name="FK_dubbingSheetHdrs_voiceActors" Association="DUBBDBModel.FK_dubbingSheetHdrs_voiceActors">
+            <End Role="voiceActor" EntitySet="voiceActors" />
+            <End Role="dubbingSheetHdr" EntitySet="dubbingSheetHdrs" />
+          </AssociationSet>
+          <AssociationSet Name="FK_dubbingSheetHdrs_workCharacters" Association="DUBBDBModel.FK_dubbingSheetHdrs_workCharacters">
+            <End Role="workCharacter" EntitySet="workCharacters" />
+            <End Role="dubbingSheetHdr" EntitySet="dubbingSheetHdrs" />
+          </AssociationSet>
+          <AssociationSet Name="FK_dubbingTrnDtls_dubbingTrnHdrs" Association="DUBBDBModel.FK_dubbingTrnDtls_dubbingTrnHdrs">
+            <End Role="dubbingTrnHdr" EntitySet="dubbingTrnHdrs" />
+            <End Role="dubbingTrnDtl" EntitySet="dubbingTrnDtls" />
+          </AssociationSet>
+          <AssociationSet Name="FK_dubbingTrnDtls_employees" Association="DUBBDBModel.FK_dubbingTrnDtls_employees">
+            <End Role="employee" EntitySet="employees" />
+            <End Role="dubbingTrnDtl" EntitySet="dubbingTrnDtls" />
+          </AssociationSet>
+          <AssociationSet Name="FK_dubbingTrnDtls_employees1" Association="DUBBDBModel.FK_dubbingTrnDtls_employees1">
+            <End Role="employee" EntitySet="employees" />
+            <End Role="dubbingTrnDtl" EntitySet="dubbingTrnDtls" />
+          </AssociationSet>
+          <AssociationSet Name="FK_dubbingTrnDtls_employees2" Association="DUBBDBModel.FK_dubbingTrnDtls_employees2">
+            <End Role="employee" EntitySet="employees" />
+            <End Role="dubbingTrnDtl" EntitySet="dubbingTrnDtls" />
+          </AssociationSet>
+          <AssociationSet Name="FK_dubbingTrnDtls_orderTrnHdrs" Association="DUBBDBModel.FK_dubbingTrnDtls_orderTrnHdrs">
+            <End Role="orderTrnHdr" EntitySet="orderTrnHdrs" />
+            <End Role="dubbingTrnDtl" EntitySet="dubbingTrnDtls" />
+          </AssociationSet>
+          <AssociationSet Name="FK_payments_dubbingTrnHdrs" Association="DUBBDBModel.FK_payments_dubbingTrnHdrs">
+            <End Role="dubbingTrnHdr" EntitySet="dubbingTrnHdrs" />
+            <End Role="payment" EntitySet="payments" />
+          </AssociationSet>
+          <AssociationSet Name="FK_orderBatchTrnHdrs_employees" Association="DUBBDBModel.FK_orderBatchTrnHdrs_employees">
+            <End Role="employee" EntitySet="employees" />
+            <End Role="orderBatchTrnHdr" EntitySet="orderBatchTrnHdrs" />
+          </AssociationSet>
+          <AssociationSet Name="FK_payments_employees" Association="DUBBDBModel.FK_payments_employees">
+            <End Role="employee" EntitySet="employees" />
+            <End Role="payment" EntitySet="payments" />
+          </AssociationSet>
+          <AssociationSet Name="FK_workPersonnels_employees" Association="DUBBDBModel.FK_workPersonnels_employees">
+            <End Role="employee" EntitySet="employees" />
+            <End Role="workPersonnel" EntitySet="workPersonnels" />
+          </AssociationSet>
+          <AssociationSet Name="FK_orderBatchTrnHdrs_workOrders" Association="DUBBDBModel.FK_orderBatchTrnHdrs_workOrders">
+            <End Role="workOrder" EntitySet="workOrders" />
+            <End Role="orderBatchTrnHdr" EntitySet="orderBatchTrnHdrs" />
+          </AssociationSet>
+          <AssociationSet Name="FK_orderChecks_orderTrnHdrs" Association="DUBBDBModel.FK_orderChecks_orderTrnHdrs">
+            <End Role="orderTrnHdr" EntitySet="orderTrnHdrs" />
+            <End Role="orderCheck" EntitySet="orderChecks" />
+          </AssociationSet>
+          <AssociationSet Name="FK_orderTrnDtls_orderTrnHdrs" Association="DUBBDBModel.FK_orderTrnDtls_orderTrnHdrs">
+            <End Role="orderTrnHdr" EntitySet="orderTrnHdrs" />
+            <End Role="orderTrnDtl" EntitySet="orderTrnDtls" />
+          </AssociationSet>
+          <AssociationSet Name="FK_orderTrnHdrs_workOrders" Association="DUBBDBModel.FK_orderTrnHdrs_workOrders">
+            <End Role="workOrder" EntitySet="workOrders" />
+            <End Role="orderTrnHdr" EntitySet="orderTrnHdrs" />
+          </AssociationSet>
+          <AssociationSet Name="FK_shipments_orderTrnHdrs" Association="DUBBDBModel.FK_shipments_orderTrnHdrs">
+            <End Role="orderTrnHdr" EntitySet="orderTrnHdrs" />
+            <End Role="shipment" EntitySet="shipments" />
+          </AssociationSet>
+          <AssociationSet Name="FK_payments_voiceActors" Association="DUBBDBModel.FK_payments_voiceActors">
+            <End Role="voiceActor" EntitySet="voiceActors" />
+            <End Role="payment" EntitySet="payments" />
+          </AssociationSet>
+          <AssociationSet Name="FK_workActors_voiceActors" Association="DUBBDBModel.FK_workActors_voiceActors">
+            <End Role="voiceActor" EntitySet="voiceActors" />
+            <End Role="workActor" EntitySet="workActors" />
+          </AssociationSet>
+          <AssociationSet Name="FK_workActors_workCharacters" Association="DUBBDBModel.FK_workActors_workCharacters">
+            <End Role="workCharacter" EntitySet="workCharacters" />
+            <End Role="workActor" EntitySet="workActors" />
+          </AssociationSet>
+          <AssociationSet Name="webpages_UsersInRoles" Association="DUBBDBModel.webpages_UsersInRoles">
+            <End Role="webpages_Roles" EntitySet="webpages_Roles" />
+            <End Role="UserProfile" EntitySet="UserProfiles" />
+          </AssociationSet>
+        </EntityContainer>
         <EntityType Name="agreement">
           <Key>
             <PropertyRef Name="agreementIntno" />
           </Key>
           <Property Name="agreementIntno" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="clientIntno" Type="Int64" Nullable="false" />
-          <Property Name="agreementType" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
-          <Property Name="agreementName" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
-          <Property Name="othAgreementName" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="agreementType" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="agreementName" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="othAgreementName" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
           <Property Name="refAgreementIntno" Type="Int64" />
           <Property Name="fromDate" Type="DateTime" Nullable="false" Precision="0" />
           <Property Name="agreementDuration" Type="Int16" Nullable="false" />
-          <Property Name="durationUom" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="durationUom" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
           <Property Name="thruDate" Type="DateTime" Precision="0" />
           <Property Name="remarks" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
-          <Property Name="status" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
-          <NavigationProperty Name="agreements1" Relationship="Self.FK_agreements_agreements" FromRole="agreements" ToRole="agreements1" />
-          <NavigationProperty Name="agreement1" Relationship="Self.FK_agreements_agreements" FromRole="agreements1" ToRole="agreements" />
-          <NavigationProperty Name="client" Relationship="Self.FK_agreements_clients" FromRole="agreements" ToRole="clients" />
-          <NavigationProperty Name="agreementSpecs" Relationship="Self.FK_agreementSpecs_agreements" FromRole="agreements" ToRole="agreementSpecs" />
-          <NavigationProperty Name="agreementTerms" Relationship="Self.FK_agreementTerms_agreements" FromRole="agreements" ToRole="agreementTerms" />
-          <NavigationProperty Name="agreementWorks" Relationship="Self.FK_agreementWorks_agreements" FromRole="agreements" ToRole="agreementWorks" />
+          <Property Name="status" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="agreements1" Relationship="DUBBDBModel.FK_agreements_agreements" FromRole="agreement" ToRole="agreement1" />
+          <NavigationProperty Name="agreement1" Relationship="DUBBDBModel.FK_agreements_agreements" FromRole="agreement1" ToRole="agreement" />
+          <NavigationProperty Name="client" Relationship="DUBBDBModel.FK_agreements_clients" FromRole="agreement" ToRole="client" />
+          <NavigationProperty Name="agreementSpecs" Relationship="DUBBDBModel.FK_agreementSpecs_agreements" FromRole="agreement" ToRole="agreementSpec" />
+          <NavigationProperty Name="agreementTerms" Relationship="DUBBDBModel.FK_agreementTerms_agreements" FromRole="agreement" ToRole="agreementTerm" />
+          <NavigationProperty Name="agreementWorks" Relationship="DUBBDBModel.FK_agreementWorks_agreements" FromRole="agreement" ToRole="agreementWork" />
         </EntityType>
         <EntityType Name="agreementSpec">
           <Key>
@@ -1245,10 +1573,10 @@
           </Key>
           <Property Name="specsIntno" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="agreementIntno" Type="Int64" Nullable="false" />
-          <Property Name="specsType" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
-          <Property Name="specsSubtype" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
-          <Property Name="specsValue" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" Nullable="false" />
-          <NavigationProperty Name="agreement" Relationship="Self.FK_agreementSpecs_agreements" FromRole="agreementSpecs" ToRole="agreements" />
+          <Property Name="specsType" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="specsSubtype" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="specsValue" Type="String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="agreement" Relationship="DUBBDBModel.FK_agreementSpecs_agreements" FromRole="agreementSpec" ToRole="agreement" />
         </EntityType>
         <EntityType Name="agreementTerm">
           <Key>
@@ -1257,8 +1585,8 @@
           <Property Name="termIntno" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="agreementIntno" Type="Int64" Nullable="false" />
           <Property Name="sortOrder" Type="Int16" Nullable="false" />
-          <Property Name="termDesc" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" Nullable="false" />
-          <NavigationProperty Name="agreement" Relationship="Self.FK_agreementTerms_agreements" FromRole="agreementTerms" ToRole="agreements" />
+          <Property Name="termDesc" Type="String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="agreement" Relationship="DUBBDBModel.FK_agreementTerms_agreements" FromRole="agreementTerm" ToRole="agreement" />
         </EntityType>
         <EntityType Name="agreementWork">
           <Key>
@@ -1266,76 +1594,76 @@
           </Key>
           <Property Name="workIntno" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="agreementIntno" Type="Int64" Nullable="false" />
-          <Property Name="workType" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
-          <Property Name="workName" Type="String" MaxLength="100" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="workType" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="workName" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="true" />
           <Property Name="othWorkName" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
-          <Property Name="workNationality" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
-          <Property Name="workOriginalLanguage" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="workNationality" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="workOriginalLanguage" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
           <Property Name="firstEpisodeShowDate" Type="DateTime" Precision="0" />
           <Property Name="totalNbrEpisodes" Type="Int16" Nullable="false" />
           <Property Name="totalWeekNbrEpisodes" Type="Int16" Nullable="false" />
           <Property Name="contactIntno" Type="Int64" />
-          <Property Name="status" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
-          <NavigationProperty Name="agreement" Relationship="Self.FK_agreementWorks_agreements" FromRole="agreementWorks" ToRole="agreements" />
-          <NavigationProperty Name="contact" Relationship="Self.FK_agreementWorks_contacts" FromRole="agreementWorks" ToRole="contacts" />
-          <NavigationProperty Name="orderBatchTrnHdrs" Relationship="Self.FK_orderBatchTrnHdrs_agreementWorks" FromRole="agreementWorks" ToRole="orderBatchTrnHdrs" />
-          <NavigationProperty Name="orderTrnHdrs" Relationship="Self.FK_orderTrnHdrs_agreementWorks" FromRole="agreementWorks" ToRole="orderTrnHdrs" />
-          <NavigationProperty Name="payments" Relationship="Self.FK_payments_agreementWorks" FromRole="agreementWorks" ToRole="payments" />
-          <NavigationProperty Name="workActors" Relationship="Self.FK_workActors_agreementWorks" FromRole="agreementWorks" ToRole="workActors" />
-          <NavigationProperty Name="workCharacters" Relationship="Self.FK_workCharacters_agreementWorks" FromRole="agreementWorks" ToRole="workCharacters" />
-          <NavigationProperty Name="workOrders" Relationship="Self.FK_workOrders_agreementWorks" FromRole="agreementWorks" ToRole="workOrders" />
-          <NavigationProperty Name="workPersonnels" Relationship="Self.FK_workPersonnels_agreementWorks" FromRole="agreementWorks" ToRole="workPersonnels" />
+          <Property Name="status" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="agreement" Relationship="DUBBDBModel.FK_agreementWorks_agreements" FromRole="agreementWork" ToRole="agreement" />
+          <NavigationProperty Name="contact" Relationship="DUBBDBModel.FK_agreementWorks_contacts" FromRole="agreementWork" ToRole="contact" />
+          <NavigationProperty Name="orderBatchTrnHdrs" Relationship="DUBBDBModel.FK_orderBatchTrnHdrs_agreementWorks" FromRole="agreementWork" ToRole="orderBatchTrnHdr" />
+          <NavigationProperty Name="orderTrnHdrs" Relationship="DUBBDBModel.FK_orderTrnHdrs_agreementWorks" FromRole="agreementWork" ToRole="orderTrnHdr" />
+          <NavigationProperty Name="payments" Relationship="DUBBDBModel.FK_payments_agreementWorks" FromRole="agreementWork" ToRole="payment" />
+          <NavigationProperty Name="workActors" Relationship="DUBBDBModel.FK_workActors_agreementWorks" FromRole="agreementWork" ToRole="workActor" />
+          <NavigationProperty Name="workCharacters" Relationship="DUBBDBModel.FK_workCharacters_agreementWorks" FromRole="agreementWork" ToRole="workCharacter" />
+          <NavigationProperty Name="workOrders" Relationship="DUBBDBModel.FK_workOrders_agreementWorks" FromRole="agreementWork" ToRole="workOrder" />
+          <NavigationProperty Name="workPersonnels" Relationship="DUBBDBModel.FK_workPersonnels_agreementWorks" FromRole="agreementWork" ToRole="workPersonnel" />
         </EntityType>
         <EntityType Name="carrier">
           <Key>
             <PropertyRef Name="carrierIntno" />
           </Key>
           <Property Name="carrierIntno" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="carrierType" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
-          <Property Name="carrierName" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
-          <Property Name="othCarrierName" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="carrierType" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="carrierName" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="othCarrierName" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
           <Property Name="remarks" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
           <Property Name="status" Type="Boolean" Nullable="false" />
-          <NavigationProperty Name="carrierSchedules" Relationship="Self.FK_carrierSchedules_carriers" FromRole="carriers" ToRole="carrierSchedules" />
-          <NavigationProperty Name="shipments" Relationship="Self.FK_shipments_carriers" FromRole="carriers" ToRole="shipments" />
+          <NavigationProperty Name="carrierSchedules" Relationship="DUBBDBModel.FK_carrierSchedules_carriers" FromRole="carrier" ToRole="carrierSchedule" />
+          <NavigationProperty Name="shipments" Relationship="DUBBDBModel.FK_shipments_carriers" FromRole="carrier" ToRole="shipment" />
         </EntityType>
         <EntityType Name="carrierSchedule">
           <Key>
             <PropertyRef Name="carrierScheduleIntno" />
           </Key>
           <Property Name="carrierScheduleIntno" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="weekDay" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="weekDay" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
           <Property Name="carrierIntno" Type="Int64" Nullable="false" />
           <Property Name="flightTime" Type="Time" Nullable="false" Precision="0" />
-          <Property Name="departure" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
-          <Property Name="destination" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="departure" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="destination" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
           <Property Name="status" Type="Boolean" Nullable="false" />
-          <NavigationProperty Name="carrier" Relationship="Self.FK_carrierSchedules_carriers" FromRole="carrierSchedules" ToRole="carriers" />
-          <NavigationProperty Name="shipments" Relationship="Self.FK_shipments_carrierSchedules" FromRole="carrierSchedules" ToRole="shipments" />
+          <NavigationProperty Name="carrier" Relationship="DUBBDBModel.FK_carrierSchedules_carriers" FromRole="carrierSchedule" ToRole="carrier" />
+          <NavigationProperty Name="shipments" Relationship="DUBBDBModel.FK_shipments_carrierSchedules" FromRole="carrierSchedule" ToRole="shipment" />
         </EntityType>
         <EntityType Name="client">
           <Key>
             <PropertyRef Name="clientIntno" />
           </Key>
           <Property Name="clientIntno" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="clientName" Type="String" MaxLength="100" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="clientName" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="true" />
           <Property Name="clientShortName" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
           <Property Name="othClientName" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
           <Property Name="othClientShortName" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
-          <Property Name="status" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
-          <NavigationProperty Name="agreements" Relationship="Self.FK_agreements_clients" FromRole="clients" ToRole="agreements" />
-          <NavigationProperty Name="shipments" Relationship="Self.FK_shipments_clients" FromRole="clients" ToRole="shipments" />
-          <NavigationProperty Name="workOrders" Relationship="Self.FK_workOrders_clients" FromRole="clients" ToRole="workOrders" />
+          <Property Name="status" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="agreements" Relationship="DUBBDBModel.FK_agreements_clients" FromRole="client" ToRole="agreement" />
+          <NavigationProperty Name="shipments" Relationship="DUBBDBModel.FK_shipments_clients" FromRole="client" ToRole="shipment" />
+          <NavigationProperty Name="workOrders" Relationship="DUBBDBModel.FK_workOrders_clients" FromRole="client" ToRole="workOrder" />
         </EntityType>
         <EntityType Name="contact">
           <Key>
             <PropertyRef Name="contactIntno" />
           </Key>
           <Property Name="contactIntno" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="contactParty" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="contactParty" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
           <Property Name="partyIntno" Type="Int64" Nullable="false" />
-          <Property Name="salutation" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
-          <Property Name="contactName" Type="String" MaxLength="100" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="salutation" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="contactName" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="true" />
           <Property Name="othContactName" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
           <Property Name="contactTitle" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
           <Property Name="contactPhoneNbr" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
@@ -1343,7 +1671,7 @@
           <Property Name="mailingAddr" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
           <Property Name="remarks" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
           <Property Name="status" Type="Boolean" Nullable="false" />
-          <NavigationProperty Name="agreementWorks" Relationship="Self.FK_agreementWorks_contacts" FromRole="contacts" ToRole="agreementWorks" />
+          <NavigationProperty Name="agreementWorks" Relationship="DUBBDBModel.FK_agreementWorks_contacts" FromRole="contact" ToRole="agreementWork" />
         </EntityType>
         <EntityType Name="deliveryFeedback">
           <Key>
@@ -1351,27 +1679,27 @@
           </Key>
           <Property Name="feedbackIntno" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="orderTrnHdrIntno" Type="Int64" Nullable="false" />
-          <Property Name="feedbackType" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="feedbackType" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
           <Property Name="receivedDate" Type="DateTime" Nullable="false" Precision="0" />
-          <Property Name="clientRefNo" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
-          <Property Name="feedbackDesc" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="clientRefNo" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="feedbackDesc" Type="String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="true" />
           <Property Name="refLocation" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
           <Property Name="remarks" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
           <Property Name="status" Type="Boolean" Nullable="false" />
-          <NavigationProperty Name="orderTrnHdr" Relationship="Self.FK_deliveryFeedbacks_orderTrnHdrs" FromRole="deliveryFeedbacks" ToRole="orderTrnHdrs" />
-          <NavigationProperty Name="feedbackActions" Relationship="Self.FK_feedbackActions_deliveryFeedbacks" FromRole="deliveryFeedbacks" ToRole="feedbackActions" />
+          <NavigationProperty Name="orderTrnHdr" Relationship="DUBBDBModel.FK_deliveryFeedbacks_orderTrnHdrs" FromRole="deliveryFeedback" ToRole="orderTrnHdr" />
+          <NavigationProperty Name="feedbackActions" Relationship="DUBBDBModel.FK_feedbackActions_deliveryFeedbacks" FromRole="deliveryFeedback" ToRole="feedbackAction" />
         </EntityType>
         <EntityType Name="dubbDomain">
           <Key>
             <PropertyRef Name="domainIntno" />
           </Key>
           <Property Name="domainIntno" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="domainName" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
-          <Property Name="domainCode" Type="String" MaxLength="10" FixedLength="false" Unicode="true" Nullable="false" />
-          <Property Name="domainValue" Type="String" MaxLength="100" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="domainName" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="domainCode" Type="String" Nullable="false" MaxLength="10" FixedLength="false" Unicode="true" />
+          <Property Name="domainValue" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="true" />
           <Property Name="userMessage" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
-          <Property Name="valueUsage" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
-          <Property Name="langCode" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="valueUsage" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="langCode" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
           <Property Name="sortOrder" Type="Int16" Nullable="false" />
           <Property Name="minAccessLevel" Type="Int16" Nullable="false" />
           <Property Name="status" Type="Boolean" Nullable="false" />
@@ -1391,8 +1719,8 @@
           <Property Name="actualThruTime" Type="DateTime" Precision="3" />
           <Property Name="remarks" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
           <Property Name="totalMinutes" Type="Int32" Nullable="false" />
-          <NavigationProperty Name="dubbingSheetHdr" Relationship="Self.FK_dubbingAppointments_dubbingSheetHdrs1" FromRole="dubbingAppointments" ToRole="dubbingSheetHdrs" />
-          <NavigationProperty Name="dubbingTrnDtl" Relationship="Self.FK_dubbingAppointments_dubbingTrnDtls" FromRole="dubbingAppointments" ToRole="dubbingTrnDtls" />
+          <NavigationProperty Name="dubbingSheetHdr" Relationship="DUBBDBModel.FK_dubbingAppointments_dubbingSheetHdrs1" FromRole="dubbingAppointment" ToRole="dubbingSheetHdr" />
+          <NavigationProperty Name="dubbingTrnDtl" Relationship="DUBBDBModel.FK_dubbingAppointments_dubbingTrnDtls" FromRole="dubbingAppointment" ToRole="dubbingTrnDtl" />
         </EntityType>
         <EntityType Name="dubbingSheetDtl">
           <Key>
@@ -1408,11 +1736,11 @@
           <Property Name="soundTechnician" Type="Int64" />
           <Property Name="assistant" Type="Int64" />
           <Property Name="takenTimeStamp" Type="DateTime" Precision="3" />
-          <NavigationProperty Name="dubbingSheetHdr" Relationship="Self.FK_dubbingSheetDtls_dubbingSheetHdrs" FromRole="dubbingSheetDtls" ToRole="dubbingSheetHdrs" />
-          <NavigationProperty Name="employee" Relationship="Self.FK_dubbingSheetDtls_employees" FromRole="dubbingSheetDtls" ToRole="employees" />
-          <NavigationProperty Name="employee1" Relationship="Self.FK_dubbingSheetDtls_employees1" FromRole="dubbingSheetDtls" ToRole="employees" />
-          <NavigationProperty Name="employee2" Relationship="Self.FK_dubbingSheetDtls_employees2" FromRole="dubbingSheetDtls" ToRole="employees" />
-          <NavigationProperty Name="orderTrnHdr" Relationship="Self.FK_dubbingSheetDtls_orderTrnHdrs" FromRole="dubbingSheetDtls" ToRole="orderTrnHdrs" />
+          <NavigationProperty Name="dubbingSheetHdr" Relationship="DUBBDBModel.FK_dubbingSheetDtls_dubbingSheetHdrs" FromRole="dubbingSheetDtl" ToRole="dubbingSheetHdr" />
+          <NavigationProperty Name="employee" Relationship="DUBBDBModel.FK_dubbingSheetDtls_employees" FromRole="dubbingSheetDtl" ToRole="employee" />
+          <NavigationProperty Name="employee1" Relationship="DUBBDBModel.FK_dubbingSheetDtls_employees1" FromRole="dubbingSheetDtl" ToRole="employee" />
+          <NavigationProperty Name="employee2" Relationship="DUBBDBModel.FK_dubbingSheetDtls_employees2" FromRole="dubbingSheetDtl" ToRole="employee" />
+          <NavigationProperty Name="orderTrnHdr" Relationship="DUBBDBModel.FK_dubbingSheetDtls_orderTrnHdrs" FromRole="dubbingSheetDtl" ToRole="orderTrnHdr" />
         </EntityType>
         <EntityType Name="dubbingSheetHdr">
           <Key>
@@ -1422,13 +1750,13 @@
           <Property Name="orderTrnHdrIntno" Type="Int64" Nullable="false" />
           <Property Name="workCharacterIntno" Type="Int64" />
           <Property Name="voiceActorIntno" Type="Int64" Nullable="false" />
-          <Property Name="actorName" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
-          <Property Name="characterName" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
-          <NavigationProperty Name="dubbingAppointments" Relationship="Self.FK_dubbingAppointments_dubbingSheetHdrs1" FromRole="dubbingSheetHdrs" ToRole="dubbingAppointments" />
-          <NavigationProperty Name="dubbingSheetDtls" Relationship="Self.FK_dubbingSheetDtls_dubbingSheetHdrs" FromRole="dubbingSheetHdrs" ToRole="dubbingSheetDtls" />
-          <NavigationProperty Name="orderTrnHdr" Relationship="Self.FK_dubbingSheetHdrs_orderTrnHdrs" FromRole="dubbingSheetHdrs" ToRole="orderTrnHdrs" />
-          <NavigationProperty Name="voiceActor" Relationship="Self.FK_dubbingSheetHdrs_voiceActors" FromRole="dubbingSheetHdrs" ToRole="voiceActors" />
-          <NavigationProperty Name="workCharacter" Relationship="Self.FK_dubbingSheetHdrs_workCharacters" FromRole="dubbingSheetHdrs" ToRole="workCharacters" />
+          <Property Name="actorName" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="characterName" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="dubbingAppointments" Relationship="DUBBDBModel.FK_dubbingAppointments_dubbingSheetHdrs1" FromRole="dubbingSheetHdr" ToRole="dubbingAppointment" />
+          <NavigationProperty Name="dubbingSheetDtls" Relationship="DUBBDBModel.FK_dubbingSheetDtls_dubbingSheetHdrs" FromRole="dubbingSheetHdr" ToRole="dubbingSheetDtl" />
+          <NavigationProperty Name="orderTrnHdr" Relationship="DUBBDBModel.FK_dubbingSheetHdrs_orderTrnHdrs" FromRole="dubbingSheetHdr" ToRole="orderTrnHdr" />
+          <NavigationProperty Name="voiceActor" Relationship="DUBBDBModel.FK_dubbingSheetHdrs_voiceActors" FromRole="dubbingSheetHdr" ToRole="voiceActor" />
+          <NavigationProperty Name="workCharacter" Relationship="DUBBDBModel.FK_dubbingSheetHdrs_workCharacters" FromRole="dubbingSheetHdr" ToRole="workCharacter" />
         </EntityType>
         <EntityType Name="dubbingTrnDtl">
           <Key>
@@ -1442,13 +1770,13 @@
           <Property Name="supervisor" Type="Int64" />
           <Property Name="soundTechnician" Type="Int64" />
           <Property Name="assistant" Type="Int64" />
-          <Property Name="status" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
-          <NavigationProperty Name="dubbingAppointments" Relationship="Self.FK_dubbingAppointments_dubbingTrnDtls" FromRole="dubbingTrnDtls" ToRole="dubbingAppointments" />
-          <NavigationProperty Name="dubbingTrnHdr" Relationship="Self.FK_dubbingTrnDtls_dubbingTrnHdrs" FromRole="dubbingTrnDtls" ToRole="dubbingTrnHdrs" />
-          <NavigationProperty Name="employee" Relationship="Self.FK_dubbingTrnDtls_employees" FromRole="dubbingTrnDtls" ToRole="employees" />
-          <NavigationProperty Name="employee1" Relationship="Self.FK_dubbingTrnDtls_employees1" FromRole="dubbingTrnDtls" ToRole="employees" />
-          <NavigationProperty Name="employee2" Relationship="Self.FK_dubbingTrnDtls_employees2" FromRole="dubbingTrnDtls" ToRole="employees" />
-          <NavigationProperty Name="orderTrnHdr" Relationship="Self.FK_dubbingTrnDtls_orderTrnHdrs" FromRole="dubbingTrnDtls" ToRole="orderTrnHdrs" />
+          <Property Name="status" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="dubbingAppointments" Relationship="DUBBDBModel.FK_dubbingAppointments_dubbingTrnDtls" FromRole="dubbingTrnDtl" ToRole="dubbingAppointment" />
+          <NavigationProperty Name="dubbingTrnHdr" Relationship="DUBBDBModel.FK_dubbingTrnDtls_dubbingTrnHdrs" FromRole="dubbingTrnDtl" ToRole="dubbingTrnHdr" />
+          <NavigationProperty Name="employee" Relationship="DUBBDBModel.FK_dubbingTrnDtls_employees" FromRole="dubbingTrnDtl" ToRole="employee" />
+          <NavigationProperty Name="employee1" Relationship="DUBBDBModel.FK_dubbingTrnDtls_employees1" FromRole="dubbingTrnDtl" ToRole="employee" />
+          <NavigationProperty Name="employee2" Relationship="DUBBDBModel.FK_dubbingTrnDtls_employees2" FromRole="dubbingTrnDtl" ToRole="employee" />
+          <NavigationProperty Name="orderTrnHdr" Relationship="DUBBDBModel.FK_dubbingTrnDtls_orderTrnHdrs" FromRole="dubbingTrnDtl" ToRole="orderTrnHdr" />
         </EntityType>
         <EntityType Name="dubbingTrnHdr">
           <Key>
@@ -1459,32 +1787,32 @@
           <Property Name="thruDate" Type="DateTime" Nullable="false" Precision="0" />
           <Property Name="isPaid" Type="Boolean" Nullable="false" />
           <Property Name="status" Type="Boolean" Nullable="false" />
-          <NavigationProperty Name="dubbingTrnDtls" Relationship="Self.FK_dubbingTrnDtls_dubbingTrnHdrs" FromRole="dubbingTrnHdrs" ToRole="dubbingTrnDtls" />
-          <NavigationProperty Name="payments" Relationship="Self.FK_payments_dubbingTrnHdrs" FromRole="dubbingTrnHdrs" ToRole="payments" />
+          <NavigationProperty Name="dubbingTrnDtls" Relationship="DUBBDBModel.FK_dubbingTrnDtls_dubbingTrnHdrs" FromRole="dubbingTrnHdr" ToRole="dubbingTrnDtl" />
+          <NavigationProperty Name="payments" Relationship="DUBBDBModel.FK_payments_dubbingTrnHdrs" FromRole="dubbingTrnHdr" ToRole="payment" />
         </EntityType>
         <EntityType Name="employee">
           <Key>
             <PropertyRef Name="empIntno" />
           </Key>
           <Property Name="empIntno" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="empType" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="empType" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
           <Property Name="empUID" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
-          <Property Name="fullName" Type="String" MaxLength="100" FixedLength="false" Unicode="true" Nullable="false" />
-          <Property Name="othFullName" Type="String" MaxLength="100" FixedLength="false" Unicode="true" Nullable="false" />
-          <Property Name="mobileNo" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
-          <Property Name="landLineNo" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
-          <Property Name="email" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="fullName" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="othFullName" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="mobileNo" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="landLineNo" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="email" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
           <Property Name="status" Type="Boolean" Nullable="false" />
           <Property Name="accountNo" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
-          <NavigationProperty Name="dubbingSheetDtls" Relationship="Self.FK_dubbingSheetDtls_employees" FromRole="employees" ToRole="dubbingSheetDtls" />
-          <NavigationProperty Name="dubbingSheetDtls1" Relationship="Self.FK_dubbingSheetDtls_employees1" FromRole="employees" ToRole="dubbingSheetDtls" />
-          <NavigationProperty Name="dubbingSheetDtls2" Relationship="Self.FK_dubbingSheetDtls_employees2" FromRole="employees" ToRole="dubbingSheetDtls" />
-          <NavigationProperty Name="dubbingTrnDtls" Relationship="Self.FK_dubbingTrnDtls_employees" FromRole="employees" ToRole="dubbingTrnDtls" />
-          <NavigationProperty Name="dubbingTrnDtls1" Relationship="Self.FK_dubbingTrnDtls_employees1" FromRole="employees" ToRole="dubbingTrnDtls" />
-          <NavigationProperty Name="dubbingTrnDtls2" Relationship="Self.FK_dubbingTrnDtls_employees2" FromRole="employees" ToRole="dubbingTrnDtls" />
-          <NavigationProperty Name="orderBatchTrnHdrs" Relationship="Self.FK_orderBatchTrnHdrs_employees" FromRole="employees" ToRole="orderBatchTrnHdrs" />
-          <NavigationProperty Name="payments" Relationship="Self.FK_payments_employees" FromRole="employees" ToRole="payments" />
-          <NavigationProperty Name="workPersonnels" Relationship="Self.FK_workPersonnels_employees" FromRole="employees" ToRole="workPersonnels" />
+          <NavigationProperty Name="dubbingSheetDtls" Relationship="DUBBDBModel.FK_dubbingSheetDtls_employees" FromRole="employee" ToRole="dubbingSheetDtl" />
+          <NavigationProperty Name="dubbingSheetDtls1" Relationship="DUBBDBModel.FK_dubbingSheetDtls_employees1" FromRole="employee" ToRole="dubbingSheetDtl" />
+          <NavigationProperty Name="dubbingSheetDtls2" Relationship="DUBBDBModel.FK_dubbingSheetDtls_employees2" FromRole="employee" ToRole="dubbingSheetDtl" />
+          <NavigationProperty Name="dubbingTrnDtls" Relationship="DUBBDBModel.FK_dubbingTrnDtls_employees" FromRole="employee" ToRole="dubbingTrnDtl" />
+          <NavigationProperty Name="dubbingTrnDtls1" Relationship="DUBBDBModel.FK_dubbingTrnDtls_employees1" FromRole="employee" ToRole="dubbingTrnDtl" />
+          <NavigationProperty Name="dubbingTrnDtls2" Relationship="DUBBDBModel.FK_dubbingTrnDtls_employees2" FromRole="employee" ToRole="dubbingTrnDtl" />
+          <NavigationProperty Name="orderBatchTrnHdrs" Relationship="DUBBDBModel.FK_orderBatchTrnHdrs_employees" FromRole="employee" ToRole="orderBatchTrnHdr" />
+          <NavigationProperty Name="payments" Relationship="DUBBDBModel.FK_payments_employees" FromRole="employee" ToRole="payment" />
+          <NavigationProperty Name="workPersonnels" Relationship="DUBBDBModel.FK_workPersonnels_employees" FromRole="employee" ToRole="workPersonnel" />
         </EntityType>
         <EntityType Name="feedbackAction">
           <Key>
@@ -1492,13 +1820,13 @@
           </Key>
           <Property Name="actionIntno" Type="Int64" Nullable="false" />
           <Property Name="feedbackIntno" Type="Int64" Nullable="false" />
-          <Property Name="actionParty" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="actionParty" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
           <Property Name="actionToBeTaken" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
           <Property Name="actionDate" Type="DateTime" Precision="0" />
           <Property Name="checkedBy" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
           <Property Name="checkedDate" Type="DateTime" Precision="3" />
           <Property Name="status" Type="Boolean" Nullable="false" />
-          <NavigationProperty Name="deliveryFeedback" Relationship="Self.FK_feedbackActions_deliveryFeedbacks" FromRole="feedbackActions" ToRole="deliveryFeedbacks" />
+          <NavigationProperty Name="deliveryFeedback" Relationship="DUBBDBModel.FK_feedbackActions_deliveryFeedbacks" FromRole="feedbackAction" ToRole="deliveryFeedback" />
         </EntityType>
         <EntityType Name="orderBatchTrnHdr">
           <Key>
@@ -1507,19 +1835,19 @@
           <Property Name="orderBatchTrnIntno" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="orderIntno" Type="Int64" Nullable="false" />
           <Property Name="workIntno" Type="Int64" Nullable="false" />
-          <Property Name="trnType" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="trnType" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
           <Property Name="fromEpisode" Type="Int32" Nullable="false" />
           <Property Name="thruEpisode" Type="Int32" Nullable="false" />
           <Property Name="trnDate" Type="DateTime" Nullable="false" Precision="0" />
           <Property Name="empIntno" Type="Int64" Nullable="false" />
           <Property Name="trnDesc" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
           <Property Name="remarks" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
-          <Property Name="updatedBy" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="updatedBy" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
           <Property Name="lastUpdated" Type="DateTime" Nullable="false" Precision="3" />
           <Property Name="status" Type="Boolean" Nullable="false" />
-          <NavigationProperty Name="agreementWork" Relationship="Self.FK_orderBatchTrnHdrs_agreementWorks" FromRole="orderBatchTrnHdrs" ToRole="agreementWorks" />
-          <NavigationProperty Name="employee" Relationship="Self.FK_orderBatchTrnHdrs_employees" FromRole="orderBatchTrnHdrs" ToRole="employees" />
-          <NavigationProperty Name="workOrder" Relationship="Self.FK_orderBatchTrnHdrs_workOrders" FromRole="orderBatchTrnHdrs" ToRole="workOrders" />
+          <NavigationProperty Name="agreementWork" Relationship="DUBBDBModel.FK_orderBatchTrnHdrs_agreementWorks" FromRole="orderBatchTrnHdr" ToRole="agreementWork" />
+          <NavigationProperty Name="employee" Relationship="DUBBDBModel.FK_orderBatchTrnHdrs_employees" FromRole="orderBatchTrnHdr" ToRole="employee" />
+          <NavigationProperty Name="workOrder" Relationship="DUBBDBModel.FK_orderBatchTrnHdrs_workOrders" FromRole="orderBatchTrnHdr" ToRole="workOrder" />
         </EntityType>
         <EntityType Name="orderCheck">
           <Key>
@@ -1527,9 +1855,9 @@
           </Key>
           <Property Name="orderCheckIntno" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="orderTrnHdrIntno" Type="Int64" Nullable="false" />
-          <Property Name="checkType" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="checkType" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
           <Property Name="isAccepted" Type="Boolean" Nullable="false" />
-          <NavigationProperty Name="orderTrnHdr" Relationship="Self.FK_orderChecks_orderTrnHdrs" FromRole="orderChecks" ToRole="orderTrnHdrs" />
+          <NavigationProperty Name="orderTrnHdr" Relationship="DUBBDBModel.FK_orderChecks_orderTrnHdrs" FromRole="orderCheck" ToRole="orderTrnHdr" />
         </EntityType>
         <EntityType Name="orderTrnDtl">
           <Key>
@@ -1537,13 +1865,13 @@
           </Key>
           <Property Name="orderTrnDtlIntno" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="orderTrnHdrIntno" Type="Int64" Nullable="false" />
-          <Property Name="activityType" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="activityType" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
           <Property Name="empIntno" Type="Int64" Nullable="false" />
           <Property Name="providedService" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
           <Property Name="totalMinutes" Type="Int32" />
           <Property Name="timeRating" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
           <Property Name="qualityRating" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
-          <NavigationProperty Name="orderTrnHdr" Relationship="Self.FK_orderTrnDtls_orderTrnHdrs" FromRole="orderTrnDtls" ToRole="orderTrnHdrs" />
+          <NavigationProperty Name="orderTrnHdr" Relationship="DUBBDBModel.FK_orderTrnDtls_orderTrnHdrs" FromRole="orderTrnDtl" ToRole="orderTrnHdr" />
         </EntityType>
         <EntityType Name="orderTrnHdr">
           <Key>
@@ -1574,16 +1902,16 @@
           <Property Name="shipmentLowRes" Type="DateTime" Precision="3" />
           <Property Name="plannedShipment" Type="DateTime" Precision="3" />
           <Property Name="shipmentFinal" Type="DateTime" Precision="3" />
-          <Property Name="status" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
-          <NavigationProperty Name="agreementWork" Relationship="Self.FK_orderTrnHdrs_agreementWorks" FromRole="orderTrnHdrs" ToRole="agreementWorks" />
-          <NavigationProperty Name="deliveryFeedbacks" Relationship="Self.FK_deliveryFeedbacks_orderTrnHdrs" FromRole="orderTrnHdrs" ToRole="deliveryFeedbacks" />
-          <NavigationProperty Name="dubbingSheetDtls" Relationship="Self.FK_dubbingSheetDtls_orderTrnHdrs" FromRole="orderTrnHdrs" ToRole="dubbingSheetDtls" />
-          <NavigationProperty Name="dubbingSheetHdrs" Relationship="Self.FK_dubbingSheetHdrs_orderTrnHdrs" FromRole="orderTrnHdrs" ToRole="dubbingSheetHdrs" />
-          <NavigationProperty Name="dubbingTrnDtls" Relationship="Self.FK_dubbingTrnDtls_orderTrnHdrs" FromRole="orderTrnHdrs" ToRole="dubbingTrnDtls" />
-          <NavigationProperty Name="orderChecks" Relationship="Self.FK_orderChecks_orderTrnHdrs" FromRole="orderTrnHdrs" ToRole="orderChecks" />
-          <NavigationProperty Name="orderTrnDtls" Relationship="Self.FK_orderTrnDtls_orderTrnHdrs" FromRole="orderTrnHdrs" ToRole="orderTrnDtls" />
-          <NavigationProperty Name="workOrder" Relationship="Self.FK_orderTrnHdrs_workOrders" FromRole="orderTrnHdrs" ToRole="workOrders" />
-          <NavigationProperty Name="shipments" Relationship="Self.FK_shipments_orderTrnHdrs" FromRole="orderTrnHdrs" ToRole="shipments" />
+          <Property Name="status" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="agreementWork" Relationship="DUBBDBModel.FK_orderTrnHdrs_agreementWorks" FromRole="orderTrnHdr" ToRole="agreementWork" />
+          <NavigationProperty Name="deliveryFeedbacks" Relationship="DUBBDBModel.FK_deliveryFeedbacks_orderTrnHdrs" FromRole="orderTrnHdr" ToRole="deliveryFeedback" />
+          <NavigationProperty Name="dubbingSheetDtls" Relationship="DUBBDBModel.FK_dubbingSheetDtls_orderTrnHdrs" FromRole="orderTrnHdr" ToRole="dubbingSheetDtl" />
+          <NavigationProperty Name="dubbingSheetHdrs" Relationship="DUBBDBModel.FK_dubbingSheetHdrs_orderTrnHdrs" FromRole="orderTrnHdr" ToRole="dubbingSheetHdr" />
+          <NavigationProperty Name="dubbingTrnDtls" Relationship="DUBBDBModel.FK_dubbingTrnDtls_orderTrnHdrs" FromRole="orderTrnHdr" ToRole="dubbingTrnDtl" />
+          <NavigationProperty Name="orderChecks" Relationship="DUBBDBModel.FK_orderChecks_orderTrnHdrs" FromRole="orderTrnHdr" ToRole="orderCheck" />
+          <NavigationProperty Name="orderTrnDtls" Relationship="DUBBDBModel.FK_orderTrnDtls_orderTrnHdrs" FromRole="orderTrnHdr" ToRole="orderTrnDtl" />
+          <NavigationProperty Name="workOrder" Relationship="DUBBDBModel.FK_orderTrnHdrs_workOrders" FromRole="orderTrnHdr" ToRole="workOrder" />
+          <NavigationProperty Name="shipments" Relationship="DUBBDBModel.FK_shipments_orderTrnHdrs" FromRole="orderTrnHdr" ToRole="shipment" />
         </EntityType>
         <EntityType Name="payment">
           <Key>
@@ -1602,16 +1930,16 @@
           <Property Name="unitRate" Type="Int32" Nullable="false" />
           <Property Name="paymentDesc" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
           <Property Name="totalAmount" Type="Int32" Nullable="false" />
-          <Property Name="currencyCode" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="currencyCode" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
           <Property Name="deduction" Type="Int32" Nullable="false" />
           <Property Name="paymentDate" Type="DateTime" Precision="0" />
           <Property Name="remarks" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
           <Property Name="status" Type="Boolean" Nullable="false" />
-          <Property Name="accountNo" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
-          <NavigationProperty Name="agreementWork" Relationship="Self.FK_payments_agreementWorks" FromRole="payments" ToRole="agreementWorks" />
-          <NavigationProperty Name="dubbingTrnHdr" Relationship="Self.FK_payments_dubbingTrnHdrs" FromRole="payments" ToRole="dubbingTrnHdrs" />
-          <NavigationProperty Name="employee" Relationship="Self.FK_payments_employees" FromRole="payments" ToRole="employees" />
-          <NavigationProperty Name="voiceActor" Relationship="Self.FK_payments_voiceActors" FromRole="payments" ToRole="voiceActors" />
+          <Property Name="accountNo" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="agreementWork" Relationship="DUBBDBModel.FK_payments_agreementWorks" FromRole="payment" ToRole="agreementWork" />
+          <NavigationProperty Name="dubbingTrnHdr" Relationship="DUBBDBModel.FK_payments_dubbingTrnHdrs" FromRole="payment" ToRole="dubbingTrnHdr" />
+          <NavigationProperty Name="employee" Relationship="DUBBDBModel.FK_payments_employees" FromRole="payment" ToRole="employee" />
+          <NavigationProperty Name="voiceActor" Relationship="DUBBDBModel.FK_payments_voiceActors" FromRole="payment" ToRole="voiceActor" />
         </EntityType>
         <EntityType Name="shipment">
           <Key>
@@ -1621,31 +1949,72 @@
           <Property Name="orderTrnHdrIntno" Type="Int64" Nullable="false" />
           <Property Name="carrierIntno" Type="Int64" />
           <Property Name="carrierScheduleIntno" Type="Int64" />
-          <Property Name="shipmentMethod" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="shipmentMethod" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
           <Property Name="shipmentDate" Type="DateTime" Nullable="false" Precision="0" />
           <Property Name="remarks" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
-          <Property Name="status" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="status" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
           <Property Name="clientIntno" Type="Int64" Nullable="false" />
-          <NavigationProperty Name="carrier" Relationship="Self.FK_shipments_carriers" FromRole="shipments" ToRole="carriers" />
-          <NavigationProperty Name="carrierSchedule" Relationship="Self.FK_shipments_carrierSchedules" FromRole="shipments" ToRole="carrierSchedules" />
-          <NavigationProperty Name="client" Relationship="Self.FK_shipments_clients" FromRole="shipments" ToRole="clients" />
-          <NavigationProperty Name="orderTrnHdr" Relationship="Self.FK_shipments_orderTrnHdrs" FromRole="shipments" ToRole="orderTrnHdrs" />
+          <NavigationProperty Name="carrier" Relationship="DUBBDBModel.FK_shipments_carriers" FromRole="shipment" ToRole="carrier" />
+          <NavigationProperty Name="carrierSchedule" Relationship="DUBBDBModel.FK_shipments_carrierSchedules" FromRole="shipment" ToRole="carrierSchedule" />
+          <NavigationProperty Name="client" Relationship="DUBBDBModel.FK_shipments_clients" FromRole="shipment" ToRole="client" />
+          <NavigationProperty Name="orderTrnHdr" Relationship="DUBBDBModel.FK_shipments_orderTrnHdrs" FromRole="shipment" ToRole="orderTrnHdr" />
+        </EntityType>
+        <EntityType Name="UserProfile">
+          <Key>
+            <PropertyRef Name="UserId" />
+          </Key>
+          <Property Name="UserId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="UserName" Type="String" Nullable="false" MaxLength="56" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="webpages_Roles" Relationship="DUBBDBModel.webpages_UsersInRoles" FromRole="UserProfile" ToRole="webpages_Roles" />
         </EntityType>
         <EntityType Name="voiceActor">
           <Key>
             <PropertyRef Name="voiceActorIntno" />
           </Key>
           <Property Name="voiceActorIntno" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="fullName" Type="String" MaxLength="100" FixedLength="false" Unicode="true" Nullable="false" />
-          <Property Name="othFullName" Type="String" MaxLength="100" FixedLength="false" Unicode="true" Nullable="false" />
-          <Property Name="mobileNo" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
-          <Property Name="landLineNo" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
-          <Property Name="email" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="fullName" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="othFullName" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="mobileNo" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="landLineNo" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="email" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
           <Property Name="status" Type="Boolean" Nullable="false" />
           <Property Name="accountNo" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
-          <NavigationProperty Name="dubbingSheetHdrs" Relationship="Self.FK_dubbingSheetHdrs_voiceActors" FromRole="voiceActors" ToRole="dubbingSheetHdrs" />
-          <NavigationProperty Name="payments" Relationship="Self.FK_payments_voiceActors" FromRole="voiceActors" ToRole="payments" />
-          <NavigationProperty Name="workActors" Relationship="Self.FK_workActors_voiceActors" FromRole="voiceActors" ToRole="workActors" />
+          <NavigationProperty Name="dubbingSheetHdrs" Relationship="DUBBDBModel.FK_dubbingSheetHdrs_voiceActors" FromRole="voiceActor" ToRole="dubbingSheetHdr" />
+          <NavigationProperty Name="payments" Relationship="DUBBDBModel.FK_payments_voiceActors" FromRole="voiceActor" ToRole="payment" />
+          <NavigationProperty Name="workActors" Relationship="DUBBDBModel.FK_workActors_voiceActors" FromRole="voiceActor" ToRole="workActor" />
+        </EntityType>
+        <EntityType Name="webpages_Membership">
+          <Key>
+            <PropertyRef Name="UserId" />
+          </Key>
+          <Property Name="UserId" Type="Int32" Nullable="false" />
+          <Property Name="CreateDate" Type="DateTime" Precision="3" />
+          <Property Name="ConfirmationToken" Type="String" MaxLength="128" FixedLength="false" Unicode="true" />
+          <Property Name="IsConfirmed" Type="Boolean" />
+          <Property Name="LastPasswordFailureDate" Type="DateTime" Precision="3" />
+          <Property Name="PasswordFailuresSinceLastSuccess" Type="Int32" Nullable="false" />
+          <Property Name="Password" Type="String" Nullable="false" MaxLength="128" FixedLength="false" Unicode="true" />
+          <Property Name="PasswordChangedDate" Type="DateTime" Precision="3" />
+          <Property Name="PasswordSalt" Type="String" Nullable="false" MaxLength="128" FixedLength="false" Unicode="true" />
+          <Property Name="PasswordVerificationToken" Type="String" MaxLength="128" FixedLength="false" Unicode="true" />
+          <Property Name="PasswordVerificationTokenExpirationDate" Type="DateTime" Precision="3" />
+        </EntityType>
+        <EntityType Name="webpages_OAuthMembership">
+          <Key>
+            <PropertyRef Name="Provider" />
+            <PropertyRef Name="ProviderUserId" />
+          </Key>
+          <Property Name="Provider" Type="String" Nullable="false" MaxLength="30" FixedLength="false" Unicode="true" />
+          <Property Name="ProviderUserId" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="UserId" Type="Int32" Nullable="false" />
+        </EntityType>
+        <EntityType Name="webpages_Roles">
+          <Key>
+            <PropertyRef Name="RoleId" />
+          </Key>
+          <Property Name="RoleId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="RoleName" Type="String" Nullable="false" MaxLength="256" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="UserProfiles" Relationship="DUBBDBModel.webpages_UsersInRoles" FromRole="webpages_Roles" ToRole="UserProfile" />
         </EntityType>
         <EntityType Name="workActor">
           <Key>
@@ -1660,9 +2029,9 @@
           <Property Name="remarks" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
           <Property Name="status" Type="Boolean" Nullable="false" />
           <Property Name="scenesPerHour" Type="Int32" Nullable="false" />
-          <NavigationProperty Name="agreementWork" Relationship="Self.FK_workActors_agreementWorks" FromRole="workActors" ToRole="agreementWorks" />
-          <NavigationProperty Name="voiceActor" Relationship="Self.FK_workActors_voiceActors" FromRole="workActors" ToRole="voiceActors" />
-          <NavigationProperty Name="workCharacter" Relationship="Self.FK_workActors_workCharacters" FromRole="workActors" ToRole="workCharacters" />
+          <NavigationProperty Name="agreementWork" Relationship="DUBBDBModel.FK_workActors_agreementWorks" FromRole="workActor" ToRole="agreementWork" />
+          <NavigationProperty Name="voiceActor" Relationship="DUBBDBModel.FK_workActors_voiceActors" FromRole="workActor" ToRole="voiceActor" />
+          <NavigationProperty Name="workCharacter" Relationship="DUBBDBModel.FK_workActors_workCharacters" FromRole="workActor" ToRole="workCharacter" />
         </EntityType>
         <EntityType Name="workCharacter">
           <Key>
@@ -1671,17 +2040,17 @@
           <Property Name="workCharacterIntno" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="workIntno" Type="Int64" Nullable="false" />
           <Property Name="sortOrder" Type="Int16" Nullable="false" />
-          <Property Name="characterType" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
-          <Property Name="characterGender" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
-          <Property Name="characterCode" Type="String" MaxLength="10" FixedLength="false" Unicode="true" Nullable="false" />
-          <Property Name="characterName" Type="String" MaxLength="100" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="characterType" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="characterGender" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="characterCode" Type="String" Nullable="false" MaxLength="10" FixedLength="false" Unicode="true" />
+          <Property Name="characterName" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="true" />
           <Property Name="othCharacterName" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
           <Property Name="nickName" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
           <Property Name="characterDesc" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
           <Property Name="remarks" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
-          <NavigationProperty Name="agreementWork" Relationship="Self.FK_workCharacters_agreementWorks" FromRole="workCharacters" ToRole="agreementWorks" />
-          <NavigationProperty Name="dubbingSheetHdrs" Relationship="Self.FK_dubbingSheetHdrs_workCharacters" FromRole="workCharacters" ToRole="dubbingSheetHdrs" />
-          <NavigationProperty Name="workActors" Relationship="Self.FK_workActors_workCharacters" FromRole="workCharacters" ToRole="workActors" />
+          <NavigationProperty Name="agreementWork" Relationship="DUBBDBModel.FK_workCharacters_agreementWorks" FromRole="workCharacter" ToRole="agreementWork" />
+          <NavigationProperty Name="dubbingSheetHdrs" Relationship="DUBBDBModel.FK_dubbingSheetHdrs_workCharacters" FromRole="workCharacter" ToRole="dubbingSheetHdr" />
+          <NavigationProperty Name="workActors" Relationship="DUBBDBModel.FK_workActors_workCharacters" FromRole="workCharacter" ToRole="workActor" />
         </EntityType>
         <EntityType Name="workCharge">
           <Key>
@@ -1689,11 +2058,11 @@
           </Key>
           <Property Name="chargeIntno" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="workIntno" Type="Int64" Nullable="false" />
-          <Property Name="workPartyType" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="workPartyType" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
           <Property Name="workPartyIntno" Type="Int64" Nullable="false" />
           <Property Name="chargeAmount" Type="Int64" Nullable="false" />
-          <Property Name="chargeUom" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
-          <Property Name="currencyCode" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="chargeUom" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="currencyCode" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
           <Property Name="fromDate" Type="DateTime" Nullable="false" Precision="0" />
           <Property Name="remarks" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
           <Property Name="status" Type="Boolean" Nullable="false" />
@@ -1714,11 +2083,11 @@
           <Property Name="remarks" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
           <Property Name="updatedBy" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
           <Property Name="lastUpdated" Type="DateTime" Precision="3" />
-          <Property Name="status" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
-          <NavigationProperty Name="agreementWork" Relationship="Self.FK_workOrders_agreementWorks" FromRole="workOrders" ToRole="agreementWorks" />
-          <NavigationProperty Name="client" Relationship="Self.FK_workOrders_clients" FromRole="workOrders" ToRole="clients" />
-          <NavigationProperty Name="orderBatchTrnHdrs" Relationship="Self.FK_orderBatchTrnHdrs_workOrders" FromRole="workOrders" ToRole="orderBatchTrnHdrs" />
-          <NavigationProperty Name="orderTrnHdrs" Relationship="Self.FK_orderTrnHdrs_workOrders" FromRole="workOrders" ToRole="orderTrnHdrs" />
+          <Property Name="status" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="agreementWork" Relationship="DUBBDBModel.FK_workOrders_agreementWorks" FromRole="workOrder" ToRole="agreementWork" />
+          <NavigationProperty Name="client" Relationship="DUBBDBModel.FK_workOrders_clients" FromRole="workOrder" ToRole="client" />
+          <NavigationProperty Name="orderBatchTrnHdrs" Relationship="DUBBDBModel.FK_orderBatchTrnHdrs_workOrders" FromRole="workOrder" ToRole="orderBatchTrnHdr" />
+          <NavigationProperty Name="orderTrnHdrs" Relationship="DUBBDBModel.FK_orderTrnHdrs_workOrders" FromRole="workOrder" ToRole="orderTrnHdr" />
         </EntityType>
         <EntityType Name="workPersonnel">
           <Key>
@@ -1727,796 +2096,589 @@
           <Property Name="workPersonnelIntno" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="workIntno" Type="Int64" Nullable="false" />
           <Property Name="empIntno" Type="Int64" Nullable="false" />
-          <Property Name="titleType" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="titleType" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
           <Property Name="fromDate" Type="DateTime" Nullable="false" Precision="0" />
           <Property Name="thruDate" Type="DateTime" Precision="0" />
           <Property Name="status" Type="Boolean" Nullable="false" />
-          <NavigationProperty Name="agreementWork" Relationship="Self.FK_workPersonnels_agreementWorks" FromRole="workPersonnels" ToRole="agreementWorks" />
-          <NavigationProperty Name="employee" Relationship="Self.FK_workPersonnels_employees" FromRole="workPersonnels" ToRole="employees" />
+          <NavigationProperty Name="agreementWork" Relationship="DUBBDBModel.FK_workPersonnels_agreementWorks" FromRole="workPersonnel" ToRole="agreementWork" />
+          <NavigationProperty Name="employee" Relationship="DUBBDBModel.FK_workPersonnels_employees" FromRole="workPersonnel" ToRole="employee" />
+        </EntityType>
+        <EntityType Name="userRolesView">
+          <Key>
+            <PropertyRef Name="UserId" />
+            <PropertyRef Name="RoleId" />
+          </Key>
+          <Property Name="UserId" Type="Int32" Nullable="false" />
+          <Property Name="RoleId" Type="Int32" Nullable="false" />
         </EntityType>
         <Association Name="FK_agreements_agreements">
-          <End Role="agreements" Type="Self.agreement" Multiplicity="0..1" />
-          <End Role="agreements1" Type="Self.agreement" Multiplicity="*" />
+          <End Type="DUBBDBModel.agreement" Role="agreement" Multiplicity="0..1" />
+          <End Type="DUBBDBModel.agreement" Role="agreement1" Multiplicity="*" />
           <ReferentialConstraint>
-            <Principal Role="agreements">
+            <Principal Role="agreement">
               <PropertyRef Name="agreementIntno" />
             </Principal>
-            <Dependent Role="agreements1">
+            <Dependent Role="agreement1">
               <PropertyRef Name="refAgreementIntno" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_agreements_clients">
-          <End Role="clients" Type="Self.client" Multiplicity="1" />
-          <End Role="agreements" Type="Self.agreement" Multiplicity="*" />
+          <End Type="DUBBDBModel.client" Role="client" Multiplicity="1" />
+          <End Type="DUBBDBModel.agreement" Role="agreement" Multiplicity="*" />
           <ReferentialConstraint>
-            <Principal Role="clients">
+            <Principal Role="client">
               <PropertyRef Name="clientIntno" />
             </Principal>
-            <Dependent Role="agreements">
+            <Dependent Role="agreement">
               <PropertyRef Name="clientIntno" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_agreementSpecs_agreements">
-          <End Role="agreements" Type="Self.agreement" Multiplicity="1" />
-          <End Role="agreementSpecs" Type="Self.agreementSpec" Multiplicity="*" />
+          <End Type="DUBBDBModel.agreement" Role="agreement" Multiplicity="1" />
+          <End Type="DUBBDBModel.agreementSpec" Role="agreementSpec" Multiplicity="*" />
           <ReferentialConstraint>
-            <Principal Role="agreements">
+            <Principal Role="agreement">
               <PropertyRef Name="agreementIntno" />
             </Principal>
-            <Dependent Role="agreementSpecs">
+            <Dependent Role="agreementSpec">
               <PropertyRef Name="agreementIntno" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_agreementTerms_agreements">
-          <End Role="agreements" Type="Self.agreement" Multiplicity="1" />
-          <End Role="agreementTerms" Type="Self.agreementTerm" Multiplicity="*" />
+          <End Type="DUBBDBModel.agreement" Role="agreement" Multiplicity="1" />
+          <End Type="DUBBDBModel.agreementTerm" Role="agreementTerm" Multiplicity="*" />
           <ReferentialConstraint>
-            <Principal Role="agreements">
+            <Principal Role="agreement">
               <PropertyRef Name="agreementIntno" />
             </Principal>
-            <Dependent Role="agreementTerms">
+            <Dependent Role="agreementTerm">
               <PropertyRef Name="agreementIntno" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_agreementWorks_agreements">
-          <End Role="agreements" Type="Self.agreement" Multiplicity="1" />
-          <End Role="agreementWorks" Type="Self.agreementWork" Multiplicity="*" />
+          <End Type="DUBBDBModel.agreement" Role="agreement" Multiplicity="1" />
+          <End Type="DUBBDBModel.agreementWork" Role="agreementWork" Multiplicity="*" />
           <ReferentialConstraint>
-            <Principal Role="agreements">
+            <Principal Role="agreement">
               <PropertyRef Name="agreementIntno" />
             </Principal>
-            <Dependent Role="agreementWorks">
+            <Dependent Role="agreementWork">
               <PropertyRef Name="agreementIntno" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_agreementWorks_contacts">
-          <End Role="contacts" Type="Self.contact" Multiplicity="0..1" />
-          <End Role="agreementWorks" Type="Self.agreementWork" Multiplicity="*" />
+          <End Type="DUBBDBModel.contact" Role="contact" Multiplicity="0..1" />
+          <End Type="DUBBDBModel.agreementWork" Role="agreementWork" Multiplicity="*" />
           <ReferentialConstraint>
-            <Principal Role="contacts">
+            <Principal Role="contact">
               <PropertyRef Name="contactIntno" />
             </Principal>
-            <Dependent Role="agreementWorks">
+            <Dependent Role="agreementWork">
               <PropertyRef Name="contactIntno" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_orderBatchTrnHdrs_agreementWorks">
-          <End Role="agreementWorks" Type="Self.agreementWork" Multiplicity="1" />
-          <End Role="orderBatchTrnHdrs" Type="Self.orderBatchTrnHdr" Multiplicity="*" />
+          <End Type="DUBBDBModel.agreementWork" Role="agreementWork" Multiplicity="1" />
+          <End Type="DUBBDBModel.orderBatchTrnHdr" Role="orderBatchTrnHdr" Multiplicity="*" />
           <ReferentialConstraint>
-            <Principal Role="agreementWorks">
+            <Principal Role="agreementWork">
               <PropertyRef Name="workIntno" />
             </Principal>
-            <Dependent Role="orderBatchTrnHdrs">
+            <Dependent Role="orderBatchTrnHdr">
               <PropertyRef Name="workIntno" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_orderTrnHdrs_agreementWorks">
-          <End Role="agreementWorks" Type="Self.agreementWork" Multiplicity="1" />
-          <End Role="orderTrnHdrs" Type="Self.orderTrnHdr" Multiplicity="*" />
+          <End Type="DUBBDBModel.agreementWork" Role="agreementWork" Multiplicity="1" />
+          <End Type="DUBBDBModel.orderTrnHdr" Role="orderTrnHdr" Multiplicity="*" />
           <ReferentialConstraint>
-            <Principal Role="agreementWorks">
+            <Principal Role="agreementWork">
               <PropertyRef Name="workIntno" />
             </Principal>
-            <Dependent Role="orderTrnHdrs">
+            <Dependent Role="orderTrnHdr">
               <PropertyRef Name="workIntno" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_payments_agreementWorks">
-          <End Role="agreementWorks" Type="Self.agreementWork" Multiplicity="1" />
-          <End Role="payments" Type="Self.payment" Multiplicity="*" />
+          <End Type="DUBBDBModel.agreementWork" Role="agreementWork" Multiplicity="1" />
+          <End Type="DUBBDBModel.payment" Role="payment" Multiplicity="*" />
           <ReferentialConstraint>
-            <Principal Role="agreementWorks">
+            <Principal Role="agreementWork">
               <PropertyRef Name="workIntno" />
             </Principal>
-            <Dependent Role="payments">
+            <Dependent Role="payment">
               <PropertyRef Name="workIntno" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_workActors_agreementWorks">
-          <End Role="agreementWorks" Type="Self.agreementWork" Multiplicity="1" />
-          <End Role="workActors" Type="Self.workActor" Multiplicity="*" />
+          <End Type="DUBBDBModel.agreementWork" Role="agreementWork" Multiplicity="1" />
+          <End Type="DUBBDBModel.workActor" Role="workActor" Multiplicity="*" />
           <ReferentialConstraint>
-            <Principal Role="agreementWorks">
+            <Principal Role="agreementWork">
               <PropertyRef Name="workIntno" />
             </Principal>
-            <Dependent Role="workActors">
+            <Dependent Role="workActor">
               <PropertyRef Name="workIntno" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_workCharacters_agreementWorks">
-          <End Role="agreementWorks" Type="Self.agreementWork" Multiplicity="1" />
-          <End Role="workCharacters" Type="Self.workCharacter" Multiplicity="*" />
+          <End Type="DUBBDBModel.agreementWork" Role="agreementWork" Multiplicity="1" />
+          <End Type="DUBBDBModel.workCharacter" Role="workCharacter" Multiplicity="*" />
           <ReferentialConstraint>
-            <Principal Role="agreementWorks">
+            <Principal Role="agreementWork">
               <PropertyRef Name="workIntno" />
             </Principal>
-            <Dependent Role="workCharacters">
+            <Dependent Role="workCharacter">
               <PropertyRef Name="workIntno" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_workOrders_agreementWorks">
-          <End Role="agreementWorks" Type="Self.agreementWork" Multiplicity="1" />
-          <End Role="workOrders" Type="Self.workOrder" Multiplicity="*" />
+          <End Type="DUBBDBModel.agreementWork" Role="agreementWork" Multiplicity="1" />
+          <End Type="DUBBDBModel.workOrder" Role="workOrder" Multiplicity="*" />
           <ReferentialConstraint>
-            <Principal Role="agreementWorks">
+            <Principal Role="agreementWork">
               <PropertyRef Name="workIntno" />
             </Principal>
-            <Dependent Role="workOrders">
+            <Dependent Role="workOrder">
               <PropertyRef Name="workIntno" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_workPersonnels_agreementWorks">
-          <End Role="agreementWorks" Type="Self.agreementWork" Multiplicity="1" />
-          <End Role="workPersonnels" Type="Self.workPersonnel" Multiplicity="*" />
+          <End Type="DUBBDBModel.agreementWork" Role="agreementWork" Multiplicity="1" />
+          <End Type="DUBBDBModel.workPersonnel" Role="workPersonnel" Multiplicity="*" />
           <ReferentialConstraint>
-            <Principal Role="agreementWorks">
+            <Principal Role="agreementWork">
               <PropertyRef Name="workIntno" />
             </Principal>
-            <Dependent Role="workPersonnels">
+            <Dependent Role="workPersonnel">
               <PropertyRef Name="workIntno" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_carrierSchedules_carriers">
-          <End Role="carriers" Type="Self.carrier" Multiplicity="1" />
-          <End Role="carrierSchedules" Type="Self.carrierSchedule" Multiplicity="*" />
+          <End Type="DUBBDBModel.carrier" Role="carrier" Multiplicity="1" />
+          <End Type="DUBBDBModel.carrierSchedule" Role="carrierSchedule" Multiplicity="*" />
           <ReferentialConstraint>
-            <Principal Role="carriers">
+            <Principal Role="carrier">
               <PropertyRef Name="carrierIntno" />
             </Principal>
-            <Dependent Role="carrierSchedules">
+            <Dependent Role="carrierSchedule">
               <PropertyRef Name="carrierIntno" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_shipments_carriers">
-          <End Role="carriers" Type="Self.carrier" Multiplicity="0..1" />
-          <End Role="shipments" Type="Self.shipment" Multiplicity="*" />
+          <End Type="DUBBDBModel.carrier" Role="carrier" Multiplicity="0..1" />
+          <End Type="DUBBDBModel.shipment" Role="shipment" Multiplicity="*" />
           <ReferentialConstraint>
-            <Principal Role="carriers">
+            <Principal Role="carrier">
               <PropertyRef Name="carrierIntno" />
             </Principal>
-            <Dependent Role="shipments">
+            <Dependent Role="shipment">
               <PropertyRef Name="carrierIntno" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_shipments_carrierSchedules">
-          <End Role="carrierSchedules" Type="Self.carrierSchedule" Multiplicity="0..1" />
-          <End Role="shipments" Type="Self.shipment" Multiplicity="*" />
+          <End Type="DUBBDBModel.carrierSchedule" Role="carrierSchedule" Multiplicity="0..1" />
+          <End Type="DUBBDBModel.shipment" Role="shipment" Multiplicity="*" />
           <ReferentialConstraint>
-            <Principal Role="carrierSchedules">
+            <Principal Role="carrierSchedule">
               <PropertyRef Name="carrierScheduleIntno" />
             </Principal>
-            <Dependent Role="shipments">
+            <Dependent Role="shipment">
               <PropertyRef Name="carrierScheduleIntno" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_shipments_clients">
-          <End Role="clients" Type="Self.client" Multiplicity="1" />
-          <End Role="shipments" Type="Self.shipment" Multiplicity="*" />
+          <End Type="DUBBDBModel.client" Role="client" Multiplicity="1" />
+          <End Type="DUBBDBModel.shipment" Role="shipment" Multiplicity="*" />
           <ReferentialConstraint>
-            <Principal Role="clients">
+            <Principal Role="client">
               <PropertyRef Name="clientIntno" />
             </Principal>
-            <Dependent Role="shipments">
+            <Dependent Role="shipment">
               <PropertyRef Name="clientIntno" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_workOrders_clients">
-          <End Role="clients" Type="Self.client" Multiplicity="1" />
-          <End Role="workOrders" Type="Self.workOrder" Multiplicity="*" />
+          <End Type="DUBBDBModel.client" Role="client" Multiplicity="1" />
+          <End Type="DUBBDBModel.workOrder" Role="workOrder" Multiplicity="*" />
           <ReferentialConstraint>
-            <Principal Role="clients">
+            <Principal Role="client">
               <PropertyRef Name="clientIntno" />
             </Principal>
-            <Dependent Role="workOrders">
+            <Dependent Role="workOrder">
               <PropertyRef Name="clientIntno" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_deliveryFeedbacks_orderTrnHdrs">
-          <End Role="orderTrnHdrs" Type="Self.orderTrnHdr" Multiplicity="1" />
-          <End Role="deliveryFeedbacks" Type="Self.deliveryFeedback" Multiplicity="*" />
+          <End Type="DUBBDBModel.orderTrnHdr" Role="orderTrnHdr" Multiplicity="1" />
+          <End Type="DUBBDBModel.deliveryFeedback" Role="deliveryFeedback" Multiplicity="*" />
           <ReferentialConstraint>
-            <Principal Role="orderTrnHdrs">
+            <Principal Role="orderTrnHdr">
               <PropertyRef Name="orderTrnHdrIntno" />
             </Principal>
-            <Dependent Role="deliveryFeedbacks">
+            <Dependent Role="deliveryFeedback">
               <PropertyRef Name="orderTrnHdrIntno" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_feedbackActions_deliveryFeedbacks">
-          <End Role="deliveryFeedbacks" Type="Self.deliveryFeedback" Multiplicity="1" />
-          <End Role="feedbackActions" Type="Self.feedbackAction" Multiplicity="*" />
+          <End Type="DUBBDBModel.deliveryFeedback" Role="deliveryFeedback" Multiplicity="1" />
+          <End Type="DUBBDBModel.feedbackAction" Role="feedbackAction" Multiplicity="*" />
           <ReferentialConstraint>
-            <Principal Role="deliveryFeedbacks">
+            <Principal Role="deliveryFeedback">
               <PropertyRef Name="feedbackIntno" />
             </Principal>
-            <Dependent Role="feedbackActions">
+            <Dependent Role="feedbackAction">
               <PropertyRef Name="feedbackIntno" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_dubbingAppointments_dubbingSheetHdrs1">
-          <End Role="dubbingSheetHdrs" Type="Self.dubbingSheetHdr" Multiplicity="1" />
-          <End Role="dubbingAppointments" Type="Self.dubbingAppointment" Multiplicity="*" />
+          <End Type="DUBBDBModel.dubbingSheetHdr" Role="dubbingSheetHdr" Multiplicity="1" />
+          <End Type="DUBBDBModel.dubbingAppointment" Role="dubbingAppointment" Multiplicity="*" />
           <ReferentialConstraint>
-            <Principal Role="dubbingSheetHdrs">
+            <Principal Role="dubbingSheetHdr">
               <PropertyRef Name="dubbSheetHdrIntno" />
             </Principal>
-            <Dependent Role="dubbingAppointments">
+            <Dependent Role="dubbingAppointment">
               <PropertyRef Name="dubbSheetHdrIntno" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_dubbingAppointments_dubbingTrnDtls">
-          <End Role="dubbingTrnDtls" Type="Self.dubbingTrnDtl" Multiplicity="1" />
-          <End Role="dubbingAppointments" Type="Self.dubbingAppointment" Multiplicity="*" />
+          <End Type="DUBBDBModel.dubbingTrnDtl" Role="dubbingTrnDtl" Multiplicity="1" />
+          <End Type="DUBBDBModel.dubbingAppointment" Role="dubbingAppointment" Multiplicity="*" />
           <ReferentialConstraint>
-            <Principal Role="dubbingTrnDtls">
+            <Principal Role="dubbingTrnDtl">
               <PropertyRef Name="dubbTrnDtlIntno" />
             </Principal>
-            <Dependent Role="dubbingAppointments">
+            <Dependent Role="dubbingAppointment">
               <PropertyRef Name="dubbTrnDtlIntno" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_dubbingSheetDtls_dubbingSheetHdrs">
-          <End Role="dubbingSheetHdrs" Type="Self.dubbingSheetHdr" Multiplicity="1" />
-          <End Role="dubbingSheetDtls" Type="Self.dubbingSheetDtl" Multiplicity="*" />
+          <End Type="DUBBDBModel.dubbingSheetHdr" Role="dubbingSheetHdr" Multiplicity="1" />
+          <End Type="DUBBDBModel.dubbingSheetDtl" Role="dubbingSheetDtl" Multiplicity="*" />
           <ReferentialConstraint>
-            <Principal Role="dubbingSheetHdrs">
+            <Principal Role="dubbingSheetHdr">
               <PropertyRef Name="dubbSheetHdrIntno" />
             </Principal>
-            <Dependent Role="dubbingSheetDtls">
+            <Dependent Role="dubbingSheetDtl">
               <PropertyRef Name="dubbSheetHdrIntno" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_dubbingSheetDtls_employees">
-          <End Role="employees" Type="Self.employee" Multiplicity="0..1" />
-          <End Role="dubbingSheetDtls" Type="Self.dubbingSheetDtl" Multiplicity="*" />
+          <End Type="DUBBDBModel.employee" Role="employee" Multiplicity="0..1" />
+          <End Type="DUBBDBModel.dubbingSheetDtl" Role="dubbingSheetDtl" Multiplicity="*" />
           <ReferentialConstraint>
-            <Principal Role="employees">
+            <Principal Role="employee">
               <PropertyRef Name="empIntno" />
             </Principal>
-            <Dependent Role="dubbingSheetDtls">
+            <Dependent Role="dubbingSheetDtl">
               <PropertyRef Name="supervisor" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_dubbingSheetDtls_employees1">
-          <End Role="employees" Type="Self.employee" Multiplicity="0..1" />
-          <End Role="dubbingSheetDtls" Type="Self.dubbingSheetDtl" Multiplicity="*" />
+          <End Type="DUBBDBModel.employee" Role="employee" Multiplicity="0..1" />
+          <End Type="DUBBDBModel.dubbingSheetDtl" Role="dubbingSheetDtl" Multiplicity="*" />
           <ReferentialConstraint>
-            <Principal Role="employees">
+            <Principal Role="employee">
               <PropertyRef Name="empIntno" />
             </Principal>
-            <Dependent Role="dubbingSheetDtls">
+            <Dependent Role="dubbingSheetDtl">
               <PropertyRef Name="soundTechnician" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_dubbingSheetDtls_employees2">
-          <End Role="employees" Type="Self.employee" Multiplicity="0..1" />
-          <End Role="dubbingSheetDtls" Type="Self.dubbingSheetDtl" Multiplicity="*" />
+          <End Type="DUBBDBModel.employee" Role="employee" Multiplicity="0..1" />
+          <End Type="DUBBDBModel.dubbingSheetDtl" Role="dubbingSheetDtl" Multiplicity="*" />
           <ReferentialConstraint>
-            <Principal Role="employees">
+            <Principal Role="employee">
               <PropertyRef Name="empIntno" />
             </Principal>
-            <Dependent Role="dubbingSheetDtls">
+            <Dependent Role="dubbingSheetDtl">
               <PropertyRef Name="assistant" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_dubbingSheetDtls_orderTrnHdrs">
-          <End Role="orderTrnHdrs" Type="Self.orderTrnHdr" Multiplicity="1" />
-          <End Role="dubbingSheetDtls" Type="Self.dubbingSheetDtl" Multiplicity="*" />
+          <End Type="DUBBDBModel.orderTrnHdr" Role="orderTrnHdr" Multiplicity="1" />
+          <End Type="DUBBDBModel.dubbingSheetDtl" Role="dubbingSheetDtl" Multiplicity="*" />
           <ReferentialConstraint>
-            <Principal Role="orderTrnHdrs">
+            <Principal Role="orderTrnHdr">
               <PropertyRef Name="orderTrnHdrIntno" />
             </Principal>
-            <Dependent Role="dubbingSheetDtls">
+            <Dependent Role="dubbingSheetDtl">
               <PropertyRef Name="orderTrnHdrIntno" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_dubbingSheetHdrs_orderTrnHdrs">
-          <End Role="orderTrnHdrs" Type="Self.orderTrnHdr" Multiplicity="1" />
-          <End Role="dubbingSheetHdrs" Type="Self.dubbingSheetHdr" Multiplicity="*" />
+          <End Type="DUBBDBModel.orderTrnHdr" Role="orderTrnHdr" Multiplicity="1" />
+          <End Type="DUBBDBModel.dubbingSheetHdr" Role="dubbingSheetHdr" Multiplicity="*" />
           <ReferentialConstraint>
-            <Principal Role="orderTrnHdrs">
+            <Principal Role="orderTrnHdr">
               <PropertyRef Name="orderTrnHdrIntno" />
             </Principal>
-            <Dependent Role="dubbingSheetHdrs">
+            <Dependent Role="dubbingSheetHdr">
               <PropertyRef Name="orderTrnHdrIntno" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_dubbingSheetHdrs_voiceActors">
-          <End Role="voiceActors" Type="Self.voiceActor" Multiplicity="1" />
-          <End Role="dubbingSheetHdrs" Type="Self.dubbingSheetHdr" Multiplicity="*" />
+          <End Type="DUBBDBModel.voiceActor" Role="voiceActor" Multiplicity="1" />
+          <End Type="DUBBDBModel.dubbingSheetHdr" Role="dubbingSheetHdr" Multiplicity="*" />
           <ReferentialConstraint>
-            <Principal Role="voiceActors">
+            <Principal Role="voiceActor">
               <PropertyRef Name="voiceActorIntno" />
             </Principal>
-            <Dependent Role="dubbingSheetHdrs">
+            <Dependent Role="dubbingSheetHdr">
               <PropertyRef Name="voiceActorIntno" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_dubbingSheetHdrs_workCharacters">
-          <End Role="workCharacters" Type="Self.workCharacter" Multiplicity="0..1" />
-          <End Role="dubbingSheetHdrs" Type="Self.dubbingSheetHdr" Multiplicity="*" />
+          <End Type="DUBBDBModel.workCharacter" Role="workCharacter" Multiplicity="0..1" />
+          <End Type="DUBBDBModel.dubbingSheetHdr" Role="dubbingSheetHdr" Multiplicity="*" />
           <ReferentialConstraint>
-            <Principal Role="workCharacters">
+            <Principal Role="workCharacter">
               <PropertyRef Name="workCharacterIntno" />
             </Principal>
-            <Dependent Role="dubbingSheetHdrs">
+            <Dependent Role="dubbingSheetHdr">
               <PropertyRef Name="workCharacterIntno" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_dubbingTrnDtls_dubbingTrnHdrs">
-          <End Role="dubbingTrnHdrs" Type="Self.dubbingTrnHdr" Multiplicity="1" />
-          <End Role="dubbingTrnDtls" Type="Self.dubbingTrnDtl" Multiplicity="*" />
+          <End Type="DUBBDBModel.dubbingTrnHdr" Role="dubbingTrnHdr" Multiplicity="1" />
+          <End Type="DUBBDBModel.dubbingTrnDtl" Role="dubbingTrnDtl" Multiplicity="*" />
           <ReferentialConstraint>
-            <Principal Role="dubbingTrnHdrs">
+            <Principal Role="dubbingTrnHdr">
               <PropertyRef Name="dubbTrnHdrIntno" />
             </Principal>
-            <Dependent Role="dubbingTrnDtls">
+            <Dependent Role="dubbingTrnDtl">
               <PropertyRef Name="dubbTrnHdrIntno" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_dubbingTrnDtls_employees">
-          <End Role="employees" Type="Self.employee" Multiplicity="0..1" />
-          <End Role="dubbingTrnDtls" Type="Self.dubbingTrnDtl" Multiplicity="*" />
+          <End Type="DUBBDBModel.employee" Role="employee" Multiplicity="0..1" />
+          <End Type="DUBBDBModel.dubbingTrnDtl" Role="dubbingTrnDtl" Multiplicity="*" />
           <ReferentialConstraint>
-            <Principal Role="employees">
+            <Principal Role="employee">
               <PropertyRef Name="empIntno" />
             </Principal>
-            <Dependent Role="dubbingTrnDtls">
+            <Dependent Role="dubbingTrnDtl">
               <PropertyRef Name="supervisor" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_dubbingTrnDtls_employees1">
-          <End Role="employees" Type="Self.employee" Multiplicity="0..1" />
-          <End Role="dubbingTrnDtls" Type="Self.dubbingTrnDtl" Multiplicity="*" />
+          <End Type="DUBBDBModel.employee" Role="employee" Multiplicity="0..1" />
+          <End Type="DUBBDBModel.dubbingTrnDtl" Role="dubbingTrnDtl" Multiplicity="*" />
           <ReferentialConstraint>
-            <Principal Role="employees">
+            <Principal Role="employee">
               <PropertyRef Name="empIntno" />
             </Principal>
-            <Dependent Role="dubbingTrnDtls">
+            <Dependent Role="dubbingTrnDtl">
               <PropertyRef Name="soundTechnician" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_dubbingTrnDtls_employees2">
-          <End Role="employees" Type="Self.employee" Multiplicity="0..1" />
-          <End Role="dubbingTrnDtls" Type="Self.dubbingTrnDtl" Multiplicity="*" />
+          <End Type="DUBBDBModel.employee" Role="employee" Multiplicity="0..1" />
+          <End Type="DUBBDBModel.dubbingTrnDtl" Role="dubbingTrnDtl" Multiplicity="*" />
           <ReferentialConstraint>
-            <Principal Role="employees">
+            <Principal Role="employee">
               <PropertyRef Name="empIntno" />
             </Principal>
-            <Dependent Role="dubbingTrnDtls">
+            <Dependent Role="dubbingTrnDtl">
               <PropertyRef Name="assistant" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_dubbingTrnDtls_orderTrnHdrs">
-          <End Role="orderTrnHdrs" Type="Self.orderTrnHdr" Multiplicity="1" />
-          <End Role="dubbingTrnDtls" Type="Self.dubbingTrnDtl" Multiplicity="*" />
+          <End Type="DUBBDBModel.orderTrnHdr" Role="orderTrnHdr" Multiplicity="1" />
+          <End Type="DUBBDBModel.dubbingTrnDtl" Role="dubbingTrnDtl" Multiplicity="*" />
           <ReferentialConstraint>
-            <Principal Role="orderTrnHdrs">
+            <Principal Role="orderTrnHdr">
               <PropertyRef Name="orderTrnHdrIntno" />
             </Principal>
-            <Dependent Role="dubbingTrnDtls">
+            <Dependent Role="dubbingTrnDtl">
               <PropertyRef Name="orderTrnHdrIntno" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_payments_dubbingTrnHdrs">
-          <End Role="dubbingTrnHdrs" Type="Self.dubbingTrnHdr" Multiplicity="1" />
-          <End Role="payments" Type="Self.payment" Multiplicity="*" />
+          <End Type="DUBBDBModel.dubbingTrnHdr" Role="dubbingTrnHdr" Multiplicity="1" />
+          <End Type="DUBBDBModel.payment" Role="payment" Multiplicity="*" />
           <ReferentialConstraint>
-            <Principal Role="dubbingTrnHdrs">
+            <Principal Role="dubbingTrnHdr">
               <PropertyRef Name="dubbTrnHdrIntno" />
             </Principal>
-            <Dependent Role="payments">
+            <Dependent Role="payment">
               <PropertyRef Name="dubbTrnHdrIntno" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_orderBatchTrnHdrs_employees">
-          <End Role="employees" Type="Self.employee" Multiplicity="1" />
-          <End Role="orderBatchTrnHdrs" Type="Self.orderBatchTrnHdr" Multiplicity="*" />
+          <End Type="DUBBDBModel.employee" Role="employee" Multiplicity="1" />
+          <End Type="DUBBDBModel.orderBatchTrnHdr" Role="orderBatchTrnHdr" Multiplicity="*" />
           <ReferentialConstraint>
-            <Principal Role="employees">
+            <Principal Role="employee">
               <PropertyRef Name="empIntno" />
             </Principal>
-            <Dependent Role="orderBatchTrnHdrs">
+            <Dependent Role="orderBatchTrnHdr">
               <PropertyRef Name="empIntno" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_payments_employees">
-          <End Role="employees" Type="Self.employee" Multiplicity="0..1" />
-          <End Role="payments" Type="Self.payment" Multiplicity="*" />
+          <End Type="DUBBDBModel.employee" Role="employee" Multiplicity="0..1" />
+          <End Type="DUBBDBModel.payment" Role="payment" Multiplicity="*" />
           <ReferentialConstraint>
-            <Principal Role="employees">
+            <Principal Role="employee">
               <PropertyRef Name="empIntno" />
             </Principal>
-            <Dependent Role="payments">
+            <Dependent Role="payment">
               <PropertyRef Name="empIntno" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_workPersonnels_employees">
-          <End Role="employees" Type="Self.employee" Multiplicity="1" />
-          <End Role="workPersonnels" Type="Self.workPersonnel" Multiplicity="*" />
+          <End Type="DUBBDBModel.employee" Role="employee" Multiplicity="1" />
+          <End Type="DUBBDBModel.workPersonnel" Role="workPersonnel" Multiplicity="*" />
           <ReferentialConstraint>
-            <Principal Role="employees">
+            <Principal Role="employee">
               <PropertyRef Name="empIntno" />
             </Principal>
-            <Dependent Role="workPersonnels">
+            <Dependent Role="workPersonnel">
               <PropertyRef Name="empIntno" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_orderBatchTrnHdrs_workOrders">
-          <End Role="workOrders" Type="Self.workOrder" Multiplicity="1" />
-          <End Role="orderBatchTrnHdrs" Type="Self.orderBatchTrnHdr" Multiplicity="*" />
+          <End Type="DUBBDBModel.workOrder" Role="workOrder" Multiplicity="1" />
+          <End Type="DUBBDBModel.orderBatchTrnHdr" Role="orderBatchTrnHdr" Multiplicity="*" />
           <ReferentialConstraint>
-            <Principal Role="workOrders">
+            <Principal Role="workOrder">
               <PropertyRef Name="orderIntno" />
             </Principal>
-            <Dependent Role="orderBatchTrnHdrs">
+            <Dependent Role="orderBatchTrnHdr">
               <PropertyRef Name="orderIntno" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_orderChecks_orderTrnHdrs">
-          <End Role="orderTrnHdrs" Type="Self.orderTrnHdr" Multiplicity="1" />
-          <End Role="orderChecks" Type="Self.orderCheck" Multiplicity="*" />
+          <End Type="DUBBDBModel.orderTrnHdr" Role="orderTrnHdr" Multiplicity="1" />
+          <End Type="DUBBDBModel.orderCheck" Role="orderCheck" Multiplicity="*" />
           <ReferentialConstraint>
-            <Principal Role="orderTrnHdrs">
+            <Principal Role="orderTrnHdr">
               <PropertyRef Name="orderTrnHdrIntno" />
             </Principal>
-            <Dependent Role="orderChecks">
+            <Dependent Role="orderCheck">
               <PropertyRef Name="orderTrnHdrIntno" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_orderTrnDtls_orderTrnHdrs">
-          <End Role="orderTrnHdrs" Type="Self.orderTrnHdr" Multiplicity="1" />
-          <End Role="orderTrnDtls" Type="Self.orderTrnDtl" Multiplicity="*" />
+          <End Type="DUBBDBModel.orderTrnHdr" Role="orderTrnHdr" Multiplicity="1" />
+          <End Type="DUBBDBModel.orderTrnDtl" Role="orderTrnDtl" Multiplicity="*" />
           <ReferentialConstraint>
-            <Principal Role="orderTrnHdrs">
+            <Principal Role="orderTrnHdr">
               <PropertyRef Name="orderTrnHdrIntno" />
             </Principal>
-            <Dependent Role="orderTrnDtls">
+            <Dependent Role="orderTrnDtl">
               <PropertyRef Name="orderTrnHdrIntno" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_orderTrnHdrs_workOrders">
-          <End Role="workOrders" Type="Self.workOrder" Multiplicity="1" />
-          <End Role="orderTrnHdrs" Type="Self.orderTrnHdr" Multiplicity="*" />
+          <End Type="DUBBDBModel.workOrder" Role="workOrder" Multiplicity="1" />
+          <End Type="DUBBDBModel.orderTrnHdr" Role="orderTrnHdr" Multiplicity="*" />
           <ReferentialConstraint>
-            <Principal Role="workOrders">
+            <Principal Role="workOrder">
               <PropertyRef Name="orderIntno" />
             </Principal>
-            <Dependent Role="orderTrnHdrs">
+            <Dependent Role="orderTrnHdr">
               <PropertyRef Name="orderIntno" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_shipments_orderTrnHdrs">
-          <End Role="orderTrnHdrs" Type="Self.orderTrnHdr" Multiplicity="1" />
-          <End Role="shipments" Type="Self.shipment" Multiplicity="*" />
+          <End Type="DUBBDBModel.orderTrnHdr" Role="orderTrnHdr" Multiplicity="1" />
+          <End Type="DUBBDBModel.shipment" Role="shipment" Multiplicity="*" />
           <ReferentialConstraint>
-            <Principal Role="orderTrnHdrs">
+            <Principal Role="orderTrnHdr">
               <PropertyRef Name="orderTrnHdrIntno" />
             </Principal>
-            <Dependent Role="shipments">
+            <Dependent Role="shipment">
               <PropertyRef Name="orderTrnHdrIntno" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_payments_voiceActors">
-          <End Role="voiceActors" Type="Self.voiceActor" Multiplicity="0..1" />
-          <End Role="payments" Type="Self.payment" Multiplicity="*" />
+          <End Type="DUBBDBModel.voiceActor" Role="voiceActor" Multiplicity="0..1" />
+          <End Type="DUBBDBModel.payment" Role="payment" Multiplicity="*" />
           <ReferentialConstraint>
-            <Principal Role="voiceActors">
+            <Principal Role="voiceActor">
               <PropertyRef Name="voiceActorIntno" />
             </Principal>
-            <Dependent Role="payments">
+            <Dependent Role="payment">
               <PropertyRef Name="voiceActorIntno" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_workActors_voiceActors">
-          <End Role="voiceActors" Type="Self.voiceActor" Multiplicity="1" />
-          <End Role="workActors" Type="Self.workActor" Multiplicity="*" />
+          <End Type="DUBBDBModel.voiceActor" Role="voiceActor" Multiplicity="1" />
+          <End Type="DUBBDBModel.workActor" Role="workActor" Multiplicity="*" />
           <ReferentialConstraint>
-            <Principal Role="voiceActors">
+            <Principal Role="voiceActor">
               <PropertyRef Name="voiceActorIntno" />
             </Principal>
-            <Dependent Role="workActors">
+            <Dependent Role="workActor">
               <PropertyRef Name="voiceActorIntno" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_workActors_workCharacters">
-          <End Role="workCharacters" Type="Self.workCharacter" Multiplicity="1" />
-          <End Role="workActors" Type="Self.workActor" Multiplicity="*" />
+          <End Type="DUBBDBModel.workCharacter" Role="workCharacter" Multiplicity="1" />
+          <End Type="DUBBDBModel.workActor" Role="workActor" Multiplicity="*" />
           <ReferentialConstraint>
-            <Principal Role="workCharacters">
+            <Principal Role="workCharacter">
               <PropertyRef Name="workCharacterIntno" />
             </Principal>
-            <Dependent Role="workActors">
+            <Dependent Role="workActor">
               <PropertyRef Name="workCharacterIntno" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <EntityContainer Name="DUBBDBEntities" annotation:LazyLoadingEnabled="true">
-          <EntitySet Name="agreements" EntityType="Self.agreement" />
-          <EntitySet Name="agreementSpecs" EntityType="Self.agreementSpec" />
-          <EntitySet Name="agreementTerms" EntityType="Self.agreementTerm" />
-          <EntitySet Name="agreementWorks" EntityType="Self.agreementWork" />
-          <EntitySet Name="carriers" EntityType="Self.carrier" />
-          <EntitySet Name="carrierSchedules" EntityType="Self.carrierSchedule" />
-          <EntitySet Name="clients" EntityType="Self.client" />
-          <EntitySet Name="contacts" EntityType="Self.contact" />
-          <EntitySet Name="deliveryFeedbacks" EntityType="Self.deliveryFeedback" />
-          <EntitySet Name="dubbDomains" EntityType="Self.dubbDomain" />
-          <EntitySet Name="dubbingAppointments" EntityType="Self.dubbingAppointment" />
-          <EntitySet Name="dubbingSheetDtls" EntityType="Self.dubbingSheetDtl" />
-          <EntitySet Name="dubbingSheetHdrs" EntityType="Self.dubbingSheetHdr" />
-          <EntitySet Name="dubbingTrnDtls" EntityType="Self.dubbingTrnDtl" />
-          <EntitySet Name="dubbingTrnHdrs" EntityType="Self.dubbingTrnHdr" />
-          <EntitySet Name="employees" EntityType="Self.employee" />
-          <EntitySet Name="feedbackActions" EntityType="Self.feedbackAction" />
-          <EntitySet Name="orderBatchTrnHdrs" EntityType="Self.orderBatchTrnHdr" />
-          <EntitySet Name="orderChecks" EntityType="Self.orderCheck" />
-          <EntitySet Name="orderTrnDtls" EntityType="Self.orderTrnDtl" />
-          <EntitySet Name="orderTrnHdrs" EntityType="Self.orderTrnHdr" />
-          <EntitySet Name="payments" EntityType="Self.payment" />
-          <EntitySet Name="shipments" EntityType="Self.shipment" />
-          <EntitySet Name="voiceActors" EntityType="Self.voiceActor" />
-          <EntitySet Name="workActors" EntityType="Self.workActor" />
-          <EntitySet Name="workCharacters" EntityType="Self.workCharacter" />
-          <EntitySet Name="workCharges" EntityType="Self.workCharge" />
-          <EntitySet Name="workOrders" EntityType="Self.workOrder" />
-          <EntitySet Name="workPersonnels" EntityType="Self.workPersonnel" />
-          <AssociationSet Name="FK_agreements_agreements" Association="Self.FK_agreements_agreements">
-            <End Role="agreements" EntitySet="agreements" />
-            <End Role="agreements1" EntitySet="agreements" />
-          </AssociationSet>
-          <AssociationSet Name="FK_agreements_clients" Association="Self.FK_agreements_clients">
-            <End Role="clients" EntitySet="clients" />
-            <End Role="agreements" EntitySet="agreements" />
-          </AssociationSet>
-          <AssociationSet Name="FK_agreementSpecs_agreements" Association="Self.FK_agreementSpecs_agreements">
-            <End Role="agreements" EntitySet="agreements" />
-            <End Role="agreementSpecs" EntitySet="agreementSpecs" />
-          </AssociationSet>
-          <AssociationSet Name="FK_agreementTerms_agreements" Association="Self.FK_agreementTerms_agreements">
-            <End Role="agreements" EntitySet="agreements" />
-            <End Role="agreementTerms" EntitySet="agreementTerms" />
-          </AssociationSet>
-          <AssociationSet Name="FK_agreementWorks_agreements" Association="Self.FK_agreementWorks_agreements">
-            <End Role="agreements" EntitySet="agreements" />
-            <End Role="agreementWorks" EntitySet="agreementWorks" />
-          </AssociationSet>
-          <AssociationSet Name="FK_agreementWorks_contacts" Association="Self.FK_agreementWorks_contacts">
-            <End Role="contacts" EntitySet="contacts" />
-            <End Role="agreementWorks" EntitySet="agreementWorks" />
-          </AssociationSet>
-          <AssociationSet Name="FK_orderBatchTrnHdrs_agreementWorks" Association="Self.FK_orderBatchTrnHdrs_agreementWorks">
-            <End Role="agreementWorks" EntitySet="agreementWorks" />
-            <End Role="orderBatchTrnHdrs" EntitySet="orderBatchTrnHdrs" />
-          </AssociationSet>
-          <AssociationSet Name="FK_orderTrnHdrs_agreementWorks" Association="Self.FK_orderTrnHdrs_agreementWorks">
-            <End Role="agreementWorks" EntitySet="agreementWorks" />
-            <End Role="orderTrnHdrs" EntitySet="orderTrnHdrs" />
-          </AssociationSet>
-          <AssociationSet Name="FK_payments_agreementWorks" Association="Self.FK_payments_agreementWorks">
-            <End Role="agreementWorks" EntitySet="agreementWorks" />
-            <End Role="payments" EntitySet="payments" />
-          </AssociationSet>
-          <AssociationSet Name="FK_workActors_agreementWorks" Association="Self.FK_workActors_agreementWorks">
-            <End Role="agreementWorks" EntitySet="agreementWorks" />
-            <End Role="workActors" EntitySet="workActors" />
-          </AssociationSet>
-          <AssociationSet Name="FK_workCharacters_agreementWorks" Association="Self.FK_workCharacters_agreementWorks">
-            <End Role="agreementWorks" EntitySet="agreementWorks" />
-            <End Role="workCharacters" EntitySet="workCharacters" />
-          </AssociationSet>
-          <AssociationSet Name="FK_workOrders_agreementWorks" Association="Self.FK_workOrders_agreementWorks">
-            <End Role="agreementWorks" EntitySet="agreementWorks" />
-            <End Role="workOrders" EntitySet="workOrders" />
-          </AssociationSet>
-          <AssociationSet Name="FK_workPersonnels_agreementWorks" Association="Self.FK_workPersonnels_agreementWorks">
-            <End Role="agreementWorks" EntitySet="agreementWorks" />
-            <End Role="workPersonnels" EntitySet="workPersonnels" />
-          </AssociationSet>
-          <AssociationSet Name="FK_carrierSchedules_carriers" Association="Self.FK_carrierSchedules_carriers">
-            <End Role="carriers" EntitySet="carriers" />
-            <End Role="carrierSchedules" EntitySet="carrierSchedules" />
-          </AssociationSet>
-          <AssociationSet Name="FK_shipments_carriers" Association="Self.FK_shipments_carriers">
-            <End Role="carriers" EntitySet="carriers" />
-            <End Role="shipments" EntitySet="shipments" />
-          </AssociationSet>
-          <AssociationSet Name="FK_shipments_carrierSchedules" Association="Self.FK_shipments_carrierSchedules">
-            <End Role="carrierSchedules" EntitySet="carrierSchedules" />
-            <End Role="shipments" EntitySet="shipments" />
-          </AssociationSet>
-          <AssociationSet Name="FK_shipments_clients" Association="Self.FK_shipments_clients">
-            <End Role="clients" EntitySet="clients" />
-            <End Role="shipments" EntitySet="shipments" />
-          </AssociationSet>
-          <AssociationSet Name="FK_workOrders_clients" Association="Self.FK_workOrders_clients">
-            <End Role="clients" EntitySet="clients" />
-            <End Role="workOrders" EntitySet="workOrders" />
-          </AssociationSet>
-          <AssociationSet Name="FK_deliveryFeedbacks_orderTrnHdrs" Association="Self.FK_deliveryFeedbacks_orderTrnHdrs">
-            <End Role="orderTrnHdrs" EntitySet="orderTrnHdrs" />
-            <End Role="deliveryFeedbacks" EntitySet="deliveryFeedbacks" />
-          </AssociationSet>
-          <AssociationSet Name="FK_feedbackActions_deliveryFeedbacks" Association="Self.FK_feedbackActions_deliveryFeedbacks">
-            <End Role="deliveryFeedbacks" EntitySet="deliveryFeedbacks" />
-            <End Role="feedbackActions" EntitySet="feedbackActions" />
-          </AssociationSet>
-          <AssociationSet Name="FK_dubbingAppointments_dubbingSheetHdrs1" Association="Self.FK_dubbingAppointments_dubbingSheetHdrs1">
-            <End Role="dubbingSheetHdrs" EntitySet="dubbingSheetHdrs" />
-            <End Role="dubbingAppointments" EntitySet="dubbingAppointments" />
-          </AssociationSet>
-          <AssociationSet Name="FK_dubbingAppointments_dubbingTrnDtls" Association="Self.FK_dubbingAppointments_dubbingTrnDtls">
-            <End Role="dubbingTrnDtls" EntitySet="dubbingTrnDtls" />
-            <End Role="dubbingAppointments" EntitySet="dubbingAppointments" />
-          </AssociationSet>
-          <AssociationSet Name="FK_dubbingSheetDtls_dubbingSheetHdrs" Association="Self.FK_dubbingSheetDtls_dubbingSheetHdrs">
-            <End Role="dubbingSheetHdrs" EntitySet="dubbingSheetHdrs" />
-            <End Role="dubbingSheetDtls" EntitySet="dubbingSheetDtls" />
-          </AssociationSet>
-          <AssociationSet Name="FK_dubbingSheetDtls_employees" Association="Self.FK_dubbingSheetDtls_employees">
-            <End Role="employees" EntitySet="employees" />
-            <End Role="dubbingSheetDtls" EntitySet="dubbingSheetDtls" />
-          </AssociationSet>
-          <AssociationSet Name="FK_dubbingSheetDtls_employees1" Association="Self.FK_dubbingSheetDtls_employees1">
-            <End Role="employees" EntitySet="employees" />
-            <End Role="dubbingSheetDtls" EntitySet="dubbingSheetDtls" />
-          </AssociationSet>
-          <AssociationSet Name="FK_dubbingSheetDtls_employees2" Association="Self.FK_dubbingSheetDtls_employees2">
-            <End Role="employees" EntitySet="employees" />
-            <End Role="dubbingSheetDtls" EntitySet="dubbingSheetDtls" />
-          </AssociationSet>
-          <AssociationSet Name="FK_dubbingSheetDtls_orderTrnHdrs" Association="Self.FK_dubbingSheetDtls_orderTrnHdrs">
-            <End Role="orderTrnHdrs" EntitySet="orderTrnHdrs" />
-            <End Role="dubbingSheetDtls" EntitySet="dubbingSheetDtls" />
-          </AssociationSet>
-          <AssociationSet Name="FK_dubbingSheetHdrs_orderTrnHdrs" Association="Self.FK_dubbingSheetHdrs_orderTrnHdrs">
-            <End Role="orderTrnHdrs" EntitySet="orderTrnHdrs" />
-            <End Role="dubbingSheetHdrs" EntitySet="dubbingSheetHdrs" />
-          </AssociationSet>
-          <AssociationSet Name="FK_dubbingSheetHdrs_voiceActors" Association="Self.FK_dubbingSheetHdrs_voiceActors">
-            <End Role="voiceActors" EntitySet="voiceActors" />
-            <End Role="dubbingSheetHdrs" EntitySet="dubbingSheetHdrs" />
-          </AssociationSet>
-          <AssociationSet Name="FK_dubbingSheetHdrs_workCharacters" Association="Self.FK_dubbingSheetHdrs_workCharacters">
-            <End Role="workCharacters" EntitySet="workCharacters" />
-            <End Role="dubbingSheetHdrs" EntitySet="dubbingSheetHdrs" />
-          </AssociationSet>
-          <AssociationSet Name="FK_dubbingTrnDtls_dubbingTrnHdrs" Association="Self.FK_dubbingTrnDtls_dubbingTrnHdrs">
-            <End Role="dubbingTrnHdrs" EntitySet="dubbingTrnHdrs" />
-            <End Role="dubbingTrnDtls" EntitySet="dubbingTrnDtls" />
-          </AssociationSet>
-          <AssociationSet Name="FK_dubbingTrnDtls_employees" Association="Self.FK_dubbingTrnDtls_employees">
-            <End Role="employees" EntitySet="employees" />
-            <End Role="dubbingTrnDtls" EntitySet="dubbingTrnDtls" />
-          </AssociationSet>
-          <AssociationSet Name="FK_dubbingTrnDtls_employees1" Association="Self.FK_dubbingTrnDtls_employees1">
-            <End Role="employees" EntitySet="employees" />
-            <End Role="dubbingTrnDtls" EntitySet="dubbingTrnDtls" />
-          </AssociationSet>
-          <AssociationSet Name="FK_dubbingTrnDtls_employees2" Association="Self.FK_dubbingTrnDtls_employees2">
-            <End Role="employees" EntitySet="employees" />
-            <End Role="dubbingTrnDtls" EntitySet="dubbingTrnDtls" />
-          </AssociationSet>
-          <AssociationSet Name="FK_dubbingTrnDtls_orderTrnHdrs" Association="Self.FK_dubbingTrnDtls_orderTrnHdrs">
-            <End Role="orderTrnHdrs" EntitySet="orderTrnHdrs" />
-            <End Role="dubbingTrnDtls" EntitySet="dubbingTrnDtls" />
-          </AssociationSet>
-          <AssociationSet Name="FK_payments_dubbingTrnHdrs" Association="Self.FK_payments_dubbingTrnHdrs">
-            <End Role="dubbingTrnHdrs" EntitySet="dubbingTrnHdrs" />
-            <End Role="payments" EntitySet="payments" />
-          </AssociationSet>
-          <AssociationSet Name="FK_orderBatchTrnHdrs_employees" Association="Self.FK_orderBatchTrnHdrs_employees">
-            <End Role="employees" EntitySet="employees" />
-            <End Role="orderBatchTrnHdrs" EntitySet="orderBatchTrnHdrs" />
-          </AssociationSet>
-          <AssociationSet Name="FK_payments_employees" Association="Self.FK_payments_employees">
-            <End Role="employees" EntitySet="employees" />
-            <End Role="payments" EntitySet="payments" />
-          </AssociationSet>
-          <AssociationSet Name="FK_workPersonnels_employees" Association="Self.FK_workPersonnels_employees">
-            <End Role="employees" EntitySet="employees" />
-            <End Role="workPersonnels" EntitySet="workPersonnels" />
-          </AssociationSet>
-          <AssociationSet Name="FK_orderBatchTrnHdrs_workOrders" Association="Self.FK_orderBatchTrnHdrs_workOrders">
-            <End Role="workOrders" EntitySet="workOrders" />
-            <End Role="orderBatchTrnHdrs" EntitySet="orderBatchTrnHdrs" />
-          </AssociationSet>
-          <AssociationSet Name="FK_orderChecks_orderTrnHdrs" Association="Self.FK_orderChecks_orderTrnHdrs">
-            <End Role="orderTrnHdrs" EntitySet="orderTrnHdrs" />
-            <End Role="orderChecks" EntitySet="orderChecks" />
-          </AssociationSet>
-          <AssociationSet Name="FK_orderTrnDtls_orderTrnHdrs" Association="Self.FK_orderTrnDtls_orderTrnHdrs">
-            <End Role="orderTrnHdrs" EntitySet="orderTrnHdrs" />
-            <End Role="orderTrnDtls" EntitySet="orderTrnDtls" />
-          </AssociationSet>
-          <AssociationSet Name="FK_orderTrnHdrs_workOrders" Association="Self.FK_orderTrnHdrs_workOrders">
-            <End Role="workOrders" EntitySet="workOrders" />
-            <End Role="orderTrnHdrs" EntitySet="orderTrnHdrs" />
-          </AssociationSet>
-          <AssociationSet Name="FK_shipments_orderTrnHdrs" Association="Self.FK_shipments_orderTrnHdrs">
-            <End Role="orderTrnHdrs" EntitySet="orderTrnHdrs" />
-            <End Role="shipments" EntitySet="shipments" />
-          </AssociationSet>
-          <AssociationSet Name="FK_payments_voiceActors" Association="Self.FK_payments_voiceActors">
-            <End Role="voiceActors" EntitySet="voiceActors" />
-            <End Role="payments" EntitySet="payments" />
-          </AssociationSet>
-          <AssociationSet Name="FK_workActors_voiceActors" Association="Self.FK_workActors_voiceActors">
-            <End Role="voiceActors" EntitySet="voiceActors" />
-            <End Role="workActors" EntitySet="workActors" />
-          </AssociationSet>
-          <AssociationSet Name="FK_workActors_workCharacters" Association="Self.FK_workActors_workCharacters">
-            <End Role="workCharacters" EntitySet="workCharacters" />
-            <End Role="workActors" EntitySet="workActors" />
-          </AssociationSet>
-        </EntityContainer>
+        <Association Name="webpages_UsersInRoles">
+          <End Type="DUBBDBModel.webpages_Roles" Role="webpages_Roles" Multiplicity="*" />
+          <End Type="DUBBDBModel.UserProfile" Role="UserProfile" Multiplicity="*" />
+        </Association>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -2526,456 +2688,514 @@
           <EntitySetMapping Name="agreements">
             <EntityTypeMapping TypeName="DUBBDBModel.agreement">
               <MappingFragment StoreEntitySet="agreements">
-                <ScalarProperty Name="agreementIntno" ColumnName="agreementIntno" />
-                <ScalarProperty Name="clientIntno" ColumnName="clientIntno" />
-                <ScalarProperty Name="agreementType" ColumnName="agreementType" />
-                <ScalarProperty Name="agreementName" ColumnName="agreementName" />
-                <ScalarProperty Name="othAgreementName" ColumnName="othAgreementName" />
-                <ScalarProperty Name="refAgreementIntno" ColumnName="refAgreementIntno" />
-                <ScalarProperty Name="fromDate" ColumnName="fromDate" />
-                <ScalarProperty Name="agreementDuration" ColumnName="agreementDuration" />
-                <ScalarProperty Name="durationUom" ColumnName="durationUom" />
-                <ScalarProperty Name="thruDate" ColumnName="thruDate" />
-                <ScalarProperty Name="remarks" ColumnName="remarks" />
                 <ScalarProperty Name="status" ColumnName="status" />
+                <ScalarProperty Name="remarks" ColumnName="remarks" />
+                <ScalarProperty Name="thruDate" ColumnName="thruDate" />
+                <ScalarProperty Name="durationUom" ColumnName="durationUom" />
+                <ScalarProperty Name="agreementDuration" ColumnName="agreementDuration" />
+                <ScalarProperty Name="fromDate" ColumnName="fromDate" />
+                <ScalarProperty Name="refAgreementIntno" ColumnName="refAgreementIntno" />
+                <ScalarProperty Name="othAgreementName" ColumnName="othAgreementName" />
+                <ScalarProperty Name="agreementName" ColumnName="agreementName" />
+                <ScalarProperty Name="agreementType" ColumnName="agreementType" />
+                <ScalarProperty Name="clientIntno" ColumnName="clientIntno" />
+                <ScalarProperty Name="agreementIntno" ColumnName="agreementIntno" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="agreementSpecs">
             <EntityTypeMapping TypeName="DUBBDBModel.agreementSpec">
               <MappingFragment StoreEntitySet="agreementSpecs">
-                <ScalarProperty Name="specsIntno" ColumnName="specsIntno" />
-                <ScalarProperty Name="agreementIntno" ColumnName="agreementIntno" />
-                <ScalarProperty Name="specsType" ColumnName="specsType" />
-                <ScalarProperty Name="specsSubtype" ColumnName="specsSubtype" />
                 <ScalarProperty Name="specsValue" ColumnName="specsValue" />
+                <ScalarProperty Name="specsSubtype" ColumnName="specsSubtype" />
+                <ScalarProperty Name="specsType" ColumnName="specsType" />
+                <ScalarProperty Name="agreementIntno" ColumnName="agreementIntno" />
+                <ScalarProperty Name="specsIntno" ColumnName="specsIntno" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="agreementTerms">
             <EntityTypeMapping TypeName="DUBBDBModel.agreementTerm">
               <MappingFragment StoreEntitySet="agreementTerms">
-                <ScalarProperty Name="termIntno" ColumnName="termIntno" />
-                <ScalarProperty Name="agreementIntno" ColumnName="agreementIntno" />
-                <ScalarProperty Name="sortOrder" ColumnName="sortOrder" />
                 <ScalarProperty Name="termDesc" ColumnName="termDesc" />
+                <ScalarProperty Name="sortOrder" ColumnName="sortOrder" />
+                <ScalarProperty Name="agreementIntno" ColumnName="agreementIntno" />
+                <ScalarProperty Name="termIntno" ColumnName="termIntno" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="agreementWorks">
             <EntityTypeMapping TypeName="DUBBDBModel.agreementWork">
               <MappingFragment StoreEntitySet="agreementWorks">
-                <ScalarProperty Name="workIntno" ColumnName="workIntno" />
-                <ScalarProperty Name="agreementIntno" ColumnName="agreementIntno" />
-                <ScalarProperty Name="workType" ColumnName="workType" />
-                <ScalarProperty Name="workName" ColumnName="workName" />
-                <ScalarProperty Name="othWorkName" ColumnName="othWorkName" />
-                <ScalarProperty Name="workNationality" ColumnName="workNationality" />
-                <ScalarProperty Name="workOriginalLanguage" ColumnName="workOriginalLanguage" />
-                <ScalarProperty Name="firstEpisodeShowDate" ColumnName="firstEpisodeShowDate" />
-                <ScalarProperty Name="totalNbrEpisodes" ColumnName="totalNbrEpisodes" />
-                <ScalarProperty Name="totalWeekNbrEpisodes" ColumnName="totalWeekNbrEpisodes" />
-                <ScalarProperty Name="contactIntno" ColumnName="contactIntno" />
                 <ScalarProperty Name="status" ColumnName="status" />
+                <ScalarProperty Name="contactIntno" ColumnName="contactIntno" />
+                <ScalarProperty Name="totalWeekNbrEpisodes" ColumnName="totalWeekNbrEpisodes" />
+                <ScalarProperty Name="totalNbrEpisodes" ColumnName="totalNbrEpisodes" />
+                <ScalarProperty Name="firstEpisodeShowDate" ColumnName="firstEpisodeShowDate" />
+                <ScalarProperty Name="workOriginalLanguage" ColumnName="workOriginalLanguage" />
+                <ScalarProperty Name="workNationality" ColumnName="workNationality" />
+                <ScalarProperty Name="othWorkName" ColumnName="othWorkName" />
+                <ScalarProperty Name="workName" ColumnName="workName" />
+                <ScalarProperty Name="workType" ColumnName="workType" />
+                <ScalarProperty Name="agreementIntno" ColumnName="agreementIntno" />
+                <ScalarProperty Name="workIntno" ColumnName="workIntno" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="carriers">
             <EntityTypeMapping TypeName="DUBBDBModel.carrier">
               <MappingFragment StoreEntitySet="carriers">
-                <ScalarProperty Name="carrierIntno" ColumnName="carrierIntno" />
-                <ScalarProperty Name="carrierType" ColumnName="carrierType" />
-                <ScalarProperty Name="carrierName" ColumnName="carrierName" />
-                <ScalarProperty Name="othCarrierName" ColumnName="othCarrierName" />
-                <ScalarProperty Name="remarks" ColumnName="remarks" />
                 <ScalarProperty Name="status" ColumnName="status" />
+                <ScalarProperty Name="remarks" ColumnName="remarks" />
+                <ScalarProperty Name="othCarrierName" ColumnName="othCarrierName" />
+                <ScalarProperty Name="carrierName" ColumnName="carrierName" />
+                <ScalarProperty Name="carrierType" ColumnName="carrierType" />
+                <ScalarProperty Name="carrierIntno" ColumnName="carrierIntno" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="carrierSchedules">
             <EntityTypeMapping TypeName="DUBBDBModel.carrierSchedule">
               <MappingFragment StoreEntitySet="carrierSchedules">
-                <ScalarProperty Name="carrierScheduleIntno" ColumnName="carrierScheduleIntno" />
-                <ScalarProperty Name="weekDay" ColumnName="weekDay" />
-                <ScalarProperty Name="carrierIntno" ColumnName="carrierIntno" />
-                <ScalarProperty Name="flightTime" ColumnName="flightTime" />
-                <ScalarProperty Name="departure" ColumnName="departure" />
-                <ScalarProperty Name="destination" ColumnName="destination" />
                 <ScalarProperty Name="status" ColumnName="status" />
+                <ScalarProperty Name="destination" ColumnName="destination" />
+                <ScalarProperty Name="departure" ColumnName="departure" />
+                <ScalarProperty Name="flightTime" ColumnName="flightTime" />
+                <ScalarProperty Name="carrierIntno" ColumnName="carrierIntno" />
+                <ScalarProperty Name="weekDay" ColumnName="weekDay" />
+                <ScalarProperty Name="carrierScheduleIntno" ColumnName="carrierScheduleIntno" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="clients">
             <EntityTypeMapping TypeName="DUBBDBModel.client">
               <MappingFragment StoreEntitySet="clients">
-                <ScalarProperty Name="clientIntno" ColumnName="clientIntno" />
-                <ScalarProperty Name="clientName" ColumnName="clientName" />
-                <ScalarProperty Name="clientShortName" ColumnName="clientShortName" />
-                <ScalarProperty Name="othClientName" ColumnName="othClientName" />
-                <ScalarProperty Name="othClientShortName" ColumnName="othClientShortName" />
                 <ScalarProperty Name="status" ColumnName="status" />
+                <ScalarProperty Name="othClientShortName" ColumnName="othClientShortName" />
+                <ScalarProperty Name="othClientName" ColumnName="othClientName" />
+                <ScalarProperty Name="clientShortName" ColumnName="clientShortName" />
+                <ScalarProperty Name="clientName" ColumnName="clientName" />
+                <ScalarProperty Name="clientIntno" ColumnName="clientIntno" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="contacts">
             <EntityTypeMapping TypeName="DUBBDBModel.contact">
               <MappingFragment StoreEntitySet="contacts">
-                <ScalarProperty Name="contactIntno" ColumnName="contactIntno" />
-                <ScalarProperty Name="contactParty" ColumnName="contactParty" />
-                <ScalarProperty Name="partyIntno" ColumnName="partyIntno" />
-                <ScalarProperty Name="salutation" ColumnName="salutation" />
-                <ScalarProperty Name="contactName" ColumnName="contactName" />
-                <ScalarProperty Name="othContactName" ColumnName="othContactName" />
-                <ScalarProperty Name="contactTitle" ColumnName="contactTitle" />
-                <ScalarProperty Name="contactPhoneNbr" ColumnName="contactPhoneNbr" />
-                <ScalarProperty Name="contactEmailAddr" ColumnName="contactEmailAddr" />
-                <ScalarProperty Name="mailingAddr" ColumnName="mailingAddr" />
-                <ScalarProperty Name="remarks" ColumnName="remarks" />
                 <ScalarProperty Name="status" ColumnName="status" />
+                <ScalarProperty Name="remarks" ColumnName="remarks" />
+                <ScalarProperty Name="mailingAddr" ColumnName="mailingAddr" />
+                <ScalarProperty Name="contactEmailAddr" ColumnName="contactEmailAddr" />
+                <ScalarProperty Name="contactPhoneNbr" ColumnName="contactPhoneNbr" />
+                <ScalarProperty Name="contactTitle" ColumnName="contactTitle" />
+                <ScalarProperty Name="othContactName" ColumnName="othContactName" />
+                <ScalarProperty Name="contactName" ColumnName="contactName" />
+                <ScalarProperty Name="salutation" ColumnName="salutation" />
+                <ScalarProperty Name="partyIntno" ColumnName="partyIntno" />
+                <ScalarProperty Name="contactParty" ColumnName="contactParty" />
+                <ScalarProperty Name="contactIntno" ColumnName="contactIntno" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="deliveryFeedbacks">
             <EntityTypeMapping TypeName="DUBBDBModel.deliveryFeedback">
               <MappingFragment StoreEntitySet="deliveryFeedbacks">
-                <ScalarProperty Name="feedbackIntno" ColumnName="feedbackIntno" />
-                <ScalarProperty Name="orderTrnHdrIntno" ColumnName="orderTrnHdrIntno" />
-                <ScalarProperty Name="feedbackType" ColumnName="feedbackType" />
-                <ScalarProperty Name="receivedDate" ColumnName="receivedDate" />
-                <ScalarProperty Name="clientRefNo" ColumnName="clientRefNo" />
-                <ScalarProperty Name="feedbackDesc" ColumnName="feedbackDesc" />
-                <ScalarProperty Name="refLocation" ColumnName="refLocation" />
-                <ScalarProperty Name="remarks" ColumnName="remarks" />
                 <ScalarProperty Name="status" ColumnName="status" />
+                <ScalarProperty Name="remarks" ColumnName="remarks" />
+                <ScalarProperty Name="refLocation" ColumnName="refLocation" />
+                <ScalarProperty Name="feedbackDesc" ColumnName="feedbackDesc" />
+                <ScalarProperty Name="clientRefNo" ColumnName="clientRefNo" />
+                <ScalarProperty Name="receivedDate" ColumnName="receivedDate" />
+                <ScalarProperty Name="feedbackType" ColumnName="feedbackType" />
+                <ScalarProperty Name="orderTrnHdrIntno" ColumnName="orderTrnHdrIntno" />
+                <ScalarProperty Name="feedbackIntno" ColumnName="feedbackIntno" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="dubbDomains">
             <EntityTypeMapping TypeName="DUBBDBModel.dubbDomain">
               <MappingFragment StoreEntitySet="dubbDomain">
-                <ScalarProperty Name="domainIntno" ColumnName="domainIntno" />
-                <ScalarProperty Name="domainName" ColumnName="domainName" />
-                <ScalarProperty Name="domainCode" ColumnName="domainCode" />
-                <ScalarProperty Name="domainValue" ColumnName="domainValue" />
-                <ScalarProperty Name="userMessage" ColumnName="userMessage" />
-                <ScalarProperty Name="valueUsage" ColumnName="valueUsage" />
-                <ScalarProperty Name="langCode" ColumnName="langCode" />
-                <ScalarProperty Name="sortOrder" ColumnName="sortOrder" />
-                <ScalarProperty Name="minAccessLevel" ColumnName="minAccessLevel" />
                 <ScalarProperty Name="status" ColumnName="status" />
+                <ScalarProperty Name="minAccessLevel" ColumnName="minAccessLevel" />
+                <ScalarProperty Name="sortOrder" ColumnName="sortOrder" />
+                <ScalarProperty Name="langCode" ColumnName="langCode" />
+                <ScalarProperty Name="valueUsage" ColumnName="valueUsage" />
+                <ScalarProperty Name="userMessage" ColumnName="userMessage" />
+                <ScalarProperty Name="domainValue" ColumnName="domainValue" />
+                <ScalarProperty Name="domainCode" ColumnName="domainCode" />
+                <ScalarProperty Name="domainName" ColumnName="domainName" />
+                <ScalarProperty Name="domainIntno" ColumnName="domainIntno" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="dubbingAppointments">
             <EntityTypeMapping TypeName="DUBBDBModel.dubbingAppointment">
               <MappingFragment StoreEntitySet="dubbingAppointments">
-                <ScalarProperty Name="dubbAppointIntno" ColumnName="dubbAppointIntno" />
-                <ScalarProperty Name="dubbTrnDtlIntno" ColumnName="dubbTrnDtlIntno" />
-                <ScalarProperty Name="dubbSheetHdrIntno" ColumnName="dubbSheetHdrIntno" />
-                <ScalarProperty Name="appointmentDate" ColumnName="appointmentDate" />
-                <ScalarProperty Name="fromTime" ColumnName="fromTime" />
-                <ScalarProperty Name="thruTime" ColumnName="thruTime" />
-                <ScalarProperty Name="totalScenes" ColumnName="totalScenes" />
-                <ScalarProperty Name="actualFromTime" ColumnName="actualFromTime" />
-                <ScalarProperty Name="actualThruTime" ColumnName="actualThruTime" />
-                <ScalarProperty Name="remarks" ColumnName="remarks" />
                 <ScalarProperty Name="totalMinutes" ColumnName="totalMinutes" />
+                <ScalarProperty Name="remarks" ColumnName="remarks" />
+                <ScalarProperty Name="actualThruTime" ColumnName="actualThruTime" />
+                <ScalarProperty Name="actualFromTime" ColumnName="actualFromTime" />
+                <ScalarProperty Name="totalScenes" ColumnName="totalScenes" />
+                <ScalarProperty Name="thruTime" ColumnName="thruTime" />
+                <ScalarProperty Name="fromTime" ColumnName="fromTime" />
+                <ScalarProperty Name="appointmentDate" ColumnName="appointmentDate" />
+                <ScalarProperty Name="dubbSheetHdrIntno" ColumnName="dubbSheetHdrIntno" />
+                <ScalarProperty Name="dubbTrnDtlIntno" ColumnName="dubbTrnDtlIntno" />
+                <ScalarProperty Name="dubbAppointIntno" ColumnName="dubbAppointIntno" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="dubbingSheetDtls">
             <EntityTypeMapping TypeName="DUBBDBModel.dubbingSheetDtl">
               <MappingFragment StoreEntitySet="dubbingSheetDtls">
-                <ScalarProperty Name="dubbSheetDtlIntno" ColumnName="dubbSheetDtlIntno" />
-                <ScalarProperty Name="orderTrnHdrIntno" ColumnName="orderTrnHdrIntno" />
-                <ScalarProperty Name="dubbSheetHdrIntno" ColumnName="dubbSheetHdrIntno" />
-                <ScalarProperty Name="sceneNo" ColumnName="sceneNo" />
-                <ScalarProperty Name="isTaken" ColumnName="isTaken" />
-                <ScalarProperty Name="studioNo" ColumnName="studioNo" />
-                <ScalarProperty Name="supervisor" ColumnName="supervisor" />
-                <ScalarProperty Name="soundTechnician" ColumnName="soundTechnician" />
-                <ScalarProperty Name="assistant" ColumnName="assistant" />
                 <ScalarProperty Name="takenTimeStamp" ColumnName="takenTimeStamp" />
+                <ScalarProperty Name="assistant" ColumnName="assistant" />
+                <ScalarProperty Name="soundTechnician" ColumnName="soundTechnician" />
+                <ScalarProperty Name="supervisor" ColumnName="supervisor" />
+                <ScalarProperty Name="studioNo" ColumnName="studioNo" />
+                <ScalarProperty Name="isTaken" ColumnName="isTaken" />
+                <ScalarProperty Name="sceneNo" ColumnName="sceneNo" />
+                <ScalarProperty Name="dubbSheetHdrIntno" ColumnName="dubbSheetHdrIntno" />
+                <ScalarProperty Name="orderTrnHdrIntno" ColumnName="orderTrnHdrIntno" />
+                <ScalarProperty Name="dubbSheetDtlIntno" ColumnName="dubbSheetDtlIntno" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="dubbingSheetHdrs">
             <EntityTypeMapping TypeName="DUBBDBModel.dubbingSheetHdr">
               <MappingFragment StoreEntitySet="dubbingSheetHdrs">
-                <ScalarProperty Name="dubbSheetHdrIntno" ColumnName="dubbSheetHdrIntno" />
-                <ScalarProperty Name="orderTrnHdrIntno" ColumnName="orderTrnHdrIntno" />
-                <ScalarProperty Name="workCharacterIntno" ColumnName="workCharacterIntno" />
-                <ScalarProperty Name="voiceActorIntno" ColumnName="voiceActorIntno" />
-                <ScalarProperty Name="actorName" ColumnName="actorName" />
                 <ScalarProperty Name="characterName" ColumnName="characterName" />
+                <ScalarProperty Name="actorName" ColumnName="actorName" />
+                <ScalarProperty Name="voiceActorIntno" ColumnName="voiceActorIntno" />
+                <ScalarProperty Name="workCharacterIntno" ColumnName="workCharacterIntno" />
+                <ScalarProperty Name="orderTrnHdrIntno" ColumnName="orderTrnHdrIntno" />
+                <ScalarProperty Name="dubbSheetHdrIntno" ColumnName="dubbSheetHdrIntno" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="dubbingTrnDtls">
             <EntityTypeMapping TypeName="DUBBDBModel.dubbingTrnDtl">
               <MappingFragment StoreEntitySet="dubbingTrnDtls">
-                <ScalarProperty Name="dubbTrnDtlIntno" ColumnName="dubbTrnDtlIntno" />
-                <ScalarProperty Name="dubbTrnHdrIntno" ColumnName="dubbTrnHdrIntno" />
-                <ScalarProperty Name="orderTrnHdrIntno" ColumnName="orderTrnHdrIntno" />
-                <ScalarProperty Name="dubbingDate" ColumnName="dubbingDate" />
-                <ScalarProperty Name="studioNo" ColumnName="studioNo" />
-                <ScalarProperty Name="supervisor" ColumnName="supervisor" />
-                <ScalarProperty Name="soundTechnician" ColumnName="soundTechnician" />
-                <ScalarProperty Name="assistant" ColumnName="assistant" />
                 <ScalarProperty Name="status" ColumnName="status" />
+                <ScalarProperty Name="assistant" ColumnName="assistant" />
+                <ScalarProperty Name="soundTechnician" ColumnName="soundTechnician" />
+                <ScalarProperty Name="supervisor" ColumnName="supervisor" />
+                <ScalarProperty Name="studioNo" ColumnName="studioNo" />
+                <ScalarProperty Name="dubbingDate" ColumnName="dubbingDate" />
+                <ScalarProperty Name="orderTrnHdrIntno" ColumnName="orderTrnHdrIntno" />
+                <ScalarProperty Name="dubbTrnHdrIntno" ColumnName="dubbTrnHdrIntno" />
+                <ScalarProperty Name="dubbTrnDtlIntno" ColumnName="dubbTrnDtlIntno" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="dubbingTrnHdrs">
             <EntityTypeMapping TypeName="DUBBDBModel.dubbingTrnHdr">
               <MappingFragment StoreEntitySet="dubbingTrnHdrs">
-                <ScalarProperty Name="dubbTrnHdrIntno" ColumnName="dubbTrnHdrIntno" />
-                <ScalarProperty Name="fromDate" ColumnName="fromDate" />
-                <ScalarProperty Name="thruDate" ColumnName="thruDate" />
-                <ScalarProperty Name="isPaid" ColumnName="isPaid" />
                 <ScalarProperty Name="status" ColumnName="status" />
+                <ScalarProperty Name="isPaid" ColumnName="isPaid" />
+                <ScalarProperty Name="thruDate" ColumnName="thruDate" />
+                <ScalarProperty Name="fromDate" ColumnName="fromDate" />
+                <ScalarProperty Name="dubbTrnHdrIntno" ColumnName="dubbTrnHdrIntno" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="employees">
             <EntityTypeMapping TypeName="DUBBDBModel.employee">
               <MappingFragment StoreEntitySet="employees">
-                <ScalarProperty Name="empIntno" ColumnName="empIntno" />
-                <ScalarProperty Name="empType" ColumnName="empType" />
-                <ScalarProperty Name="empUID" ColumnName="empUID" />
-                <ScalarProperty Name="fullName" ColumnName="fullName" />
-                <ScalarProperty Name="othFullName" ColumnName="othFullName" />
-                <ScalarProperty Name="mobileNo" ColumnName="mobileNo" />
-                <ScalarProperty Name="landLineNo" ColumnName="landLineNo" />
-                <ScalarProperty Name="email" ColumnName="email" />
-                <ScalarProperty Name="status" ColumnName="status" />
                 <ScalarProperty Name="accountNo" ColumnName="accountNo" />
+                <ScalarProperty Name="status" ColumnName="status" />
+                <ScalarProperty Name="email" ColumnName="email" />
+                <ScalarProperty Name="landLineNo" ColumnName="landLineNo" />
+                <ScalarProperty Name="mobileNo" ColumnName="mobileNo" />
+                <ScalarProperty Name="othFullName" ColumnName="othFullName" />
+                <ScalarProperty Name="fullName" ColumnName="fullName" />
+                <ScalarProperty Name="empUID" ColumnName="empUID" />
+                <ScalarProperty Name="empType" ColumnName="empType" />
+                <ScalarProperty Name="empIntno" ColumnName="empIntno" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="feedbackActions">
             <EntityTypeMapping TypeName="DUBBDBModel.feedbackAction">
               <MappingFragment StoreEntitySet="feedbackActions">
-                <ScalarProperty Name="actionIntno" ColumnName="actionIntno" />
-                <ScalarProperty Name="feedbackIntno" ColumnName="feedbackIntno" />
-                <ScalarProperty Name="actionParty" ColumnName="actionParty" />
-                <ScalarProperty Name="actionToBeTaken" ColumnName="actionToBeTaken" />
-                <ScalarProperty Name="actionDate" ColumnName="actionDate" />
-                <ScalarProperty Name="checkedBy" ColumnName="checkedBy" />
-                <ScalarProperty Name="checkedDate" ColumnName="checkedDate" />
                 <ScalarProperty Name="status" ColumnName="status" />
+                <ScalarProperty Name="checkedDate" ColumnName="checkedDate" />
+                <ScalarProperty Name="checkedBy" ColumnName="checkedBy" />
+                <ScalarProperty Name="actionDate" ColumnName="actionDate" />
+                <ScalarProperty Name="actionToBeTaken" ColumnName="actionToBeTaken" />
+                <ScalarProperty Name="actionParty" ColumnName="actionParty" />
+                <ScalarProperty Name="feedbackIntno" ColumnName="feedbackIntno" />
+                <ScalarProperty Name="actionIntno" ColumnName="actionIntno" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="orderBatchTrnHdrs">
             <EntityTypeMapping TypeName="DUBBDBModel.orderBatchTrnHdr">
               <MappingFragment StoreEntitySet="orderBatchTrnHdrs">
-                <ScalarProperty Name="orderBatchTrnIntno" ColumnName="orderBatchTrnIntno" />
-                <ScalarProperty Name="orderIntno" ColumnName="orderIntno" />
-                <ScalarProperty Name="workIntno" ColumnName="workIntno" />
-                <ScalarProperty Name="trnType" ColumnName="trnType" />
-                <ScalarProperty Name="fromEpisode" ColumnName="fromEpisode" />
-                <ScalarProperty Name="thruEpisode" ColumnName="thruEpisode" />
-                <ScalarProperty Name="trnDate" ColumnName="trnDate" />
-                <ScalarProperty Name="empIntno" ColumnName="empIntno" />
-                <ScalarProperty Name="trnDesc" ColumnName="trnDesc" />
-                <ScalarProperty Name="remarks" ColumnName="remarks" />
-                <ScalarProperty Name="updatedBy" ColumnName="updatedBy" />
-                <ScalarProperty Name="lastUpdated" ColumnName="lastUpdated" />
                 <ScalarProperty Name="status" ColumnName="status" />
+                <ScalarProperty Name="lastUpdated" ColumnName="lastUpdated" />
+                <ScalarProperty Name="updatedBy" ColumnName="updatedBy" />
+                <ScalarProperty Name="remarks" ColumnName="remarks" />
+                <ScalarProperty Name="trnDesc" ColumnName="trnDesc" />
+                <ScalarProperty Name="empIntno" ColumnName="empIntno" />
+                <ScalarProperty Name="trnDate" ColumnName="trnDate" />
+                <ScalarProperty Name="thruEpisode" ColumnName="thruEpisode" />
+                <ScalarProperty Name="fromEpisode" ColumnName="fromEpisode" />
+                <ScalarProperty Name="trnType" ColumnName="trnType" />
+                <ScalarProperty Name="workIntno" ColumnName="workIntno" />
+                <ScalarProperty Name="orderIntno" ColumnName="orderIntno" />
+                <ScalarProperty Name="orderBatchTrnIntno" ColumnName="orderBatchTrnIntno" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="orderChecks">
             <EntityTypeMapping TypeName="DUBBDBModel.orderCheck">
               <MappingFragment StoreEntitySet="orderChecks">
-                <ScalarProperty Name="orderCheckIntno" ColumnName="orderCheckIntno" />
-                <ScalarProperty Name="orderTrnHdrIntno" ColumnName="orderTrnHdrIntno" />
-                <ScalarProperty Name="checkType" ColumnName="checkType" />
                 <ScalarProperty Name="isAccepted" ColumnName="isAccepted" />
-                </MappingFragment>
+                <ScalarProperty Name="checkType" ColumnName="checkType" />
+                <ScalarProperty Name="orderTrnHdrIntno" ColumnName="orderTrnHdrIntno" />
+                <ScalarProperty Name="orderCheckIntno" ColumnName="orderCheckIntno" />
+              </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="orderTrnDtls">
             <EntityTypeMapping TypeName="DUBBDBModel.orderTrnDtl">
               <MappingFragment StoreEntitySet="orderTrnDtls">
-                <ScalarProperty Name="orderTrnDtlIntno" ColumnName="orderTrnDtlIntno" />
-                <ScalarProperty Name="orderTrnHdrIntno" ColumnName="orderTrnHdrIntno" />
-                <ScalarProperty Name="activityType" ColumnName="activityType" />
-                <ScalarProperty Name="empIntno" ColumnName="empIntno" />
-                <ScalarProperty Name="providedService" ColumnName="providedService" />
-                <ScalarProperty Name="totalMinutes" ColumnName="totalMinutes" />
-                <ScalarProperty Name="timeRating" ColumnName="timeRating" />
                 <ScalarProperty Name="qualityRating" ColumnName="qualityRating" />
+                <ScalarProperty Name="timeRating" ColumnName="timeRating" />
+                <ScalarProperty Name="totalMinutes" ColumnName="totalMinutes" />
+                <ScalarProperty Name="providedService" ColumnName="providedService" />
+                <ScalarProperty Name="empIntno" ColumnName="empIntno" />
+                <ScalarProperty Name="activityType" ColumnName="activityType" />
+                <ScalarProperty Name="orderTrnHdrIntno" ColumnName="orderTrnHdrIntno" />
+                <ScalarProperty Name="orderTrnDtlIntno" ColumnName="orderTrnDtlIntno" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="orderTrnHdrs">
             <EntityTypeMapping TypeName="DUBBDBModel.orderTrnHdr">
               <MappingFragment StoreEntitySet="orderTrnHdrs">
-                <ScalarProperty Name="orderTrnHdrIntno" ColumnName="orderTrnHdrIntno" />
-                <ScalarProperty Name="workIntno" ColumnName="workIntno" />
-                <ScalarProperty Name="orderIntno" ColumnName="orderIntno" />
-                <ScalarProperty Name="episodeNo" ColumnName="episodeNo" />
-                <ScalarProperty Name="priority" ColumnName="priority" />
-                <ScalarProperty Name="orderReceivedDate" ColumnName="orderReceivedDate" />
-                <ScalarProperty Name="expectedDeliveryDate" ColumnName="expectedDeliveryDate" />
-                <ScalarProperty Name="allowFirstDubbing" ColumnName="allowFirstDubbing" />
-                <ScalarProperty Name="startTranslation" ColumnName="startTranslation" />
-                <ScalarProperty Name="endTranslation" ColumnName="endTranslation" />
-                <ScalarProperty Name="startAdaptation" ColumnName="startAdaptation" />
-                <ScalarProperty Name="endAdaptation" ColumnName="endAdaptation" />
-                <ScalarProperty Name="startDischarge" ColumnName="startDischarge" />
-                <ScalarProperty Name="endDischarge" ColumnName="endDischarge" />
-                <ScalarProperty Name="plannedDubbing" ColumnName="plannedDubbing" />
-                <ScalarProperty Name="startDubbing" ColumnName="startDubbing" />
-                <ScalarProperty Name="endDubbing" ColumnName="endDubbing" />
-                <ScalarProperty Name="startMixage" ColumnName="startMixage" />
-                <ScalarProperty Name="endMixage" ColumnName="endMixage" />
-                <ScalarProperty Name="startMontage" ColumnName="startMontage" />
-                <ScalarProperty Name="endMontage" ColumnName="endMontage" />
-                <ScalarProperty Name="plannedUpload" ColumnName="plannedUpload" />
-                <ScalarProperty Name="shipmentLowRes" ColumnName="shipmentLowRes" />
-                <ScalarProperty Name="plannedShipment" ColumnName="plannedShipment" />
-                <ScalarProperty Name="shipmentFinal" ColumnName="shipmentFinal" />
                 <ScalarProperty Name="status" ColumnName="status" />
+                <ScalarProperty Name="shipmentFinal" ColumnName="shipmentFinal" />
+                <ScalarProperty Name="plannedShipment" ColumnName="plannedShipment" />
+                <ScalarProperty Name="shipmentLowRes" ColumnName="shipmentLowRes" />
+                <ScalarProperty Name="plannedUpload" ColumnName="plannedUpload" />
+                <ScalarProperty Name="endMontage" ColumnName="endMontage" />
+                <ScalarProperty Name="startMontage" ColumnName="startMontage" />
+                <ScalarProperty Name="endMixage" ColumnName="endMixage" />
+                <ScalarProperty Name="startMixage" ColumnName="startMixage" />
+                <ScalarProperty Name="endDubbing" ColumnName="endDubbing" />
+                <ScalarProperty Name="startDubbing" ColumnName="startDubbing" />
+                <ScalarProperty Name="plannedDubbing" ColumnName="plannedDubbing" />
+                <ScalarProperty Name="endDischarge" ColumnName="endDischarge" />
+                <ScalarProperty Name="startDischarge" ColumnName="startDischarge" />
+                <ScalarProperty Name="endAdaptation" ColumnName="endAdaptation" />
+                <ScalarProperty Name="startAdaptation" ColumnName="startAdaptation" />
+                <ScalarProperty Name="endTranslation" ColumnName="endTranslation" />
+                <ScalarProperty Name="startTranslation" ColumnName="startTranslation" />
+                <ScalarProperty Name="allowFirstDubbing" ColumnName="allowFirstDubbing" />
+                <ScalarProperty Name="expectedDeliveryDate" ColumnName="expectedDeliveryDate" />
+                <ScalarProperty Name="orderReceivedDate" ColumnName="orderReceivedDate" />
+                <ScalarProperty Name="priority" ColumnName="priority" />
+                <ScalarProperty Name="episodeNo" ColumnName="episodeNo" />
+                <ScalarProperty Name="orderIntno" ColumnName="orderIntno" />
+                <ScalarProperty Name="workIntno" ColumnName="workIntno" />
+                <ScalarProperty Name="orderTrnHdrIntno" ColumnName="orderTrnHdrIntno" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="payments">
             <EntityTypeMapping TypeName="DUBBDBModel.payment">
               <MappingFragment StoreEntitySet="payments">
-                <ScalarProperty Name="paymentHdrIntno" ColumnName="paymentHdrIntno" />
-                <ScalarProperty Name="dubbTrnHdrIntno" ColumnName="dubbTrnHdrIntno" />
-                <ScalarProperty Name="workIntno" ColumnName="workIntno" />
-                <ScalarProperty Name="costCenterType" ColumnName="costCenterType" />
-                <ScalarProperty Name="voiceActorIntno" ColumnName="voiceActorIntno" />
-                <ScalarProperty Name="empIntno" ColumnName="empIntno" />
-                <ScalarProperty Name="anonymousName" ColumnName="anonymousName" />
-                <ScalarProperty Name="episodeNo" ColumnName="episodeNo" />
-                <ScalarProperty Name="totalScenes" ColumnName="totalScenes" />
-                <ScalarProperty Name="adjustedTotalScenes" ColumnName="adjustedTotalScenes" />
-                <ScalarProperty Name="unitRate" ColumnName="unitRate" />
-                <ScalarProperty Name="paymentDesc" ColumnName="paymentDesc" />
-                <ScalarProperty Name="totalAmount" ColumnName="totalAmount" />
-                <ScalarProperty Name="currencyCode" ColumnName="currencyCode" />
-                <ScalarProperty Name="deduction" ColumnName="deduction" />
-                <ScalarProperty Name="paymentDate" ColumnName="paymentDate" />
-                <ScalarProperty Name="remarks" ColumnName="remarks" />
-                <ScalarProperty Name="status" ColumnName="status" />
                 <ScalarProperty Name="accountNo" ColumnName="accountNo" />
+                <ScalarProperty Name="status" ColumnName="status" />
+                <ScalarProperty Name="remarks" ColumnName="remarks" />
+                <ScalarProperty Name="paymentDate" ColumnName="paymentDate" />
+                <ScalarProperty Name="deduction" ColumnName="deduction" />
+                <ScalarProperty Name="currencyCode" ColumnName="currencyCode" />
+                <ScalarProperty Name="totalAmount" ColumnName="totalAmount" />
+                <ScalarProperty Name="paymentDesc" ColumnName="paymentDesc" />
+                <ScalarProperty Name="unitRate" ColumnName="unitRate" />
+                <ScalarProperty Name="adjustedTotalScenes" ColumnName="adjustedTotalScenes" />
+                <ScalarProperty Name="totalScenes" ColumnName="totalScenes" />
+                <ScalarProperty Name="episodeNo" ColumnName="episodeNo" />
+                <ScalarProperty Name="anonymousName" ColumnName="anonymousName" />
+                <ScalarProperty Name="empIntno" ColumnName="empIntno" />
+                <ScalarProperty Name="voiceActorIntno" ColumnName="voiceActorIntno" />
+                <ScalarProperty Name="costCenterType" ColumnName="costCenterType" />
+                <ScalarProperty Name="workIntno" ColumnName="workIntno" />
+                <ScalarProperty Name="dubbTrnHdrIntno" ColumnName="dubbTrnHdrIntno" />
+                <ScalarProperty Name="paymentHdrIntno" ColumnName="paymentHdrIntno" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="shipments">
             <EntityTypeMapping TypeName="DUBBDBModel.shipment">
               <MappingFragment StoreEntitySet="shipments">
-                <ScalarProperty Name="shipmentIntno" ColumnName="shipmentIntno" />
-                <ScalarProperty Name="orderTrnHdrIntno" ColumnName="orderTrnHdrIntno" />
-                <ScalarProperty Name="carrierIntno" ColumnName="carrierIntno" />
-                <ScalarProperty Name="carrierScheduleIntno" ColumnName="carrierScheduleIntno" />
-                <ScalarProperty Name="shipmentMethod" ColumnName="shipmentMethod" />
-                <ScalarProperty Name="shipmentDate" ColumnName="shipmentDate" />
-                <ScalarProperty Name="remarks" ColumnName="remarks" />
-                <ScalarProperty Name="status" ColumnName="status" />
                 <ScalarProperty Name="clientIntno" ColumnName="clientIntno" />
+                <ScalarProperty Name="status" ColumnName="status" />
+                <ScalarProperty Name="remarks" ColumnName="remarks" />
+                <ScalarProperty Name="shipmentDate" ColumnName="shipmentDate" />
+                <ScalarProperty Name="shipmentMethod" ColumnName="shipmentMethod" />
+                <ScalarProperty Name="carrierScheduleIntno" ColumnName="carrierScheduleIntno" />
+                <ScalarProperty Name="carrierIntno" ColumnName="carrierIntno" />
+                <ScalarProperty Name="orderTrnHdrIntno" ColumnName="orderTrnHdrIntno" />
+                <ScalarProperty Name="shipmentIntno" ColumnName="shipmentIntno" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="UserProfiles">
+            <EntityTypeMapping TypeName="DUBBDBModel.UserProfile">
+              <MappingFragment StoreEntitySet="UserProfile">
+                <ScalarProperty Name="UserName" ColumnName="UserName" />
+                <ScalarProperty Name="UserId" ColumnName="UserId" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="voiceActors">
             <EntityTypeMapping TypeName="DUBBDBModel.voiceActor">
               <MappingFragment StoreEntitySet="voiceActors">
-                <ScalarProperty Name="voiceActorIntno" ColumnName="voiceActorIntno" />
-                <ScalarProperty Name="fullName" ColumnName="fullName" />
-                <ScalarProperty Name="othFullName" ColumnName="othFullName" />
-                <ScalarProperty Name="mobileNo" ColumnName="mobileNo" />
-                <ScalarProperty Name="landLineNo" ColumnName="landLineNo" />
-                <ScalarProperty Name="email" ColumnName="email" />
-                <ScalarProperty Name="status" ColumnName="status" />
                 <ScalarProperty Name="accountNo" ColumnName="accountNo" />
+                <ScalarProperty Name="status" ColumnName="status" />
+                <ScalarProperty Name="email" ColumnName="email" />
+                <ScalarProperty Name="landLineNo" ColumnName="landLineNo" />
+                <ScalarProperty Name="mobileNo" ColumnName="mobileNo" />
+                <ScalarProperty Name="othFullName" ColumnName="othFullName" />
+                <ScalarProperty Name="fullName" ColumnName="fullName" />
+                <ScalarProperty Name="voiceActorIntno" ColumnName="voiceActorIntno" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="webpages_Membership">
+            <EntityTypeMapping TypeName="DUBBDBModel.webpages_Membership">
+              <MappingFragment StoreEntitySet="webpages_Membership">
+                <ScalarProperty Name="PasswordVerificationTokenExpirationDate" ColumnName="PasswordVerificationTokenExpirationDate" />
+                <ScalarProperty Name="PasswordVerificationToken" ColumnName="PasswordVerificationToken" />
+                <ScalarProperty Name="PasswordSalt" ColumnName="PasswordSalt" />
+                <ScalarProperty Name="PasswordChangedDate" ColumnName="PasswordChangedDate" />
+                <ScalarProperty Name="Password" ColumnName="Password" />
+                <ScalarProperty Name="PasswordFailuresSinceLastSuccess" ColumnName="PasswordFailuresSinceLastSuccess" />
+                <ScalarProperty Name="LastPasswordFailureDate" ColumnName="LastPasswordFailureDate" />
+                <ScalarProperty Name="IsConfirmed" ColumnName="IsConfirmed" />
+                <ScalarProperty Name="ConfirmationToken" ColumnName="ConfirmationToken" />
+                <ScalarProperty Name="CreateDate" ColumnName="CreateDate" />
+                <ScalarProperty Name="UserId" ColumnName="UserId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="webpages_OAuthMembership">
+            <EntityTypeMapping TypeName="DUBBDBModel.webpages_OAuthMembership">
+              <MappingFragment StoreEntitySet="webpages_OAuthMembership">
+                <ScalarProperty Name="UserId" ColumnName="UserId" />
+                <ScalarProperty Name="ProviderUserId" ColumnName="ProviderUserId" />
+                <ScalarProperty Name="Provider" ColumnName="Provider" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="webpages_Roles">
+            <EntityTypeMapping TypeName="DUBBDBModel.webpages_Roles">
+              <MappingFragment StoreEntitySet="webpages_Roles">
+                <ScalarProperty Name="RoleName" ColumnName="RoleName" />
+                <ScalarProperty Name="RoleId" ColumnName="RoleId" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="workActors">
             <EntityTypeMapping TypeName="DUBBDBModel.workActor">
               <MappingFragment StoreEntitySet="workActors">
-                <ScalarProperty Name="workActorIntno" ColumnName="workActorIntno" />
-                <ScalarProperty Name="workIntno" ColumnName="workIntno" />
-                <ScalarProperty Name="workCharacterIntno" ColumnName="workCharacterIntno" />
-                <ScalarProperty Name="voiceActorIntno" ColumnName="voiceActorIntno" />
-                <ScalarProperty Name="fromDate" ColumnName="fromDate" />
-                <ScalarProperty Name="thruDate" ColumnName="thruDate" />
-                <ScalarProperty Name="remarks" ColumnName="remarks" />
-                <ScalarProperty Name="status" ColumnName="status" />
                 <ScalarProperty Name="scenesPerHour" ColumnName="scenesPerHour" />
+                <ScalarProperty Name="status" ColumnName="status" />
+                <ScalarProperty Name="remarks" ColumnName="remarks" />
+                <ScalarProperty Name="thruDate" ColumnName="thruDate" />
+                <ScalarProperty Name="fromDate" ColumnName="fromDate" />
+                <ScalarProperty Name="voiceActorIntno" ColumnName="voiceActorIntno" />
+                <ScalarProperty Name="workCharacterIntno" ColumnName="workCharacterIntno" />
+                <ScalarProperty Name="workIntno" ColumnName="workIntno" />
+                <ScalarProperty Name="workActorIntno" ColumnName="workActorIntno" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="workCharacters">
             <EntityTypeMapping TypeName="DUBBDBModel.workCharacter">
               <MappingFragment StoreEntitySet="workCharacters">
-                <ScalarProperty Name="workCharacterIntno" ColumnName="workCharacterIntno" />
-                <ScalarProperty Name="workIntno" ColumnName="workIntno" />
-                <ScalarProperty Name="sortOrder" ColumnName="sortOrder" />
-                <ScalarProperty Name="characterType" ColumnName="characterType" />
-                <ScalarProperty Name="characterGender" ColumnName="characterGender" />
-                <ScalarProperty Name="characterCode" ColumnName="characterCode" />
-                <ScalarProperty Name="characterName" ColumnName="characterName" />
-                <ScalarProperty Name="othCharacterName" ColumnName="othCharacterName" />
-                <ScalarProperty Name="nickName" ColumnName="nickName" />
-                <ScalarProperty Name="characterDesc" ColumnName="characterDesc" />
                 <ScalarProperty Name="remarks" ColumnName="remarks" />
+                <ScalarProperty Name="characterDesc" ColumnName="characterDesc" />
+                <ScalarProperty Name="nickName" ColumnName="nickName" />
+                <ScalarProperty Name="othCharacterName" ColumnName="othCharacterName" />
+                <ScalarProperty Name="characterName" ColumnName="characterName" />
+                <ScalarProperty Name="characterCode" ColumnName="characterCode" />
+                <ScalarProperty Name="characterGender" ColumnName="characterGender" />
+                <ScalarProperty Name="characterType" ColumnName="characterType" />
+                <ScalarProperty Name="sortOrder" ColumnName="sortOrder" />
+                <ScalarProperty Name="workIntno" ColumnName="workIntno" />
+                <ScalarProperty Name="workCharacterIntno" ColumnName="workCharacterIntno" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="workCharges">
             <EntityTypeMapping TypeName="DUBBDBModel.workCharge">
               <MappingFragment StoreEntitySet="workCharges">
-                <ScalarProperty Name="chargeIntno" ColumnName="chargeIntno" />
-                <ScalarProperty Name="workIntno" ColumnName="workIntno" />
-                <ScalarProperty Name="workPartyType" ColumnName="workPartyType" />
-                <ScalarProperty Name="workPartyIntno" ColumnName="workPartyIntno" />
-                <ScalarProperty Name="chargeAmount" ColumnName="chargeAmount" />
-                <ScalarProperty Name="chargeUom" ColumnName="chargeUom" />
-                <ScalarProperty Name="currencyCode" ColumnName="currencyCode" />
-                <ScalarProperty Name="fromDate" ColumnName="fromDate" />
-                <ScalarProperty Name="remarks" ColumnName="remarks" />
                 <ScalarProperty Name="status" ColumnName="status" />
+                <ScalarProperty Name="remarks" ColumnName="remarks" />
+                <ScalarProperty Name="fromDate" ColumnName="fromDate" />
+                <ScalarProperty Name="currencyCode" ColumnName="currencyCode" />
+                <ScalarProperty Name="chargeUom" ColumnName="chargeUom" />
+                <ScalarProperty Name="chargeAmount" ColumnName="chargeAmount" />
+                <ScalarProperty Name="workPartyIntno" ColumnName="workPartyIntno" />
+                <ScalarProperty Name="workPartyType" ColumnName="workPartyType" />
+                <ScalarProperty Name="workIntno" ColumnName="workIntno" />
+                <ScalarProperty Name="chargeIntno" ColumnName="chargeIntno" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="workOrders">
             <EntityTypeMapping TypeName="DUBBDBModel.workOrder">
               <MappingFragment StoreEntitySet="workOrders">
-                <ScalarProperty Name="orderIntno" ColumnName="orderIntno" />
-                <ScalarProperty Name="clientIntno" ColumnName="clientIntno" />
-                <ScalarProperty Name="workIntno" ColumnName="workIntno" />
-                <ScalarProperty Name="fromEpisode" ColumnName="fromEpisode" />
-                <ScalarProperty Name="thruEpisode" ColumnName="thruEpisode" />
-                <ScalarProperty Name="receivedDate" ColumnName="receivedDate" />
-                <ScalarProperty Name="priority" ColumnName="priority" />
-                <ScalarProperty Name="expectedDeliveryDate" ColumnName="expectedDeliveryDate" />
-                <ScalarProperty Name="allowFirstDubbing" ColumnName="allowFirstDubbing" />
-                <ScalarProperty Name="remarks" ColumnName="remarks" />
-                <ScalarProperty Name="updatedBy" ColumnName="updatedBy" />
-                <ScalarProperty Name="lastUpdated" ColumnName="lastUpdated" />
                 <ScalarProperty Name="status" ColumnName="status" />
+                <ScalarProperty Name="lastUpdated" ColumnName="lastUpdated" />
+                <ScalarProperty Name="updatedBy" ColumnName="updatedBy" />
+                <ScalarProperty Name="remarks" ColumnName="remarks" />
+                <ScalarProperty Name="allowFirstDubbing" ColumnName="allowFirstDubbing" />
+                <ScalarProperty Name="expectedDeliveryDate" ColumnName="expectedDeliveryDate" />
+                <ScalarProperty Name="priority" ColumnName="priority" />
+                <ScalarProperty Name="receivedDate" ColumnName="receivedDate" />
+                <ScalarProperty Name="thruEpisode" ColumnName="thruEpisode" />
+                <ScalarProperty Name="fromEpisode" ColumnName="fromEpisode" />
+                <ScalarProperty Name="workIntno" ColumnName="workIntno" />
+                <ScalarProperty Name="clientIntno" ColumnName="clientIntno" />
+                <ScalarProperty Name="orderIntno" ColumnName="orderIntno" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="workPersonnels">
             <EntityTypeMapping TypeName="DUBBDBModel.workPersonnel">
               <MappingFragment StoreEntitySet="workPersonnels">
-                <ScalarProperty Name="workPersonnelIntno" ColumnName="workPersonnelIntno" />
-                <ScalarProperty Name="workIntno" ColumnName="workIntno" />
-                <ScalarProperty Name="empIntno" ColumnName="empIntno" />
-                <ScalarProperty Name="titleType" ColumnName="titleType" />
-                <ScalarProperty Name="fromDate" ColumnName="fromDate" />
-                <ScalarProperty Name="thruDate" ColumnName="thruDate" />
                 <ScalarProperty Name="status" ColumnName="status" />
+                <ScalarProperty Name="thruDate" ColumnName="thruDate" />
+                <ScalarProperty Name="fromDate" ColumnName="fromDate" />
+                <ScalarProperty Name="titleType" ColumnName="titleType" />
+                <ScalarProperty Name="empIntno" ColumnName="empIntno" />
+                <ScalarProperty Name="workIntno" ColumnName="workIntno" />
+                <ScalarProperty Name="workPersonnelIntno" ColumnName="workPersonnelIntno" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
+          <EntitySetMapping Name="userRolesViews">
+            <EntityTypeMapping TypeName="DUBBDBModel.userRolesView">
+              <MappingFragment StoreEntitySet="userRolesView">
+                <ScalarProperty Name="RoleId" ColumnName="RoleId" />
+                <ScalarProperty Name="UserId" ColumnName="UserId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <AssociationSetMapping Name="webpages_UsersInRoles" TypeName="DUBBDBModel.webpages_UsersInRoles" StoreEntitySet="webpages_UsersInRoles">
+            <EndProperty Name="UserProfile">
+              <ScalarProperty Name="UserId" ColumnName="UserId" />
+            </EndProperty>
+            <EndProperty Name="webpages_Roles">
+              <ScalarProperty Name="RoleId" ColumnName="RoleId" />
+            </EndProperty>
+          </AssociationSetMapping>
         </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>

@@ -169,6 +169,7 @@
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\Startup.Auth.cs" />
     <Compile Include="Controllers\AccountController.cs" />
+    <Compile Include="Controllers\adminController.cs" />
     <Compile Include="Controllers\agreementsController.cs" />
     <Compile Include="Controllers\castingController.cs" />
     <Compile Include="Controllers\clientContactsController.cs" />
@@ -294,6 +295,10 @@
     <Content Include="Views\orders\_orderItemComplainsList.cshtml" />
     <Content Include="Views\orders\_orderItemComplainAddNew.cshtml" />
     <Content Include="Views\orders\_tips.cshtml" />
+    <Content Include="Views\admin\Index.cshtml" />
+    <Content Include="Views\admin\_personnelList.cshtml" />
+    <Content Include="Views\admin\_personnelAddNew.cshtml" />
+    <Content Include="Views\admin\_personnelUpdate.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

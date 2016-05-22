@@ -1,0 +1,82 @@
+﻿@{
+    ViewBag.Title = "Admin";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container-fluid">
+    <div class="jumbotron" style="padding:5px">
+        <h2>Administration</h2>
+        <p class="lead"><h5>Maintain Admin Data Masters,
+                            <a href="#" onclick="onPersonnelClick()">Personnel</a>,
+                            <a href="#" onclick="onActorsClick()">Actors</a>, ...</h5>
+        </p>
+    </div>
+    <div class="row">
+        <div class="container-fluid col-sm-9" id="listPartial"></div>
+        <div class="container-fluid col-sm-3" id="detailsPartial"></div>
+    </div>
+
+</div>
+
+@section Scripts
+{
+    @Scripts.Render("~/bundles/jqueryval")
+
+    <script>
+        function onDismissClick() {
+            $('#detailsPartial').html(null);
+            $.ajax({
+                url: '@Url.Action("personnelList", "admin")',
+                type: 'GET',
+                data: { isActive: true },
+                success: function (result) {
+                    $('#listPartial').html(result);
+                }
+            })
+        }
+
+        function onPersonnelClick() {
+            $.ajax({
+                url: '@Url.Action("personnelList", "admin")',
+                type: 'GET',
+                data: { isActive: true },
+                success: function (result) {
+                    $('#listPartial').html(result);
+                }
+            })
+        }
+        function onPersonnelAddNewClick(empType1) {
+            $.ajax({
+                url: '@Url.Action("personnelAddNew", "admin")',
+                type: 'GET',
+                data: { empType: empType1 },
+                success: function (result) {
+                    $('#detailsPartial').html(result);
+                }
+            })
+        }
+        function onPersonnelUpdateClick(emp) {
+            $.ajax({
+                url: '@Url.Action("personnelUpdate", "admin")',
+                type: 'GET',
+                data: { id: emp },
+                success: function (result) {
+                    $('#detailsPartial').html(result);
+                }
+            })
+        }
+        function onPersonnelRemoveClick(emp) {
+            if (confirm('Please Confirm! About to Remove the Selected Personnel from List.')) {
+                $.ajax({
+                    url: '@Url.Action("personnelDelete", "admin")',
+                    type: 'GET',
+                    data: { id: emp },
+                    success: function (result) {
+                        $('#listPartial').html(result);
+                    }
+                })
+            }
+        }
+
+    </script>
+}
