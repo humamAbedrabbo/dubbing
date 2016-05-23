@@ -7,6 +7,7 @@
     [thruDate]           DATE           NULL,
     [remarks]            NVARCHAR (MAX) NULL,
     [status]             BIT            NOT NULL,
+    [scenesPerHour]      INT            NOT NULL,
     CONSTRAINT [PK_workActors] PRIMARY KEY CLUSTERED ([workActorIntno] ASC),
     CONSTRAINT [FK_workActors_agreementWorks] FOREIGN KEY ([workIntno]) REFERENCES [dbo].[agreementWorks] ([workIntno]),
     CONSTRAINT [FK_workActors_voiceActors] FOREIGN KEY ([voiceActorIntno]) REFERENCES [dbo].[voiceActors] ([voiceActorIntno]),

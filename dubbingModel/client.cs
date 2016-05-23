@@ -18,6 +18,7 @@ namespace dubbingModel
         public client()
         {
             this.agreements = new HashSet<agreement>();
+            this.shipments = new HashSet<shipment>();
             this.workOrders = new HashSet<workOrder>();
         }
     
@@ -30,6 +31,8 @@ namespace dubbingModel
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<agreement> agreements { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<shipment> shipments { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<workOrder> workOrders { get; set; }
     }

@@ -22,6 +22,7 @@ namespace dubbingModel
         public Nullable<System.DateTime> thruDate { get; set; }
         public string remarks { get; set; }
         public bool status { get; set; }
+        public int scenesPerHour { get; set; }
     
         public virtual agreementWork agreementWork { get; set; }
         public virtual voiceActor voiceActor { get; set; }

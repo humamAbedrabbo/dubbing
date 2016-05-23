@@ -18,19 +18,15 @@ namespace dubbingModel
         public workOrder()
         {
             this.orderBatchTrnHdrs = new HashSet<orderBatchTrnHdr>();
-            this.orderChecks = new HashSet<orderCheck>();
             this.orderTrnHdrs = new HashSet<orderTrnHdr>();
         }
     
         public long orderIntno { get; set; }
         public long clientIntno { get; set; }
         public long workIntno { get; set; }
-        public string receivedMediaType { get; set; }
-        public string mediaId { get; set; }
         public short fromEpisode { get; set; }
         public short thruEpisode { get; set; }
         public System.DateTime receivedDate { get; set; }
-        public string contentDesc { get; set; }
         public string priority { get; set; }
         public Nullable<System.DateTime> expectedDeliveryDate { get; set; }
         public Nullable<bool> allowFirstDubbing { get; set; }
@@ -43,8 +39,6 @@ namespace dubbingModel
         public virtual client client { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<orderBatchTrnHdr> orderBatchTrnHdrs { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<orderCheck> orderChecks { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<orderTrnHdr> orderTrnHdrs { get; set; }
     }

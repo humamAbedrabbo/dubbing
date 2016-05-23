@@ -8,6 +8,7 @@
     [landLineNo]  NVARCHAR (50)  NOT NULL,
     [email]       NVARCHAR (50)  NOT NULL,
     [status]      BIT            NOT NULL,
+    [accountNo]   NVARCHAR (50)  NULL,
     CONSTRAINT [PK_employees] PRIMARY KEY CLUSTERED ([empIntno] ASC)
 );
 

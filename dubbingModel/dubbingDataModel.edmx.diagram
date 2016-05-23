@@ -5,41 +5,39 @@
     <!-- Diagram content (shape and connector positions) -->
     <edmx:Diagrams>
       <Diagram DiagramId="f86500cc867247d1bfdf66221ad39a95" Name="Diagram1">
-        <EntityTypeShape EntityType="DUBBDBModel.agreement" Width="1.5" PointX="3" PointY="34.375" />
-        <EntityTypeShape EntityType="DUBBDBModel.agreementSpec" Width="1.5" PointX="5.25" PointY="44.625" />
-        <EntityTypeShape EntityType="DUBBDBModel.agreementTerm" Width="1.5" PointX="5.25" PointY="41.875" />
-        <EntityTypeShape EntityType="DUBBDBModel.agreementWork" Width="1.5" PointX="5.25" PointY="33.75" />
-        <EntityTypeShape EntityType="DUBBDBModel.carrier" Width="1.5" PointX="15.5" PointY="46.125" />
-        <EntityTypeShape EntityType="DUBBDBModel.carrierSchedule" Width="1.5" PointX="15.5" PointY="42.625" />
-        <EntityTypeShape EntityType="DUBBDBModel.client" Width="1.5" PointX="0.75" PointY="35.375" />
-        <EntityTypeShape EntityType="DUBBDBModel.contact" Width="1.5" PointX="3" PointY="29.875" />
-        <EntityTypeShape EntityType="DUBBDBModel.costCenter" Width="1.5" PointX="7.5" PointY="69.375" />
-        <EntityTypeShape EntityType="DUBBDBModel.deliveryFeedback" Width="1.5" PointX="14.75" PointY="57.375" />
+        <EntityTypeShape EntityType="DUBBDBModel.agreement" Width="1.5" PointX="3" PointY="32.125" />
+        <EntityTypeShape EntityType="DUBBDBModel.agreementSpec" Width="1.5" PointX="5.25" PointY="31.875" />
+        <EntityTypeShape EntityType="DUBBDBModel.agreementTerm" Width="1.5" PointX="5.25" PointY="40.625" />
+        <EntityTypeShape EntityType="DUBBDBModel.agreementWork" Width="1.5" PointX="5.25" PointY="34.875" />
+        <EntityTypeShape EntityType="DUBBDBModel.carrier" Width="1.5" PointX="12.75" PointY="25" />
+        <EntityTypeShape EntityType="DUBBDBModel.carrierSchedule" Width="1.5" PointX="12.75" PointY="45.25" />
+        <EntityTypeShape EntityType="DUBBDBModel.client" Width="1.5" PointX="0.75" PointY="33" />
+        <EntityTypeShape EntityType="DUBBDBModel.contact" Width="1.5" PointX="3" PointY="37.625" />
+        <EntityTypeShape EntityType="DUBBDBModel.deliveryFeedback" Width="1.5" PointX="12" PointY="56.125" />
         <EntityTypeShape EntityType="DUBBDBModel.dubbDomain" Width="1.5" PointX="0.75" PointY="3.75" />
-        <EntityTypeShape EntityType="DUBBDBModel.dubbingAppointment" Width="1.5" PointX="23" PointY="37.875" />
-        <EntityTypeShape EntityType="DUBBDBModel.dubbingSheetDtl" Width="1.5" PointX="20" PointY="37.625" />
-        <EntityTypeShape EntityType="DUBBDBModel.dubbingSheetHdr" Width="1.5" PointX="17.75" PointY="38.125" />
-        <EntityTypeShape EntityType="DUBBDBModel.dubbingTrnDtl" Width="1.5" PointX="14.75" PointY="37.625" />
-        <EntityTypeShape EntityType="DUBBDBModel.dubbingTrnHdr" Width="1.5" PointX="5.25" PointY="26.25" />
-        <EntityTypeShape EntityType="DUBBDBModel.employee" Width="1.5" PointX="11.25" PointY="22.375" />
-        <EntityTypeShape EntityType="DUBBDBModel.feedbackAction" Width="1.5" PointX="17" PointY="57.625" />
-        <EntityTypeShape EntityType="DUBBDBModel.orderBatchTrnHdr" Width="1.5" PointX="13.5" PointY="30.5" />
-        <EntityTypeShape EntityType="DUBBDBModel.orderCheck" Width="1.5" PointX="15.75" PointY="33" />
-        <EntityTypeShape EntityType="DUBBDBModel.orderTrnDtl" Width="1.5" PointX="14.75" PointY="61.375" />
-        <EntityTypeShape EntityType="DUBBDBModel.orderTrnHdr" Width="1.5" PointX="12.5" PointY="35.75" />
-        <EntityTypeShape EntityType="DUBBDBModel.paymentDetail" Width="1.5" PointX="9.75" PointY="28.375" />
-        <EntityTypeShape EntityType="DUBBDBModel.payment" Width="1.5" PointX="7.5" PointY="32.375" />
-        <EntityTypeShape EntityType="DUBBDBModel.shipment" Width="1.5" PointX="17.75" PointY="42" />
+        <EntityTypeShape EntityType="DUBBDBModel.dubbingAppointment" Width="1.5" PointX="17.25" PointY="45.625" />
+        <EntityTypeShape EntityType="DUBBDBModel.dubbingSheetDtl" Width="1.5" PointX="15" PointY="30.125" />
+        <EntityTypeShape EntityType="DUBBDBModel.dubbingSheetHdr" Width="1.5" PointX="15" PointY="51.5" />
+        <EntityTypeShape EntityType="DUBBDBModel.dubbingTrnDtl" Width="1.5" PointX="12" PointY="40.125" />
+        <EntityTypeShape EntityType="DUBBDBModel.dubbingTrnHdr" Width="1.5" PointX="10.25" PointY="22" />
+        <EntityTypeShape EntityType="DUBBDBModel.employee" Width="1.5" PointX="10.25" PointY="25.5" />
+        <EntityTypeShape EntityType="DUBBDBModel.feedbackAction" Width="1.5" PointX="14.25" PointY="56.25" />
+        <EntityTypeShape EntityType="DUBBDBModel.orderBatchTrnHdr" Width="1.5" PointX="12.75" PointY="35" />
+        <EntityTypeShape EntityType="DUBBDBModel.orderCheck" Width="1.5" PointX="12" PointY="53.375" />
+        <EntityTypeShape EntityType="DUBBDBModel.orderTrnDtl" Width="1.5" PointX="12" PointY="49.875" />
+        <EntityTypeShape EntityType="DUBBDBModel.orderTrnHdr" Width="1.5" PointX="9.75" PointY="33.25" />
+        <EntityTypeShape EntityType="DUBBDBModel.payment" Width="1.5" PointX="12.5" PointY="28.625" />
+        <EntityTypeShape EntityType="DUBBDBModel.shipment" Width="1.5" PointX="15" PointY="35.25" />
         <EntityTypeShape EntityType="DUBBDBModel.UserProfile" Width="1.5" PointX="3" PointY="0.875" />
-        <EntityTypeShape EntityType="DUBBDBModel.voiceActor" Width="1.5" PointX="5.25" PointY="29.625" />
+        <EntityTypeShape EntityType="DUBBDBModel.voiceActor" Width="1.5" PointX="10.25" PointY="45" />
         <EntityTypeShape EntityType="DUBBDBModel.webpages_Membership" Width="1.5" PointX="2.75" PointY="3.75" />
         <EntityTypeShape EntityType="DUBBDBModel.webpages_OAuthMembership" Width="1.5" PointX="4.75" PointY="3.75" />
         <EntityTypeShape EntityType="DUBBDBModel.webpages_Roles" Width="1.5" PointX="0.75" PointY="0.875" />
-        <EntityTypeShape EntityType="DUBBDBModel.workActor" Width="1.5" PointX="9.75" PointY="36.375" />
-        <EntityTypeShape EntityType="DUBBDBModel.workCharacter" Width="1.5" PointX="7.5" PointY="38.375" />
+        <EntityTypeShape EntityType="DUBBDBModel.workActor" Width="1.5" PointX="9.75" PointY="52.25" />
+        <EntityTypeShape EntityType="DUBBDBModel.workCharacter" Width="1.5" PointX="7.5" PointY="69.25" />
         <EntityTypeShape EntityType="DUBBDBModel.workCharge" Width="1.5" PointX="6.75" PointY="0.75" />
-        <EntityTypeShape EntityType="DUBBDBModel.workOrder" Width="1.5" PointX="7.5" PointY="26.125" />
-        <EntityTypeShape EntityType="DUBBDBModel.workPersonnel" Width="1.5" PointX="10.5" PointY="32.25" />
+        <EntityTypeShape EntityType="DUBBDBModel.workOrder" Width="1.5" PointX="7.5" PointY="34.25" />
+        <EntityTypeShape EntityType="DUBBDBModel.workPersonnel" Width="1.5" PointX="7.5" PointY="40" />
         <EntityTypeShape EntityType="DUBBDBModel.userRolesView" Width="1.5" PointX="6.75" PointY="4.75" />
         <AssociationConnector Association="DUBBDBModel.FK_agreements_agreements" />
         <AssociationConnector Association="DUBBDBModel.FK_agreements_clients" />
@@ -47,7 +45,6 @@
         <AssociationConnector Association="DUBBDBModel.FK_agreementTerms_agreements" />
         <AssociationConnector Association="DUBBDBModel.FK_agreementWorks_agreements" />
         <AssociationConnector Association="DUBBDBModel.FK_agreementWorks_contacts" />
-        <AssociationConnector Association="DUBBDBModel.FK_costCenters_agreementWorks" />
         <AssociationConnector Association="DUBBDBModel.FK_orderBatchTrnHdrs_agreementWorks" />
         <AssociationConnector Association="DUBBDBModel.FK_orderTrnHdrs_agreementWorks" />
         <AssociationConnector Association="DUBBDBModel.FK_payments_agreementWorks" />
@@ -58,6 +55,7 @@
         <AssociationConnector Association="DUBBDBModel.FK_carrierSchedules_carriers" />
         <AssociationConnector Association="DUBBDBModel.FK_shipments_carriers" />
         <AssociationConnector Association="DUBBDBModel.FK_shipments_carrierSchedules" />
+        <AssociationConnector Association="DUBBDBModel.FK_shipments_clients" />
         <AssociationConnector Association="DUBBDBModel.FK_workOrders_clients" />
         <AssociationConnector Association="DUBBDBModel.FK_deliveryFeedbacks_orderTrnHdrs" />
         <AssociationConnector Association="DUBBDBModel.FK_feedbackActions_deliveryFeedbacks" />
@@ -82,11 +80,9 @@
         <AssociationConnector Association="DUBBDBModel.FK_workPersonnels_employees" />
         <AssociationConnector Association="DUBBDBModel.FK_orderBatchTrnHdrs_workOrders" />
         <AssociationConnector Association="DUBBDBModel.FK_orderChecks_orderTrnHdrs" />
-        <AssociationConnector Association="DUBBDBModel.FK_orderChecks_workOrders" />
         <AssociationConnector Association="DUBBDBModel.FK_orderTrnDtls_orderTrnHdrs" />
         <AssociationConnector Association="DUBBDBModel.FK_orderTrnHdrs_workOrders" />
         <AssociationConnector Association="DUBBDBModel.FK_shipments_orderTrnHdrs" />
-        <AssociationConnector Association="DUBBDBModel.FK_paymentDetails_payments" />
         <AssociationConnector Association="DUBBDBModel.FK_payments_voiceActors" />
         <AssociationConnector Association="DUBBDBModel.FK_workActors_voiceActors" />
         <AssociationConnector Association="DUBBDBModel.FK_workActors_workCharacters" />

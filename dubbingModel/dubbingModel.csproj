@@ -75,9 +75,6 @@
     <Compile Include="contact.cs">
       <DependentUpon>dubbingDataModel.tt</DependentUpon>
     </Compile>
-    <Compile Include="costCenter.cs">
-      <DependentUpon>dubbingDataModel.tt</DependentUpon>
-    </Compile>
     <Compile Include="deliveryFeedback.cs">
       <DependentUpon>dubbingDataModel.tt</DependentUpon>
     </Compile>
@@ -133,9 +130,6 @@
       <DependentUpon>dubbingDataModel.tt</DependentUpon>
     </Compile>
     <Compile Include="payment.cs">
-      <DependentUpon>dubbingDataModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="paymentDetail.cs">
       <DependentUpon>dubbingDataModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />

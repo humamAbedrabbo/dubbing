@@ -182,7 +182,7 @@ namespace dubbingApp.Controllers
         {
             var model = db.orderChecks;
             var modelItem = model.Find(id);
-            long orderTrnHdrIntno = modelItem.orderTrnHdrIntno.Value;
+            long orderTrnHdrIntno = modelItem.orderTrnHdrIntno;
             model.Remove(modelItem);
             db.SaveChanges();
 

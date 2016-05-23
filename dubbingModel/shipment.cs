@@ -22,9 +22,11 @@ namespace dubbingModel
         public System.DateTime shipmentDate { get; set; }
         public string remarks { get; set; }
         public string status { get; set; }
+        public long clientIntno { get; set; }
     
         public virtual carrier carrier { get; set; }
         public virtual carrierSchedule carrierSchedule { get; set; }
+        public virtual client client { get; set; }
         public virtual orderTrnHdr orderTrnHdr { get; set; }
     }
 }
