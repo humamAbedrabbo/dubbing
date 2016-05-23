@@ -17,6 +17,7 @@ namespace dubbingModel
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         public agreementWork()
         {
+            this.costCenters = new HashSet<costCenter>();
             this.orderBatchTrnHdrs = new HashSet<orderBatchTrnHdr>();
             this.orderTrnHdrs = new HashSet<orderTrnHdr>();
             this.payments = new HashSet<payment>();
@@ -41,6 +42,8 @@ namespace dubbingModel
     
         public virtual agreement agreement { get; set; }
         public virtual contact contact { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<costCenter> costCenters { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<orderBatchTrnHdr> orderBatchTrnHdrs { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]

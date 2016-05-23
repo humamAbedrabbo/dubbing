@@ -21,10 +21,10 @@ namespace dubbingModel
         public Nullable<System.DateTime> fromTime { get; set; }
         public Nullable<System.DateTime> thruTime { get; set; }
         public Nullable<int> totalScenes { get; set; }
+        public string dubbSubject { get; set; }
         public Nullable<System.DateTime> actualFromTime { get; set; }
         public Nullable<System.DateTime> actualThruTime { get; set; }
         public string remarks { get; set; }
-        public int totalMinutes { get; set; }
     
         public virtual dubbingSheetHdr dubbingSheetHdr { get; set; }
         public virtual dubbingTrnDtl dubbingTrnDtl { get; set; }

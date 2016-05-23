@@ -12,19 +12,18 @@ namespace dubbingModel
     using System;
     using System.Collections.Generic;
     
-    public partial class workActor
+    public partial class sceneScentence
     {
-        public long workActorIntno { get; set; }
-        public long workIntno { get; set; }
-        public long workCharacterIntno { get; set; }
-        public long voiceActorIntno { get; set; }
-        public System.DateTime fromDate { get; set; }
-        public Nullable<System.DateTime> thruDate { get; set; }
-        public string remarks { get; set; }
-        public bool status { get; set; }
+        public int scentenceIntno { get; set; }
+        public int dialogIntno { get; set; }
+        public int scentenceNo { get; set; }
+        public Nullable<long> workCharacterIntno { get; set; }
+        public string characterName { get; set; }
+        public string startTime { get; set; }
+        public string endTime { get; set; }
+        public string scentence { get; set; }
     
-        public virtual agreementWork agreementWork { get; set; }
-        public virtual voiceActor voiceActor { get; set; }
+        public virtual sceneDialog sceneDialog { get; set; }
         public virtual workCharacter workCharacter { get; set; }
     }
 }

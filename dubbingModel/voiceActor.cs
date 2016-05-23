@@ -29,7 +29,6 @@ namespace dubbingModel
         public string landLineNo { get; set; }
         public string email { get; set; }
         public bool status { get; set; }
-        public string accountNo { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<dubbingSheetHdr> dubbingSheetHdrs { get; set; }

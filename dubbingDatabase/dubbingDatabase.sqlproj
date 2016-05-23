@@ -258,5 +258,9 @@
       <AnsiNulls>On</AnsiNulls>
       <QuotedIdentifier>On</QuotedIdentifier>
     </Build>
+    <Build Include="dbo\Tables\adaptationScenes.sql" />
+    <Build Include="dbo\Tables\orderAdaptations.sql" />
+    <Build Include="dbo\Tables\sceneDialogs.sql" />
+    <Build Include="dbo\Tables\sceneScentences.sql" />
   </ItemGroup>
 </Project>

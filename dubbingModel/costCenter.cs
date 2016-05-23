@@ -12,13 +12,16 @@ namespace dubbingModel
     using System;
     using System.Collections.Generic;
     
-    public partial class orderCheck
+    public partial class costCenter
     {
-        public long orderCheckIntno { get; set; }
-        public Nullable<long> orderTrnHdrIntno { get; set; }
-        public string checkType { get; set; }
-        public bool isAccepted { get; set; }
+        public long costCenterIntno { get; set; }
+        public long workIntno { get; set; }
+        public string costCenterType { get; set; }
+        public string costCenterName { get; set; }
+        public string othCostCenterName { get; set; }
+        public string accountNo { get; set; }
+        public bool status { get; set; }
     
-        public virtual orderTrnHdr orderTrnHdr { get; set; }
+        public virtual agreementWork agreementWork { get; set; }
     }
 }

@@ -33,6 +33,7 @@ namespace dubbingModel
         public virtual DbSet<carrierSchedule> carrierSchedules { get; set; }
         public virtual DbSet<client> clients { get; set; }
         public virtual DbSet<contact> contacts { get; set; }
+        public virtual DbSet<costCenter> costCenters { get; set; }
         public virtual DbSet<deliveryFeedback> deliveryFeedbacks { get; set; }
         public virtual DbSet<dubbDomain> dubbDomains { get; set; }
         public virtual DbSet<dubbingAppointment> dubbingAppointments { get; set; }
@@ -46,6 +47,7 @@ namespace dubbingModel
         public virtual DbSet<orderCheck> orderChecks { get; set; }
         public virtual DbSet<orderTrnDtl> orderTrnDtls { get; set; }
         public virtual DbSet<orderTrnHdr> orderTrnHdrs { get; set; }
+        public virtual DbSet<paymentDetail> paymentDetails { get; set; }
         public virtual DbSet<payment> payments { get; set; }
         public virtual DbSet<shipment> shipments { get; set; }
         public virtual DbSet<UserProfile> UserProfiles { get; set; }
@@ -59,5 +61,9 @@ namespace dubbingModel
         public virtual DbSet<workOrder> workOrders { get; set; }
         public virtual DbSet<workPersonnel> workPersonnels { get; set; }
         public virtual DbSet<userRolesView> userRolesViews { get; set; }
+        public virtual DbSet<adaptationScene> adaptationScenes { get; set; }
+        public virtual DbSet<orderAdaptation> orderAdaptations { get; set; }
+        public virtual DbSet<sceneDialog> sceneDialogs { get; set; }
+        public virtual DbSet<sceneScentence> sceneScentences { get; set; }
     }
 }

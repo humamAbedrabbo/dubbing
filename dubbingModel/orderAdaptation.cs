@@ -12,25 +12,20 @@ namespace dubbingModel
     using System;
     using System.Collections.Generic;
     
-    public partial class client
+    public partial class orderAdaptation
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public client()
+        public orderAdaptation()
         {
-            this.agreements = new HashSet<agreement>();
-            this.workOrders = new HashSet<workOrder>();
+            this.adaptationScenes = new HashSet<adaptationScene>();
         }
     
-        public long clientIntno { get; set; }
-        public string clientName { get; set; }
-        public string clientShortName { get; set; }
-        public string othClientName { get; set; }
-        public string othClientShortName { get; set; }
+        public long orderTrnHdrIntno { get; set; }
+        public System.DateTime createdOn { get; set; }
         public string status { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<agreement> agreements { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<workOrder> workOrders { get; set; }
+        public virtual ICollection<adaptationScene> adaptationScenes { get; set; }
+        public virtual orderTrnHdr orderTrnHdr { get; set; }
     }
 }

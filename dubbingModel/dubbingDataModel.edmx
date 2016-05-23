@@ -5,6 +5,15 @@
     <!-- SSDL content -->
     <edmx:StorageModels>
     <Schema Namespace="DUBBDBModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2008" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="adaptationScenes">
+          <Key>
+            <PropertyRef Name="sceneIntno" />
+          </Key>
+          <Property Name="sceneIntno" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="orderTrnHdrIntno" Type="bigint" Nullable="false" />
+          <Property Name="sceneNo" Type="int" Nullable="false" />
+          <Property Name="summary" Type="nvarchar" MaxLength="150" />
+        </EntityType>
         <EntityType Name="agreements">
           <Key>
             <PropertyRef Name="agreementIntno" />
@@ -109,6 +118,18 @@
           <Property Name="remarks" Type="nvarchar(max)" />
           <Property Name="status" Type="bit" Nullable="false" />
         </EntityType>
+        <EntityType Name="costCenters">
+          <Key>
+            <PropertyRef Name="costCenterIntno" />
+          </Key>
+          <Property Name="costCenterIntno" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="workIntno" Type="bigint" Nullable="false" />
+          <Property Name="costCenterType" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="costCenterName" Type="nvarchar" MaxLength="100" Nullable="false" />
+          <Property Name="othCostCenterName" Type="nvarchar" MaxLength="100" />
+          <Property Name="accountNo" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="status" Type="bit" Nullable="false" />
+        </EntityType>
         <EntityType Name="deliveryFeedbacks">
           <Key>
             <PropertyRef Name="feedbackIntno" />
@@ -149,10 +170,10 @@
           <Property Name="fromTime" Type="datetime" />
           <Property Name="thruTime" Type="datetime" />
           <Property Name="totalScenes" Type="int" />
+          <Property Name="dubbSubject" Type="nvarchar" MaxLength="255" />
           <Property Name="actualFromTime" Type="datetime" />
           <Property Name="actualThruTime" Type="datetime" />
           <Property Name="remarks" Type="nvarchar(max)" />
-          <Property Name="totalMinutes" Type="int" Nullable="false" />
         </EntityType>
         <EntityType Name="dubbingSheetDtls">
           <Key>
@@ -175,10 +196,9 @@
           </Key>
           <Property Name="dubbSheetHdrIntno" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="orderTrnHdrIntno" Type="bigint" Nullable="false" />
-          <Property Name="workCharacterIntno" Type="bigint" />
+          <Property Name="workCharacterIntno" Type="bigint" Nullable="false" />
           <Property Name="voiceActorIntno" Type="bigint" Nullable="false" />
-          <Property Name="actorName" Type="nvarchar" MaxLength="50" Nullable="false" />
-          <Property Name="characterName" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="anonymActorName" Type="nvarchar" MaxLength="50" />
         </EntityType>
         <EntityType Name="dubbingTrnDtls">
           <Key>
@@ -217,7 +237,6 @@
           <Property Name="landLineNo" Type="nvarchar" MaxLength="50" Nullable="false" />
           <Property Name="email" Type="nvarchar" MaxLength="50" Nullable="false" />
           <Property Name="status" Type="bit" Nullable="false" />
-          <Property Name="accountNo" Type="nvarchar" MaxLength="50" />
         </EntityType>
         <EntityType Name="feedbackActions">
           <Key>
@@ -231,6 +250,14 @@
           <Property Name="checkedBy" Type="nvarchar" MaxLength="50" />
           <Property Name="checkedDate" Type="datetime" />
           <Property Name="status" Type="bit" Nullable="false" />
+        </EntityType>
+        <EntityType Name="orderAdaptations">
+          <Key>
+            <PropertyRef Name="orderTrnHdrIntno" />
+          </Key>
+          <Property Name="orderTrnHdrIntno" Type="bigint" Nullable="false" />
+          <Property Name="createdOn" Type="datetime" Nullable="false" />
+          <Property Name="status" Type="nvarchar" MaxLength="10" Nullable="false" />
         </EntityType>
         <EntityType Name="orderBatchTrnHdrs">
           <Key>
@@ -255,7 +282,7 @@
             <PropertyRef Name="orderCheckIntno" />
           </Key>
           <Property Name="orderCheckIntno" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
-          <Property Name="orderTrnHdrIntno" Type="bigint" Nullable="false" />
+          <Property Name="orderTrnHdrIntno" Type="bigint" />
           <Property Name="checkType" Type="nvarchar" MaxLength="50" Nullable="false" />
           <Property Name="isAccepted" Type="bit" Nullable="false" />
         </EntityType>
@@ -303,6 +330,18 @@
           <Property Name="shipmentFinal" Type="datetime" />
           <Property Name="status" Type="nvarchar" MaxLength="50" Nullable="false" />
         </EntityType>
+        <EntityType Name="paymentDetails">
+          <Key>
+            <PropertyRef Name="paymentDtlIntno" />
+          </Key>
+          <Property Name="paymentDtlIntno" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="paymentHdrIntno" Type="bigint" Nullable="false" />
+          <Property Name="episodeNo" Type="smallint" Nullable="false" />
+          <Property Name="totalScenes" Type="int" />
+          <Property Name="adjustedTotalScenes" Type="int" />
+          <Property Name="unitRate" Type="int" Nullable="false" />
+          <Property Name="amount" Type="int" Nullable="false" />
+        </EntityType>
         <EntityType Name="payments">
           <Key>
             <PropertyRef Name="paymentHdrIntno" />
@@ -314,18 +353,33 @@
           <Property Name="voiceActorIntno" Type="bigint" />
           <Property Name="empIntno" Type="bigint" />
           <Property Name="anonymousName" Type="nvarchar" MaxLength="50" />
-          <Property Name="episodeNo" Type="smallint" Nullable="false" />
-          <Property Name="totalScenes" Type="int" Nullable="false" />
-          <Property Name="adjustedTotalScenes" Type="int" Nullable="false" />
-          <Property Name="unitRate" Type="int" Nullable="false" />
           <Property Name="paymentDesc" Type="nvarchar(max)" />
           <Property Name="totalAmount" Type="int" Nullable="false" />
           <Property Name="currencyCode" Type="nvarchar" MaxLength="50" Nullable="false" />
-          <Property Name="deduction" Type="int" Nullable="false" />
           <Property Name="paymentDate" Type="date" />
           <Property Name="remarks" Type="nvarchar(max)" />
           <Property Name="status" Type="bit" Nullable="false" />
-          <Property Name="accountNo" Type="nvarchar" MaxLength="50" Nullable="false" />
+        </EntityType>
+        <EntityType Name="sceneDialogs">
+          <Key>
+            <PropertyRef Name="dialogIntno" />
+          </Key>
+          <Property Name="dialogIntno" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="sceneIntno" Type="int" Nullable="false" />
+          <Property Name="dialogNo" Type="int" Nullable="false" />
+        </EntityType>
+        <EntityType Name="sceneScentences">
+          <Key>
+            <PropertyRef Name="scentenceIntno" />
+          </Key>
+          <Property Name="scentenceIntno" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="dialogIntno" Type="int" Nullable="false" />
+          <Property Name="scentenceNo" Type="int" Nullable="false" />
+          <Property Name="workCharacterIntno" Type="bigint" />
+          <Property Name="characterName" Type="nvarchar" MaxLength="100" />
+          <Property Name="startTime" Type="nvarchar" MaxLength="20" />
+          <Property Name="endTime" Type="nvarchar" MaxLength="20" />
+          <Property Name="scentence" Type="nvarchar" MaxLength="500" Nullable="false" />
         </EntityType>
         <EntityType Name="shipments">
           <Key>
@@ -339,7 +393,6 @@
           <Property Name="shipmentDate" Type="date" Nullable="false" />
           <Property Name="remarks" Type="nvarchar" MaxLength="50" />
           <Property Name="status" Type="nvarchar" MaxLength="50" Nullable="false" />
-          <Property Name="clientIntno" Type="bigint" Nullable="false" />
         </EntityType>
         <EntityType Name="UserProfile">
           <Key>
@@ -359,7 +412,6 @@
           <Property Name="landLineNo" Type="nvarchar" MaxLength="50" Nullable="false" />
           <Property Name="email" Type="nvarchar" MaxLength="50" Nullable="false" />
           <Property Name="status" Type="bit" Nullable="false" />
-          <Property Name="accountNo" Type="nvarchar" MaxLength="50" />
         </EntityType>
         <EntityType Name="webpages_Membership">
           <Key>
@@ -413,7 +465,6 @@
           <Property Name="thruDate" Type="date" />
           <Property Name="remarks" Type="nvarchar(max)" />
           <Property Name="status" Type="bit" Nullable="false" />
-          <Property Name="scenesPerHour" Type="int" Nullable="false" />
         </EntityType>
         <EntityType Name="workCharacters">
           <Key>
@@ -486,6 +537,18 @@ warning 6002: The table/view 'DUBBDB.dbo.userRolesView' does not have a primary 
           <Property Name="UserId" Type="int" Nullable="false" />
           <Property Name="RoleId" Type="int" Nullable="false" />
         </EntityType>
+        <Association Name="FK_adaptationScenes_To_orderAdaptations">
+          <End Role="orderAdaptations" Type="Self.orderAdaptations" Multiplicity="1" />
+          <End Role="adaptationScenes" Type="Self.adaptationScenes" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="orderAdaptations">
+              <PropertyRef Name="orderTrnHdrIntno" />
+            </Principal>
+            <Dependent Role="adaptationScenes">
+              <PropertyRef Name="orderTrnHdrIntno" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK_agreements_agreements">
           <End Role="agreements" Type="Self.agreements" Multiplicity="0..1" />
           <End Role="agreements1" Type="Self.agreements" Multiplicity="*" />
@@ -567,6 +630,18 @@ warning 6002: The table/view 'DUBBDB.dbo.userRolesView' does not have a primary 
             </Principal>
             <Dependent Role="carrierSchedules">
               <PropertyRef Name="carrierIntno" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_costCenters_agreementWorks">
+          <End Role="agreementWorks" Type="Self.agreementWorks" Multiplicity="1" />
+          <End Role="costCenters" Type="Self.costCenters" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="agreementWorks">
+              <PropertyRef Name="workIntno" />
+            </Principal>
+            <Dependent Role="costCenters">
+              <PropertyRef Name="workIntno" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -691,7 +766,7 @@ warning 6002: The table/view 'DUBBDB.dbo.userRolesView' does not have a primary 
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_dubbingSheetHdrs_workCharacters">
-          <End Role="workCharacters" Type="Self.workCharacters" Multiplicity="0..1" />
+          <End Role="workCharacters" Type="Self.workCharacters" Multiplicity="1" />
           <End Role="dubbingSheetHdrs" Type="Self.dubbingSheetHdrs" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="workCharacters">
@@ -774,6 +849,18 @@ warning 6002: The table/view 'DUBBDB.dbo.userRolesView' does not have a primary 
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK_orderAdaptations_To_orderTrnHdrs">
+          <End Role="orderTrnHdrs" Type="Self.orderTrnHdrs" Multiplicity="1" />
+          <End Role="orderAdaptations" Type="Self.orderAdaptations" Multiplicity="0..1" />
+          <ReferentialConstraint>
+            <Principal Role="orderTrnHdrs">
+              <PropertyRef Name="orderTrnHdrIntno" />
+            </Principal>
+            <Dependent Role="orderAdaptations">
+              <PropertyRef Name="orderTrnHdrIntno" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK_orderBatchTrnHdrs_agreementWorks">
           <End Role="agreementWorks" Type="Self.agreementWorks" Multiplicity="1" />
           <End Role="orderBatchTrnHdrs" Type="Self.orderBatchTrnHdrs" Multiplicity="*" />
@@ -811,7 +898,7 @@ warning 6002: The table/view 'DUBBDB.dbo.userRolesView' does not have a primary 
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_orderChecks_orderTrnHdrs">
-          <End Role="orderTrnHdrs" Type="Self.orderTrnHdrs" Multiplicity="1" />
+          <End Role="orderTrnHdrs" Type="Self.orderTrnHdrs" Multiplicity="0..1" />
           <End Role="orderChecks" Type="Self.orderChecks" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="orderTrnHdrs">
@@ -855,6 +942,18 @@ warning 6002: The table/view 'DUBBDB.dbo.userRolesView' does not have a primary 
             </Principal>
             <Dependent Role="orderTrnHdrs">
               <PropertyRef Name="orderIntno" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_paymentDetails_payments">
+          <End Role="payments" Type="Self.payments" Multiplicity="1" />
+          <End Role="paymentDetails" Type="Self.paymentDetails" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="payments">
+              <PropertyRef Name="paymentHdrIntno" />
+            </Principal>
+            <Dependent Role="paymentDetails">
+              <PropertyRef Name="paymentHdrIntno" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -918,6 +1017,42 @@ warning 6002: The table/view 'DUBBDB.dbo.userRolesView' does not have a primary 
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK_sceneDialogs_To_adaptationScenes">
+          <End Role="adaptationScenes" Type="Self.adaptationScenes" Multiplicity="1" />
+          <End Role="sceneDialogs" Type="Self.sceneDialogs" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="adaptationScenes">
+              <PropertyRef Name="sceneIntno" />
+            </Principal>
+            <Dependent Role="sceneDialogs">
+              <PropertyRef Name="sceneIntno" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_sceneScentences_To_sceneDialogs">
+          <End Role="sceneDialogs" Type="Self.sceneDialogs" Multiplicity="1" />
+          <End Role="sceneScentences" Type="Self.sceneScentences" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="sceneDialogs">
+              <PropertyRef Name="dialogIntno" />
+            </Principal>
+            <Dependent Role="sceneScentences">
+              <PropertyRef Name="dialogIntno" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_sceneScentences_To_workCharacters">
+          <End Role="workCharacters" Type="Self.workCharacters" Multiplicity="0..1" />
+          <End Role="sceneScentences" Type="Self.sceneScentences" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="workCharacters">
+              <PropertyRef Name="workCharacterIntno" />
+            </Principal>
+            <Dependent Role="sceneScentences">
+              <PropertyRef Name="workCharacterIntno" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK_shipments_carriers">
           <End Role="carriers" Type="Self.carriers" Multiplicity="0..1" />
           <End Role="shipments" Type="Self.shipments" Multiplicity="*" />
@@ -939,18 +1074,6 @@ warning 6002: The table/view 'DUBBDB.dbo.userRolesView' does not have a primary 
             </Principal>
             <Dependent Role="shipments">
               <PropertyRef Name="carrierScheduleIntno" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK_shipments_clients">
-          <End Role="clients" Type="Self.clients" Multiplicity="1" />
-          <End Role="shipments" Type="Self.shipments" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="clients">
-              <PropertyRef Name="clientIntno" />
-            </Principal>
-            <Dependent Role="shipments">
-              <PropertyRef Name="clientIntno" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -1075,6 +1198,7 @@ warning 6002: The table/view 'DUBBDB.dbo.userRolesView' does not have a primary 
           </ReferentialConstraint>
         </Association>
         <EntityContainer Name="DUBBDBModelStoreContainer">
+          <EntitySet Name="adaptationScenes" EntityType="Self.adaptationScenes" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="agreements" EntityType="Self.agreements" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="agreementSpecs" EntityType="Self.agreementSpecs" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="agreementTerms" EntityType="Self.agreementTerms" Schema="dbo" store:Type="Tables" />
@@ -1083,6 +1207,7 @@ warning 6002: The table/view 'DUBBDB.dbo.userRolesView' does not have a primary 
           <EntitySet Name="carrierSchedules" EntityType="Self.carrierSchedules" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="clients" EntityType="Self.clients" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="contacts" EntityType="Self.contacts" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="costCenters" EntityType="Self.costCenters" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="deliveryFeedbacks" EntityType="Self.deliveryFeedbacks" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="dubbDomain" EntityType="Self.dubbDomain" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="dubbingAppointments" EntityType="Self.dubbingAppointments" Schema="dbo" store:Type="Tables" />
@@ -1092,11 +1217,15 @@ warning 6002: The table/view 'DUBBDB.dbo.userRolesView' does not have a primary 
           <EntitySet Name="dubbingTrnHdrs" EntityType="Self.dubbingTrnHdrs" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="employees" EntityType="Self.employees" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="feedbackActions" EntityType="Self.feedbackActions" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="orderAdaptations" EntityType="Self.orderAdaptations" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="orderBatchTrnHdrs" EntityType="Self.orderBatchTrnHdrs" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="orderChecks" EntityType="Self.orderChecks" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="orderTrnDtls" EntityType="Self.orderTrnDtls" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="orderTrnHdrs" EntityType="Self.orderTrnHdrs" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="paymentDetails" EntityType="Self.paymentDetails" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="payments" EntityType="Self.payments" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="sceneDialogs" EntityType="Self.sceneDialogs" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="sceneScentences" EntityType="Self.sceneScentences" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="shipments" EntityType="Self.shipments" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="UserProfile" EntityType="Self.UserProfile" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="voiceActors" EntityType="Self.voiceActors" Schema="dbo" store:Type="Tables" />
@@ -1115,6 +1244,10 @@ warning 6002: The table/view 'DUBBDB.dbo.userRolesView' does not have a primary 
     [userRolesView].[RoleId] AS [RoleId]
     FROM [dbo].[userRolesView] AS [userRolesView]</DefiningQuery>
           </EntitySet>
+          <AssociationSet Name="FK_adaptationScenes_To_orderAdaptations" Association="Self.FK_adaptationScenes_To_orderAdaptations">
+            <End Role="orderAdaptations" EntitySet="orderAdaptations" />
+            <End Role="adaptationScenes" EntitySet="adaptationScenes" />
+          </AssociationSet>
           <AssociationSet Name="FK_agreements_agreements" Association="Self.FK_agreements_agreements">
             <End Role="agreements" EntitySet="agreements" />
             <End Role="agreements1" EntitySet="agreements" />
@@ -1142,6 +1275,10 @@ warning 6002: The table/view 'DUBBDB.dbo.userRolesView' does not have a primary 
           <AssociationSet Name="FK_carrierSchedules_carriers" Association="Self.FK_carrierSchedules_carriers">
             <End Role="carriers" EntitySet="carriers" />
             <End Role="carrierSchedules" EntitySet="carrierSchedules" />
+          </AssociationSet>
+          <AssociationSet Name="FK_costCenters_agreementWorks" Association="Self.FK_costCenters_agreementWorks">
+            <End Role="agreementWorks" EntitySet="agreementWorks" />
+            <End Role="costCenters" EntitySet="costCenters" />
           </AssociationSet>
           <AssociationSet Name="FK_deliveryFeedbacks_orderTrnHdrs" Association="Self.FK_deliveryFeedbacks_orderTrnHdrs">
             <End Role="orderTrnHdrs" EntitySet="orderTrnHdrs" />
@@ -1211,6 +1348,10 @@ warning 6002: The table/view 'DUBBDB.dbo.userRolesView' does not have a primary 
             <End Role="deliveryFeedbacks" EntitySet="deliveryFeedbacks" />
             <End Role="feedbackActions" EntitySet="feedbackActions" />
           </AssociationSet>
+          <AssociationSet Name="FK_orderAdaptations_To_orderTrnHdrs" Association="Self.FK_orderAdaptations_To_orderTrnHdrs">
+            <End Role="orderTrnHdrs" EntitySet="orderTrnHdrs" />
+            <End Role="orderAdaptations" EntitySet="orderAdaptations" />
+          </AssociationSet>
           <AssociationSet Name="FK_orderBatchTrnHdrs_agreementWorks" Association="Self.FK_orderBatchTrnHdrs_agreementWorks">
             <End Role="agreementWorks" EntitySet="agreementWorks" />
             <End Role="orderBatchTrnHdrs" EntitySet="orderBatchTrnHdrs" />
@@ -1239,6 +1380,10 @@ warning 6002: The table/view 'DUBBDB.dbo.userRolesView' does not have a primary 
             <End Role="workOrders" EntitySet="workOrders" />
             <End Role="orderTrnHdrs" EntitySet="orderTrnHdrs" />
           </AssociationSet>
+          <AssociationSet Name="FK_paymentDetails_payments" Association="Self.FK_paymentDetails_payments">
+            <End Role="payments" EntitySet="payments" />
+            <End Role="paymentDetails" EntitySet="paymentDetails" />
+          </AssociationSet>
           <AssociationSet Name="FK_payments_agreementWorks" Association="Self.FK_payments_agreementWorks">
             <End Role="agreementWorks" EntitySet="agreementWorks" />
             <End Role="payments" EntitySet="payments" />
@@ -1259,16 +1404,24 @@ warning 6002: The table/view 'DUBBDB.dbo.userRolesView' does not have a primary 
             <End Role="webpages_Roles" EntitySet="webpages_Roles" />
             <End Role="webpages_UsersInRoles" EntitySet="webpages_UsersInRoles" />
           </AssociationSet>
+          <AssociationSet Name="FK_sceneDialogs_To_adaptationScenes" Association="Self.FK_sceneDialogs_To_adaptationScenes">
+            <End Role="adaptationScenes" EntitySet="adaptationScenes" />
+            <End Role="sceneDialogs" EntitySet="sceneDialogs" />
+          </AssociationSet>
+          <AssociationSet Name="FK_sceneScentences_To_sceneDialogs" Association="Self.FK_sceneScentences_To_sceneDialogs">
+            <End Role="sceneDialogs" EntitySet="sceneDialogs" />
+            <End Role="sceneScentences" EntitySet="sceneScentences" />
+          </AssociationSet>
+          <AssociationSet Name="FK_sceneScentences_To_workCharacters" Association="Self.FK_sceneScentences_To_workCharacters">
+            <End Role="workCharacters" EntitySet="workCharacters" />
+            <End Role="sceneScentences" EntitySet="sceneScentences" />
+          </AssociationSet>
           <AssociationSet Name="FK_shipments_carriers" Association="Self.FK_shipments_carriers">
             <End Role="carriers" EntitySet="carriers" />
             <End Role="shipments" EntitySet="shipments" />
           </AssociationSet>
           <AssociationSet Name="FK_shipments_carrierSchedules" Association="Self.FK_shipments_carrierSchedules">
             <End Role="carrierSchedules" EntitySet="carrierSchedules" />
-            <End Role="shipments" EntitySet="shipments" />
-          </AssociationSet>
-          <AssociationSet Name="FK_shipments_clients" Association="Self.FK_shipments_clients">
-            <End Role="clients" EntitySet="clients" />
             <End Role="shipments" EntitySet="shipments" />
           </AssociationSet>
           <AssociationSet Name="FK_shipments_orderTrnHdrs" Association="Self.FK_shipments_orderTrnHdrs">
@@ -1325,6 +1478,7 @@ warning 6002: The table/view 'DUBBDB.dbo.userRolesView' does not have a primary 
           <EntitySet Name="carrierSchedules" EntityType="DUBBDBModel.carrierSchedule" />
           <EntitySet Name="clients" EntityType="DUBBDBModel.client" />
           <EntitySet Name="contacts" EntityType="DUBBDBModel.contact" />
+          <EntitySet Name="costCenters" EntityType="DUBBDBModel.costCenter" />
           <EntitySet Name="deliveryFeedbacks" EntityType="DUBBDBModel.deliveryFeedback" />
           <EntitySet Name="dubbDomains" EntityType="DUBBDBModel.dubbDomain" />
           <EntitySet Name="dubbingAppointments" EntityType="DUBBDBModel.dubbingAppointment" />
@@ -1338,6 +1492,7 @@ warning 6002: The table/view 'DUBBDB.dbo.userRolesView' does not have a primary 
           <EntitySet Name="orderChecks" EntityType="DUBBDBModel.orderCheck" />
           <EntitySet Name="orderTrnDtls" EntityType="DUBBDBModel.orderTrnDtl" />
           <EntitySet Name="orderTrnHdrs" EntityType="DUBBDBModel.orderTrnHdr" />
+          <EntitySet Name="paymentDetails" EntityType="DUBBDBModel.paymentDetail" />
           <EntitySet Name="payments" EntityType="DUBBDBModel.payment" />
           <EntitySet Name="shipments" EntityType="DUBBDBModel.shipment" />
           <EntitySet Name="UserProfiles" EntityType="DUBBDBModel.UserProfile" />
@@ -1350,7 +1505,6 @@ warning 6002: The table/view 'DUBBDB.dbo.userRolesView' does not have a primary 
           <EntitySet Name="workCharges" EntityType="DUBBDBModel.workCharge" />
           <EntitySet Name="workOrders" EntityType="DUBBDBModel.workOrder" />
           <EntitySet Name="workPersonnels" EntityType="DUBBDBModel.workPersonnel" />
-          <EntitySet Name="userRolesViews" EntityType="DUBBDBModel.userRolesView" />
           <AssociationSet Name="FK_agreements_agreements" Association="DUBBDBModel.FK_agreements_agreements">
             <End Role="agreement" EntitySet="agreements" />
             <End Role="agreement1" EntitySet="agreements" />
@@ -1374,6 +1528,10 @@ warning 6002: The table/view 'DUBBDB.dbo.userRolesView' does not have a primary 
           <AssociationSet Name="FK_agreementWorks_contacts" Association="DUBBDBModel.FK_agreementWorks_contacts">
             <End Role="contact" EntitySet="contacts" />
             <End Role="agreementWork" EntitySet="agreementWorks" />
+          </AssociationSet>
+          <AssociationSet Name="FK_costCenters_agreementWorks" Association="DUBBDBModel.FK_costCenters_agreementWorks">
+            <End Role="agreementWork" EntitySet="agreementWorks" />
+            <End Role="costCenter" EntitySet="costCenters" />
           </AssociationSet>
           <AssociationSet Name="FK_orderBatchTrnHdrs_agreementWorks" Association="DUBBDBModel.FK_orderBatchTrnHdrs_agreementWorks">
             <End Role="agreementWork" EntitySet="agreementWorks" />
@@ -1413,10 +1571,6 @@ warning 6002: The table/view 'DUBBDB.dbo.userRolesView' does not have a primary 
           </AssociationSet>
           <AssociationSet Name="FK_shipments_carrierSchedules" Association="DUBBDBModel.FK_shipments_carrierSchedules">
             <End Role="carrierSchedule" EntitySet="carrierSchedules" />
-            <End Role="shipment" EntitySet="shipments" />
-          </AssociationSet>
-          <AssociationSet Name="FK_shipments_clients" Association="DUBBDBModel.FK_shipments_clients">
-            <End Role="client" EntitySet="clients" />
             <End Role="shipment" EntitySet="shipments" />
           </AssociationSet>
           <AssociationSet Name="FK_workOrders_clients" Association="DUBBDBModel.FK_workOrders_clients">
@@ -1527,6 +1681,10 @@ warning 6002: The table/view 'DUBBDB.dbo.userRolesView' does not have a primary 
             <End Role="orderTrnHdr" EntitySet="orderTrnHdrs" />
             <End Role="shipment" EntitySet="shipments" />
           </AssociationSet>
+          <AssociationSet Name="FK_paymentDetails_payments" Association="DUBBDBModel.FK_paymentDetails_payments">
+            <End Role="payment" EntitySet="payments" />
+            <End Role="paymentDetail" EntitySet="paymentDetails" />
+          </AssociationSet>
           <AssociationSet Name="FK_payments_voiceActors" Association="DUBBDBModel.FK_payments_voiceActors">
             <End Role="voiceActor" EntitySet="voiceActors" />
             <End Role="payment" EntitySet="payments" />
@@ -1542,6 +1700,31 @@ warning 6002: The table/view 'DUBBDB.dbo.userRolesView' does not have a primary 
           <AssociationSet Name="webpages_UsersInRoles" Association="DUBBDBModel.webpages_UsersInRoles">
             <End Role="webpages_Roles" EntitySet="webpages_Roles" />
             <End Role="UserProfile" EntitySet="UserProfiles" />
+          </AssociationSet>
+          <EntitySet Name="userRolesViews" EntityType="DUBBDBModel.userRolesView" />
+          <EntitySet Name="adaptationScenes" EntityType="DUBBDBModel.adaptationScene" />
+          <EntitySet Name="orderAdaptations" EntityType="DUBBDBModel.orderAdaptation" />
+          <EntitySet Name="sceneDialogs" EntityType="DUBBDBModel.sceneDialog" />
+          <EntitySet Name="sceneScentences" EntityType="DUBBDBModel.sceneScentence" />
+          <AssociationSet Name="FK_adaptationScenes_To_orderAdaptations" Association="DUBBDBModel.FK_adaptationScenes_To_orderAdaptations">
+            <End Role="orderAdaptation" EntitySet="orderAdaptations" />
+            <End Role="adaptationScene" EntitySet="adaptationScenes" />
+          </AssociationSet>
+          <AssociationSet Name="FK_sceneDialogs_To_adaptationScenes" Association="DUBBDBModel.FK_sceneDialogs_To_adaptationScenes">
+            <End Role="adaptationScene" EntitySet="adaptationScenes" />
+            <End Role="sceneDialog" EntitySet="sceneDialogs" />
+          </AssociationSet>
+          <AssociationSet Name="FK_orderAdaptations_To_orderTrnHdrs" Association="DUBBDBModel.FK_orderAdaptations_To_orderTrnHdrs">
+            <End Role="orderTrnHdr" EntitySet="orderTrnHdrs" />
+            <End Role="orderAdaptation" EntitySet="orderAdaptations" />
+          </AssociationSet>
+          <AssociationSet Name="FK_sceneScentences_To_sceneDialogs" Association="DUBBDBModel.FK_sceneScentences_To_sceneDialogs">
+            <End Role="sceneDialog" EntitySet="sceneDialogs" />
+            <End Role="sceneScentence" EntitySet="sceneScentences" />
+          </AssociationSet>
+          <AssociationSet Name="FK_sceneScentences_To_workCharacters" Association="DUBBDBModel.FK_sceneScentences_To_workCharacters">
+            <End Role="workCharacter" EntitySet="workCharacters" />
+            <End Role="sceneScentence" EntitySet="sceneScentences" />
           </AssociationSet>
         </EntityContainer>
         <EntityType Name="agreement">
@@ -1606,6 +1789,7 @@ warning 6002: The table/view 'DUBBDB.dbo.userRolesView' does not have a primary 
           <Property Name="status" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
           <NavigationProperty Name="agreement" Relationship="DUBBDBModel.FK_agreementWorks_agreements" FromRole="agreementWork" ToRole="agreement" />
           <NavigationProperty Name="contact" Relationship="DUBBDBModel.FK_agreementWorks_contacts" FromRole="agreementWork" ToRole="contact" />
+          <NavigationProperty Name="costCenters" Relationship="DUBBDBModel.FK_costCenters_agreementWorks" FromRole="agreementWork" ToRole="costCenter" />
           <NavigationProperty Name="orderBatchTrnHdrs" Relationship="DUBBDBModel.FK_orderBatchTrnHdrs_agreementWorks" FromRole="agreementWork" ToRole="orderBatchTrnHdr" />
           <NavigationProperty Name="orderTrnHdrs" Relationship="DUBBDBModel.FK_orderTrnHdrs_agreementWorks" FromRole="agreementWork" ToRole="orderTrnHdr" />
           <NavigationProperty Name="payments" Relationship="DUBBDBModel.FK_payments_agreementWorks" FromRole="agreementWork" ToRole="payment" />
@@ -1652,7 +1836,6 @@ warning 6002: The table/view 'DUBBDB.dbo.userRolesView' does not have a primary 
           <Property Name="othClientShortName" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
           <Property Name="status" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
           <NavigationProperty Name="agreements" Relationship="DUBBDBModel.FK_agreements_clients" FromRole="client" ToRole="agreement" />
-          <NavigationProperty Name="shipments" Relationship="DUBBDBModel.FK_shipments_clients" FromRole="client" ToRole="shipment" />
           <NavigationProperty Name="workOrders" Relationship="DUBBDBModel.FK_workOrders_clients" FromRole="client" ToRole="workOrder" />
         </EntityType>
         <EntityType Name="contact">
@@ -1672,6 +1855,19 @@ warning 6002: The table/view 'DUBBDB.dbo.userRolesView' does not have a primary 
           <Property Name="remarks" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
           <Property Name="status" Type="Boolean" Nullable="false" />
           <NavigationProperty Name="agreementWorks" Relationship="DUBBDBModel.FK_agreementWorks_contacts" FromRole="contact" ToRole="agreementWork" />
+        </EntityType>
+        <EntityType Name="costCenter">
+          <Key>
+            <PropertyRef Name="costCenterIntno" />
+          </Key>
+          <Property Name="costCenterIntno" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="workIntno" Type="Int64" Nullable="false" />
+          <Property Name="costCenterType" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="costCenterName" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="othCostCenterName" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="accountNo" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="status" Type="Boolean" Nullable="false" />
+          <NavigationProperty Name="agreementWork" Relationship="DUBBDBModel.FK_costCenters_agreementWorks" FromRole="costCenter" ToRole="agreementWork" />
         </EntityType>
         <EntityType Name="deliveryFeedback">
           <Key>
@@ -1715,10 +1911,10 @@ warning 6002: The table/view 'DUBBDB.dbo.userRolesView' does not have a primary 
           <Property Name="fromTime" Type="DateTime" Precision="3" />
           <Property Name="thruTime" Type="DateTime" Precision="3" />
           <Property Name="totalScenes" Type="Int32" />
+          <Property Name="dubbSubject" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
           <Property Name="actualFromTime" Type="DateTime" Precision="3" />
           <Property Name="actualThruTime" Type="DateTime" Precision="3" />
           <Property Name="remarks" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
-          <Property Name="totalMinutes" Type="Int32" Nullable="false" />
           <NavigationProperty Name="dubbingSheetHdr" Relationship="DUBBDBModel.FK_dubbingAppointments_dubbingSheetHdrs1" FromRole="dubbingAppointment" ToRole="dubbingSheetHdr" />
           <NavigationProperty Name="dubbingTrnDtl" Relationship="DUBBDBModel.FK_dubbingAppointments_dubbingTrnDtls" FromRole="dubbingAppointment" ToRole="dubbingTrnDtl" />
         </EntityType>
@@ -1748,10 +1944,9 @@ warning 6002: The table/view 'DUBBDB.dbo.userRolesView' does not have a primary 
           </Key>
           <Property Name="dubbSheetHdrIntno" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="orderTrnHdrIntno" Type="Int64" Nullable="false" />
-          <Property Name="workCharacterIntno" Type="Int64" />
+          <Property Name="workCharacterIntno" Type="Int64" Nullable="false" />
           <Property Name="voiceActorIntno" Type="Int64" Nullable="false" />
-          <Property Name="actorName" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
-          <Property Name="characterName" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="anonymActorName" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
           <NavigationProperty Name="dubbingAppointments" Relationship="DUBBDBModel.FK_dubbingAppointments_dubbingSheetHdrs1" FromRole="dubbingSheetHdr" ToRole="dubbingAppointment" />
           <NavigationProperty Name="dubbingSheetDtls" Relationship="DUBBDBModel.FK_dubbingSheetDtls_dubbingSheetHdrs" FromRole="dubbingSheetHdr" ToRole="dubbingSheetDtl" />
           <NavigationProperty Name="orderTrnHdr" Relationship="DUBBDBModel.FK_dubbingSheetHdrs_orderTrnHdrs" FromRole="dubbingSheetHdr" ToRole="orderTrnHdr" />
@@ -1803,7 +1998,6 @@ warning 6002: The table/view 'DUBBDB.dbo.userRolesView' does not have a primary 
           <Property Name="landLineNo" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
           <Property Name="email" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
           <Property Name="status" Type="Boolean" Nullable="false" />
-          <Property Name="accountNo" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
           <NavigationProperty Name="dubbingSheetDtls" Relationship="DUBBDBModel.FK_dubbingSheetDtls_employees" FromRole="employee" ToRole="dubbingSheetDtl" />
           <NavigationProperty Name="dubbingSheetDtls1" Relationship="DUBBDBModel.FK_dubbingSheetDtls_employees1" FromRole="employee" ToRole="dubbingSheetDtl" />
           <NavigationProperty Name="dubbingSheetDtls2" Relationship="DUBBDBModel.FK_dubbingSheetDtls_employees2" FromRole="employee" ToRole="dubbingSheetDtl" />
@@ -1854,7 +2048,7 @@ warning 6002: The table/view 'DUBBDB.dbo.userRolesView' does not have a primary 
             <PropertyRef Name="orderCheckIntno" />
           </Key>
           <Property Name="orderCheckIntno" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="orderTrnHdrIntno" Type="Int64" Nullable="false" />
+          <Property Name="orderTrnHdrIntno" Type="Int64" />
           <Property Name="checkType" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
           <Property Name="isAccepted" Type="Boolean" Nullable="false" />
           <NavigationProperty Name="orderTrnHdr" Relationship="DUBBDBModel.FK_orderChecks_orderTrnHdrs" FromRole="orderCheck" ToRole="orderTrnHdr" />
@@ -1912,6 +2106,20 @@ warning 6002: The table/view 'DUBBDB.dbo.userRolesView' does not have a primary 
           <NavigationProperty Name="orderTrnDtls" Relationship="DUBBDBModel.FK_orderTrnDtls_orderTrnHdrs" FromRole="orderTrnHdr" ToRole="orderTrnDtl" />
           <NavigationProperty Name="workOrder" Relationship="DUBBDBModel.FK_orderTrnHdrs_workOrders" FromRole="orderTrnHdr" ToRole="workOrder" />
           <NavigationProperty Name="shipments" Relationship="DUBBDBModel.FK_shipments_orderTrnHdrs" FromRole="orderTrnHdr" ToRole="shipment" />
+          <NavigationProperty Name="orderAdaptation" Relationship="DUBBDBModel.FK_orderAdaptations_To_orderTrnHdrs" FromRole="orderTrnHdr" ToRole="orderAdaptation" />
+        </EntityType>
+        <EntityType Name="paymentDetail">
+          <Key>
+            <PropertyRef Name="paymentDtlIntno" />
+          </Key>
+          <Property Name="paymentDtlIntno" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="paymentHdrIntno" Type="Int64" Nullable="false" />
+          <Property Name="episodeNo" Type="Int16" Nullable="false" />
+          <Property Name="totalScenes" Type="Int32" />
+          <Property Name="adjustedTotalScenes" Type="Int32" />
+          <Property Name="unitRate" Type="Int32" Nullable="false" />
+          <Property Name="amount" Type="Int32" Nullable="false" />
+          <NavigationProperty Name="payment" Relationship="DUBBDBModel.FK_paymentDetails_payments" FromRole="paymentDetail" ToRole="payment" />
         </EntityType>
         <EntityType Name="payment">
           <Key>
@@ -1924,21 +2132,16 @@ warning 6002: The table/view 'DUBBDB.dbo.userRolesView' does not have a primary 
           <Property Name="voiceActorIntno" Type="Int64" />
           <Property Name="empIntno" Type="Int64" />
           <Property Name="anonymousName" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
-          <Property Name="episodeNo" Type="Int16" Nullable="false" />
-          <Property Name="totalScenes" Type="Int32" Nullable="false" />
-          <Property Name="adjustedTotalScenes" Type="Int32" Nullable="false" />
-          <Property Name="unitRate" Type="Int32" Nullable="false" />
           <Property Name="paymentDesc" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
           <Property Name="totalAmount" Type="Int32" Nullable="false" />
           <Property Name="currencyCode" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
-          <Property Name="deduction" Type="Int32" Nullable="false" />
           <Property Name="paymentDate" Type="DateTime" Precision="0" />
           <Property Name="remarks" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
           <Property Name="status" Type="Boolean" Nullable="false" />
-          <Property Name="accountNo" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
           <NavigationProperty Name="agreementWork" Relationship="DUBBDBModel.FK_payments_agreementWorks" FromRole="payment" ToRole="agreementWork" />
           <NavigationProperty Name="dubbingTrnHdr" Relationship="DUBBDBModel.FK_payments_dubbingTrnHdrs" FromRole="payment" ToRole="dubbingTrnHdr" />
           <NavigationProperty Name="employee" Relationship="DUBBDBModel.FK_payments_employees" FromRole="payment" ToRole="employee" />
+          <NavigationProperty Name="paymentDetails" Relationship="DUBBDBModel.FK_paymentDetails_payments" FromRole="payment" ToRole="paymentDetail" />
           <NavigationProperty Name="voiceActor" Relationship="DUBBDBModel.FK_payments_voiceActors" FromRole="payment" ToRole="voiceActor" />
         </EntityType>
         <EntityType Name="shipment">
@@ -1953,10 +2156,8 @@ warning 6002: The table/view 'DUBBDB.dbo.userRolesView' does not have a primary 
           <Property Name="shipmentDate" Type="DateTime" Nullable="false" Precision="0" />
           <Property Name="remarks" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
           <Property Name="status" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
-          <Property Name="clientIntno" Type="Int64" Nullable="false" />
           <NavigationProperty Name="carrier" Relationship="DUBBDBModel.FK_shipments_carriers" FromRole="shipment" ToRole="carrier" />
           <NavigationProperty Name="carrierSchedule" Relationship="DUBBDBModel.FK_shipments_carrierSchedules" FromRole="shipment" ToRole="carrierSchedule" />
-          <NavigationProperty Name="client" Relationship="DUBBDBModel.FK_shipments_clients" FromRole="shipment" ToRole="client" />
           <NavigationProperty Name="orderTrnHdr" Relationship="DUBBDBModel.FK_shipments_orderTrnHdrs" FromRole="shipment" ToRole="orderTrnHdr" />
         </EntityType>
         <EntityType Name="UserProfile">
@@ -1978,7 +2179,6 @@ warning 6002: The table/view 'DUBBDB.dbo.userRolesView' does not have a primary 
           <Property Name="landLineNo" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
           <Property Name="email" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
           <Property Name="status" Type="Boolean" Nullable="false" />
-          <Property Name="accountNo" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
           <NavigationProperty Name="dubbingSheetHdrs" Relationship="DUBBDBModel.FK_dubbingSheetHdrs_voiceActors" FromRole="voiceActor" ToRole="dubbingSheetHdr" />
           <NavigationProperty Name="payments" Relationship="DUBBDBModel.FK_payments_voiceActors" FromRole="voiceActor" ToRole="payment" />
           <NavigationProperty Name="workActors" Relationship="DUBBDBModel.FK_workActors_voiceActors" FromRole="voiceActor" ToRole="workActor" />
@@ -2028,7 +2228,6 @@ warning 6002: The table/view 'DUBBDB.dbo.userRolesView' does not have a primary 
           <Property Name="thruDate" Type="DateTime" Precision="0" />
           <Property Name="remarks" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
           <Property Name="status" Type="Boolean" Nullable="false" />
-          <Property Name="scenesPerHour" Type="Int32" Nullable="false" />
           <NavigationProperty Name="agreementWork" Relationship="DUBBDBModel.FK_workActors_agreementWorks" FromRole="workActor" ToRole="agreementWork" />
           <NavigationProperty Name="voiceActor" Relationship="DUBBDBModel.FK_workActors_voiceActors" FromRole="workActor" ToRole="voiceActor" />
           <NavigationProperty Name="workCharacter" Relationship="DUBBDBModel.FK_workActors_workCharacters" FromRole="workActor" ToRole="workCharacter" />
@@ -2051,6 +2250,7 @@ warning 6002: The table/view 'DUBBDB.dbo.userRolesView' does not have a primary 
           <NavigationProperty Name="agreementWork" Relationship="DUBBDBModel.FK_workCharacters_agreementWorks" FromRole="workCharacter" ToRole="agreementWork" />
           <NavigationProperty Name="dubbingSheetHdrs" Relationship="DUBBDBModel.FK_dubbingSheetHdrs_workCharacters" FromRole="workCharacter" ToRole="dubbingSheetHdr" />
           <NavigationProperty Name="workActors" Relationship="DUBBDBModel.FK_workActors_workCharacters" FromRole="workCharacter" ToRole="workActor" />
+          <NavigationProperty Name="sceneScentences" Relationship="DUBBDBModel.FK_sceneScentences_To_workCharacters" FromRole="workCharacter" ToRole="sceneScentence" />
         </EntityType>
         <EntityType Name="workCharge">
           <Key>
@@ -2102,14 +2302,6 @@ warning 6002: The table/view 'DUBBDB.dbo.userRolesView' does not have a primary 
           <Property Name="status" Type="Boolean" Nullable="false" />
           <NavigationProperty Name="agreementWork" Relationship="DUBBDBModel.FK_workPersonnels_agreementWorks" FromRole="workPersonnel" ToRole="agreementWork" />
           <NavigationProperty Name="employee" Relationship="DUBBDBModel.FK_workPersonnels_employees" FromRole="workPersonnel" ToRole="employee" />
-        </EntityType>
-        <EntityType Name="userRolesView">
-          <Key>
-            <PropertyRef Name="UserId" />
-            <PropertyRef Name="RoleId" />
-          </Key>
-          <Property Name="UserId" Type="Int32" Nullable="false" />
-          <Property Name="RoleId" Type="Int32" Nullable="false" />
         </EntityType>
         <Association Name="FK_agreements_agreements">
           <End Type="DUBBDBModel.agreement" Role="agreement" Multiplicity="0..1" />
@@ -2180,6 +2372,18 @@ warning 6002: The table/view 'DUBBDB.dbo.userRolesView' does not have a primary 
             </Principal>
             <Dependent Role="agreementWork">
               <PropertyRef Name="contactIntno" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_costCenters_agreementWorks">
+          <End Type="DUBBDBModel.agreementWork" Role="agreementWork" Multiplicity="1" />
+          <End Type="DUBBDBModel.costCenter" Role="costCenter" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="agreementWork">
+              <PropertyRef Name="workIntno" />
+            </Principal>
+            <Dependent Role="costCenter">
+              <PropertyRef Name="workIntno" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -2300,18 +2504,6 @@ warning 6002: The table/view 'DUBBDB.dbo.userRolesView' does not have a primary 
             </Principal>
             <Dependent Role="shipment">
               <PropertyRef Name="carrierScheduleIntno" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK_shipments_clients">
-          <End Type="DUBBDBModel.client" Role="client" Multiplicity="1" />
-          <End Type="DUBBDBModel.shipment" Role="shipment" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="client">
-              <PropertyRef Name="clientIntno" />
-            </Principal>
-            <Dependent Role="shipment">
-              <PropertyRef Name="clientIntno" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -2460,7 +2652,7 @@ warning 6002: The table/view 'DUBBDB.dbo.userRolesView' does not have a primary 
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_dubbingSheetHdrs_workCharacters">
-          <End Type="DUBBDBModel.workCharacter" Role="workCharacter" Multiplicity="0..1" />
+          <End Type="DUBBDBModel.workCharacter" Role="workCharacter" Multiplicity="1" />
           <End Type="DUBBDBModel.dubbingSheetHdr" Role="dubbingSheetHdr" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="workCharacter">
@@ -2592,7 +2784,7 @@ warning 6002: The table/view 'DUBBDB.dbo.userRolesView' does not have a primary 
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_orderChecks_orderTrnHdrs">
-          <End Type="DUBBDBModel.orderTrnHdr" Role="orderTrnHdr" Multiplicity="1" />
+          <End Type="DUBBDBModel.orderTrnHdr" Role="orderTrnHdr" Multiplicity="0..1" />
           <End Type="DUBBDBModel.orderCheck" Role="orderCheck" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="orderTrnHdr">
@@ -2639,6 +2831,18 @@ warning 6002: The table/view 'DUBBDB.dbo.userRolesView' does not have a primary 
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK_paymentDetails_payments">
+          <End Type="DUBBDBModel.payment" Role="payment" Multiplicity="1" />
+          <End Type="DUBBDBModel.paymentDetail" Role="paymentDetail" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="payment">
+              <PropertyRef Name="paymentHdrIntno" />
+            </Principal>
+            <Dependent Role="paymentDetail">
+              <PropertyRef Name="paymentHdrIntno" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK_payments_voiceActors">
           <End Type="DUBBDBModel.voiceActor" Role="voiceActor" Multiplicity="0..1" />
           <End Type="DUBBDBModel.payment" Role="payment" Multiplicity="*" />
@@ -2679,7 +2883,121 @@ warning 6002: The table/view 'DUBBDB.dbo.userRolesView' does not have a primary 
           <End Type="DUBBDBModel.webpages_Roles" Role="webpages_Roles" Multiplicity="*" />
           <End Type="DUBBDBModel.UserProfile" Role="UserProfile" Multiplicity="*" />
         </Association>
-      </Schema>
+        <EntityType Name="userRolesView">
+          <Key>
+            <PropertyRef Name="UserId" />
+            <PropertyRef Name="RoleId" />
+          </Key>
+          <Property Name="UserId" Type="Int32" Nullable="false" />
+          <Property Name="RoleId" Type="Int32" Nullable="false" />
+        </EntityType>
+        <EntityType Name="adaptationScene">
+          <Key>
+            <PropertyRef Name="sceneIntno" />
+          </Key>
+          <Property Name="sceneIntno" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="orderTrnHdrIntno" Type="Int64" Nullable="false" />
+          <Property Name="sceneNo" Type="Int32" Nullable="false" />
+          <Property Name="summary" Type="String" MaxLength="150" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="orderAdaptation" Relationship="DUBBDBModel.FK_adaptationScenes_To_orderAdaptations" FromRole="adaptationScene" ToRole="orderAdaptation" />
+          <NavigationProperty Name="sceneDialogs" Relationship="DUBBDBModel.FK_sceneDialogs_To_adaptationScenes" FromRole="adaptationScene" ToRole="sceneDialog" />
+        </EntityType>
+        <EntityType Name="orderAdaptation">
+          <Key>
+            <PropertyRef Name="orderTrnHdrIntno" />
+          </Key>
+          <Property Name="orderTrnHdrIntno" Type="Int64" Nullable="false" />
+          <Property Name="createdOn" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="status" Type="String" Nullable="false" MaxLength="10" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="adaptationScenes" Relationship="DUBBDBModel.FK_adaptationScenes_To_orderAdaptations" FromRole="orderAdaptation" ToRole="adaptationScene" />
+          <NavigationProperty Name="orderTrnHdr" Relationship="DUBBDBModel.FK_orderAdaptations_To_orderTrnHdrs" FromRole="orderAdaptation" ToRole="orderTrnHdr" />
+        </EntityType>
+        <EntityType Name="sceneDialog">
+          <Key>
+            <PropertyRef Name="dialogIntno" />
+          </Key>
+          <Property Name="dialogIntno" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="sceneIntno" Type="Int32" Nullable="false" />
+          <Property Name="dialogNo" Type="Int32" Nullable="false" />
+          <NavigationProperty Name="adaptationScene" Relationship="DUBBDBModel.FK_sceneDialogs_To_adaptationScenes" FromRole="sceneDialog" ToRole="adaptationScene" />
+          <NavigationProperty Name="sceneScentences" Relationship="DUBBDBModel.FK_sceneScentences_To_sceneDialogs" FromRole="sceneDialog" ToRole="sceneScentence" />
+        </EntityType>
+        <EntityType Name="sceneScentence">
+          <Key>
+            <PropertyRef Name="scentenceIntno" />
+          </Key>
+          <Property Name="scentenceIntno" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="dialogIntno" Type="Int32" Nullable="false" />
+          <Property Name="scentenceNo" Type="Int32" Nullable="false" />
+          <Property Name="workCharacterIntno" Type="Int64" />
+          <Property Name="characterName" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="startTime" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
+          <Property Name="endTime" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
+          <Property Name="scentence" Type="String" Nullable="false" MaxLength="500" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="sceneDialog" Relationship="DUBBDBModel.FK_sceneScentences_To_sceneDialogs" FromRole="sceneScentence" ToRole="sceneDialog" />
+          <NavigationProperty Name="workCharacter" Relationship="DUBBDBModel.FK_sceneScentences_To_workCharacters" FromRole="sceneScentence" ToRole="workCharacter" />
+        </EntityType>
+        <Association Name="FK_adaptationScenes_To_orderAdaptations">
+          <End Type="DUBBDBModel.orderAdaptation" Role="orderAdaptation" Multiplicity="1" />
+          <End Type="DUBBDBModel.adaptationScene" Role="adaptationScene" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="orderAdaptation">
+              <PropertyRef Name="orderTrnHdrIntno" />
+            </Principal>
+            <Dependent Role="adaptationScene">
+              <PropertyRef Name="orderTrnHdrIntno" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_sceneDialogs_To_adaptationScenes">
+          <End Type="DUBBDBModel.adaptationScene" Role="adaptationScene" Multiplicity="1" />
+          <End Type="DUBBDBModel.sceneDialog" Role="sceneDialog" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="adaptationScene">
+              <PropertyRef Name="sceneIntno" />
+            </Principal>
+            <Dependent Role="sceneDialog">
+              <PropertyRef Name="sceneIntno" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_orderAdaptations_To_orderTrnHdrs">
+          <End Type="DUBBDBModel.orderTrnHdr" Role="orderTrnHdr" Multiplicity="1" />
+          <End Type="DUBBDBModel.orderAdaptation" Role="orderAdaptation" Multiplicity="0..1" />
+          <ReferentialConstraint>
+            <Principal Role="orderTrnHdr">
+              <PropertyRef Name="orderTrnHdrIntno" />
+            </Principal>
+            <Dependent Role="orderAdaptation">
+              <PropertyRef Name="orderTrnHdrIntno" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_sceneScentences_To_sceneDialogs">
+          <End Type="DUBBDBModel.sceneDialog" Role="sceneDialog" Multiplicity="1" />
+          <End Type="DUBBDBModel.sceneScentence" Role="sceneScentence" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="sceneDialog">
+              <PropertyRef Name="dialogIntno" />
+            </Principal>
+            <Dependent Role="sceneScentence">
+              <PropertyRef Name="dialogIntno" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_sceneScentences_To_workCharacters">
+          <End Type="DUBBDBModel.workCharacter" Role="workCharacter" Multiplicity="0..1" />
+          <End Type="DUBBDBModel.sceneScentence" Role="sceneScentence" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="workCharacter">
+              <PropertyRef Name="workCharacterIntno" />
+            </Principal>
+            <Dependent Role="sceneScentence">
+              <PropertyRef Name="workCharacterIntno" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
     <edmx:Mappings>
@@ -2797,6 +3115,19 @@ warning 6002: The table/view 'DUBBDB.dbo.userRolesView' does not have a primary 
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
+          <EntitySetMapping Name="costCenters">
+            <EntityTypeMapping TypeName="DUBBDBModel.costCenter">
+              <MappingFragment StoreEntitySet="costCenters">
+                <ScalarProperty Name="status" ColumnName="status" />
+                <ScalarProperty Name="accountNo" ColumnName="accountNo" />
+                <ScalarProperty Name="othCostCenterName" ColumnName="othCostCenterName" />
+                <ScalarProperty Name="costCenterName" ColumnName="costCenterName" />
+                <ScalarProperty Name="costCenterType" ColumnName="costCenterType" />
+                <ScalarProperty Name="workIntno" ColumnName="workIntno" />
+                <ScalarProperty Name="costCenterIntno" ColumnName="costCenterIntno" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
           <EntitySetMapping Name="deliveryFeedbacks">
             <EntityTypeMapping TypeName="DUBBDBModel.deliveryFeedback">
               <MappingFragment StoreEntitySet="deliveryFeedbacks">
@@ -2831,10 +3162,10 @@ warning 6002: The table/view 'DUBBDB.dbo.userRolesView' does not have a primary 
           <EntitySetMapping Name="dubbingAppointments">
             <EntityTypeMapping TypeName="DUBBDBModel.dubbingAppointment">
               <MappingFragment StoreEntitySet="dubbingAppointments">
-                <ScalarProperty Name="totalMinutes" ColumnName="totalMinutes" />
                 <ScalarProperty Name="remarks" ColumnName="remarks" />
                 <ScalarProperty Name="actualThruTime" ColumnName="actualThruTime" />
                 <ScalarProperty Name="actualFromTime" ColumnName="actualFromTime" />
+                <ScalarProperty Name="dubbSubject" ColumnName="dubbSubject" />
                 <ScalarProperty Name="totalScenes" ColumnName="totalScenes" />
                 <ScalarProperty Name="thruTime" ColumnName="thruTime" />
                 <ScalarProperty Name="fromTime" ColumnName="fromTime" />
@@ -2864,8 +3195,7 @@ warning 6002: The table/view 'DUBBDB.dbo.userRolesView' does not have a primary 
           <EntitySetMapping Name="dubbingSheetHdrs">
             <EntityTypeMapping TypeName="DUBBDBModel.dubbingSheetHdr">
               <MappingFragment StoreEntitySet="dubbingSheetHdrs">
-                <ScalarProperty Name="characterName" ColumnName="characterName" />
-                <ScalarProperty Name="actorName" ColumnName="actorName" />
+                <ScalarProperty Name="anonymActorName" ColumnName="anonymActorName" />
                 <ScalarProperty Name="voiceActorIntno" ColumnName="voiceActorIntno" />
                 <ScalarProperty Name="workCharacterIntno" ColumnName="workCharacterIntno" />
                 <ScalarProperty Name="orderTrnHdrIntno" ColumnName="orderTrnHdrIntno" />
@@ -2902,7 +3232,6 @@ warning 6002: The table/view 'DUBBDB.dbo.userRolesView' does not have a primary 
           <EntitySetMapping Name="employees">
             <EntityTypeMapping TypeName="DUBBDBModel.employee">
               <MappingFragment StoreEntitySet="employees">
-                <ScalarProperty Name="accountNo" ColumnName="accountNo" />
                 <ScalarProperty Name="status" ColumnName="status" />
                 <ScalarProperty Name="email" ColumnName="email" />
                 <ScalarProperty Name="landLineNo" ColumnName="landLineNo" />
@@ -3004,21 +3333,28 @@ warning 6002: The table/view 'DUBBDB.dbo.userRolesView' does not have a primary 
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
-          <EntitySetMapping Name="payments">
-            <EntityTypeMapping TypeName="DUBBDBModel.payment">
-              <MappingFragment StoreEntitySet="payments">
-                <ScalarProperty Name="accountNo" ColumnName="accountNo" />
-                <ScalarProperty Name="status" ColumnName="status" />
-                <ScalarProperty Name="remarks" ColumnName="remarks" />
-                <ScalarProperty Name="paymentDate" ColumnName="paymentDate" />
-                <ScalarProperty Name="deduction" ColumnName="deduction" />
-                <ScalarProperty Name="currencyCode" ColumnName="currencyCode" />
-                <ScalarProperty Name="totalAmount" ColumnName="totalAmount" />
-                <ScalarProperty Name="paymentDesc" ColumnName="paymentDesc" />
+          <EntitySetMapping Name="paymentDetails">
+            <EntityTypeMapping TypeName="DUBBDBModel.paymentDetail">
+              <MappingFragment StoreEntitySet="paymentDetails">
+                <ScalarProperty Name="amount" ColumnName="amount" />
                 <ScalarProperty Name="unitRate" ColumnName="unitRate" />
                 <ScalarProperty Name="adjustedTotalScenes" ColumnName="adjustedTotalScenes" />
                 <ScalarProperty Name="totalScenes" ColumnName="totalScenes" />
                 <ScalarProperty Name="episodeNo" ColumnName="episodeNo" />
+                <ScalarProperty Name="paymentHdrIntno" ColumnName="paymentHdrIntno" />
+                <ScalarProperty Name="paymentDtlIntno" ColumnName="paymentDtlIntno" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="payments">
+            <EntityTypeMapping TypeName="DUBBDBModel.payment">
+              <MappingFragment StoreEntitySet="payments">
+                <ScalarProperty Name="status" ColumnName="status" />
+                <ScalarProperty Name="remarks" ColumnName="remarks" />
+                <ScalarProperty Name="paymentDate" ColumnName="paymentDate" />
+                <ScalarProperty Name="currencyCode" ColumnName="currencyCode" />
+                <ScalarProperty Name="totalAmount" ColumnName="totalAmount" />
+                <ScalarProperty Name="paymentDesc" ColumnName="paymentDesc" />
                 <ScalarProperty Name="anonymousName" ColumnName="anonymousName" />
                 <ScalarProperty Name="empIntno" ColumnName="empIntno" />
                 <ScalarProperty Name="voiceActorIntno" ColumnName="voiceActorIntno" />
@@ -3032,7 +3368,6 @@ warning 6002: The table/view 'DUBBDB.dbo.userRolesView' does not have a primary 
           <EntitySetMapping Name="shipments">
             <EntityTypeMapping TypeName="DUBBDBModel.shipment">
               <MappingFragment StoreEntitySet="shipments">
-                <ScalarProperty Name="clientIntno" ColumnName="clientIntno" />
                 <ScalarProperty Name="status" ColumnName="status" />
                 <ScalarProperty Name="remarks" ColumnName="remarks" />
                 <ScalarProperty Name="shipmentDate" ColumnName="shipmentDate" />
@@ -3055,7 +3390,6 @@ warning 6002: The table/view 'DUBBDB.dbo.userRolesView' does not have a primary 
           <EntitySetMapping Name="voiceActors">
             <EntityTypeMapping TypeName="DUBBDBModel.voiceActor">
               <MappingFragment StoreEntitySet="voiceActors">
-                <ScalarProperty Name="accountNo" ColumnName="accountNo" />
                 <ScalarProperty Name="status" ColumnName="status" />
                 <ScalarProperty Name="email" ColumnName="email" />
                 <ScalarProperty Name="landLineNo" ColumnName="landLineNo" />
@@ -3103,7 +3437,6 @@ warning 6002: The table/view 'DUBBDB.dbo.userRolesView' does not have a primary 
           <EntitySetMapping Name="workActors">
             <EntityTypeMapping TypeName="DUBBDBModel.workActor">
               <MappingFragment StoreEntitySet="workActors">
-                <ScalarProperty Name="scenesPerHour" ColumnName="scenesPerHour" />
                 <ScalarProperty Name="status" ColumnName="status" />
                 <ScalarProperty Name="remarks" ColumnName="remarks" />
                 <ScalarProperty Name="thruDate" ColumnName="thruDate" />
@@ -3180,14 +3513,6 @@ warning 6002: The table/view 'DUBBDB.dbo.userRolesView' does not have a primary 
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
-          <EntitySetMapping Name="userRolesViews">
-            <EntityTypeMapping TypeName="DUBBDBModel.userRolesView">
-              <MappingFragment StoreEntitySet="userRolesView">
-                <ScalarProperty Name="RoleId" ColumnName="RoleId" />
-                <ScalarProperty Name="UserId" ColumnName="UserId" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
           <AssociationSetMapping Name="webpages_UsersInRoles" TypeName="DUBBDBModel.webpages_UsersInRoles" StoreEntitySet="webpages_UsersInRoles">
             <EndProperty Name="UserProfile">
               <ScalarProperty Name="UserId" ColumnName="UserId" />
@@ -3196,6 +3521,56 @@ warning 6002: The table/view 'DUBBDB.dbo.userRolesView' does not have a primary 
               <ScalarProperty Name="RoleId" ColumnName="RoleId" />
             </EndProperty>
           </AssociationSetMapping>
+          <EntitySetMapping Name="userRolesViews">
+            <EntityTypeMapping TypeName="DUBBDBModel.userRolesView">
+              <MappingFragment StoreEntitySet="userRolesView">
+                <ScalarProperty Name="RoleId" ColumnName="RoleId" />
+                <ScalarProperty Name="UserId" ColumnName="UserId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="adaptationScenes">
+            <EntityTypeMapping TypeName="DUBBDBModel.adaptationScene">
+              <MappingFragment StoreEntitySet="adaptationScenes">
+                <ScalarProperty Name="summary" ColumnName="summary" />
+                <ScalarProperty Name="sceneNo" ColumnName="sceneNo" />
+                <ScalarProperty Name="orderTrnHdrIntno" ColumnName="orderTrnHdrIntno" />
+                <ScalarProperty Name="sceneIntno" ColumnName="sceneIntno" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="orderAdaptations">
+            <EntityTypeMapping TypeName="DUBBDBModel.orderAdaptation">
+              <MappingFragment StoreEntitySet="orderAdaptations">
+                <ScalarProperty Name="status" ColumnName="status" />
+                <ScalarProperty Name="createdOn" ColumnName="createdOn" />
+                <ScalarProperty Name="orderTrnHdrIntno" ColumnName="orderTrnHdrIntno" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="sceneDialogs">
+            <EntityTypeMapping TypeName="DUBBDBModel.sceneDialog">
+              <MappingFragment StoreEntitySet="sceneDialogs">
+                <ScalarProperty Name="dialogNo" ColumnName="dialogNo" />
+                <ScalarProperty Name="sceneIntno" ColumnName="sceneIntno" />
+                <ScalarProperty Name="dialogIntno" ColumnName="dialogIntno" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="sceneScentences">
+            <EntityTypeMapping TypeName="DUBBDBModel.sceneScentence">
+              <MappingFragment StoreEntitySet="sceneScentences">
+                <ScalarProperty Name="scentence" ColumnName="scentence" />
+                <ScalarProperty Name="endTime" ColumnName="endTime" />
+                <ScalarProperty Name="startTime" ColumnName="startTime" />
+                <ScalarProperty Name="characterName" ColumnName="characterName" />
+                <ScalarProperty Name="workCharacterIntno" ColumnName="workCharacterIntno" />
+                <ScalarProperty Name="scentenceNo" ColumnName="scentenceNo" />
+                <ScalarProperty Name="dialogIntno" ColumnName="dialogIntno" />
+                <ScalarProperty Name="scentenceIntno" ColumnName="scentenceIntno" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
         </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>

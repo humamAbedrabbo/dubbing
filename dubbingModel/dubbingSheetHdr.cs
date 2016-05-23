@@ -23,10 +23,9 @@ namespace dubbingModel
     
         public long dubbSheetHdrIntno { get; set; }
         public long orderTrnHdrIntno { get; set; }
-        public Nullable<long> workCharacterIntno { get; set; }
+        public long workCharacterIntno { get; set; }
         public long voiceActorIntno { get; set; }
-        public string actorName { get; set; }
-        public string characterName { get; set; }
+        public string anonymActorName { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<dubbingAppointment> dubbingAppointments { get; set; }

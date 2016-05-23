@@ -401,36 +401,6 @@ namespace dubbingApp.Models
             return aptList;
         }
 
-        public static IEnumerable getAppointmentActorsList(DateTime? appointmentDate)
-        {
-            if (appointmentDate.HasValue)
-                return (from A in db.dubbingAppointments
-                        join B in db.dubbingSheetHdrs on A.dubbSheetHdrIntno equals B.dubbSheetHdrIntno
-                        where A.appointmentDate == appointmentDate
-                        select new { B.dubbSheetHdrIntno, voiceActorName = B.actorName }).ToList();
-            else
-                return null;
-        }
-
-        public static IEnumerable getScheduleCharactersList(long? dubbTrnDtlIntno)
-        {
-            if (dubbTrnDtlIntno.HasValue)
-                return (from A in db.dubbingAppointments
-                        join B in db.dubbingSheetHdrs on A.dubbSheetHdrIntno equals B.dubbSheetHdrIntno
-                        where A.dubbTrnDtlIntno == dubbTrnDtlIntno
-                        select new { B.dubbSheetHdrIntno, voiceActorName = B.characterName + " / " + B.actorName }).ToList();
-            else
-                return null;
-        }
-
-        public static IEnumerable getScheduleActorsList(long dubbTrnHdrIntno)
-        {
-                return (from A in db.dubbingAppointments
-                        join B in db.dubbingSheetHdrs on A.dubbSheetHdrIntno equals B.dubbSheetHdrIntno
-                        join C in db.dubbingTrnDtls on A.dubbTrnDtlIntno equals C.dubbTrnDtlIntno
-                        where C.dubbTrnHdrIntno == dubbTrnHdrIntno
-                        select new { B.dubbSheetHdrIntno, voiceActorName = B.actorName + " (" + B.characterName + ")" }).ToList();
-        }
 
         public static IEnumerable getScheduleMatrixModel(DateTime calendarWeekFirstDay, DateTime calendarWeekLastDay)
         {
