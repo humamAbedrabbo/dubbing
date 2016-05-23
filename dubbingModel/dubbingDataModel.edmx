@@ -2679,7 +2679,7 @@ warning 6002: The table/view 'DUBBDB.dbo.userRolesView' does not have a primary 
           <End Type="DUBBDBModel.webpages_Roles" Role="webpages_Roles" Multiplicity="*" />
           <End Type="DUBBDBModel.UserProfile" Role="UserProfile" Multiplicity="*" />
         </Association>
-      </Schema>
+        </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
     <edmx:Mappings>

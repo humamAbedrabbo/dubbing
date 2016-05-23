@@ -1,13 +1,13 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
-VisualStudioVersion = 14.0.24720.0
+VisualStudioVersion = 14.0.25123.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "dubbingModel", "dubbingModel\dubbingModel.csproj", "{B9A92335-DC9F-4DED-96A0-DA0975BEB7CD}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "dubbingApp", "dubbingApp\dubbingApp.csproj", "{5F6A3758-58E4-4F01-BB02-1180D54C5254}"
 EndProject
-Project("{00D1A9C2-B5F0-4AF3-8072-F6C62B433612}") = "dubbingDatabase", "dubbingDatabase\dubbingDatabase.sqlproj", "{880CFEE3-50A0-4FF8-A10D-52A9F279B1CB}"
+Project("{00D1A9C2-B5F0-4AF3-8072-F6C62B433612}") = "dubbingDatabase", "dubbingDatabase\dubbingDatabase.sqlproj", "{4A35DB03-82E9-40A3-8224-11038FCEFE9A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -23,12 +23,12 @@ Global
 		{5F6A3758-58E4-4F01-BB02-1180D54C5254}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5F6A3758-58E4-4F01-BB02-1180D54C5254}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5F6A3758-58E4-4F01-BB02-1180D54C5254}.Release|Any CPU.Build.0 = Release|Any CPU
-		{880CFEE3-50A0-4FF8-A10D-52A9F279B1CB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{880CFEE3-50A0-4FF8-A10D-52A9F279B1CB}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{880CFEE3-50A0-4FF8-A10D-52A9F279B1CB}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
-		{880CFEE3-50A0-4FF8-A10D-52A9F279B1CB}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{880CFEE3-50A0-4FF8-A10D-52A9F279B1CB}.Release|Any CPU.Build.0 = Release|Any CPU
-		{880CFEE3-50A0-4FF8-A10D-52A9F279B1CB}.Release|Any CPU.Deploy.0 = Release|Any CPU
+		{4A35DB03-82E9-40A3-8224-11038FCEFE9A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4A35DB03-82E9-40A3-8224-11038FCEFE9A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4A35DB03-82E9-40A3-8224-11038FCEFE9A}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{4A35DB03-82E9-40A3-8224-11038FCEFE9A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4A35DB03-82E9-40A3-8224-11038FCEFE9A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4A35DB03-82E9-40A3-8224-11038FCEFE9A}.Release|Any CPU.Deploy.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
