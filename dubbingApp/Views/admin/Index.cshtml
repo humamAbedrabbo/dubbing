@@ -23,16 +23,105 @@
     @Scripts.Render("~/bundles/jqueryval")
 
     <script>
-        function onDismissClick() {
+        function onDismissClick(list) {
             $('#detailsPartial').html(null);
+            var url1;
+            if (list === '01') {
+                url1 = '@Url.Action("actorsList", "admin")';
+            }
+            else {
+                url1 = '@Url.Action("personnelList", "admin")';
+            }
             $.ajax({
-                url: '@Url.Action("personnelList", "admin")',
+                url: url1,
                 type: 'GET',
                 data: { isActive: true },
                 success: function (result) {
                     $('#listPartial').html(result);
                 }
             })
+        }
+
+        function onActiveClick(list, status) {
+            $('#status').val(status);
+            var url1;
+            if (list === '01') {
+                url1 = '@Url.Action("actorsList", "admin")';
+            }
+            else {
+                url1 = '@Url.Action("personnelList", "admin")';
+            }
+            $.ajax({
+                url: url1,
+                type: 'GET',
+                data: { isActive: status },
+                success: function (result) {
+                    $('#listPartial').html(result);
+                }
+            })
+        }
+
+        function onFilterClick(list, filter) {
+            if ($('#status').val() === '') {
+                $('#status').val(true);
+            }
+            var url1;
+            if (list === '01') {
+                url1 = '@Url.Action("actorsList", "admin")';
+            }
+            else {
+                url1 = '@Url.Action("personnelList", "admin")';
+            }
+            $.ajax({
+                url: url1,
+                type: 'GET',
+                data: { isActive: $('#status').val(), alpha: filter },
+                success: function (result) {
+                    $('#listPartial').html(result);
+                }
+            })
+        }
+
+        function onActorsClick() {
+            $.ajax({
+                url: '@Url.Action("actorsList", "admin")',
+                type: 'GET',
+                data: { isActive: true },
+                success: function (result) {
+                    $('#listPartial').html(result);
+                }
+            })
+        }
+        function onActorsAddNewClick() {
+            $.ajax({
+                url: '@Url.Action("actorsAddNew", "admin")',
+                type: 'GET',
+                success: function (result) {
+                    $('#detailsPartial').html(result);
+                }
+            })
+        }
+        function onActorsUpdateClick(actor) {
+            $.ajax({
+                url: '@Url.Action("actorsUpdate", "admin")',
+                type: 'GET',
+                data: { id: actor },
+                success: function (result) {
+                    $('#detailsPartial').html(result);
+                }
+            })
+        }
+        function onActorsRemoveClick(actor) {
+            if (confirm('Please Confirm! About to Remove the Selected Actor from List.')) {
+                $.ajax({
+                    url: '@Url.Action("actorsDelete", "admin")',
+                    type: 'GET',
+                    data: { id: actor },
+                    success: function (result) {
+                        $('#listPartial').html(result);
+                    }
+                })
+            }
         }
 
         function onPersonnelClick() {
@@ -78,5 +167,25 @@
             }
         }
 
+        function onWorkChargesClick(party, partyType1) {
+            $.ajax({
+                url: '@Url.Action("workChargesList", "admin")',
+                type: 'GET',
+                data: { id: party, partyType: partyType1 },
+                success: function (result) {
+                    $('#detailsPartial').html(result);
+                }
+            })
+        }
+        function onWorkChargesAddNewClick(work1, party, partyType1) {
+            $.ajax({
+                url: '@Url.Action("workChargesAddNew", "admin")',
+                type: 'GET',
+                data: { id: party, work: work1, partyType: partyType1 },
+                success: function (result) {
+                    $('#detailsPartial').html(result);
+                }
+            })
+        }
     </script>
 }

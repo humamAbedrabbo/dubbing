@@ -299,6 +299,11 @@
     <Content Include="Views\admin\_personnelList.cshtml" />
     <Content Include="Views\admin\_personnelAddNew.cshtml" />
     <Content Include="Views\admin\_personnelUpdate.cshtml" />
+    <Content Include="Views\admin\_workChargesList.cshtml" />
+    <Content Include="Views\admin\_actorsAddNew.cshtml" />
+    <Content Include="Views\admin\_actorsList.cshtml" />
+    <Content Include="Views\admin\_actorsUpdate.cshtml" />
+    <Content Include="Views\admin\_workChargesAddNew.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

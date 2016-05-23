@@ -1,0 +1,61 @@
+﻿@model dubbingModel.workCharge
+
+@using (Ajax.BeginForm("workChargesAddNew", "admin", new { id = ViewBag.workPartyIntno, work = ViewBag.workIntno, partyType = ViewBag.workPartyType },
+                                            new AjaxOptions()
+                                            {
+                                                HttpMethod = "POST",
+                                                UpdateTargetId = "detailsPartial"
+                                            }
+                                            ))
+{
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+    <div class="form-group-sm">
+        <small>@Html.LabelFor(model => model.chargeUom, "Charge Basis", htmlAttributes: new { @class = "control-label" })</small>
+        <div>
+            @Html.DropDownListFor(model => model.chargeUom, new SelectList(ViewBag.chargeUomList, "key", "value"), string.Empty, htmlAttributes: new { @class = "form-control" })
+            @Html.ValidationMessageFor(model => model.chargeUom, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+    <div class="form-group-sm">
+        <small>@Html.LabelFor(model => model.chargeAmount, "Amount", htmlAttributes: new { @class = "control-label" })</small>
+        <div>
+            @Html.EditorFor(model => model.chargeAmount, new { htmlAttributes = new { @class = "form-control" } })
+            @Html.ValidationMessageFor(model => model.chargeAmount, "", new { @class = "text-danger" })
+        </div>
+    </div>
+    
+    <div class="form-group-sm">
+        <small>@Html.LabelFor(model => model.currencyCode, "Currency", htmlAttributes: new { @class = "control-label" })</small>
+        <div>
+            @Html.DropDownListFor(model => model.currencyCode, new SelectList(ViewBag.currenciesList, "key", "value"), string.Empty, htmlAttributes: new { @class = "form-control" })
+            @Html.ValidationMessageFor(model => model.currencyCode, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+    <div class="form-group-sm">
+        <small>@Html.LabelFor(model => model.fromDate, "Start Date", htmlAttributes: new { @class = "control-label" })</small>
+        <div>
+            <input type="date" name="fromDate" />
+            @Html.ValidationMessageFor(model => model.fromDate, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+    <div class="form-group-sm">
+        <small>@Html.LabelFor(model => model.remarks, "Remarks", htmlAttributes: new { @class = "control-label" })</small>
+        <div>
+            @Html.EditorFor(model => model.remarks, new { htmlAttributes = new { @class = "form-control" } })
+            @Html.ValidationMessageFor(model => model.remarks, "", new { @class = "text-danger" })
+        </div>
+    </div>
+    
+    <br />
+    <div class="form-group-sm">
+        <button type="submit" class="btn btn-default btn-sm pull-left">Submit</button>
+        &nbsp;
+        <a class="btn btn-default btn-sm pull-right" onclick="onDismissClick('01')" role="button">Dismiss</a>
+        <label class="alert-success" id="result"></label>
+    </div>
+}

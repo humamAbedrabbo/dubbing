@@ -2,16 +2,26 @@
 @using dubbingApp.Models;
 
 <div class="container-fluid">
-    @foreach (string empType in Model.Select(b => b.empType).Distinct())
+    <div class="jumbotron" style="padding:10px">
+        <button class="btn btn-success btn-xs" onclick="onActiveClick('02', true)" title="Active">
+            <span class="glyphicon glyphicon-thumbs-up" aria-hidden="true"></span>
+        </button>
+        <button class="btn btn-default btn-xs" onclick="onActiveClick('02', false)" title="Archive">
+            <span class="glyphicon glyphicon-thumbs-down" aria-hidden="true"></span>
+        </button>
+        <label>Personnel List Grouped By Category</label> &nbsp;
+    </div>
+    @Html.Hidden("status")
+    @foreach (SelectListItem empType in new SelectList(ViewBag.empTypesList, "key", "value"))
     {
         <div class="panel-default">
             <div class="panel-heading">
                 <div class="row">
                     <div class="col-sm-10">
-                        <label>@LookupModels.decodeDictionaryItem("empType", @empType)</label>
+                        <label>@empType.Text</label>
                     </div>
                     <div class="col-sm-2">
-                        <button class="btn btn-default btn-xs pull-right" onclick="onPersonnelAddNewClick(@empType)" title="Create New">
+                        <button class="btn btn-default btn-xs pull-right" onclick="onPersonnelAddNewClick(@empType.Value)" title="Create New">
                             <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
                         </button>
                     </div>
@@ -30,7 +40,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach (dubbingModel.employee item in Model.Where(b => b.empType == @empType))
+                        @foreach (dubbingModel.employee item in Model.Where(b => b.empType == @empType.Value))
                         {
                             <tr>
                                 <td class="col-sm-3"><small>@item.fullName (@item.empUID)</small></td>
@@ -43,8 +53,15 @@
                                         <button class="btn btn-default btn-xs" onclick="onPersonnelRemoveClick(@item.empIntno)" title="Remove">
                                             <span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
                                         </button>
-                                        <button class="btn btn-success btn-xs" onclick="onPersonnelChargesClick(@item.empIntno)" title="Charges">
-                                            <span class="glyphicon glyphicon-credit-card" aria-hidden="true"></span>
+                                        @{
+                                            string btnColor = "btn-default";
+                                            if (!LookupModels.isPartyHasCharges(item.empIntno, "02"))
+                                            {
+                                                btnColor = "btn-warning";
+                                            }
+                                        }
+                                        <button class="btn @btnColor btn-xs" onclick="onWorkChargesClick(@item.empIntno, '02')" title="Charges">
+                                            <span class="glyphicon glyphicon-usd" aria-hidden="true"></span>
                                         </button>
                                         <button class="btn btn-primary btn-xs" onclick="onPersonnelUpdateClick(@item.empIntno)" title="Modify">
                                             <span class="glyphicon glyphicon-edit" aria-hidden="true"></span>

@@ -58,22 +58,14 @@ namespace dubbingApp.Controllers
         public ActionResult clientAddNew(client item)
         {
             var model = db.clients;
-            if (ModelState.IsValid)
-            {
-                try
-                {
-                    item.status = "01";
-                    model.Add(item);
-                    db.SaveChanges();
-                }
-                catch (Exception e)
-                {
-                    return Content("Failed! Please Correct All Data. " + e.Message, "text/html");
-                }
-            }
-            else
-                return Content("Failed! Please Enter All Data.", "text/html");
-            return Content("Successfully Created.", "text/html");
+            item.status = "01";
+            model.Add(item);
+            db.SaveChanges();
+
+            var model1 = db.clients.Where(b => b.status == "01")
+                    .Select(b => new { b.clientIntno, b.clientName });
+            SelectList cList = new SelectList(model1, "clientIntno", "clientName");
+            return Json(cList);
         }
 
         public ActionResult clientUpdate(long id)
@@ -120,22 +112,14 @@ namespace dubbingApp.Controllers
         public ActionResult agreementAddNew(agreement item)
         {
             var model = db.agreements;
-            if (ModelState.IsValid)
-            {
-                try
-                {
-                    item.status = "01";
-                    model.Add(item);
-                    db.SaveChanges();
-                }
-                catch (Exception e)
-                {
-                    return Content("Failed! Please Correct All Data. " + e.Message, "text/html");
-                }
-            }
-            else
-                return Content("Failed! Please Enter All Data.", "text/html");
-            return Content("Successfully Created.", "text/html");
+            item.status = "01";
+            model.Add(item);
+            db.SaveChanges();
+
+            var model1 = db.agreements.Where(b => b.status == "01")
+                    .Select(b => new { b.agreementIntno, b.agreementName });
+            SelectList aList = new SelectList(model1, "agreementIntno", "agreementName");
+            return Json(aList);
         }
 
         public ActionResult agreementUpdate(long id)
@@ -304,6 +288,25 @@ namespace dubbingApp.Controllers
             var model = db.workPersonnels.Where(b => b.workIntno == id && b.status == true);
             ViewBag.workIntno = id;
             return PartialView("_teamList", model.ToList());
+        }
+
+        public ActionResult titlesComboChanged(string title)
+        {
+            string empType;
+            // mapping titleType to empType
+            if (title == "01" || title == "02" || title == "03")
+                empType = "01";
+            else if (title == "04")
+                empType = "02";
+            else if (title == "05")
+                empType = "03";
+            else if (title == "06")
+                empType = "04";
+            else
+                empType = null;
+
+            var x = db.employees.Where(b => (string.IsNullOrEmpty(title) || b.empType == empType) && b.status == true).Select(b => new { b.empIntno, b.fullName });
+            return Json(new SelectList(x, "empIntno", "fullName"));
         }
 
         public ActionResult teamAddNew(long id)

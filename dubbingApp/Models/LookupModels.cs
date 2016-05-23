@@ -71,6 +71,23 @@ namespace dubbingApp.Models
         //    string langCode = getLangCode();
         //    return db.dubbDomains.SingleOrDefault(b => b.domainName == domainName && b.domainCode == domainCode && b.langCode == langCode).domainValue;
         //}
+        public static bool isPartyHasCharges(long party, string partyType)
+        {
+            var x = db.workActors.Where(b => b.voiceActorIntno == party && b.status == true).ToList();
+            
+            bool isCharged = true;
+            foreach (workActor work in x)
+            {
+                var y = db.workCharges.Where(b => b.workIntno == work.workIntno && b.workPartyIntno == work.voiceActorIntno
+                                    && b.workPartyType == partyType && b.status == true).ToList();
+                if (y.Count() == 0)
+                    isCharged = false;
+            }
+            if (x.Count() != 0 && !isCharged)
+                return false;
+            else
+                return true;
+        }
 
         public static IEnumerable getClientsList()
         {

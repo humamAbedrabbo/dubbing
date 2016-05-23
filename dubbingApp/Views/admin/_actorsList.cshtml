@@ -1,0 +1,85 @@
+﻿@model IEnumerable<dubbingModel.voiceActor>
+@using dubbingApp.Models;
+
+<div class="container-fluid">
+    <div class="panel-default">
+        <div class="panel-heading">
+            <div class="row">
+                @Html.Hidden("status")
+                <div class="col-sm-11">
+                    <button class="btn btn-success btn-xs" onclick="onActiveClick('01', true)" title="Active">
+                        <span class="glyphicon glyphicon-thumbs-up" aria-hidden="true"></span>
+                    </button>
+                    <button class="btn btn-default btn-xs" onclick="onActiveClick('01', false)" title="Archive">
+                        <span class="glyphicon glyphicon-thumbs-down" aria-hidden="true"></span>
+                    </button>
+                    <label>Voice Actors List</label> &nbsp;
+                </div>
+                <div class="col-sm-1">
+                    <button class="btn btn-default btn-xs pull-right" onclick="onActorsAddNewClick()" title="Create New">
+                        <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+                    </button>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-12">
+                    <div class="btn-group-xs pull-right">
+                        @foreach (string alpha in ViewBag.alphaList)
+                        {
+                            <button class="btn btn-default btn-xs" onclick="onFilterClick('01', '@alpha')">@alpha</button>
+                        }
+                        <button class="btn btn-default btn-xs" onclick="onFilterClick('01')" title="All">
+                            <span class="glyphicon glyphicon-asterisk"></span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="panel-body">
+            <table class="table table-hover table-condensed">
+                <thead>
+                    <tr>
+                        <th class="col-sm-3"><label><small>Name</small></label></th>
+                        <th class="col-sm-2"><label><small>Mobile</small></label></th>
+                        <th class="col-sm-2"><label><small>LandLine</small></label></th>
+                        <th class="col-sm-2"><label><small>email</small></label></th>
+                        <th class="col-sm-1"><label><small>Account</small></label></th>
+                        <th class="col-sm-2 pull-right"><label><small>#</small></label></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (dubbingModel.voiceActor item in Model)
+                    {
+                        <tr>
+                            <td class="col-sm-3"><small>@item.fullName</small></td>
+                            <td class="col-sm-2"><small>@item.mobileNo</small></td>
+                            <td class="col-sm-2"><small>@item.landLineNo</small></td>
+                            <td class="col-sm-2"><small>@item.email</small></td>
+                            <td class="col-sm-1"><small>@item.accountNo</small></td>
+                            <td class="col-sm-2">
+                                <div class="pull-right">
+                                    <button class="btn btn-default btn-xs" onclick="onActorsRemoveClick(@item.voiceActorIntno)" title="Remove">
+                                        <span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
+                                    </button>
+                                    @{ 
+                                        string btnColor = "btn-default";
+                                        if (!LookupModels.isPartyHasCharges(item.voiceActorIntno, "01"))
+                                        {
+                                            btnColor = "btn-warning";
+                                        }
+                                    }
+                                    <button class="btn @btnColor btn-xs" onclick="onWorkChargesClick(@item.voiceActorIntno, '01')" title="Charges">
+                                        <span class="glyphicon glyphicon-usd" aria-hidden="true"></span>
+                                    </button>
+                                    <button class="btn btn-primary btn-xs" onclick="onActorsUpdateClick(@item.voiceActorIntno)" title="Modify">
+                                        <span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>       
+            </table>
+        </div>
+    </div>
+</div>

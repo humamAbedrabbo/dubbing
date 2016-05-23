@@ -16,7 +16,7 @@
         <div class="form-group">
             @Html.LabelFor(model => model.titleType, "Role", htmlAttributes: new { @class = "control-label col-sm-4" })
             <div class="col-sm-8">
-                @Html.DropDownListFor(model => model.titleType, new SelectList(ViewBag.titleTypesList, "key", "value"), string.Empty, htmlAttributes: new { @class = "form-control" })
+                @Html.DropDownListFor(model => model.titleType, new SelectList(ViewBag.titleTypesList, "key", "value"), "Select Role ...", htmlAttributes: new { @class = "form-control", onchange = "onTitlesComboChanged()", @id = "titlesCombo" })
                 @Html.ValidationMessageFor(model => model.titleType, "", new { @class = "text-danger" })
             </div>
         </div>
@@ -24,7 +24,7 @@
         <div class="form-group">
             @Html.LabelFor(model => model.empIntno, "Personnel", htmlAttributes: new { @class = "control-label col-sm-4" })
             <div class="col-sm-8">
-                @Html.DropDownListFor(model => model.empIntno, ViewBag.personnelList as SelectList, string.Empty, htmlAttributes: new { @class = "form-control" })
+                @Html.DropDownListFor(model => model.empIntno, ViewBag.personnelList as SelectList, string.Empty, htmlAttributes: new { @class = "form-control", @id = "personnelCombo" })
                 @Html.ValidationMessageFor(model => model.empIntno, "", new { @class = "text-danger" })
             </div>
         </div>
