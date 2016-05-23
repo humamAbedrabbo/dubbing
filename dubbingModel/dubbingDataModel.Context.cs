@@ -61,9 +61,5 @@ namespace dubbingModel
         public virtual DbSet<workOrder> workOrders { get; set; }
         public virtual DbSet<workPersonnel> workPersonnels { get; set; }
         public virtual DbSet<userRolesView> userRolesViews { get; set; }
-        public virtual DbSet<adaptationScene> adaptationScenes { get; set; }
-        public virtual DbSet<orderAdaptation> orderAdaptations { get; set; }
-        public virtual DbSet<sceneDialog> sceneDialogs { get; set; }
-        public virtual DbSet<sceneScentence> sceneScentences { get; set; }
     }
 }

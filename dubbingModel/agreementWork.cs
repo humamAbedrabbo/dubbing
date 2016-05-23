@@ -34,6 +34,8 @@ namespace dubbingModel
         public string othWorkName { get; set; }
         public string workNationality { get; set; }
         public string workOriginalLanguage { get; set; }
+        public System.DateTime fromDate { get; set; }
+        public Nullable<System.DateTime> thruDate { get; set; }
         public Nullable<System.DateTime> firstEpisodeShowDate { get; set; }
         public short totalNbrEpisodes { get; set; }
         public short totalWeekNbrEpisodes { get; set; }

@@ -15,10 +15,18 @@ namespace dubbingModel
     public partial class orderCheck
     {
         public long orderCheckIntno { get; set; }
+        public long orderIntno { get; set; }
         public Nullable<long> orderTrnHdrIntno { get; set; }
+        public short episodeNo { get; set; }
+        public string mediaType { get; set; }
         public string checkType { get; set; }
         public bool isAccepted { get; set; }
+        public string rejectReasons { get; set; }
+        public string remarks { get; set; }
+        public string updatedBy { get; set; }
+        public Nullable<System.DateTime> lastUpdated { get; set; }
     
         public virtual orderTrnHdr orderTrnHdr { get; set; }
+        public virtual workOrder workOrder { get; set; }
     }
 }

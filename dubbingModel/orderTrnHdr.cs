@@ -69,6 +69,5 @@ namespace dubbingModel
         public virtual workOrder workOrder { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<shipment> shipments { get; set; }
-        public virtual orderAdaptation orderAdaptation { get; set; }
     }
 }

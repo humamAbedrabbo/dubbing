@@ -7,7 +7,7 @@
     <Name>dubbingDatabase</Name>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectVersion>4.1</ProjectVersion>
-    <ProjectGuid>{880cfee3-50a0-4ff8-a10d-52a9f279b1cb}</ProjectGuid>
+    <ProjectGuid>{915a0c8a-3d89-4632-8d01-81180a5cd8c6}</ProjectGuid>
     <DSP>Microsoft.Data.Tools.Schema.Sql.Sql100DatabaseSchemaProvider</DSP>
     <OutputType>Database</OutputType>
     <RootPath>
@@ -258,9 +258,8 @@
       <AnsiNulls>On</AnsiNulls>
       <QuotedIdentifier>On</QuotedIdentifier>
     </Build>
-    <Build Include="dbo\Tables\adaptationScenes.sql" />
-    <Build Include="dbo\Tables\orderAdaptations.sql" />
-    <Build Include="dbo\Tables\sceneDialogs.sql" />
-    <Build Include="dbo\Tables\sceneScentences.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <PostDeploy Include="Add DubbDomain.sql" />
   </ItemGroup>
 </Project>

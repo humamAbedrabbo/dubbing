@@ -51,9 +51,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="adaptationScene.cs">
-      <DependentUpon>dubbingDataModel.tt</DependentUpon>
-    </Compile>
     <Compile Include="agreement.cs">
       <DependentUpon>dubbingDataModel.tt</DependentUpon>
     </Compile>
@@ -123,9 +120,6 @@
     <Compile Include="feedbackAction.cs">
       <DependentUpon>dubbingDataModel.tt</DependentUpon>
     </Compile>
-    <Compile Include="orderAdaptation.cs">
-      <DependentUpon>dubbingDataModel.tt</DependentUpon>
-    </Compile>
     <Compile Include="orderBatchTrnHdr.cs">
       <DependentUpon>dubbingDataModel.tt</DependentUpon>
     </Compile>
@@ -145,12 +139,6 @@
       <DependentUpon>dubbingDataModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="sceneDialog.cs">
-      <DependentUpon>dubbingDataModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="sceneScentence.cs">
-      <DependentUpon>dubbingDataModel.tt</DependentUpon>
-    </Compile>
     <Compile Include="shipment.cs">
       <DependentUpon>dubbingDataModel.tt</DependentUpon>
     </Compile>

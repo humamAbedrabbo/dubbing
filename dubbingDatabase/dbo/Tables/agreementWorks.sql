@@ -6,6 +6,8 @@
     [othWorkName]          NVARCHAR (100) NULL,
     [workNationality]      NVARCHAR (50)  NOT NULL,
     [workOriginalLanguage] NVARCHAR (50)  NOT NULL,
+    [fromDate]             DATE           NOT NULL,
+    [thruDate]             DATE           NULL,
     [firstEpisodeShowDate] DATE           NULL,
     [totalNbrEpisodes]     SMALLINT       NOT NULL,
     [totalWeekNbrEpisodes] SMALLINT       NOT NULL,
