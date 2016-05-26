@@ -20,10 +20,10 @@ namespace dubbingModel
             this.deliveryFeedbacks = new HashSet<deliveryFeedback>();
             this.dubbingSheetDtls = new HashSet<dubbingSheetDtl>();
             this.dubbingSheetHdrs = new HashSet<dubbingSheetHdr>();
-            this.dubbingTrnDtls = new HashSet<dubbingTrnDtl>();
             this.orderChecks = new HashSet<orderCheck>();
             this.orderTrnDtls = new HashSet<orderTrnDtl>();
             this.shipments = new HashSet<shipment>();
+            this.dubbingTrnDtls = new HashSet<dubbingTrnDtl>();
         }
     
         public long orderTrnHdrIntno { get; set; }
@@ -61,13 +61,13 @@ namespace dubbingModel
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<dubbingSheetHdr> dubbingSheetHdrs { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<dubbingTrnDtl> dubbingTrnDtls { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<orderCheck> orderChecks { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<orderTrnDtl> orderTrnDtls { get; set; }
         public virtual workOrder workOrder { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<shipment> shipments { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<dubbingTrnDtl> dubbingTrnDtls { get; set; }
     }
 }

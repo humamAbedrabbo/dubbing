@@ -136,10 +136,13 @@
     <Compile Include="shipment.cs">
       <DependentUpon>dubbingDataModel.tt</DependentUpon>
     </Compile>
-    <Compile Include="UserProfile.cs">
+    <Compile Include="studio.cs">
       <DependentUpon>dubbingDataModel.tt</DependentUpon>
     </Compile>
-    <Compile Include="userRolesView.cs">
+    <Compile Include="studioDtl.cs">
+      <DependentUpon>dubbingDataModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="UserProfile.cs">
       <DependentUpon>dubbingDataModel.tt</DependentUpon>
     </Compile>
     <Compile Include="voiceActor.cs">

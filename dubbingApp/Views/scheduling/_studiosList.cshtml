@@ -1,0 +1,13 @@
+﻿@model IEnumerable<dubbingModel.studio>
+
+<div class="container-fluid">
+    <div class="btn-group-sm">
+        @foreach(dubbingModel.studio item in Model)
+        {
+            string supervisor = item.supervisor.HasValue ? item.employee.fullName : null;
+            string sound = item.sound.HasValue ? item.employee1.fullName : null;
+            string team = "Supervisor: " + supervisor + ", Sound: " + sound;
+            <button class="btn btn-default" onclick="onStudioUpdateClick(@item.studioIntno)" title="@team"><small>Studio @item.studioNo</small></button>
+        }
+    </div>
+</div>

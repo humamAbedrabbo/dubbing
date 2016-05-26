@@ -12,9 +12,14 @@ namespace dubbingModel
     using System;
     using System.Collections.Generic;
     
-    public partial class userRolesView
+    public partial class studioDtl
     {
-        public int UserId { get; set; }
-        public int RoleId { get; set; }
+        public long studioDtlsIntno { get; set; }
+        public long studioIntno { get; set; }
+        public long workIntno { get; set; }
+        public bool isDefault { get; set; }
+    
+        public virtual agreementWork agreementWork { get; set; }
+        public virtual studio studio { get; set; }
     }
 }

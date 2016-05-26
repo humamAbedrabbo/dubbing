@@ -1,0 +1,50 @@
+﻿@model IEnumerable<dubbingModel.dubbingTrnDtl>
+@{
+    SelectList studiosList = new SelectList(ViewBag.studios, "workIntno", "studioNo");
+}
+
+@foreach (long work in Model.Select(b => b.workIntno).Distinct())
+{
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <div class="row">
+                <div class="col-sm-10">
+                    <label class="badge alert-info">@Model.FirstOrDefault(b => b.workIntno == work).agreementWork.workName</label>
+                </div>
+                <div class="col-sm-2">
+                    <button class="btn btn-default btn-xs" onclick="onWorkAllocateClick(@work, @ViewBag.schedule)" title="Allocate To Studio">
+                        <span class="glyphicon glyphicon-facetime-video" aria-hidden="true"></span>
+                    </button>
+                    <button class="btn btn-default btn-xs" onclick="onCharactersClick(@work)" title="Reload Episodes">
+                        <span class="glyphicon glyphicon-user" aria-hidden="true"></span>
+                    </button>
+                </div>
+                
+            </div>
+        </div>
+        <div class="panel-body">
+            <div class="row">
+                <div class="col-sm-12 btn-group-xs">
+                    @foreach (dubbingModel.dubbingTrnDtl oi in Model.Where(b => b.workIntno == work))
+                    {
+                        string btnColor = "btn-default";
+                        if (oi.orderTrnHdr.endAdaptation.HasValue)
+                        {
+                            btnColor = "btn-success";
+                        }
+                        <button class="btn btn-xs @btnColor" onclick="onEpisodeBtnClick(@oi.dubbTrnDtlIntno)" title="Remove">@oi.orderTrnHdr.episodeNo</button>
+                    }
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-12" style="padding-top:7px">
+                    <label><small>Studios: </small></label> &nbsp;
+                    @foreach (SelectListItem std in studiosList.Where(b => b.Value == work.ToString()))
+                    {
+                        <label class="badge alert-info">@std.Text</label><small>&nbsp;/&nbsp;</small>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+}

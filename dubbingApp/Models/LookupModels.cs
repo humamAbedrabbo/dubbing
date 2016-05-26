@@ -239,43 +239,7 @@ namespace dubbingApp.Models
         //    return list;
         //}
 
-        public static IEnumerable getScheduledStudiosList(long schedule)
-        {
-            List<ViewModels.keyValuePair> studiosList = new List<ViewModels.keyValuePair>();
-            var x = db.dubbingTrnDtls.Where(b => b.dubbTrnHdrIntno == schedule).Select(b => new {b.dubbTrnDtlIntno, b.studioNo}).ToList();
-            for (int i = 0; i < x.Count(); i++)
-            {
-                ViewModels.keyValuePair std = new ViewModels.keyValuePair();
-                std.key = x[i].dubbTrnDtlIntno;
-                std.value = decodeDictionaryItem("studio", x[i].studioNo);
-                studiosList.Add(std);
-            }
-            return studiosList;
-        }
-
-        public static IEnumerable getRelocationStudiosList(long apt)
-        {
-            var y = (from A in db.dubbingAppointments
-                     join B in db.dubbingTrnDtls on A.dubbTrnDtlIntno equals B.dubbTrnDtlIntno
-                     where A.dubbAppointIntno == apt
-                     select new { B.orderTrnHdrIntno, B.dubbTrnHdrIntno, B.dubbTrnDtlIntno }).FirstOrDefault();
-            long order = y.orderTrnHdrIntno;
-            long hdr = y.dubbTrnHdrIntno;
-            long dtl = y.dubbTrnDtlIntno;
-            List<ViewModels.keyValuePair> studiosList = new List<ViewModels.keyValuePair>();
-            var x = (from A in db.dubbingTrnDtls
-                     where A.dubbTrnHdrIntno == hdr && A.orderTrnHdrIntno == order && A.dubbTrnDtlIntno != dtl
-                     select new { A.dubbTrnDtlIntno, A.studioNo }).ToList();
-            for (int i = 0; i < x.Count(); i++)
-            {
-                ViewModels.keyValuePair std = new ViewModels.keyValuePair();
-                std.key = x[i].dubbTrnDtlIntno;
-                std.value = decodeDictionaryItem("studio", x[i].studioNo);
-                studiosList.Add(std);
-            }
-            return studiosList;
-        }
-
+        
         public static int getTotalAssignedScripts(long orderIntno)
         {
             var x = db.orderBatchTrnHdrs.Where(b => b.orderIntno == orderIntno && b.trnType == "01" && b.status == true).ToList();
@@ -380,74 +344,7 @@ namespace dubbingApp.Models
             else
                 return x.ToList();
         }
-
-        public static IEnumerable getAppointmentMatrixModel(DateTime calendarWeekFirstDay, DateTime calendarWeekLastDay, long? dubbAppointIntno)
-        {
-            var x = (from A in db.dubbingTrnDtls
-                     join B in db.orderTrnHdrs on A.orderTrnHdrIntno equals B.orderTrnHdrIntno
-                     where A.status == "02" && A.dubbingDate >= calendarWeekFirstDay && A.dubbingDate <= calendarWeekLastDay
-                     select new { A.dubbTrnDtlIntno, A.studioNo, A.dubbingDate, B.workIntno, B.episodeNo }).Distinct().ToList();
-            List<ViewModels.appointmentMatrixViewModel> aptList = new List<ViewModels.appointmentMatrixViewModel>();
-            for (int i = 0; i < x.Count(); i++)
-            {
-                ViewModels.appointmentMatrixViewModel apt = new ViewModels.appointmentMatrixViewModel();
-                apt.dubbTrnDtlIntno = x[i].dubbTrnDtlIntno;
-                apt.appointmentDate = x[i].dubbingDate.Value;
-                apt.studioNo = x[i].studioNo;
-                long workIntno = x[i].workIntno;
-                apt.workName = db.agreementWorks.FirstOrDefault(b => b.workIntno == workIntno).workName + " (" + x[i].episodeNo + ")";
-                int cnt = db.dubbingAppointments.Where(b => b.dubbTrnDtlIntno == apt.dubbTrnDtlIntno && b.fromTime == null).Count();
-                if (cnt != 0)
-                    apt.workName = apt.workName + "*";
-                // check if it is locked for a selected appointment
-                apt.isLocked = false;
-                if (dubbAppointIntno.HasValue)
-                {
-                    long voiceActorIntno = db.dubbingAppointments.FirstOrDefault(b => b.dubbAppointIntno == dubbAppointIntno).dubbingSheetHdr.voiceActorIntno;
-                    var y = (from A in db.dubbingSheetHdrs
-                             join B in db.dubbingAppointments on A.dubbSheetHdrIntno equals B.dubbSheetHdrIntno
-                             join C in db.dubbingTrnDtls on B.dubbTrnDtlIntno equals C.dubbTrnDtlIntno
-                             join D in db.dubbingTrnHdrs on C.dubbTrnHdrIntno equals D.dubbTrnHdrIntno
-                             where A.voiceActorIntno == voiceActorIntno && B.appointmentDate >= calendarWeekFirstDay && B.appointmentDate <= calendarWeekLastDay && B.fromTime == null
-                             select new { A.dubbSheetHdrIntno }).ToList();
-                    if (y.Count() != 0)
-                        apt.isLocked = true;
-                }
-                aptList.Add(apt);
-            }
-            return aptList;
-        }
-
-
-        public static IEnumerable getScheduleMatrixModel(DateTime calendarWeekFirstDay, DateTime calendarWeekLastDay)
-        {
-            var x = (from A in db.dubbingTrnDtls
-                     join B in db.orderTrnHdrs on A.orderTrnHdrIntno equals B.orderTrnHdrIntno
-                     where (A.status == "01" || A.status == "02") && A.dubbingDate >= calendarWeekFirstDay && A.dubbingDate <= calendarWeekLastDay
-                     select new { A.dubbTrnDtlIntno, B.orderTrnHdrIntno, A.dubbingDate, A.studioNo, B.workIntno, B.episodeNo, A.supervisor, A.soundTechnician, A.assistant }).Distinct().ToList();
-            List<ViewModels.orderScheduleViewModel> schList = new List<ViewModels.orderScheduleViewModel>();
-            for (int i = 0; i < x.Count(); i++)
-            {
-                ViewModels.orderScheduleViewModel sch = new ViewModels.orderScheduleViewModel();
-                long dubbTrnDtlIntno = x[i].dubbTrnDtlIntno;
-                sch.dubbTrnDtlIntno = dubbTrnDtlIntno;
-                sch.orderTrnHdrIntno = x[i].orderTrnHdrIntno;
-                sch.planFromDate = x[i].dubbingDate;
-                sch.studioNo = x[i].studioNo;
-                sch.supervisor = x[i].supervisor;
-                sch.soundTechnician = x[i].soundTechnician;
-                sch.assistant = x[i].assistant;
-                long workIntno = x[i].workIntno;
-                int cnt = db.dubbingAppointments.Where(b => b.dubbTrnDtlIntno == dubbTrnDtlIntno).Count();
-                if (cnt == 0 || x[i].studioNo == null || !x[i].supervisor.HasValue || !x[i].soundTechnician.HasValue)
-                    sch.workName = db.agreementWorks.FirstOrDefault(b => b.workIntno == workIntno).workName + " (" + x[i].episodeNo + "*)";
-                else
-                    sch.workName = db.agreementWorks.FirstOrDefault(b => b.workIntno == workIntno).workName + " (" + x[i].episodeNo + ")";
-                sch.episodeNo = x[i].episodeNo;
-                schList.Add(sch);
-            }
-            return schList;
-        }
+        
     }
 }
 

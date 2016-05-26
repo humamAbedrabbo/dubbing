@@ -1,0 +1,41 @@
+﻿@model IEnumerable<string>
+
+<div class="container-fluid" id="scheduleDetails" style="padding:0px">
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <div class="row">
+                <div class="col-sm-10">
+                    <label><small>Bulletin for Schedule: @ViewBag.schedule</small></label>
+                </div>
+                <div class="col-sm-2 pull-right">
+                    <button class="btn btn-default btn-xs" onclick="onCloseClick('scheduleDetails')" title="Close">
+                        <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div class="panel-body">
+            <dl class="dl-horizontal" style="padding:0px">
+                @foreach (string dtl in Model)
+            {
+                if (!dtl.Contains("xxx"))
+                {
+                        <dt><label><small>@dtl.Split('|')[0]</small></label></dt>
+                        <dd><label><small>@dtl.Split('|')[1]</small></label></dd>
+                    }
+                    else
+                    {
+                        <dt>&nbsp;</dt>
+                        <dd>&nbsp;</dd>
+                    }
+                }
+            </dl>
+            <br />
+            <div class="col-sm-12 btn-group-xs" style="padding:2px">
+                <button class="btn btn-xs btn-warning" onclick="onScheduleChangeClick(@ViewBag.scheduleIntno, '01')" title="Planned Episodes">Reload Planned</button>
+                <button class="btn btn-xs btn-success" onclick="onScheduleChangeClick(@ViewBag.scheduleIntno, '02')" title="Adaptation Ready">Reload Ready</button>
+                <button class="btn btn-xs btn-default" onclick="onScheduleChangeClick(@ViewBag.scheduleIntno, '03')">Delete Schedule</button>
+            </div>
+        </div>
+    </div>
+</div>

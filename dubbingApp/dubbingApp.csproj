@@ -177,6 +177,7 @@
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\ManageController.cs" />
     <Compile Include="Controllers\ordersController.cs" />
+    <Compile Include="Controllers\schedulingController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
@@ -304,6 +305,14 @@
     <Content Include="Views\admin\_actorsList.cshtml" />
     <Content Include="Views\admin\_actorsUpdate.cshtml" />
     <Content Include="Views\admin\_workChargesAddNew.cshtml" />
+    <Content Include="Views\scheduling\Index.cshtml" />
+    <Content Include="Views\scheduling\_schedulesList.cshtml" />
+    <Content Include="Views\scheduling\_episodesList.cshtml" />
+    <Content Include="Views\scheduling\_schedulesAddNew.cshtml" />
+    <Content Include="Views\scheduling\_scheduleDetails.cshtml" />
+    <Content Include="Views\scheduling\_studiosList.cshtml" />
+    <Content Include="Views\scheduling\_studiosUpdate.cshtml" />
+    <Content Include="Views\scheduling\_allocateWorkToStudio.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

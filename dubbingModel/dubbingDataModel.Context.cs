@@ -38,7 +38,6 @@ namespace dubbingModel
         public virtual DbSet<dubbingAppointment> dubbingAppointments { get; set; }
         public virtual DbSet<dubbingSheetDtl> dubbingSheetDtls { get; set; }
         public virtual DbSet<dubbingSheetHdr> dubbingSheetHdrs { get; set; }
-        public virtual DbSet<dubbingTrnDtl> dubbingTrnDtls { get; set; }
         public virtual DbSet<dubbingTrnHdr> dubbingTrnHdrs { get; set; }
         public virtual DbSet<employee> employees { get; set; }
         public virtual DbSet<feedbackAction> feedbackActions { get; set; }
@@ -58,6 +57,8 @@ namespace dubbingModel
         public virtual DbSet<workCharge> workCharges { get; set; }
         public virtual DbSet<workOrder> workOrders { get; set; }
         public virtual DbSet<workPersonnel> workPersonnels { get; set; }
-        public virtual DbSet<userRolesView> userRolesViews { get; set; }
+        public virtual DbSet<studio> studios { get; set; }
+        public virtual DbSet<dubbingTrnDtl> dubbingTrnDtls { get; set; }
+        public virtual DbSet<studioDtl> studioDtls { get; set; }
     }
 }

@@ -186,13 +186,8 @@
           </Key>
           <Property Name="dubbTrnDtlIntno" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="dubbTrnHdrIntno" Type="bigint" Nullable="false" />
+          <Property Name="workIntno" Type="bigint" Nullable="false" />
           <Property Name="orderTrnHdrIntno" Type="bigint" Nullable="false" />
-          <Property Name="dubbingDate" Type="date" />
-          <Property Name="studioNo" Type="nvarchar" MaxLength="50" />
-          <Property Name="supervisor" Type="bigint" />
-          <Property Name="soundTechnician" Type="bigint" />
-          <Property Name="assistant" Type="bigint" />
-          <Property Name="status" Type="nvarchar" MaxLength="50" Nullable="false" />
         </EntityType>
         <EntityType Name="dubbingTrnHdrs">
           <Key>
@@ -341,6 +336,27 @@
           <Property Name="status" Type="nvarchar" MaxLength="50" Nullable="false" />
           <Property Name="clientIntno" Type="bigint" Nullable="false" />
         </EntityType>
+        <EntityType Name="studioDtls">
+          <Key>
+            <PropertyRef Name="studioDtlsIntno" />
+          </Key>
+          <Property Name="studioDtlsIntno" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="studioIntno" Type="bigint" Nullable="false" />
+          <Property Name="workIntno" Type="bigint" Nullable="false" />
+          <Property Name="isDefault" Type="bit" Nullable="false" />
+        </EntityType>
+        <EntityType Name="studios">
+          <Key>
+            <PropertyRef Name="studioIntno" />
+          </Key>
+          <Property Name="studioIntno" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="dubbTrnHdrIntno" Type="bigint" Nullable="false" />
+          <Property Name="studioNo" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="srl" Type="int" Nullable="false" />
+          <Property Name="supervisor" Type="bigint" />
+          <Property Name="sound" Type="bigint" />
+          <Property Name="status" Type="bit" Nullable="false" />
+        </EntityType>
         <EntityType Name="UserProfile">
           <Key>
             <PropertyRef Name="UserId" />
@@ -475,16 +491,6 @@
           <Property Name="fromDate" Type="date" Nullable="false" />
           <Property Name="thruDate" Type="date" />
           <Property Name="status" Type="bit" Nullable="false" />
-        </EntityType>
-        <!--Errors Found During Generation:
-warning 6002: The table/view 'DUBBDB.dbo.userRolesView' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
-        <EntityType Name="userRolesView">
-          <Key>
-            <PropertyRef Name="UserId" />
-            <PropertyRef Name="RoleId" />
-          </Key>
-          <Property Name="UserId" Type="int" Nullable="false" />
-          <Property Name="RoleId" Type="int" Nullable="false" />
         </EntityType>
         <Association Name="FK_agreements_agreements">
           <End Role="agreements" Type="Self.agreements" Multiplicity="0..1" />
@@ -702,6 +708,18 @@ warning 6002: The table/view 'DUBBDB.dbo.userRolesView' does not have a primary 
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK_dubbingTrnDtls_agreementWorks">
+          <End Role="agreementWorks" Type="Self.agreementWorks" Multiplicity="1" />
+          <End Role="dubbingTrnDtls" Type="Self.dubbingTrnDtls" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="agreementWorks">
+              <PropertyRef Name="workIntno" />
+            </Principal>
+            <Dependent Role="dubbingTrnDtls">
+              <PropertyRef Name="workIntno" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK_dubbingTrnDtls_dubbingTrnHdrs">
           <End Role="dubbingTrnHdrs" Type="Self.dubbingTrnHdrs" Multiplicity="1" />
           <End Role="dubbingTrnDtls" Type="Self.dubbingTrnDtls" Multiplicity="*" />
@@ -711,42 +729,6 @@ warning 6002: The table/view 'DUBBDB.dbo.userRolesView' does not have a primary 
             </Principal>
             <Dependent Role="dubbingTrnDtls">
               <PropertyRef Name="dubbTrnHdrIntno" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK_dubbingTrnDtls_employees">
-          <End Role="employees" Type="Self.employees" Multiplicity="0..1" />
-          <End Role="dubbingTrnDtls" Type="Self.dubbingTrnDtls" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="employees">
-              <PropertyRef Name="empIntno" />
-            </Principal>
-            <Dependent Role="dubbingTrnDtls">
-              <PropertyRef Name="supervisor" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK_dubbingTrnDtls_employees1">
-          <End Role="employees" Type="Self.employees" Multiplicity="0..1" />
-          <End Role="dubbingTrnDtls" Type="Self.dubbingTrnDtls" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="employees">
-              <PropertyRef Name="empIntno" />
-            </Principal>
-            <Dependent Role="dubbingTrnDtls">
-              <PropertyRef Name="soundTechnician" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK_dubbingTrnDtls_employees2">
-          <End Role="employees" Type="Self.employees" Multiplicity="0..1" />
-          <End Role="dubbingTrnDtls" Type="Self.dubbingTrnDtls" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="employees">
-              <PropertyRef Name="empIntno" />
-            </Principal>
-            <Dependent Role="dubbingTrnDtls">
-              <PropertyRef Name="assistant" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -966,6 +948,66 @@ warning 6002: The table/view 'DUBBDB.dbo.userRolesView' does not have a primary 
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK_studioDtls_agreementWorks">
+          <End Role="agreementWorks" Type="Self.agreementWorks" Multiplicity="1" />
+          <End Role="studioDtls" Type="Self.studioDtls" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="agreementWorks">
+              <PropertyRef Name="workIntno" />
+            </Principal>
+            <Dependent Role="studioDtls">
+              <PropertyRef Name="workIntno" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_studioDtls_studios">
+          <End Role="studios" Type="Self.studios" Multiplicity="1" />
+          <End Role="studioDtls" Type="Self.studioDtls" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="studios">
+              <PropertyRef Name="studioIntno" />
+            </Principal>
+            <Dependent Role="studioDtls">
+              <PropertyRef Name="studioIntno" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_studios_dubbingTrnHdrs">
+          <End Role="dubbingTrnHdrs" Type="Self.dubbingTrnHdrs" Multiplicity="1" />
+          <End Role="studios" Type="Self.studios" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="dubbingTrnHdrs">
+              <PropertyRef Name="dubbTrnHdrIntno" />
+            </Principal>
+            <Dependent Role="studios">
+              <PropertyRef Name="dubbTrnHdrIntno" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_studios_employees_sound">
+          <End Role="employees" Type="Self.employees" Multiplicity="0..1" />
+          <End Role="studios" Type="Self.studios" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="employees">
+              <PropertyRef Name="empIntno" />
+            </Principal>
+            <Dependent Role="studios">
+              <PropertyRef Name="sound" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_studios_employees_supervisor">
+          <End Role="employees" Type="Self.employees" Multiplicity="0..1" />
+          <End Role="studios" Type="Self.studios" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="employees">
+              <PropertyRef Name="empIntno" />
+            </Principal>
+            <Dependent Role="studios">
+              <PropertyRef Name="supervisor" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="fk_UserId">
           <End Role="UserProfile" Type="Self.UserProfile" Multiplicity="1" />
           <End Role="webpages_UsersInRoles" Type="Self.webpages_UsersInRoles" Multiplicity="*" />
@@ -1098,6 +1140,8 @@ warning 6002: The table/view 'DUBBDB.dbo.userRolesView' does not have a primary 
           <EntitySet Name="orderTrnHdrs" EntityType="Self.orderTrnHdrs" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="payments" EntityType="Self.payments" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="shipments" EntityType="Self.shipments" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="studioDtls" EntityType="Self.studioDtls" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="studios" EntityType="Self.studios" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="UserProfile" EntityType="Self.UserProfile" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="voiceActors" EntityType="Self.voiceActors" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="webpages_Membership" EntityType="Self.webpages_Membership" Schema="dbo" store:Type="Tables" />
@@ -1109,12 +1153,6 @@ warning 6002: The table/view 'DUBBDB.dbo.userRolesView' does not have a primary 
           <EntitySet Name="workCharges" EntityType="Self.workCharges" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="workOrders" EntityType="Self.workOrders" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="workPersonnels" EntityType="Self.workPersonnels" Schema="dbo" store:Type="Tables" />
-          <EntitySet Name="userRolesView" EntityType="Self.userRolesView" store:Type="Views" store:Schema="dbo">
-            <DefiningQuery>SELECT 
-    [userRolesView].[UserId] AS [UserId], 
-    [userRolesView].[RoleId] AS [RoleId]
-    FROM [dbo].[userRolesView] AS [userRolesView]</DefiningQuery>
-          </EntitySet>
           <AssociationSet Name="FK_agreements_agreements" Association="Self.FK_agreements_agreements">
             <End Role="agreements" EntitySet="agreements" />
             <End Role="agreements1" EntitySet="agreements" />
@@ -1187,20 +1225,12 @@ warning 6002: The table/view 'DUBBDB.dbo.userRolesView' does not have a primary 
             <End Role="workCharacters" EntitySet="workCharacters" />
             <End Role="dubbingSheetHdrs" EntitySet="dubbingSheetHdrs" />
           </AssociationSet>
+          <AssociationSet Name="FK_dubbingTrnDtls_agreementWorks" Association="Self.FK_dubbingTrnDtls_agreementWorks">
+            <End Role="agreementWorks" EntitySet="agreementWorks" />
+            <End Role="dubbingTrnDtls" EntitySet="dubbingTrnDtls" />
+          </AssociationSet>
           <AssociationSet Name="FK_dubbingTrnDtls_dubbingTrnHdrs" Association="Self.FK_dubbingTrnDtls_dubbingTrnHdrs">
             <End Role="dubbingTrnHdrs" EntitySet="dubbingTrnHdrs" />
-            <End Role="dubbingTrnDtls" EntitySet="dubbingTrnDtls" />
-          </AssociationSet>
-          <AssociationSet Name="FK_dubbingTrnDtls_employees" Association="Self.FK_dubbingTrnDtls_employees">
-            <End Role="employees" EntitySet="employees" />
-            <End Role="dubbingTrnDtls" EntitySet="dubbingTrnDtls" />
-          </AssociationSet>
-          <AssociationSet Name="FK_dubbingTrnDtls_employees1" Association="Self.FK_dubbingTrnDtls_employees1">
-            <End Role="employees" EntitySet="employees" />
-            <End Role="dubbingTrnDtls" EntitySet="dubbingTrnDtls" />
-          </AssociationSet>
-          <AssociationSet Name="FK_dubbingTrnDtls_employees2" Association="Self.FK_dubbingTrnDtls_employees2">
-            <End Role="employees" EntitySet="employees" />
             <End Role="dubbingTrnDtls" EntitySet="dubbingTrnDtls" />
           </AssociationSet>
           <AssociationSet Name="FK_dubbingTrnDtls_orderTrnHdrs" Association="Self.FK_dubbingTrnDtls_orderTrnHdrs">
@@ -1275,6 +1305,26 @@ warning 6002: The table/view 'DUBBDB.dbo.userRolesView' does not have a primary 
             <End Role="orderTrnHdrs" EntitySet="orderTrnHdrs" />
             <End Role="shipments" EntitySet="shipments" />
           </AssociationSet>
+          <AssociationSet Name="FK_studioDtls_agreementWorks" Association="Self.FK_studioDtls_agreementWorks">
+            <End Role="agreementWorks" EntitySet="agreementWorks" />
+            <End Role="studioDtls" EntitySet="studioDtls" />
+          </AssociationSet>
+          <AssociationSet Name="FK_studioDtls_studios" Association="Self.FK_studioDtls_studios">
+            <End Role="studios" EntitySet="studios" />
+            <End Role="studioDtls" EntitySet="studioDtls" />
+          </AssociationSet>
+          <AssociationSet Name="FK_studios_dubbingTrnHdrs" Association="Self.FK_studios_dubbingTrnHdrs">
+            <End Role="dubbingTrnHdrs" EntitySet="dubbingTrnHdrs" />
+            <End Role="studios" EntitySet="studios" />
+          </AssociationSet>
+          <AssociationSet Name="FK_studios_employees_sound" Association="Self.FK_studios_employees_sound">
+            <End Role="employees" EntitySet="employees" />
+            <End Role="studios" EntitySet="studios" />
+          </AssociationSet>
+          <AssociationSet Name="FK_studios_employees_supervisor" Association="Self.FK_studios_employees_supervisor">
+            <End Role="employees" EntitySet="employees" />
+            <End Role="studios" EntitySet="studios" />
+          </AssociationSet>
           <AssociationSet Name="fk_UserId" Association="Self.fk_UserId">
             <End Role="UserProfile" EntitySet="UserProfile" />
             <End Role="webpages_UsersInRoles" EntitySet="webpages_UsersInRoles" />
@@ -1330,7 +1380,6 @@ warning 6002: The table/view 'DUBBDB.dbo.userRolesView' does not have a primary 
           <EntitySet Name="dubbingAppointments" EntityType="DUBBDBModel.dubbingAppointment" />
           <EntitySet Name="dubbingSheetDtls" EntityType="DUBBDBModel.dubbingSheetDtl" />
           <EntitySet Name="dubbingSheetHdrs" EntityType="DUBBDBModel.dubbingSheetHdr" />
-          <EntitySet Name="dubbingTrnDtls" EntityType="DUBBDBModel.dubbingTrnDtl" />
           <EntitySet Name="dubbingTrnHdrs" EntityType="DUBBDBModel.dubbingTrnHdr" />
           <EntitySet Name="employees" EntityType="DUBBDBModel.employee" />
           <EntitySet Name="feedbackActions" EntityType="DUBBDBModel.feedbackAction" />
@@ -1350,7 +1399,6 @@ warning 6002: The table/view 'DUBBDB.dbo.userRolesView' does not have a primary 
           <EntitySet Name="workCharges" EntityType="DUBBDBModel.workCharge" />
           <EntitySet Name="workOrders" EntityType="DUBBDBModel.workOrder" />
           <EntitySet Name="workPersonnels" EntityType="DUBBDBModel.workPersonnel" />
-          <EntitySet Name="userRolesViews" EntityType="DUBBDBModel.userRolesView" />
           <AssociationSet Name="FK_agreements_agreements" Association="DUBBDBModel.FK_agreements_agreements">
             <End Role="agreement" EntitySet="agreements" />
             <End Role="agreement1" EntitySet="agreements" />
@@ -1435,10 +1483,6 @@ warning 6002: The table/view 'DUBBDB.dbo.userRolesView' does not have a primary 
             <End Role="dubbingSheetHdr" EntitySet="dubbingSheetHdrs" />
             <End Role="dubbingAppointment" EntitySet="dubbingAppointments" />
           </AssociationSet>
-          <AssociationSet Name="FK_dubbingAppointments_dubbingTrnDtls" Association="DUBBDBModel.FK_dubbingAppointments_dubbingTrnDtls">
-            <End Role="dubbingTrnDtl" EntitySet="dubbingTrnDtls" />
-            <End Role="dubbingAppointment" EntitySet="dubbingAppointments" />
-          </AssociationSet>
           <AssociationSet Name="FK_dubbingSheetDtls_dubbingSheetHdrs" Association="DUBBDBModel.FK_dubbingSheetDtls_dubbingSheetHdrs">
             <End Role="dubbingSheetHdr" EntitySet="dubbingSheetHdrs" />
             <End Role="dubbingSheetDtl" EntitySet="dubbingSheetDtls" />
@@ -1470,26 +1514,6 @@ warning 6002: The table/view 'DUBBDB.dbo.userRolesView' does not have a primary 
           <AssociationSet Name="FK_dubbingSheetHdrs_workCharacters" Association="DUBBDBModel.FK_dubbingSheetHdrs_workCharacters">
             <End Role="workCharacter" EntitySet="workCharacters" />
             <End Role="dubbingSheetHdr" EntitySet="dubbingSheetHdrs" />
-          </AssociationSet>
-          <AssociationSet Name="FK_dubbingTrnDtls_dubbingTrnHdrs" Association="DUBBDBModel.FK_dubbingTrnDtls_dubbingTrnHdrs">
-            <End Role="dubbingTrnHdr" EntitySet="dubbingTrnHdrs" />
-            <End Role="dubbingTrnDtl" EntitySet="dubbingTrnDtls" />
-          </AssociationSet>
-          <AssociationSet Name="FK_dubbingTrnDtls_employees" Association="DUBBDBModel.FK_dubbingTrnDtls_employees">
-            <End Role="employee" EntitySet="employees" />
-            <End Role="dubbingTrnDtl" EntitySet="dubbingTrnDtls" />
-          </AssociationSet>
-          <AssociationSet Name="FK_dubbingTrnDtls_employees1" Association="DUBBDBModel.FK_dubbingTrnDtls_employees1">
-            <End Role="employee" EntitySet="employees" />
-            <End Role="dubbingTrnDtl" EntitySet="dubbingTrnDtls" />
-          </AssociationSet>
-          <AssociationSet Name="FK_dubbingTrnDtls_employees2" Association="DUBBDBModel.FK_dubbingTrnDtls_employees2">
-            <End Role="employee" EntitySet="employees" />
-            <End Role="dubbingTrnDtl" EntitySet="dubbingTrnDtls" />
-          </AssociationSet>
-          <AssociationSet Name="FK_dubbingTrnDtls_orderTrnHdrs" Association="DUBBDBModel.FK_dubbingTrnDtls_orderTrnHdrs">
-            <End Role="orderTrnHdr" EntitySet="orderTrnHdrs" />
-            <End Role="dubbingTrnDtl" EntitySet="dubbingTrnDtls" />
           </AssociationSet>
           <AssociationSet Name="FK_payments_dubbingTrnHdrs" Association="DUBBDBModel.FK_payments_dubbingTrnHdrs">
             <End Role="dubbingTrnHdr" EntitySet="dubbingTrnHdrs" />
@@ -1543,7 +1567,46 @@ warning 6002: The table/view 'DUBBDB.dbo.userRolesView' does not have a primary 
             <End Role="webpages_Roles" EntitySet="webpages_Roles" />
             <End Role="UserProfile" EntitySet="UserProfiles" />
           </AssociationSet>
-        </EntityContainer>
+          <EntitySet Name="studios" EntityType="DUBBDBModel.studio" />
+          <AssociationSet Name="FK_studios_dubbingTrnHdrs" Association="DUBBDBModel.FK_studios_dubbingTrnHdrs">
+            <End Role="dubbingTrnHdr" EntitySet="dubbingTrnHdrs" />
+            <End Role="studio" EntitySet="studios" />
+          </AssociationSet>
+          <AssociationSet Name="FK_studios_employees_sound" Association="DUBBDBModel.FK_studios_employees_sound">
+            <End Role="employee" EntitySet="employees" />
+            <End Role="studio" EntitySet="studios" />
+          </AssociationSet>
+          <AssociationSet Name="FK_studios_employees_supervisor" Association="DUBBDBModel.FK_studios_employees_supervisor">
+            <End Role="employee" EntitySet="employees" />
+            <End Role="studio" EntitySet="studios" />
+          </AssociationSet>
+          <EntitySet Name="dubbingTrnDtls" EntityType="DUBBDBModel.dubbingTrnDtl" />
+          <EntitySet Name="studioDtls" EntityType="DUBBDBModel.studioDtl" />
+          <AssociationSet Name="FK_dubbingTrnDtls_agreementWorks" Association="DUBBDBModel.FK_dubbingTrnDtls_agreementWorks">
+            <End Role="agreementWork" EntitySet="agreementWorks" />
+            <End Role="dubbingTrnDtl" EntitySet="dubbingTrnDtls" />
+          </AssociationSet>
+          <AssociationSet Name="FK_studioDtls_agreementWorks" Association="DUBBDBModel.FK_studioDtls_agreementWorks">
+            <End Role="agreementWork" EntitySet="agreementWorks" />
+            <End Role="studioDtl" EntitySet="studioDtls" />
+          </AssociationSet>
+          <AssociationSet Name="FK_dubbingAppointments_dubbingTrnDtls" Association="DUBBDBModel.FK_dubbingAppointments_dubbingTrnDtls">
+            <End Role="dubbingTrnDtl" EntitySet="dubbingTrnDtls" />
+            <End Role="dubbingAppointment" EntitySet="dubbingAppointments" />
+          </AssociationSet>
+          <AssociationSet Name="FK_dubbingTrnDtls_dubbingTrnHdrs" Association="DUBBDBModel.FK_dubbingTrnDtls_dubbingTrnHdrs">
+            <End Role="dubbingTrnHdr" EntitySet="dubbingTrnHdrs" />
+            <End Role="dubbingTrnDtl" EntitySet="dubbingTrnDtls" />
+          </AssociationSet>
+          <AssociationSet Name="FK_dubbingTrnDtls_orderTrnHdrs" Association="DUBBDBModel.FK_dubbingTrnDtls_orderTrnHdrs">
+            <End Role="orderTrnHdr" EntitySet="orderTrnHdrs" />
+            <End Role="dubbingTrnDtl" EntitySet="dubbingTrnDtls" />
+          </AssociationSet>
+          <AssociationSet Name="FK_studioDtls_studios" Association="DUBBDBModel.FK_studioDtls_studios">
+            <End Role="studio" EntitySet="studios" />
+            <End Role="studioDtl" EntitySet="studioDtls" />
+          </AssociationSet>
+          </EntityContainer>
         <EntityType Name="agreement">
           <Key>
             <PropertyRef Name="agreementIntno" />
@@ -1613,6 +1676,8 @@ warning 6002: The table/view 'DUBBDB.dbo.userRolesView' does not have a primary 
           <NavigationProperty Name="workCharacters" Relationship="DUBBDBModel.FK_workCharacters_agreementWorks" FromRole="agreementWork" ToRole="workCharacter" />
           <NavigationProperty Name="workOrders" Relationship="DUBBDBModel.FK_workOrders_agreementWorks" FromRole="agreementWork" ToRole="workOrder" />
           <NavigationProperty Name="workPersonnels" Relationship="DUBBDBModel.FK_workPersonnels_agreementWorks" FromRole="agreementWork" ToRole="workPersonnel" />
+          <NavigationProperty Name="dubbingTrnDtls" Relationship="DUBBDBModel.FK_dubbingTrnDtls_agreementWorks" FromRole="agreementWork" ToRole="dubbingTrnDtl" />
+          <NavigationProperty Name="studioDtls" Relationship="DUBBDBModel.FK_studioDtls_agreementWorks" FromRole="agreementWork" ToRole="studioDtl" />
         </EntityType>
         <EntityType Name="carrier">
           <Key>
@@ -1758,26 +1823,6 @@ warning 6002: The table/view 'DUBBDB.dbo.userRolesView' does not have a primary 
           <NavigationProperty Name="voiceActor" Relationship="DUBBDBModel.FK_dubbingSheetHdrs_voiceActors" FromRole="dubbingSheetHdr" ToRole="voiceActor" />
           <NavigationProperty Name="workCharacter" Relationship="DUBBDBModel.FK_dubbingSheetHdrs_workCharacters" FromRole="dubbingSheetHdr" ToRole="workCharacter" />
         </EntityType>
-        <EntityType Name="dubbingTrnDtl">
-          <Key>
-            <PropertyRef Name="dubbTrnDtlIntno" />
-          </Key>
-          <Property Name="dubbTrnDtlIntno" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="dubbTrnHdrIntno" Type="Int64" Nullable="false" />
-          <Property Name="orderTrnHdrIntno" Type="Int64" Nullable="false" />
-          <Property Name="dubbingDate" Type="DateTime" Precision="0" />
-          <Property Name="studioNo" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
-          <Property Name="supervisor" Type="Int64" />
-          <Property Name="soundTechnician" Type="Int64" />
-          <Property Name="assistant" Type="Int64" />
-          <Property Name="status" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
-          <NavigationProperty Name="dubbingAppointments" Relationship="DUBBDBModel.FK_dubbingAppointments_dubbingTrnDtls" FromRole="dubbingTrnDtl" ToRole="dubbingAppointment" />
-          <NavigationProperty Name="dubbingTrnHdr" Relationship="DUBBDBModel.FK_dubbingTrnDtls_dubbingTrnHdrs" FromRole="dubbingTrnDtl" ToRole="dubbingTrnHdr" />
-          <NavigationProperty Name="employee" Relationship="DUBBDBModel.FK_dubbingTrnDtls_employees" FromRole="dubbingTrnDtl" ToRole="employee" />
-          <NavigationProperty Name="employee1" Relationship="DUBBDBModel.FK_dubbingTrnDtls_employees1" FromRole="dubbingTrnDtl" ToRole="employee" />
-          <NavigationProperty Name="employee2" Relationship="DUBBDBModel.FK_dubbingTrnDtls_employees2" FromRole="dubbingTrnDtl" ToRole="employee" />
-          <NavigationProperty Name="orderTrnHdr" Relationship="DUBBDBModel.FK_dubbingTrnDtls_orderTrnHdrs" FromRole="dubbingTrnDtl" ToRole="orderTrnHdr" />
-        </EntityType>
         <EntityType Name="dubbingTrnHdr">
           <Key>
             <PropertyRef Name="dubbTrnHdrIntno" />
@@ -1787,8 +1832,9 @@ warning 6002: The table/view 'DUBBDB.dbo.userRolesView' does not have a primary 
           <Property Name="thruDate" Type="DateTime" Nullable="false" Precision="0" />
           <Property Name="isPaid" Type="Boolean" Nullable="false" />
           <Property Name="status" Type="Boolean" Nullable="false" />
-          <NavigationProperty Name="dubbingTrnDtls" Relationship="DUBBDBModel.FK_dubbingTrnDtls_dubbingTrnHdrs" FromRole="dubbingTrnHdr" ToRole="dubbingTrnDtl" />
           <NavigationProperty Name="payments" Relationship="DUBBDBModel.FK_payments_dubbingTrnHdrs" FromRole="dubbingTrnHdr" ToRole="payment" />
+          <NavigationProperty Name="studios" Relationship="DUBBDBModel.FK_studios_dubbingTrnHdrs" FromRole="dubbingTrnHdr" ToRole="studio" />
+          <NavigationProperty Name="dubbingTrnDtls" Relationship="DUBBDBModel.FK_dubbingTrnDtls_dubbingTrnHdrs" FromRole="dubbingTrnHdr" ToRole="dubbingTrnDtl" />
         </EntityType>
         <EntityType Name="employee">
           <Key>
@@ -1807,12 +1853,11 @@ warning 6002: The table/view 'DUBBDB.dbo.userRolesView' does not have a primary 
           <NavigationProperty Name="dubbingSheetDtls" Relationship="DUBBDBModel.FK_dubbingSheetDtls_employees" FromRole="employee" ToRole="dubbingSheetDtl" />
           <NavigationProperty Name="dubbingSheetDtls1" Relationship="DUBBDBModel.FK_dubbingSheetDtls_employees1" FromRole="employee" ToRole="dubbingSheetDtl" />
           <NavigationProperty Name="dubbingSheetDtls2" Relationship="DUBBDBModel.FK_dubbingSheetDtls_employees2" FromRole="employee" ToRole="dubbingSheetDtl" />
-          <NavigationProperty Name="dubbingTrnDtls" Relationship="DUBBDBModel.FK_dubbingTrnDtls_employees" FromRole="employee" ToRole="dubbingTrnDtl" />
-          <NavigationProperty Name="dubbingTrnDtls1" Relationship="DUBBDBModel.FK_dubbingTrnDtls_employees1" FromRole="employee" ToRole="dubbingTrnDtl" />
-          <NavigationProperty Name="dubbingTrnDtls2" Relationship="DUBBDBModel.FK_dubbingTrnDtls_employees2" FromRole="employee" ToRole="dubbingTrnDtl" />
           <NavigationProperty Name="orderBatchTrnHdrs" Relationship="DUBBDBModel.FK_orderBatchTrnHdrs_employees" FromRole="employee" ToRole="orderBatchTrnHdr" />
           <NavigationProperty Name="payments" Relationship="DUBBDBModel.FK_payments_employees" FromRole="employee" ToRole="payment" />
           <NavigationProperty Name="workPersonnels" Relationship="DUBBDBModel.FK_workPersonnels_employees" FromRole="employee" ToRole="workPersonnel" />
+          <NavigationProperty Name="studios" Relationship="DUBBDBModel.FK_studios_employees_sound" FromRole="employee" ToRole="studio" />
+          <NavigationProperty Name="studios1" Relationship="DUBBDBModel.FK_studios_employees_supervisor" FromRole="employee" ToRole="studio" />
         </EntityType>
         <EntityType Name="feedbackAction">
           <Key>
@@ -1907,11 +1952,11 @@ warning 6002: The table/view 'DUBBDB.dbo.userRolesView' does not have a primary 
           <NavigationProperty Name="deliveryFeedbacks" Relationship="DUBBDBModel.FK_deliveryFeedbacks_orderTrnHdrs" FromRole="orderTrnHdr" ToRole="deliveryFeedback" />
           <NavigationProperty Name="dubbingSheetDtls" Relationship="DUBBDBModel.FK_dubbingSheetDtls_orderTrnHdrs" FromRole="orderTrnHdr" ToRole="dubbingSheetDtl" />
           <NavigationProperty Name="dubbingSheetHdrs" Relationship="DUBBDBModel.FK_dubbingSheetHdrs_orderTrnHdrs" FromRole="orderTrnHdr" ToRole="dubbingSheetHdr" />
-          <NavigationProperty Name="dubbingTrnDtls" Relationship="DUBBDBModel.FK_dubbingTrnDtls_orderTrnHdrs" FromRole="orderTrnHdr" ToRole="dubbingTrnDtl" />
           <NavigationProperty Name="orderChecks" Relationship="DUBBDBModel.FK_orderChecks_orderTrnHdrs" FromRole="orderTrnHdr" ToRole="orderCheck" />
           <NavigationProperty Name="orderTrnDtls" Relationship="DUBBDBModel.FK_orderTrnDtls_orderTrnHdrs" FromRole="orderTrnHdr" ToRole="orderTrnDtl" />
           <NavigationProperty Name="workOrder" Relationship="DUBBDBModel.FK_orderTrnHdrs_workOrders" FromRole="orderTrnHdr" ToRole="workOrder" />
           <NavigationProperty Name="shipments" Relationship="DUBBDBModel.FK_shipments_orderTrnHdrs" FromRole="orderTrnHdr" ToRole="shipment" />
+          <NavigationProperty Name="dubbingTrnDtls" Relationship="DUBBDBModel.FK_dubbingTrnDtls_orderTrnHdrs" FromRole="orderTrnHdr" ToRole="dubbingTrnDtl" />
         </EntityType>
         <EntityType Name="payment">
           <Key>
@@ -2102,14 +2147,6 @@ warning 6002: The table/view 'DUBBDB.dbo.userRolesView' does not have a primary 
           <Property Name="status" Type="Boolean" Nullable="false" />
           <NavigationProperty Name="agreementWork" Relationship="DUBBDBModel.FK_workPersonnels_agreementWorks" FromRole="workPersonnel" ToRole="agreementWork" />
           <NavigationProperty Name="employee" Relationship="DUBBDBModel.FK_workPersonnels_employees" FromRole="workPersonnel" ToRole="employee" />
-        </EntityType>
-        <EntityType Name="userRolesView">
-          <Key>
-            <PropertyRef Name="UserId" />
-            <PropertyRef Name="RoleId" />
-          </Key>
-          <Property Name="UserId" Type="Int32" Nullable="false" />
-          <Property Name="RoleId" Type="Int32" Nullable="false" />
         </EntityType>
         <Association Name="FK_agreements_agreements">
           <End Type="DUBBDBModel.agreement" Role="agreement" Multiplicity="0..1" />
@@ -2363,18 +2400,6 @@ warning 6002: The table/view 'DUBBDB.dbo.userRolesView' does not have a primary 
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK_dubbingAppointments_dubbingTrnDtls">
-          <End Type="DUBBDBModel.dubbingTrnDtl" Role="dubbingTrnDtl" Multiplicity="1" />
-          <End Type="DUBBDBModel.dubbingAppointment" Role="dubbingAppointment" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="dubbingTrnDtl">
-              <PropertyRef Name="dubbTrnDtlIntno" />
-            </Principal>
-            <Dependent Role="dubbingAppointment">
-              <PropertyRef Name="dubbTrnDtlIntno" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
         <Association Name="FK_dubbingSheetDtls_dubbingSheetHdrs">
           <End Type="DUBBDBModel.dubbingSheetHdr" Role="dubbingSheetHdr" Multiplicity="1" />
           <End Type="DUBBDBModel.dubbingSheetDtl" Role="dubbingSheetDtl" Multiplicity="*" />
@@ -2468,66 +2493,6 @@ warning 6002: The table/view 'DUBBDB.dbo.userRolesView' does not have a primary 
             </Principal>
             <Dependent Role="dubbingSheetHdr">
               <PropertyRef Name="workCharacterIntno" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK_dubbingTrnDtls_dubbingTrnHdrs">
-          <End Type="DUBBDBModel.dubbingTrnHdr" Role="dubbingTrnHdr" Multiplicity="1" />
-          <End Type="DUBBDBModel.dubbingTrnDtl" Role="dubbingTrnDtl" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="dubbingTrnHdr">
-              <PropertyRef Name="dubbTrnHdrIntno" />
-            </Principal>
-            <Dependent Role="dubbingTrnDtl">
-              <PropertyRef Name="dubbTrnHdrIntno" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK_dubbingTrnDtls_employees">
-          <End Type="DUBBDBModel.employee" Role="employee" Multiplicity="0..1" />
-          <End Type="DUBBDBModel.dubbingTrnDtl" Role="dubbingTrnDtl" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="employee">
-              <PropertyRef Name="empIntno" />
-            </Principal>
-            <Dependent Role="dubbingTrnDtl">
-              <PropertyRef Name="supervisor" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK_dubbingTrnDtls_employees1">
-          <End Type="DUBBDBModel.employee" Role="employee" Multiplicity="0..1" />
-          <End Type="DUBBDBModel.dubbingTrnDtl" Role="dubbingTrnDtl" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="employee">
-              <PropertyRef Name="empIntno" />
-            </Principal>
-            <Dependent Role="dubbingTrnDtl">
-              <PropertyRef Name="soundTechnician" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK_dubbingTrnDtls_employees2">
-          <End Type="DUBBDBModel.employee" Role="employee" Multiplicity="0..1" />
-          <End Type="DUBBDBModel.dubbingTrnDtl" Role="dubbingTrnDtl" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="employee">
-              <PropertyRef Name="empIntno" />
-            </Principal>
-            <Dependent Role="dubbingTrnDtl">
-              <PropertyRef Name="assistant" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK_dubbingTrnDtls_orderTrnHdrs">
-          <End Type="DUBBDBModel.orderTrnHdr" Role="orderTrnHdr" Multiplicity="1" />
-          <End Type="DUBBDBModel.dubbingTrnDtl" Role="dubbingTrnDtl" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="orderTrnHdr">
-              <PropertyRef Name="orderTrnHdrIntno" />
-            </Principal>
-            <Dependent Role="dubbingTrnDtl">
-              <PropertyRef Name="orderTrnHdrIntno" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -2678,6 +2643,154 @@ warning 6002: The table/view 'DUBBDB.dbo.userRolesView' does not have a primary 
         <Association Name="webpages_UsersInRoles">
           <End Type="DUBBDBModel.webpages_Roles" Role="webpages_Roles" Multiplicity="*" />
           <End Type="DUBBDBModel.UserProfile" Role="UserProfile" Multiplicity="*" />
+        </Association>
+        <EntityType Name="studio">
+          <Key>
+            <PropertyRef Name="studioIntno" />
+          </Key>
+          <Property Name="studioIntno" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="dubbTrnHdrIntno" Type="Int64" Nullable="false" />
+          <Property Name="studioNo" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="supervisor" Type="Int64" />
+          <Property Name="sound" Type="Int64" />
+          <Property Name="status" Type="Boolean" Nullable="false" />
+          <NavigationProperty Name="dubbingTrnHdr" Relationship="DUBBDBModel.FK_studios_dubbingTrnHdrs" FromRole="studio" ToRole="dubbingTrnHdr" />
+          <NavigationProperty Name="employee" Relationship="DUBBDBModel.FK_studios_employees_sound" FromRole="studio" ToRole="employee" />
+          <NavigationProperty Name="employee1" Relationship="DUBBDBModel.FK_studios_employees_supervisor" FromRole="studio" ToRole="employee" />
+          <Property Name="srl" Type="Int32" Nullable="false" />
+          <NavigationProperty Name="studioDtls" Relationship="DUBBDBModel.FK_studioDtls_studios" FromRole="studio" ToRole="studioDtl" />
+        </EntityType>
+        <Association Name="FK_studios_dubbingTrnHdrs">
+          <End Type="DUBBDBModel.dubbingTrnHdr" Role="dubbingTrnHdr" Multiplicity="1" />
+          <End Type="DUBBDBModel.studio" Role="studio" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="dubbingTrnHdr">
+              <PropertyRef Name="dubbTrnHdrIntno" />
+            </Principal>
+            <Dependent Role="studio">
+              <PropertyRef Name="dubbTrnHdrIntno" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_studios_employees_sound">
+          <End Type="DUBBDBModel.employee" Role="employee" Multiplicity="0..1" />
+          <End Type="DUBBDBModel.studio" Role="studio" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="employee">
+              <PropertyRef Name="empIntno" />
+            </Principal>
+            <Dependent Role="studio">
+              <PropertyRef Name="sound" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_studios_employees_supervisor">
+          <End Type="DUBBDBModel.employee" Role="employee" Multiplicity="0..1" />
+          <End Type="DUBBDBModel.studio" Role="studio" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="employee">
+              <PropertyRef Name="empIntno" />
+            </Principal>
+            <Dependent Role="studio">
+              <PropertyRef Name="supervisor" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityType Name="dubbingTrnDtl">
+          <Key>
+            <PropertyRef Name="dubbTrnDtlIntno" />
+          </Key>
+          <Property Name="dubbTrnDtlIntno" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="dubbTrnHdrIntno" Type="Int64" Nullable="false" />
+          <Property Name="workIntno" Type="Int64" Nullable="false" />
+          <Property Name="orderTrnHdrIntno" Type="Int64" Nullable="false" />
+          <NavigationProperty Name="agreementWork" Relationship="DUBBDBModel.FK_dubbingTrnDtls_agreementWorks" FromRole="dubbingTrnDtl" ToRole="agreementWork" />
+          <NavigationProperty Name="dubbingAppointments" Relationship="DUBBDBModel.FK_dubbingAppointments_dubbingTrnDtls" FromRole="dubbingTrnDtl" ToRole="dubbingAppointment" />
+          <NavigationProperty Name="dubbingTrnHdr" Relationship="DUBBDBModel.FK_dubbingTrnDtls_dubbingTrnHdrs" FromRole="dubbingTrnDtl" ToRole="dubbingTrnHdr" />
+          <NavigationProperty Name="orderTrnHdr" Relationship="DUBBDBModel.FK_dubbingTrnDtls_orderTrnHdrs" FromRole="dubbingTrnDtl" ToRole="orderTrnHdr" />
+        </EntityType>
+        <EntityType Name="studioDtl">
+          <Key>
+            <PropertyRef Name="studioDtlsIntno" />
+          </Key>
+          <Property Name="studioDtlsIntno" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="studioIntno" Type="Int64" Nullable="false" />
+          <Property Name="workIntno" Type="Int64" Nullable="false" />
+          <Property Name="isDefault" Type="Boolean" Nullable="false" />
+          <NavigationProperty Name="agreementWork" Relationship="DUBBDBModel.FK_studioDtls_agreementWorks" FromRole="studioDtl" ToRole="agreementWork" />
+          <NavigationProperty Name="studio" Relationship="DUBBDBModel.FK_studioDtls_studios" FromRole="studioDtl" ToRole="studio" />
+        </EntityType>
+        <Association Name="FK_dubbingTrnDtls_agreementWorks">
+          <End Type="DUBBDBModel.agreementWork" Role="agreementWork" Multiplicity="1" />
+          <End Type="DUBBDBModel.dubbingTrnDtl" Role="dubbingTrnDtl" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="agreementWork">
+              <PropertyRef Name="workIntno" />
+            </Principal>
+            <Dependent Role="dubbingTrnDtl">
+              <PropertyRef Name="workIntno" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_studioDtls_agreementWorks">
+          <End Type="DUBBDBModel.agreementWork" Role="agreementWork" Multiplicity="1" />
+          <End Type="DUBBDBModel.studioDtl" Role="studioDtl" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="agreementWork">
+              <PropertyRef Name="workIntno" />
+            </Principal>
+            <Dependent Role="studioDtl">
+              <PropertyRef Name="workIntno" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_dubbingAppointments_dubbingTrnDtls">
+          <End Type="DUBBDBModel.dubbingTrnDtl" Role="dubbingTrnDtl" Multiplicity="1" />
+          <End Type="DUBBDBModel.dubbingAppointment" Role="dubbingAppointment" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="dubbingTrnDtl">
+              <PropertyRef Name="dubbTrnDtlIntno" />
+            </Principal>
+            <Dependent Role="dubbingAppointment">
+              <PropertyRef Name="dubbTrnDtlIntno" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_dubbingTrnDtls_dubbingTrnHdrs">
+          <End Type="DUBBDBModel.dubbingTrnHdr" Role="dubbingTrnHdr" Multiplicity="1" />
+          <End Type="DUBBDBModel.dubbingTrnDtl" Role="dubbingTrnDtl" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="dubbingTrnHdr">
+              <PropertyRef Name="dubbTrnHdrIntno" />
+            </Principal>
+            <Dependent Role="dubbingTrnDtl">
+              <PropertyRef Name="dubbTrnHdrIntno" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_dubbingTrnDtls_orderTrnHdrs">
+          <End Type="DUBBDBModel.orderTrnHdr" Role="orderTrnHdr" Multiplicity="1" />
+          <End Type="DUBBDBModel.dubbingTrnDtl" Role="dubbingTrnDtl" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="orderTrnHdr">
+              <PropertyRef Name="orderTrnHdrIntno" />
+            </Principal>
+            <Dependent Role="dubbingTrnDtl">
+              <PropertyRef Name="orderTrnHdrIntno" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_studioDtls_studios">
+          <End Type="DUBBDBModel.studio" Role="studio" Multiplicity="1" />
+          <End Type="DUBBDBModel.studioDtl" Role="studioDtl" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="studio">
+              <PropertyRef Name="studioIntno" />
+            </Principal>
+            <Dependent Role="studioDtl">
+              <PropertyRef Name="studioIntno" />
+            </Dependent>
+          </ReferentialConstraint>
         </Association>
         </Schema>
     </edmx:ConceptualModels>
@@ -2870,21 +2983,6 @@ warning 6002: The table/view 'DUBBDB.dbo.userRolesView' does not have a primary 
                 <ScalarProperty Name="workCharacterIntno" ColumnName="workCharacterIntno" />
                 <ScalarProperty Name="orderTrnHdrIntno" ColumnName="orderTrnHdrIntno" />
                 <ScalarProperty Name="dubbSheetHdrIntno" ColumnName="dubbSheetHdrIntno" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="dubbingTrnDtls">
-            <EntityTypeMapping TypeName="DUBBDBModel.dubbingTrnDtl">
-              <MappingFragment StoreEntitySet="dubbingTrnDtls">
-                <ScalarProperty Name="status" ColumnName="status" />
-                <ScalarProperty Name="assistant" ColumnName="assistant" />
-                <ScalarProperty Name="soundTechnician" ColumnName="soundTechnician" />
-                <ScalarProperty Name="supervisor" ColumnName="supervisor" />
-                <ScalarProperty Name="studioNo" ColumnName="studioNo" />
-                <ScalarProperty Name="dubbingDate" ColumnName="dubbingDate" />
-                <ScalarProperty Name="orderTrnHdrIntno" ColumnName="orderTrnHdrIntno" />
-                <ScalarProperty Name="dubbTrnHdrIntno" ColumnName="dubbTrnHdrIntno" />
-                <ScalarProperty Name="dubbTrnDtlIntno" ColumnName="dubbTrnDtlIntno" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
@@ -3180,14 +3278,6 @@ warning 6002: The table/view 'DUBBDB.dbo.userRolesView' does not have a primary 
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
-          <EntitySetMapping Name="userRolesViews">
-            <EntityTypeMapping TypeName="DUBBDBModel.userRolesView">
-              <MappingFragment StoreEntitySet="userRolesView">
-                <ScalarProperty Name="RoleId" ColumnName="RoleId" />
-                <ScalarProperty Name="UserId" ColumnName="UserId" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
           <AssociationSetMapping Name="webpages_UsersInRoles" TypeName="DUBBDBModel.webpages_UsersInRoles" StoreEntitySet="webpages_UsersInRoles">
             <EndProperty Name="UserProfile">
               <ScalarProperty Name="UserId" ColumnName="UserId" />
@@ -3196,6 +3286,39 @@ warning 6002: The table/view 'DUBBDB.dbo.userRolesView' does not have a primary 
               <ScalarProperty Name="RoleId" ColumnName="RoleId" />
             </EndProperty>
           </AssociationSetMapping>
+          <EntitySetMapping Name="studios">
+            <EntityTypeMapping TypeName="DUBBDBModel.studio">
+              <MappingFragment StoreEntitySet="studios">
+                <ScalarProperty Name="srl" ColumnName="srl" />
+                <ScalarProperty Name="status" ColumnName="status" />
+                <ScalarProperty Name="sound" ColumnName="sound" />
+                <ScalarProperty Name="supervisor" ColumnName="supervisor" />
+                <ScalarProperty Name="studioNo" ColumnName="studioNo" />
+                <ScalarProperty Name="dubbTrnHdrIntno" ColumnName="dubbTrnHdrIntno" />
+                <ScalarProperty Name="studioIntno" ColumnName="studioIntno" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="dubbingTrnDtls">
+            <EntityTypeMapping TypeName="DUBBDBModel.dubbingTrnDtl">
+              <MappingFragment StoreEntitySet="dubbingTrnDtls">
+                <ScalarProperty Name="orderTrnHdrIntno" ColumnName="orderTrnHdrIntno" />
+                <ScalarProperty Name="workIntno" ColumnName="workIntno" />
+                <ScalarProperty Name="dubbTrnHdrIntno" ColumnName="dubbTrnHdrIntno" />
+                <ScalarProperty Name="dubbTrnDtlIntno" ColumnName="dubbTrnDtlIntno" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="studioDtls">
+            <EntityTypeMapping TypeName="DUBBDBModel.studioDtl">
+              <MappingFragment StoreEntitySet="studioDtls">
+                <ScalarProperty Name="isDefault" ColumnName="isDefault" />
+                <ScalarProperty Name="workIntno" ColumnName="workIntno" />
+                <ScalarProperty Name="studioIntno" ColumnName="studioIntno" />
+                <ScalarProperty Name="studioDtlsIntno" ColumnName="studioDtlsIntno" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
         </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>

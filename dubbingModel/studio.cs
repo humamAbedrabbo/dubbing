@@ -12,23 +12,26 @@ namespace dubbingModel
     using System;
     using System.Collections.Generic;
     
-    public partial class dubbingTrnDtl
+    public partial class studio
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public dubbingTrnDtl()
+        public studio()
         {
-            this.dubbingAppointments = new HashSet<dubbingAppointment>();
+            this.studioDtls = new HashSet<studioDtl>();
         }
     
-        public long dubbTrnDtlIntno { get; set; }
+        public long studioIntno { get; set; }
         public long dubbTrnHdrIntno { get; set; }
-        public long workIntno { get; set; }
-        public long orderTrnHdrIntno { get; set; }
+        public string studioNo { get; set; }
+        public Nullable<long> supervisor { get; set; }
+        public Nullable<long> sound { get; set; }
+        public bool status { get; set; }
+        public int srl { get; set; }
     
-        public virtual agreementWork agreementWork { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<dubbingAppointment> dubbingAppointments { get; set; }
         public virtual dubbingTrnHdr dubbingTrnHdr { get; set; }
-        public virtual orderTrnHdr orderTrnHdr { get; set; }
+        public virtual employee employee { get; set; }
+        public virtual employee employee1 { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<studioDtl> studioDtls { get; set; }
     }
 }

@@ -1,0 +1,45 @@
+﻿@model dubbingModel.dubbingTrnHdr
+@using dubbingApp.Models;
+
+<div class="container-fluid" id="schedulesAddNew" style="padding:0px">
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <div class="row">
+                <div class="col-sm-12">
+                    <button class="btn btn-default btn-xs pull-right" onclick="onCloseClick('schedulesAddNew')" title="Close">
+                        <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div class="panel-body">
+            @using (Ajax.BeginForm("schedulesAddNew", "scheduling",
+                                                new AjaxOptions()
+                                                {
+                                                    HttpMethod = "POST",
+                                                    OnSuccess = "onScheduleSuccess",
+                                                    OnFailure = "onScheduleFailure"
+                                                }
+                                                ))
+            {
+                @Html.AntiForgeryToken()
+                @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+                <div class="form-group-sm">
+                    <small>@Html.LabelFor(model => model.fromDate, "Week Starting", htmlAttributes: new { @class = "control-label" })</small>
+                    <p><small>Note: New Schedule MUST Start on a &nbsp; <label>@LookupModels.decodeDictionaryItem("settings", "fdw")</label> &nbsp; as per System Settings.</small></p>
+                    <div>
+                        <input type="date" name="fromDate" class="form-control" />
+                        @Html.ValidationMessageFor(model => model.fromDate, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+                <br />
+                <div class="form-group-sm">
+                    <button type="submit" class="btn btn-default btn-sm pull-left">Submit</button>
+                    <label class="alert-success" id="result"></label>
+                </div>
+            }
+        </div>
+    </div>
+</div>

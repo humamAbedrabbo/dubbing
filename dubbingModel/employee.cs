@@ -20,12 +20,11 @@ namespace dubbingModel
             this.dubbingSheetDtls = new HashSet<dubbingSheetDtl>();
             this.dubbingSheetDtls1 = new HashSet<dubbingSheetDtl>();
             this.dubbingSheetDtls2 = new HashSet<dubbingSheetDtl>();
-            this.dubbingTrnDtls = new HashSet<dubbingTrnDtl>();
-            this.dubbingTrnDtls1 = new HashSet<dubbingTrnDtl>();
-            this.dubbingTrnDtls2 = new HashSet<dubbingTrnDtl>();
             this.orderBatchTrnHdrs = new HashSet<orderBatchTrnHdr>();
             this.payments = new HashSet<payment>();
             this.workPersonnels = new HashSet<workPersonnel>();
+            this.studios = new HashSet<studio>();
+            this.studios1 = new HashSet<studio>();
         }
     
         public long empIntno { get; set; }
@@ -46,16 +45,14 @@ namespace dubbingModel
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<dubbingSheetDtl> dubbingSheetDtls2 { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<dubbingTrnDtl> dubbingTrnDtls { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<dubbingTrnDtl> dubbingTrnDtls1 { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<dubbingTrnDtl> dubbingTrnDtls2 { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<orderBatchTrnHdr> orderBatchTrnHdrs { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<payment> payments { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<workPersonnel> workPersonnels { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<studio> studios { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<studio> studios1 { get; set; }
     }
 }
