@@ -15,7 +15,6 @@
         <EntityTypeShape EntityType="DUBBDBModel.contact" Width="1.5" PointX="6" PointY="34.625" />
         <EntityTypeShape EntityType="DUBBDBModel.deliveryFeedback" Width="1.5" PointX="18.75" PointY="50.625" />
         <EntityTypeShape EntityType="DUBBDBModel.dubbDomain" Width="1.5" PointX="0.75" PointY="3.75" />
-        <EntityTypeShape EntityType="DUBBDBModel.dubbingAppointment" Width="1.5" PointX="24" PointY="40.375" />
         <EntityTypeShape EntityType="DUBBDBModel.dubbingSheetDtl" Width="1.5" PointX="21.75" PointY="26.5" />
         <EntityTypeShape EntityType="DUBBDBModel.dubbingSheetHdr" Width="1.5" PointX="21.75" PointY="46.75" />
         <EntityTypeShape EntityType="DUBBDBModel.dubbingTrnHdr" Width="1.5" PointX="16.5" PointY="38.25" />
@@ -57,7 +56,6 @@
         <AssociationConnector Association="DUBBDBModel.FK_workOrders_clients" />
         <AssociationConnector Association="DUBBDBModel.FK_deliveryFeedbacks_orderTrnHdrs" />
         <AssociationConnector Association="DUBBDBModel.FK_feedbackActions_deliveryFeedbacks" />
-        <AssociationConnector Association="DUBBDBModel.FK_dubbingAppointments_dubbingSheetHdrs1" />
         <AssociationConnector Association="DUBBDBModel.FK_dubbingSheetDtls_dubbingSheetHdrs" />
         <AssociationConnector Association="DUBBDBModel.FK_dubbingSheetDtls_employees" />
         <AssociationConnector Association="DUBBDBModel.FK_dubbingSheetDtls_employees1" />
@@ -87,10 +85,13 @@
         <EntityTypeShape EntityType="DUBBDBModel.studioDtl" Width="1.5" PointX="24" PointY="45.5" />
         <AssociationConnector Association="DUBBDBModel.FK_dubbingTrnDtls_agreementWorks" />
         <AssociationConnector Association="DUBBDBModel.FK_studioDtls_agreementWorks" />
-        <AssociationConnector Association="DUBBDBModel.FK_dubbingAppointments_dubbingTrnDtls" />
         <AssociationConnector Association="DUBBDBModel.FK_dubbingTrnDtls_dubbingTrnHdrs" />
         <AssociationConnector Association="DUBBDBModel.FK_dubbingTrnDtls_orderTrnHdrs" />
         <AssociationConnector Association="DUBBDBModel.FK_studioDtls_studios" />
+        <EntityTypeShape EntityType="DUBBDBModel.dubbingAppointment" Width="1.5" PointX="24.75" PointY="48.375" />
+        <AssociationConnector Association="DUBBDBModel.FK_dubbingAppointments_studios" />
+        <AssociationConnector Association="DUBBDBModel.FK_dubbingAppointments_voiceActors" />
+        <AssociationConnector Association="DUBBDBModel.FK_dubbingAppointments_agreementWorks" />
         </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

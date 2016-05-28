@@ -17,7 +17,6 @@ namespace dubbingModel
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         public dubbingSheetHdr()
         {
-            this.dubbingAppointments = new HashSet<dubbingAppointment>();
             this.dubbingSheetDtls = new HashSet<dubbingSheetDtl>();
         }
     
@@ -28,8 +27,6 @@ namespace dubbingModel
         public string actorName { get; set; }
         public string characterName { get; set; }
     
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<dubbingAppointment> dubbingAppointments { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<dubbingSheetDtl> dubbingSheetDtls { get; set; }
         public virtual orderTrnHdr orderTrnHdr { get; set; }

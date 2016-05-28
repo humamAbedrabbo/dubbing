@@ -14,20 +14,12 @@ namespace dubbingModel
     
     public partial class dubbingTrnDtl
     {
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public dubbingTrnDtl()
-        {
-            this.dubbingAppointments = new HashSet<dubbingAppointment>();
-        }
-    
         public long dubbTrnDtlIntno { get; set; }
         public long dubbTrnHdrIntno { get; set; }
         public long workIntno { get; set; }
         public long orderTrnHdrIntno { get; set; }
     
         public virtual agreementWork agreementWork { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<dubbingAppointment> dubbingAppointments { get; set; }
         public virtual dubbingTrnHdr dubbingTrnHdr { get; set; }
         public virtual orderTrnHdr orderTrnHdr { get; set; }
     }

@@ -171,9 +171,11 @@
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\adminController.cs" />
     <Compile Include="Controllers\agreementsController.cs" />
+    <Compile Include="Controllers\calendarController.cs" />
     <Compile Include="Controllers\castingController.cs" />
     <Compile Include="Controllers\clientContactsController.cs" />
     <Compile Include="Controllers\contractsController.cs" />
+    <Compile Include="Controllers\dubbingController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\ManageController.cs" />
     <Compile Include="Controllers\ordersController.cs" />
@@ -313,6 +315,16 @@
     <Content Include="Views\scheduling\_studiosList.cshtml" />
     <Content Include="Views\scheduling\_studiosUpdate.cshtml" />
     <Content Include="Views\scheduling\_allocateWorkToStudio.cshtml" />
+    <Content Include="Views\calendar\Index.cshtml" />
+    <Content Include="Views\calendar\_actorsList.cshtml" />
+    <Content Include="Views\dubbing\Index.cshtml" />
+    <Content Include="Views\dubbing\_actorsList.cshtml" />
+    <Content Include="Views\dubbing\_dialoguesList.cshtml" />
+    <Content Include="Views\dubbing\_sceneHeader.cshtml" />
+    <Content Include="Views\dubbing\_scenesList.cshtml" />
+    <Content Include="Views\scheduling\_workCalendar.cshtml" />
+    <Content Include="Views\calendar\_appointmentsList.cshtml" />
+    <Content Include="Views\calendar\_appointmentUpdate.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

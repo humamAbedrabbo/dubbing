@@ -335,9 +335,95 @@ namespace dubbingApp.Controllers
             var modelItem = model.Find(id);
             long std = modelItem.studioIntno;
             model.Remove(modelItem);
-            db.SaveChanges();
 
-            return RedirectToAction("studiosUpdate", new { id = std });
+            var aptModel = db.dubbingAppointments;
+            var aptList = aptModel.Include(b => b.studio.studioDtls).Where(b => b.studio.studioDtls.FirstOrDefault(t => t.studioDtlsIntno == id).studioDtlsIntno == id).ToList();
+            if (aptList.Count() != 0)
+                return new HttpStatusCodeResult(500, "Failed! Unable to Cancel/Delete The Selected Schedule. Appointments are Already Given to Actors. Deleting This Schedule WILL Require to Manually Delete the Given Appointments and then Retry Again.");
+            else
+            {
+                db.SaveChanges();
+                return RedirectToAction("studiosUpdate", new { id = std });
+            }
+        }
+
+        public ActionResult workCalendar(long work, long schedule)
+        {
+            var x = (from A in db.dubbingAppointments
+                     join B in db.studios on A.studioIntno equals B.studioIntno
+                     join C in db.studioDtls on B.studioIntno equals C.studioIntno
+                     where C.workIntno == work && B.dubbTrnHdrIntno == schedule && B.status == true && B.status == true
+                     select new { B.studioIntno, B.studioNo }).Distinct().ToList();
+            ViewBag.studiosList = x;
+            ViewBag.work = work;
+            ViewBag.schedule = schedule;
+            return PartialView("_workCalendar");
+        }
+
+        public ActionResult generateCalendar(long work, long schedule, long? studio)
+        {
+            var model = db.dubbingAppointments;
+            DateTime fromDate = db.dubbingTrnHdrs.Find(schedule).fromDate;
+            var x = (from A in db.dubbingTrnDtls
+                     join B in db.orderTrnHdrs on A.orderTrnHdrIntno equals B.orderTrnHdrIntno
+                     join C in db.dubbingSheetHdrs on B.orderTrnHdrIntno equals C.orderTrnHdrIntno
+                     where A.dubbTrnHdrIntno == schedule && A.workIntno == work
+                     select new { C.voiceActorIntno, totalScenes = C.dubbingSheetDtls.Count() }).Distinct().ToList();
+
+            if (studio.HasValue) // this is a reload of an already generated calendar for the given studio
+            {
+                for (int i = 0; i < x.Count(); i++)
+                {
+                    long actor = x[i].voiceActorIntno;
+                    var y = db.dubbingAppointments.Where(b => b.voiceActorIntno == actor && b.studioIntno == studio.Value).ToList();
+                    if (y.Count() == 0)
+                    {
+                        dubbingAppointment apt = new dubbingAppointment();
+                        apt.voiceActorIntno = actor;
+                        apt.studioIntno = studio.Value;
+                        apt.appointmentDate = fromDate;
+                        apt.workIntno = work;
+                        apt.totalScenes = x[i].totalScenes;
+                        var sph = db.workActors.FirstOrDefault(b => b.voiceActorIntno == actor && b.workIntno == work && b.status == true);
+                        if (sph != null && sph.scenesPerHour != 0)
+                            apt.totalMinutes = x[i].totalScenes * 60 / sph.scenesPerHour;
+                        else
+                            apt.totalMinutes = 0;
+                        model.Add(apt);
+                    }
+                }
+                db.SaveChanges();
+            }
+            else // this is a generate of new calendars for the allocated studios
+            {
+                var z = (from A in db.studios
+                         join B in db.studioDtls on A.studioIntno equals B.studioIntno
+                         where A.dubbTrnHdrIntno == schedule && B.workIntno == work
+                         select A.studioIntno).Distinct().ToList();
+                foreach (long std in z)
+                {
+                    for (int i = 0; i < x.Count(); i++)
+                    {
+                        long actor = x[i].voiceActorIntno;
+                        dubbingAppointment apt = new dubbingAppointment();
+                        apt.voiceActorIntno = actor;
+                        apt.studioIntno = std;
+                        apt.appointmentDate = fromDate;
+                        apt.workIntno = work;
+                        apt.totalScenes = x[i].totalScenes;
+                        var sph = db.workActors.FirstOrDefault(b => b.voiceActorIntno == actor && b.workIntno == work && b.status == true);
+                        if (sph != null && sph.scenesPerHour != 0)
+                            apt.totalMinutes = x[i].totalScenes * 60 / sph.scenesPerHour;
+                        else
+                            apt.totalMinutes = 0;
+                        model.Add(apt);
+                    }
+                }
+                db.SaveChanges();
+            }
+            long work1 = work;
+            long schedule1 = schedule;
+            return RedirectToAction("workCalendar", new { work = work1, schedule = schedule1 });
         }
     }
 }

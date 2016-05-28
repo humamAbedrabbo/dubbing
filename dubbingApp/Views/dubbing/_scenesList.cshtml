@@ -1,0 +1,21 @@
+﻿<div class="container-fluid" style="padding:0px">
+    @for (int i = 5; i < 8; i++)
+    {
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="btn-group">
+                    <div class="col-sm-2">
+                        <button class="btn btn-primary btn-lg" onclick="onEpisodeClick(5)" title="Episode">@i</button>
+                    </div>
+                    <div class="col-sm-10">
+                        @for (int j = 1; j < 51; j++)
+                        {
+                            <button class="btn btn-default btn-xs" onclick="onSceneClick(5)" title="Scene">@j</button>
+                        }
+                    </div>
+                </div>
+                <p></p>
+            </div>
+        </div>
+    }
+</div>

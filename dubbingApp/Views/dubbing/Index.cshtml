@@ -1,0 +1,116 @@
+﻿@{
+    ViewBag.Title = "Dubbing";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@Html.Hidden("dialogueControlHF")
+<div class="container-fluid">
+    <div class="jumbotron" style="padding:5px">
+        <div class="row">
+            <div class="col-md-2 pull-left">
+                <small>Today @DateTime.Today.DayOfWeek &nbsp; @DateTime.Today.ToShortDateString()</small>
+            </div>
+            <div class="col-md-8" style="text-align:center; padding:0px"><small>@ViewBag.team</small></div>
+            <div class="col-md-2">
+                <button class="btn btn-default btn-xs pull-right" title="Log Out">
+                    <span class="glyphicon glyphicon-log-out" aria-hidden="true"></span>
+                </button>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-4">
+                <div class="row">
+                    <div class="col-sm-12">
+                        <h2><label>STUDIO 01</label></h2>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-12">
+                        <small>Dubbing Week 12/07 - 18/07</small>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div class="progress" style="padding:0px; width:300px; height:10px" title="Weekly Progress">
+                            <div class="progress-bar" role="progressbar" aria-valuenow="30" aria-valuemin="0" aria-valuemax="100" style="width: 30%">
+                                <span class="sr-only">50% Complete</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-8">
+                @Html.Action("sceneHeader", "dubbing")
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-2" id="actorsList">
+            @Html.Action("actorsList", "dubbing", new { std = @ViewBag.studio })
+        </div>
+
+        <div class="col-md-6" id="dialoguesList"></div>
+        <div class="col-md-4" id="scenesList"></div>
+    </div>
+</div>
+
+@section Scripts
+{
+    @Scripts.Render("~/bundles/jqueryval")
+
+    <script>
+        $(document).ready(function () {
+
+            $(window).on('load', function () {
+                $('#dialogueControlHF').val('0');
+            })
+
+            $(".actorLbl").click(function () {
+                $('.actorLbl').removeClass("badge");
+                var actorIntno = $(this).attr('id');
+                $('#' + actorIntno).addClass("badge");
+
+                $.ajax({
+                    url: '@Url.Action("dialoguesList", "dubbing")',
+                    type: 'GET',
+                    data: { actor: actorIntno },
+                    success: function (result) {
+                        $('#dialoguesList').html(result);
+                    }
+                })
+
+                $.ajax({
+                    url: '@Url.Action("scenesList", "dubbing")',
+                    type: 'GET',
+                    data: { actor: actorIntno },
+                    success: function (result) {
+                        $('#scenesList').html(result);
+                    }
+                })
+            });
+        })
+
+        function onActionClick(dlg) {
+            $('#dialogueControlHF').val('1');
+            $('#' + dlg).removeClass("panel-default").addClass("panel-danger");
+        }
+        function onTakenClick(dlg) {
+            if ($('#dialogueControlHF').val() === '1') {
+                $.ajax({
+                    url: '@Url.Action("dialogueTaken", "dubbing")',
+                    type: 'GET',
+                    data: { id: dlg },
+                    success: function (result) {
+                        $('#' + dlg).remove();
+                        $('#dialogueControlHF').val('0');
+                    }
+                })
+            }
+            else {
+                alert('Dialogue Action Not Started Yet!.');
+            }
+        }
+    </script>
+}

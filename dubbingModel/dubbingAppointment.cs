@@ -15,9 +15,9 @@ namespace dubbingModel
     public partial class dubbingAppointment
     {
         public long dubbAppointIntno { get; set; }
-        public long dubbTrnDtlIntno { get; set; }
-        public long dubbSheetHdrIntno { get; set; }
-        public Nullable<System.DateTime> appointmentDate { get; set; }
+        public long voiceActorIntno { get; set; }
+        public long studioIntno { get; set; }
+        public System.DateTime appointmentDate { get; set; }
         public Nullable<System.DateTime> fromTime { get; set; }
         public Nullable<System.DateTime> thruTime { get; set; }
         public Nullable<int> totalScenes { get; set; }
@@ -25,8 +25,10 @@ namespace dubbingModel
         public Nullable<System.DateTime> actualThruTime { get; set; }
         public string remarks { get; set; }
         public int totalMinutes { get; set; }
+        public long workIntno { get; set; }
     
-        public virtual dubbingSheetHdr dubbingSheetHdr { get; set; }
-        public virtual dubbingTrnDtl dubbingTrnDtl { get; set; }
+        public virtual studio studio { get; set; }
+        public virtual voiceActor voiceActor { get; set; }
+        public virtual agreementWork agreementWork { get; set; }
     }
 }

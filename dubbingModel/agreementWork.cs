@@ -26,6 +26,7 @@ namespace dubbingModel
             this.workPersonnels = new HashSet<workPersonnel>();
             this.dubbingTrnDtls = new HashSet<dubbingTrnDtl>();
             this.studioDtls = new HashSet<studioDtl>();
+            this.dubbingAppointments = new HashSet<dubbingAppointment>();
         }
     
         public long workIntno { get; set; }
@@ -61,5 +62,7 @@ namespace dubbingModel
         public virtual ICollection<dubbingTrnDtl> dubbingTrnDtls { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<studioDtl> studioDtls { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<dubbingAppointment> dubbingAppointments { get; set; }
     }
 }

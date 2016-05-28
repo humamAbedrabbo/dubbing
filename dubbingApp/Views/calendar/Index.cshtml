@@ -1,0 +1,101 @@
+﻿@{
+    ViewBag.Title = "Calendar";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container-fluid">
+    <div class="jumbotron" style="padding:5px">
+        <h2>Dubbing Calendar</h2>
+        <p class="lead"><h5>Register and Maintain Actors Appointments to Perform the Planned Dubbing Schedules. In addition, You Can Capture Attendance Data at the Arrival and Departure of Actors.</h5></p>
+        <label><a href="#" onclick="onAppointmentAddNewClick()">Add New Appointment ...</a></label>
+    </div>
+
+    <div class="row">
+        <div class="col-sm-3">
+            <div class="col-sm-12">
+                <small>
+                    @Html.DropDownList("scheduleIntno", new SelectList(ViewBag.schedulesList, "Key", "Value"), "Select Schedule ...", htmlAttributes: new { @class = "form-control" })
+                </small>
+            </div>
+            <br /><br />
+            <div class="col-sm-12" id="actorsList"></div>    
+        </div>
+        
+        <div class="col-sm-6" id="aptList"></div>
+        <div class="col-sm-3" id="details"></div>
+    </div>
+</div>
+
+@section Scripts
+{
+    @Scripts.Render("~/bundles/jqueryval")
+
+    <script>
+        $(document).ready(function () {
+            $('#scheduleIntno').change(function () {
+                $.ajax({
+                    url: '@Url.Action("actorsList", "calendar")',
+                    data: { schedule: $('#scheduleIntno').val() },
+                    type: 'GET',
+                    success: function (result) {
+                        $('#actorsList').html(result);
+                    }
+                })
+            });
+        });
+
+        function onActorClick(actor1, schedule1) {
+            $('.actorLbl').removeClass("badge");
+            var act = $(this).attr('id');
+            $('#' + act).addClass("badge");
+
+            $.ajax({
+                url: '@Url.Action("appointmentsList", "calendar")',
+                data: { actor: actor1, schedule: schedule1 },
+                type: 'GET',
+                success: function (result) {
+                    $('#aptList').html(result);
+                }
+            })
+        }
+
+        function onCloseClick() {
+            $('#details').html(null);
+        }
+
+        function onAppointmentUpdateClick(id) {
+            $.ajax({
+                url: '@Url.Action("appointmentUpdate", "calendar")',
+                data: { apt: id },
+                type: 'GET',
+                success: function (result) {
+                    $('#details').html(result);
+                }
+            })
+        }
+        function onAppointmentDeleteClick(id) {
+            if (confirm('Please Confirm! About to Delete the Appointment.')) {
+                $.ajax({
+                    url: '@Url.Action("appointmentDelete", "calendar")',
+                    data: { apt: id },
+                    type: 'GET',
+                    success: function (result) {
+                        $('#details').html(null);
+                        $('#aptList').html(result);
+                    },
+                    error: function () {
+                        alert('Failed! Unable to Delete Appointment.');
+                    }
+                })
+            }
+        }
+        function onAppointmentUpdateSuccess(ajaxContext) {
+            $('#result').html('Successfully Updated.');
+            $('#aptList').html(ajaxContext);
+        }
+        function onAppointmentUpdateFailure() {
+            alert('Failed! Unable to Update Appointment. Please Correct all Errors.');
+        }
+
+    </script>
+}
