@@ -1,0 +1,33 @@
+﻿@model IEnumerable<dubbingModel.dubbingAppointment>
+@{ 
+    string fromTime;
+    string thruTime;
+}
+
+<div class="container-fluid">
+    @foreach (DateTime calDay in Model.Select(b => b.appointmentDate).Distinct())
+    {
+        <small><label class="badge alert-info">@calDay.DayOfWeek @calDay.ToString("dd/MM")</label></small>
+        <table class="table table-condensed">
+            <thead>
+                <tr>
+                    <th class="col-sm-2"><small><label>From</label></small></th>
+                    <th class="col-sm-2"><small><label>To</label></small></th>
+                    <th class="col-sm-6"><small><label>Actor</label></small></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (dubbingModel.dubbingAppointment apt in Model.Where(b => b.appointmentDate == @calDay).ToList())
+                {
+                    fromTime = apt.fromTime.HasValue ? apt.fromTime.Value.ToString("HH:mm") : null;
+                    thruTime = apt.thruTime.HasValue ? apt.thruTime.Value.ToString("HH:mm") : null;
+                    <tr>
+                        <td class="col-sm-2"><small>@fromTime</small></td>
+                        <td class="col-sm-2"><small>@thruTime</small></td>
+                        <td class="col-sm-6"><small><label>@apt.voiceActor.fullName</label></small></td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+</div>

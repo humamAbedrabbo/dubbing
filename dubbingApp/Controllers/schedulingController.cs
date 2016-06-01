@@ -31,113 +31,6 @@ namespace dubbingApp.Controllers
             return PartialView("_schedulesList", model.ToList());
         }
 
-        public ActionResult scheduleDetails(long sch)
-        {
-            var hdr = db.dubbingTrnHdrs.Find(sch);
-            ViewBag.scheduleIntno = sch;
-            ViewBag.schedule = hdr.fromDate.ToString("dd/MM") + " - " + hdr.thruDate.ToString("dd/MM");
-
-            List<string> detailsList = new List<string>();
-            // find planned episodes suitable for the dubbing schedule
-            var x = db.orderTrnHdrs.Include(b => b.agreementWork).Where(b => !b.startDubbing.HasValue && !b.endAdaptation.HasValue && b.plannedDubbing.HasValue && b.status == "04").ToList();
-            detailsList.Add("Planned|" + x.Count() + " Episodes");
-            int cnt = 0;
-            int last = 0;
-            foreach (orderTrnHdr item in x)
-            {
-                var x1 = db.dubbingTrnDtls.FirstOrDefault(b => b.orderTrnHdrIntno == item.orderTrnHdrIntno);
-                if (x1 == null && item.plannedDubbing >= hdr.fromDate && item.plannedDubbing <= hdr.thruDate)
-                {
-                    cnt++;
-                    detailsList.Add(item.agreementWork.workName + "|" + item.episodeNo);
-                }
-            }
-            if (cnt == 0)
-            {
-                detailsList[0] = "Planned|None";
-                last = 1;
-            }
-            else
-            {
-                last = cnt + 1;
-                cnt = 0;
-            }
-            
-            
-            //find episodes with finalized adaptation
-            var y = db.orderTrnHdrs.Include(b => b.agreementWork).Where(b => !b.startDubbing.HasValue && b.endAdaptation.HasValue && b.status == "04").ToList();
-            detailsList.Add("xxx|");
-            detailsList.Add("Finalized Adaptation|" + y.Count() + " Episodes");
-            foreach (orderTrnHdr item in y)
-            {
-                var y1 = db.dubbingTrnDtls.FirstOrDefault(b => b.orderTrnHdrIntno == item.orderTrnHdrIntno);
-                if (y1 == null)
-                {
-                    cnt++;
-                    detailsList.Add(item.agreementWork.workName + "|" + item.episodeNo);
-                }
-            }
-            if (cnt == 0)
-                detailsList[last + 1] = "Finalized Adaptation|None";
-
-            return PartialView("_scheduleDetails", detailsList);
-        }
-
-        public ActionResult scheduleChange(long sch, string op)
-        {
-            var model = db.dubbingTrnDtls;
-            var hdr = db.dubbingTrnHdrs.Find(sch);
-            switch(op)
-            {
-                case "01": //reload planned episodes for dubbing
-                    var x = db.orderTrnHdrs.Where(b => !b.startDubbing.HasValue && !b.endAdaptation.HasValue && b.plannedDubbing.HasValue && b.status == "04").ToList();
-                    foreach (orderTrnHdr item in x)
-                    {
-                        var x1 = db.dubbingTrnDtls.FirstOrDefault(b => b.orderTrnHdrIntno == item.orderTrnHdrIntno && b.dubbTrnHdrIntno == sch);
-                        if (x1 == null && item.plannedDubbing >= hdr.fromDate && item.plannedDubbing <= hdr.thruDate)
-                        {
-                            dubbingTrnDtl dtl = new dubbingTrnDtl();
-                            dtl.dubbTrnHdrIntno = sch;
-                            dtl.workIntno = item.workIntno;
-                            dtl.orderTrnHdrIntno = item.orderTrnHdrIntno;
-                            model.Add(dtl);
-                        }
-                    }
-                    db.SaveChanges();
-                    break;
-                case "02": //reload episodes with adaptation ready
-                    var y = db.orderTrnHdrs.Where(b => !b.startDubbing.HasValue && b.endAdaptation.HasValue && b.status == "04").ToList();
-                    foreach (orderTrnHdr item in y)
-                    {
-                        var y1 = db.dubbingTrnDtls.FirstOrDefault(b => b.orderTrnHdrIntno == item.orderTrnHdrIntno && b.dubbTrnHdrIntno == sch);
-                        if (y1 == null)
-                        {
-                            dubbingTrnDtl dtl = new dubbingTrnDtl();
-                            dtl.dubbTrnHdrIntno = sch;
-                            dtl.workIntno = item.workIntno;
-                            dtl.orderTrnHdrIntno = item.orderTrnHdrIntno;
-                            model.Add(dtl);
-                        }
-                    }
-                    db.SaveChanges();
-                    break;
-                case "03": //delete schedule
-                    hdr.status = false;
-                    db.SaveChanges();
-                    break;
-            }
-
-            if (op != "03")
-            {
-                long sch1 = sch;
-                return RedirectToAction("episodesList", new { sch = sch1 });
-            }
-            else
-            {
-                return RedirectToAction("schedulesList");
-            }
-        }
-
         public ActionResult schedulesAddNew()
         {
             return PartialView("_schedulesAddNew");
@@ -162,36 +55,201 @@ namespace dubbingApp.Controllers
                     item.status = true;
                     model.Add(item);
                     db.SaveChanges();
-
-                    var studioModel = db.studios;
-                    var studioList = db.dubbDomains.Where(b => b.domainName == "studio").OrderBy(b => b.sortOrder)
-                                    .Select(b => new { b.domainCode, b.sortOrder }).ToList();
-                    for (int i = 0; i < studioList.Count(); i++)
-                    {
-                        studio std = new studio();
-                        std.dubbTrnHdrIntno = item.dubbTrnHdrIntno;
-                        std.studioNo = studioList[i].domainCode;
-                        std.srl = studioList[i].sortOrder;
-                        std.status = true;
-                        studioModel.Add(std);
-                    }
-                    db.SaveChanges();
                 }
             }
             var model1 = db.dubbingTrnHdrs.Where(b => b.status == true).OrderBy(b => b.fromDate);
             return PartialView("_schedulesList", model1.ToList());
         }
+
+        public ActionResult schedulesDelete(long schedule)
+        {
+            var model = db.dubbingTrnHdrs;
+            var modelItem = model.Find(schedule);
+            modelItem.status = false;
+            db.SaveChanges();
+            return RedirectToAction("schedulesList");
+        }
+
+        public ActionResult scheduleDetails(long sch)
+        {
+            var hdr = db.dubbingTrnHdrs.Find(sch);
+            ViewBag.scheduleIntno = sch;
+            ViewBag.schedule = hdr.fromDate.ToString("dd/MM") + " - " + hdr.thruDate.ToString("dd/MM");
+
+            List<string> detailsList = new List<string>();
+            var x = db.studioEpisodes.Include(b => b.studio).Include(b => b.dubbingTrnDtl)
+                    .Where(b => b.studio.dubbTrnHdrIntno == sch && b.status == true)
+                    .Select(b => new { b.studio.workIntno, b.studio.studioNo, b.studioIntno, b.dubbTrnDtlIntno }).ToList();
+            foreach (var x1 in x.Select(b => new { b.workIntno, b.studioNo, b.studioIntno }).Distinct().OrderBy(b => b.studioNo))
+            {
+                long x2 = x1.workIntno;
+                long x3 = x1.studioIntno;
+                string work = db.agreementWorks.Find(x2).workName;
+                int cnt = x.Where(b => b.workIntno == x2 && b.studioIntno == x3).Count();
+                detailsList.Add(x1.studioNo + "|" + work + "|" + cnt);
+            }
+            return PartialView("_scheduleDetails", detailsList);
+        }
+
+        public ActionResult generateCalendar(long schedule)
+        {
+            var model = db.dubbingAppointments;
+            DateTime fromDate = db.dubbingTrnHdrs.Find(schedule).fromDate;
+
+            var x = (from A in db.studios
+                     join B in db.studioEpisodes on A.studioIntno equals B.studioIntno
+                     join C in db.dubbingTrnDtls on B.dubbTrnDtlIntno equals C.dubbTrnDtlIntno
+                     join D in db.orderTrnHdrs on C.orderTrnHdrIntno equals D.orderTrnHdrIntno
+                     join E in db.dubbingSheetHdrs on D.orderTrnHdrIntno equals E.orderTrnHdrIntno
+                     where A.dubbTrnHdrIntno == schedule && A.status == true && B.status == true
+                     select new { A.studioIntno, A.workIntno, E.voiceActorIntno, E.actorName, totalScenes = E.dubbingSheetDtls.Count() }).Distinct().ToList();
+
+            for (int i = 0; i < x.Count(); i++)
+            {
+                long actor = x[i].voiceActorIntno;
+                string actorName = x[i].actorName;
+                long studio = x[i].studioIntno;
+                long work = x[i].workIntno;
+                var y = db.dubbingAppointments.Where(b => b.voiceActorIntno == actor && b.actorName == actorName && b.studioIntno == studio).ToList();
+                if (y.Count() == 0)
+                {
+                    dubbingAppointment apt = new dubbingAppointment();
+                    apt.voiceActorIntno = actor;
+                    apt.actorName = actorName;
+                    apt.studioIntno = studio;
+                    apt.appointmentDate = fromDate;
+                    apt.workIntno = work;
+                    apt.totalScenes = x[i].totalScenes;
+                    var sph = db.workActors.FirstOrDefault(b => b.voiceActorIntno == actor && b.workIntno == work && b.status == true);
+                    if (sph != null && sph.scenesPerHour != 0)
+                        apt.totalMinutes = x[i].totalScenes * 60 / sph.scenesPerHour;
+                    else
+                        apt.totalMinutes = 0;
+                    model.Add(apt);
+                }
+            }
+            db.SaveChanges();
+            return null;
+        }
         
-        //episodes
+        //works and episodes
         public ActionResult episodesList(long sch)
         {
-            var model = db.dubbingTrnDtls.Include(b => b.agreementWork).Include(b => b.dubbingTrnHdr).Include(b => b.orderTrnHdr)
-                        .Where(b => b.dubbTrnHdrIntno == sch).OrderBy(b => new { b.workIntno, b.orderTrnHdr.episodeNo });
-            var x = db.studioDtls.Include(b => b.studio).Where(b => b.studio.dubbTrnHdrIntno == sch && b.studio.status == true)
-                    .Select(b => new { b.workIntno, b.studio.studioNo });
-            ViewBag.studios = x;
-            ViewBag.schedule = sch;
-            return PartialView("_episodesList", model.ToList());
+            List<ViewModels.scheduleViewModel> model = new List<ViewModels.scheduleViewModel>();
+
+            var schedule = db.dubbingTrnHdrs.Find(sch);
+            var worksList = db.orderTrnHdrs.Include(b => b.agreementWork)
+                            .Where(b => !b.startDubbing.HasValue && b.status == "04")
+                            .Select(b => new { b.workIntno, b.agreementWork.workName, b.agreementWork.totalWeekNbrEpisodes }).Distinct().ToList();
+
+            for (int i = 0; i < worksList.Count(); i++)
+            {
+                ViewModels.scheduleViewModel modelItem = new ViewModels.scheduleViewModel();
+                modelItem.workIntno = worksList[i].workIntno;
+                modelItem.workName = worksList[i].workName;
+                modelItem.episodesPerWeek = worksList[i].totalWeekNbrEpisodes;
+                modelItem.dubbTrnHdrIntno = sch;
+                modelItem.fromDate = schedule.fromDate;
+                modelItem.thruDate = schedule.thruDate;
+
+                var orderItemsList = db.dubbingTrnDtls.Include(b => b.orderTrnHdr)
+                                    .Where(b => b.dubbTrnHdrIntno == sch && b.workIntno == modelItem.workIntno).OrderBy(b => b.episodeNo);
+                List<ViewModels.episodeItem> epList = new List<ViewModels.episodeItem>();
+                foreach (var oi in orderItemsList)
+                {
+                    ViewModels.episodeItem ep = new ViewModels.episodeItem();
+                    ep.episode = oi;
+                    ep.status = oi.orderTrnHdr.endAdaptation.HasValue ? "02" : "01"; // "01" planned, "02" ready
+                    epList.Add(ep);
+                }
+                modelItem.episodesList = epList;
+
+                var x = db.studioEpisodes.Include(b => b.studio)
+                        .Where(b => b.studio.dubbTrnHdrIntno == sch && b.studio.workIntno == modelItem.workIntno)
+                        .OrderBy(b => new { b.studioIntno, b.dubbingTrnDtl.episodeNo, b.status });
+                List<ViewModels.studioEpisodeItem> studiosList = new List<ViewModels.studioEpisodeItem>();
+                foreach (var stdEp in x)
+                {
+                    ViewModels.studioEpisodeItem std = new ViewModels.studioEpisodeItem();
+                    std.studioEpisodeIntno = stdEp.studioEpisodeIntno;
+                    std.episodeNo = stdEp.dubbingTrnDtl.episodeNo;
+                    std.studioNo = stdEp.studio.studioNo;
+                    std.status = stdEp.status;
+                    studiosList.Add(std);
+                }
+                modelItem.studioEpisodesList = studiosList;
+                model.Add(modelItem);
+            }
+            //ViewBag.empList = db.employees.Where(b => b.empType == "01" && b.status == true).ToList();
+            return PartialView("_episodesList", model);
+        }
+
+        public ActionResult episodesAddNew(long work, long schedule)
+        {
+            var hdr = db.dubbingTrnHdrs.Find(schedule);
+            List<string> episodesList = new List<string>();
+            // find planned episodes suitable for the dubbing schedule
+            var x = db.orderTrnHdrs.Where(b => b.workIntno == work && !b.startDubbing.HasValue && !b.endAdaptation.HasValue && b.plannedDubbing.HasValue && b.status == "04").ToList();
+            episodesList.Add("Planned (Adaptation Not Ready)|");
+            int cnt = 0;
+            int last = 0;
+            foreach (orderTrnHdr item in x)
+            {
+                var x1 = db.dubbingTrnDtls.FirstOrDefault(b => b.orderTrnHdrIntno == item.orderTrnHdrIntno);
+                if (x1 == null && item.plannedDubbing >= hdr.fromDate && item.plannedDubbing <= hdr.thruDate)
+                {
+                    cnt++;
+                    episodesList.Add(item.orderTrnHdrIntno + "|" + item.episodeNo);
+                }
+            }
+            if (cnt == 0)
+            {
+                episodesList[0] = "Planned: None|";
+                last = 1;
+            }
+            else
+            {
+                last = cnt + 1;
+                cnt = 0;
+            }
+
+            //find episodes with finalized adaptation
+            var y = db.orderTrnHdrs.Include(b => b.agreementWork).Where(b => !b.startDubbing.HasValue && b.endAdaptation.HasValue && b.status == "04").ToList();
+            episodesList.Add("Adaptation Ready|");
+            foreach (orderTrnHdr item in y)
+            {
+                var y1 = db.dubbingTrnDtls.FirstOrDefault(b => b.orderTrnHdrIntno == item.orderTrnHdrIntno);
+                if (y1 == null)
+                {
+                    cnt++;
+                    episodesList.Add(item.orderTrnHdrIntno + "|" + item.episodeNo);
+                }
+            }
+            if (cnt == 0)
+                episodesList[last] = "Adaptation Ready: None|";
+            ViewBag.work = work;
+            ViewBag.schedule = schedule;
+            return PartialView("_episodesAddNew", episodesList);
+        }
+
+        public ActionResult loadEpisodesToSchedule(long work, long schedule, string episodes)
+        {
+            var model = db.dubbingTrnDtls;
+            string[] episodesList = episodes.Split(';');
+            for (int i = 0; i < episodesList.Count(); i++)
+            {
+                dubbingTrnDtl dtl = new dubbingTrnDtl();
+                long orderItem = long.Parse(episodesList[i]);
+                dtl.orderTrnHdrIntno = orderItem;
+                dtl.dubbTrnHdrIntno = schedule;
+                dtl.workIntno = work;
+                dtl.episodeNo = db.orderTrnHdrs.Find(orderItem).episodeNo;
+                model.Add(dtl);
+            }
+            db.SaveChanges();
+            long work1 = work;
+            long schedule1 = schedule;
+            return RedirectToAction("episodesAddNew", new { work = work1, schedule = schedule1 });
         }
 
         public ActionResult episodesDelete(long id)
@@ -200,18 +258,26 @@ namespace dubbingApp.Controllers
             var modelItem = model.Find(id);
             long sch1 = modelItem.dubbTrnHdrIntno;
             long work = modelItem.workIntno;
+            long dtl = modelItem.dubbTrnDtlIntno;
+
+            var studioModel = db.studios;
+            var studioEpisodesModel = db.studioEpisodes;
+
             try
             {
+                var x = db.studioEpisodes.Where(b => b.dubbTrnDtlIntno == dtl).ToList();
+                if (x.Count() != 0)
+                {
+                    foreach (var x1 in x)
+                    {
+                        long std = x1.studioIntno;
+                        studioEpisodesModel.Remove(x1);
+                        if (db.studioEpisodes.Where(b => b.studioIntno == std).Count() == 0)
+                            studioModel.Remove(db.studios.Find(std));
+                    }
+                }
                 model.Remove(modelItem);
                 db.SaveChanges();
-
-                //delete all studio allocations when no more episodes of the same work are included in the dubbingTrnDtl
-                if (model.Where(b => b.workIntno == work && b.dubbTrnHdrIntno == sch1).Count() == 0)
-                {
-                    var x = db.studioDtls.Include(b => b.studio).Where(b => b.workIntno == work && b.studio.dubbTrnHdrIntno == sch1);
-                    db.studioDtls.RemoveRange(x);
-                    db.SaveChanges();
-                }
             }
             catch
             {
@@ -223,207 +289,111 @@ namespace dubbingApp.Controllers
         //studios
         public ActionResult studiosList(long sch)
         {
-            var model = db.studios.Where(b => b.dubbTrnHdrIntno == sch && b.status == true);
+            var model = db.dubbDomains.Where(b => b.domainName == "studio" && b.langCode == "en" && b.status == true);
+            ViewBag.allocatedList = db.studios.Where(b => b.dubbTrnHdrIntno == sch && b.status == true)
+                                    .Select(b => b.studioNo).Distinct().ToList();
+            ViewBag.schedule = sch;
             return PartialView("_studiosList", model.ToList());
         }
 
-        public ActionResult studiosUpdate(long id)
+        //studio allocations
+        public ActionResult studioAllocationList(long schedule, string studio)
         {
-            var model = db.studios.Find(id);
-            ViewBag.teamList = new SelectList(db.employees.Where(b => b.empType == "01" && b.status == true), "empIntno", "fullName");
-            ViewBag.studioWorksList = db.studioDtls.Include(b => b.agreementWork).Where(b => b.studioIntno == id).ToList();
-            ViewBag.schedule = model.dubbTrnHdrIntno;
-            return PartialView("_studiosUpdate", model);
+            var model = db.studios.Include(b => b.agreementWork).Include(b => b.employee)
+                        .Where(b => b.dubbTrnHdrIntno == schedule && b.studioNo == studio && b.status == true);
+            ViewBag.studio = studio;
+            ViewBag.schedule = schedule;
+            return PartialView("_studioAllocationList", model.ToList());
         }
 
-        [ValidateAntiForgeryToken]
-        [HttpPost,ValidateInput(false)]
-        public ActionResult studiosUpdate(studio item)
+        public ActionResult studioAllocationAddNew(long schedule, string studio)
         {
-            var model = db.studios.Find(item.studioIntno);
-            model.supervisor = item.supervisor;
-            model.sound = item.sound;
-            db.SaveChanges();
-            return RedirectToAction("studiosList", new { sch = item.dubbTrnHdrIntno });
-        }
+            var x = db.employees.Where(b => b.empType == "01" && b.status == true).Select(b => new { b.empIntno, b.fullName });
+            ViewBag.studioTeamList = new SelectList(x.ToList(), "empIntno", "fullName");
 
-        [HttpGet]
-        public ActionResult allocateWorkToStudio(long work, long sch)
-        {
-            ViewBag.work = work + "|" + db.agreementWorks.Find(work).workName;
-            long? supervisorIntno = null;
-            var x = db.workPersonnels.FirstOrDefault(b => b.workIntno == work && b.titleType == "02" && b.status == true); //work supervisors
-            if (x != null)
-            {
-                supervisorIntno = x.empIntno;
-                ViewBag.studio = db.employees.Find(supervisorIntno.Value).fullName + "|" + db.studios.FirstOrDefault(b => b.supervisor == supervisorIntno.Value && b.status == true).studioNo;
-
-            }
-            else
-                ViewBag.studio = null;
-            var z = db.studios.Include(b => b.employee)
-                    .Where(b => b.dubbTrnHdrIntno == sch && (!supervisorIntno.HasValue || b.supervisor != supervisorIntno.Value) && b.status == true)
-                    .Select(b => new { b.studioIntno, studioName = ("Studio " + b.studioNo + " / " + b.employee.fullName) });
-            ViewBag.studiosList = new SelectList(z, "studioIntno", "studioName");
-            ViewBag.schedule = sch;
-            return PartialView("_allocateWorkToStudio");
+            var y = db.dubbingTrnDtls.Include(b => b.agreementWork).Where(b => b.dubbTrnHdrIntno == schedule)
+                    .Select(b => new { b.workIntno, b.agreementWork.workName }).Distinct();
+            ViewBag.worksList = new SelectList(y.ToList(), "workIntno", "workName");
+            ViewBag.studio = studio;
+            ViewBag.schedule = schedule;
+            return PartialView("_studioAllocationAddNew");
         }
 
         [ValidateAntiForgeryToken]
         [HttpPost, ValidateInput(false)]
-        public ActionResult allocateWorkToStudio(studioDtl item, string work, string sch)
+        public ActionResult studioAllocationAddNew(studio item, long schedule, string studioNo)
         {
-            var model = db.studioDtls;
-            long workIntno = long.Parse(work);
-            long schedule = long.Parse(sch);
-            if (ModelState.IsValid)
+            var model = db.studios;
+            var x = db.studios.Where(b => b.dubbTrnHdrIntno == schedule && b.studioNo == studioNo && b.supervisor == item.supervisor && b.status == true).ToList();
+            if (x.Count() == 0)
             {
-                var x = db.studioDtls.Where(b => b.studioIntno == item.studioIntno && b.workIntno == workIntno).ToList();
-                if (x.Count() == 0)
+                item.dubbTrnHdrIntno = schedule;
+                item.status = true;
+                model.Add(item);
+                
+                var studioEpisodesModel = db.studioEpisodes;
+                var y = db.dubbingTrnDtls.Where(b => b.dubbTrnHdrIntno == schedule && b.workIntno == item.workIntno).Select(b => b.dubbTrnDtlIntno);
+                foreach(long ep in y)
                 {
-                    try
-                    {
-                        item.workIntno = workIntno;
-                        model.Add(item);
-                        db.SaveChanges();
-                    }
-                    catch
-                    {
-                        return new HttpStatusCodeResult(500, "Error message");
-                    }
+                    studioEpisode ep1 = new studioEpisode();
+                    ep1.dubbTrnDtlIntno = ep;
+                    ep1.status = true;
+                    studioEpisodesModel.Add(ep1);
                 }
-                else
-                    return new HttpStatusCodeResult(500, "Already Allocated to the Same Studio.");
+                db.SaveChanges();
             }
             else
-            {
-                var x = db.workPersonnels.FirstOrDefault(b => b.workIntno == workIntno && b.titleType == "02" && b.status == true);
-                if (x != null)
-                {
-                    long x1 = db.studios.FirstOrDefault(b => b.dubbTrnHdrIntno == schedule && b.supervisor == x.empIntno).studioIntno;
-                    var y = db.studioDtls.FirstOrDefault(b => b.studioIntno == x1 && b.workIntno == workIntno);
-                    if (y == null)
-                    {
-                        try
-                        {
-                            studioDtl dtl = new studioDtl();
-                            dtl.workIntno = workIntno;
-                            dtl.studioIntno = x1;
-                            dtl.isDefault = true;
-                            
-                            model.Add(dtl);
-                            db.SaveChanges();
-                        }
-                        catch
-                        {
-                            return new HttpStatusCodeResult(500, "Error message");
-                        }
-                    }
-                    else
-                        return new HttpStatusCodeResult(500, "Already Allocated to the Same Studio.");
-                }
-                else
-                    return new HttpStatusCodeResult(500, "Error message");
-            }
-
-            return RedirectToAction("episodesList", new { sch = schedule });
+                return new HttpStatusCodeResult(500, "Error message");
+            long schedule1 = schedule;
+            return RedirectToAction("studioAllocationList", new { schedule = schedule1, studio = studioNo });
         }
 
-        public ActionResult workAllocationDelete(long id)
+        public ActionResult studioAllocationDelete(long id)
         {
-            var model = db.studioDtls;
+            var model = db.studios;
             var modelItem = model.Find(id);
-            long std = modelItem.studioIntno;
+            string studio1 = modelItem.studioNo;
+            long schedule1 = modelItem.dubbTrnHdrIntno;
+
             model.Remove(modelItem);
 
-            var aptModel = db.dubbingAppointments;
-            var aptList = aptModel.Include(b => b.studio.studioDtls).Where(b => b.studio.studioDtls.FirstOrDefault(t => t.studioDtlsIntno == id).studioDtlsIntno == id).ToList();
-            if (aptList.Count() != 0)
-                return new HttpStatusCodeResult(500, "Failed! Unable to Cancel/Delete The Selected Schedule. Appointments are Already Given to Actors. Deleting This Schedule WILL Require to Manually Delete the Given Appointments and then Retry Again.");
+            var epModel = db.studioEpisodes;
+            var x = epModel.Where(b => b.studioIntno == id);
+            epModel.RemoveRange(x);
+
+            db.SaveChanges();
+
+            return RedirectToAction("studioAllocationList", new { schedule = schedule1, studio = studio1 });
+        }
+
+        public ActionResult studioEpisodeAllocationToggle(long id)
+        {
+            var model = db.studioEpisodes;
+            var modelItem = model.Find(id);
+            long schedule = modelItem.studio.dubbTrnHdrIntno;
+            long std = modelItem.studioIntno;
+
+            int cnt;
+            var studioModel = db.studios;
+            var studioModelItem = studioModel.Find(std);
+
+            if (modelItem.status)
+            {
+                cnt = model.Where(b => b.studioIntno == std && b.status == true).Count();
+                modelItem.status = false;
+                if (cnt == 1) //if this is the last allocation to remove then disable the parent studio as well
+                    studioModelItem.status = false;
+            }
             else
             {
-                db.SaveChanges();
-                return RedirectToAction("studiosUpdate", new { id = std });
+                cnt = model.Where(b => b.studioIntno == std && b.status == true).Count();
+                modelItem.status = true;
+                if (cnt == 0) //if this is the first allocation to enable then enable the parent studio as well
+                    studioModelItem.status = true;
             }
-        }
 
-        public ActionResult workCalendar(long work, long schedule)
-        {
-            var x = (from A in db.dubbingAppointments
-                     join B in db.studios on A.studioIntno equals B.studioIntno
-                     join C in db.studioDtls on B.studioIntno equals C.studioIntno
-                     where C.workIntno == work && B.dubbTrnHdrIntno == schedule && B.status == true && B.status == true
-                     select new { B.studioIntno, B.studioNo }).Distinct().ToList();
-            ViewBag.studiosList = x;
-            ViewBag.work = work;
-            ViewBag.schedule = schedule;
-            return PartialView("_workCalendar");
-        }
-
-        public ActionResult generateCalendar(long work, long schedule, long? studio)
-        {
-            var model = db.dubbingAppointments;
-            DateTime fromDate = db.dubbingTrnHdrs.Find(schedule).fromDate;
-            var x = (from A in db.dubbingTrnDtls
-                     join B in db.orderTrnHdrs on A.orderTrnHdrIntno equals B.orderTrnHdrIntno
-                     join C in db.dubbingSheetHdrs on B.orderTrnHdrIntno equals C.orderTrnHdrIntno
-                     where A.dubbTrnHdrIntno == schedule && A.workIntno == work
-                     select new { C.voiceActorIntno, totalScenes = C.dubbingSheetDtls.Count() }).Distinct().ToList();
-
-            if (studio.HasValue) // this is a reload of an already generated calendar for the given studio
-            {
-                for (int i = 0; i < x.Count(); i++)
-                {
-                    long actor = x[i].voiceActorIntno;
-                    var y = db.dubbingAppointments.Where(b => b.voiceActorIntno == actor && b.studioIntno == studio.Value).ToList();
-                    if (y.Count() == 0)
-                    {
-                        dubbingAppointment apt = new dubbingAppointment();
-                        apt.voiceActorIntno = actor;
-                        apt.studioIntno = studio.Value;
-                        apt.appointmentDate = fromDate;
-                        apt.workIntno = work;
-                        apt.totalScenes = x[i].totalScenes;
-                        var sph = db.workActors.FirstOrDefault(b => b.voiceActorIntno == actor && b.workIntno == work && b.status == true);
-                        if (sph != null && sph.scenesPerHour != 0)
-                            apt.totalMinutes = x[i].totalScenes * 60 / sph.scenesPerHour;
-                        else
-                            apt.totalMinutes = 0;
-                        model.Add(apt);
-                    }
-                }
-                db.SaveChanges();
-            }
-            else // this is a generate of new calendars for the allocated studios
-            {
-                var z = (from A in db.studios
-                         join B in db.studioDtls on A.studioIntno equals B.studioIntno
-                         where A.dubbTrnHdrIntno == schedule && B.workIntno == work
-                         select A.studioIntno).Distinct().ToList();
-                foreach (long std in z)
-                {
-                    for (int i = 0; i < x.Count(); i++)
-                    {
-                        long actor = x[i].voiceActorIntno;
-                        dubbingAppointment apt = new dubbingAppointment();
-                        apt.voiceActorIntno = actor;
-                        apt.studioIntno = std;
-                        apt.appointmentDate = fromDate;
-                        apt.workIntno = work;
-                        apt.totalScenes = x[i].totalScenes;
-                        var sph = db.workActors.FirstOrDefault(b => b.voiceActorIntno == actor && b.workIntno == work && b.status == true);
-                        if (sph != null && sph.scenesPerHour != 0)
-                            apt.totalMinutes = x[i].totalScenes * 60 / sph.scenesPerHour;
-                        else
-                            apt.totalMinutes = 0;
-                        model.Add(apt);
-                    }
-                }
-                db.SaveChanges();
-            }
-            long work1 = work;
-            long schedule1 = schedule;
-            return RedirectToAction("workCalendar", new { work = work1, schedule = schedule1 });
+            db.SaveChanges();
+            return RedirectToAction("episodesList", new { sch = schedule });
         }
     }
 }

@@ -38,56 +38,13 @@
                 $('#' + id).css('background-color', 'silver');
             })
         })
-
-        function onSchedulesAddNewClick() {
-            $.ajax({
-                url: '@Url.Action("schedulesAddNew", "scheduling")',
-                type: 'GET',
-                success: function (result) {
-                    $('#details').html(result);
-                }
-            })
-        }
-        function onScheduleChangeClick(sch1, op1) {
-            if (confirm("Please Confirm! About to Process the Selected Schedule.")) {
-                $.ajax({
-                    url: '@Url.Action("scheduleChange", "scheduling")',
-                    data: { sch: sch1, op: op1 },
-                    type: 'GET',
-                    success: function (result) {
-                        if (op1 === '03') {
-                            $('#details').html(null);
-                            $('#epList').html(null);
-                            $('#schList').html(result);
-                        }
-                        else {
-                            $('#epList').html(result);
-                        }
-                    }
-                });
-                $.ajax({
-                    url: '@Url.Action("scheduleDetails", "scheduling")',
-                    data: { sch: sch1 },
-                    type: 'GET',
-                    success: function (result) {
-                        $('#details').html(result);
-                    }
-                });
-            }
-        }
-        function onScheduleSuccess() {
-            $.ajax({
-                url: '@Url.Action("schedulesList", "scheduling")',
-                type: 'GET',
-                success: function (result) {
-                    $('#schList').html(result);
-                }
-            });
+        function onCloseClick(section) {
+            var x = '#' + section;
+            $(x).html(null);
             $('#details').html(null);
         }
-        function onScheduleFailure() {
-            $('#result').html("Failed! Please Provide Starting Date which Conforms to System Settings and is NOT Already Scheduled.");
-        }
+
+        // schedules
         function onScheduleSelectClick(sch1) {
             $.ajax({
                 url: '@Url.Action("episodesList", "scheduling")',
@@ -114,14 +71,114 @@
                 }
             })
         }
-
-        function onCloseClick(section) {
-            var x = '#' + section;
-            $(x).html(null);
+        function onSchedulesAddNewClick() {
+            $.ajax({
+                url: '@Url.Action("schedulesAddNew", "scheduling")',
+                type: 'GET',
+                success: function (result) {
+                    $('#details').html(result);
+                }
+            })
+        }
+        function onScheduleSuccess() {
+            $.ajax({
+                url: '@Url.Action("schedulesList", "scheduling")',
+                type: 'GET',
+                success: function (result) {
+                    $('#schList').html(result);
+                }
+            });
             $('#details').html(null);
         }
+        function onScheduleFailure() {
+            $('#result').html("Failed! Please Provide Starting Date which Conforms to System Settings and is NOT Already Scheduled.");
+        }
+        function onSchedulesDeleteClick(schedule1) {
+            if (confirm("Please Confirm! About to Delete the Selected Schedule.")) {
+                $.ajax({
+                    url: '@Url.Action("schedulesDelete", "scheduling")',
+                    type: 'GET',
+                    data: { schedule: schedule1 },
+                    success: function (result) {
+                        $('#schList').html(result);
+                        $('#epList').html(null);
+                        $('#stdList').html(null);
+                        $('#details').html(null);
+                    }
+                });
+            }
+        }
+        function onGenerateCalendarClick(schedule1) {
+            if (confirm("Please Confirm! About to Generate Studios Calendar & Actors' Appointments Draft.")) {
+                $('#result').html(null);
+                $.ajax({
+                    url: '@Url.Action("generateCalendar", "scheduling")',
+                    type: 'GET',
+                    data: { schedule: schedule1 },
+                    success: function (result) {
+                        $('#result').html("Calendar Successfully Generated.");
+                    },
+                    error: function () {
+                        $('#result').html("Failed! Unable to Generate Calendar.");
+                    }
+                });
+            }
+        }
 
-        function onEpisodeBtnClick(ep) {
+        //works and episodes
+        function onEpisodesAddNewClick(work1, schedule1) {
+            $.ajax({
+                url: '@Url.Action("episodesAddNew", "scheduling")',
+                type: 'GET',
+                data: { work: work1, schedule: schedule1 },
+                success: function (result) {
+                    $('#details').html(result);
+                }
+            })
+        }
+        function onEpisodesLoadClick(work1, schedule1) {
+            var episodes1 = null;
+            $('.selectCb').each(function (i, item) {
+                var id = $(this).attr('id');
+                if ($('#' + id).is(':checked')) {
+                    if (episodes1 === null) {
+                        episodes1 = id;
+                    }
+                    else {
+                        episodes1 = episodes1 + ";" + id;
+                    }
+                };
+            });
+            $.ajax({
+                url: '@Url.Action("loadEpisodesToSchedule", "scheduling")',
+                type: 'GET',
+                data: { work: work1, schedule: schedule1, episodes: episodes1 },
+                success: function (result) {
+                    $('#details').html(result);
+                    $('#results').html('Selected Episodes were Successfully Loaded.');
+                    $.ajax({
+                        url: '@Url.Action("episodesList", "scheduling")',
+                        type: 'GET',
+                        data: { sch: schedule1 },
+                        success: function (result) {
+                            $('#epList').html(result);
+                        }
+                    });
+                    $.ajax({
+                        url: '@Url.Action("studiosList", "scheduling")',
+                        type: 'GET',
+                        data: { sch: schedule1 },
+                        success: function (result) {
+                            $('#stdList').html(result);
+                        }
+                    });
+                },
+                error: function (result) {
+                    $('#results').html('Unable to Load Episodes. Try Later.');
+                }
+            })
+        }
+        function onEpisodeRemoveClick(ep) {
             if (confirm("Please Confirm! About to Remove the Episode from Schedule.")) {
                 $.ajax({
                     url: '@Url.Action("episodesDelete", "scheduling")',
@@ -131,100 +188,96 @@
                         $('#epList').html(result);
                     },
                     error: function (result) {
-                        alert("Episode CANNOT be Removed from Schedule. It is Already Allocated to Studio.");
+                        alert("Failed to Remove Episode from Schedule.");
                     }
                 });
             }
         }
 
-        function onStudioUpdateClick(std) {
+        // studios
+        function onStudioAllocationClick(schedule1, studio1) {
             $.ajax({
-                url: '@Url.Action("studiosUpdate", "scheduling")',
+                url: '@Url.Action("studioAllocationList", "scheduling")',
                 type: 'GET',
-                data: { id: std },
+                data: { schedule: schedule1, studio: studio1 },
                 success: function (result) {
                     $('#details').html(result);
                 }
             });
         }
-        function onStudiosUpdateSuccess(ajaxContext) {
-            $('#stdList').html(ajaxContext);
-            $('#result').html("Successfully Updated.");
-        }
-        function onStudiosUpdateFailure() {
-            $('#result').html("Failed! Please Correct All Data.");
-        }
-
-        function onWorkAllocateClick(work1, sch1) {
+        function onStudioAllocationAddNewClick(schedule1, studio1) {
             $.ajax({
-                url: '@Url.Action("allocateWorkToStudio", "scheduling")',
+                url: '@Url.Action("studioAllocationAddNew", "scheduling")',
                 type: 'GET',
-                data: { work: work1, sch: sch1 },
+                data: { schedule: schedule1, studio: studio1 },
                 success: function (result) {
                     $('#details').html(result);
                 }
             });
-        }
-        function onDefaultAllocateClick() {
-            $('#allocationForm').submit();
         }
         function onAllocationSuccess(ajaxContext) {
-            $('#epList').html(ajaxContext);
-            $('#result').html("Successfully Allocated.");
+            $('#details').html(ajaxContext);
+        }
+        function onAllocationComplete(schedule1) {
+            $.ajax({
+                url: '@Url.Action("episodesList", "scheduling")',
+                type: 'GET',
+                data: { sch: schedule1 },
+                success: function (result) {
+                    $('#epList').html(result);
+                }
+            });
+            $.ajax({
+                url: '@Url.Action("studiosList", "scheduling")',
+                type: 'GET',
+                data: { sch: schedule1 },
+                success: function (result) {
+                    $('#stdList').html(result);
+                }
+            });
         }
         function onAllocationFailure(ajaxContext) {
             $('#result').html(ajaxContext);
         }
-
-        function onWorkAllocationRemoveClick(id1, sch1)
-        {
-            if (confirm("Please Confirm! About to Remove Scheduled Work from Studio.")) {
-                $.ajax({
-                    url: '@Url.Action("workAllocationDelete", "scheduling")',
-                    type: 'GET',
-                    data: { id: id1 },
-                    success: function (result) {
-                        $('#details').html(result);
-                        $.ajax({
-                            url: '@Url.Action("episodesList", "scheduling")',
-                            type: 'GET',
-                            data: { sch: sch1 },
-                            success: function (result) {
-                                $('#epList').html(result);
-                            }
-                        });
-                    },
-                    error: function(ajaxContext) {
-                        alert(ajaxContext.statusText);
-                    }
-                })
-            }
-        }
-
-        function onWorkCalendarClick(work1, schedule1) {
+        function onStudioAllocationDeleteClick(id1, schedule1) {
             $.ajax({
-                url: '@Url.Action("workCalendar", "scheduling")',
+                url: '@Url.Action("studioAllocationDelete", "scheduling")',
                 type: 'GET',
-                data: { work: work1, schedule: schedule1 },
+                data: { id: id1 },
                 success: function (result) {
                     $('#details').html(result);
-                }
-            });
-        }
-        function onCalendarReloadClick(work1, schedule1, studio1) {
-            $.ajax({
-                url: '@Url.Action("generateCalendar", "scheduling")',
-                type: 'GET',
-                data: { work: work1, schedule: schedule1, studio: studio1 },
-                success: function (result) {
-                    $('#details').html(result);
-                    $('#result').html("Successfully Generated / Reloaded Actors' Appointments Draft.");
+                    $.ajax({
+                        url: '@Url.Action("episodesList", "scheduling")',
+                        type: 'GET',
+                        data: { sch: schedule1 },
+                        success: function (result) {
+                            $('#epList').html(result);
+                        }
+                    });
+                    $.ajax({
+                        url: '@Url.Action("studiosList", "scheduling")',
+                        type: 'GET',
+                        data: { sch: schedule1 },
+                        success: function (result) {
+                            $('#stdList').html(result);
+                        }
+                    });
                 },
-                error: function(){
-                    $('#result').html("Failed! Unable to Generated / Reloaded Actors' Appointments Draft.");
+                error: function (result) {
+                    alert('Unable to Remove Studio Allocation. Appointments are Given for this Studio. Please Delete Appointments and Retry Again.');
                 }
             });
         }
-        
+        function onStudioEpisodeAllocationToggleClick(id1) {
+            $.ajax({
+                url: '@Url.Action("studioEpisodeAllocationToggle", "scheduling")',
+                type: 'GET',
+                data: { id: id1 },
+                success: function (result) {
+                    $('#epList').html(result);
+                }
+            })
+        }
     </script>
+
 }

@@ -14,13 +14,22 @@ namespace dubbingModel
     
     public partial class dubbingTrnDtl
     {
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
+        public dubbingTrnDtl()
+        {
+            this.studioEpisodes = new HashSet<studioEpisode>();
+        }
+    
         public long dubbTrnDtlIntno { get; set; }
         public long dubbTrnHdrIntno { get; set; }
         public long workIntno { get; set; }
         public long orderTrnHdrIntno { get; set; }
+        public int episodeNo { get; set; }
     
         public virtual agreementWork agreementWork { get; set; }
         public virtual dubbingTrnHdr dubbingTrnHdr { get; set; }
         public virtual orderTrnHdr orderTrnHdr { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<studioEpisode> studioEpisodes { get; set; }
     }
 }

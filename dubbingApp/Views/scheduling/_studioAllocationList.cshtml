@@ -1,0 +1,49 @@
+﻿@model IEnumerable<dubbingModel.studio>
+
+<div class="container-fluid" style="padding:0px">
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <div class="row">
+                <div class="col-sm-9">
+                    <label><small>Studio &nbsp;<label class="badge">@ViewBag.studio</label>&nbsp;Allocation Summary</small></label>
+                </div>
+                <div class="col-sm-3 pull-right">
+                    <button class="btn btn-default btn-xs" onclick="onStudioAllocationAddNewClick(@ViewBag.schedule, '@ViewBag.studio')" title="Add Allocation">
+                        <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+                    </button>
+                    <button class="btn btn-default btn-xs" onclick="onCloseClick()" title="Close">
+                        <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    @foreach (var rec in Model)
+    {
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <div class="row">
+                    <div class="col-sm-10">
+                        <label><small>@rec.employee.fullName</small></label>
+                    </div>
+                    <div class="col-sm-2 pull-right">
+                        <button class="btn btn-default btn-xs" onclick="onStudioAllocationDeleteClick(@rec.studioIntno, @ViewBag.schedule)" title="Remove">
+                            <span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="panel-body">
+                <div class="row">
+                    <div class="col-sm-8">
+                        <small>@rec.agreementWork.workName</small>
+                    </div>
+                    <div class="col-sm-4">
+                        <small>Episodes: @rec.studioEpisodes.Where(b => b.status == true).Count()</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+

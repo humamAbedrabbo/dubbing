@@ -307,14 +307,6 @@
     <Content Include="Views\admin\_actorsList.cshtml" />
     <Content Include="Views\admin\_actorsUpdate.cshtml" />
     <Content Include="Views\admin\_workChargesAddNew.cshtml" />
-    <Content Include="Views\scheduling\Index.cshtml" />
-    <Content Include="Views\scheduling\_schedulesList.cshtml" />
-    <Content Include="Views\scheduling\_episodesList.cshtml" />
-    <Content Include="Views\scheduling\_schedulesAddNew.cshtml" />
-    <Content Include="Views\scheduling\_scheduleDetails.cshtml" />
-    <Content Include="Views\scheduling\_studiosList.cshtml" />
-    <Content Include="Views\scheduling\_studiosUpdate.cshtml" />
-    <Content Include="Views\scheduling\_allocateWorkToStudio.cshtml" />
     <Content Include="Views\calendar\Index.cshtml" />
     <Content Include="Views\calendar\_actorsList.cshtml" />
     <Content Include="Views\dubbing\Index.cshtml" />
@@ -322,9 +314,18 @@
     <Content Include="Views\dubbing\_dialoguesList.cshtml" />
     <Content Include="Views\dubbing\_sceneHeader.cshtml" />
     <Content Include="Views\dubbing\_scenesList.cshtml" />
-    <Content Include="Views\scheduling\_workCalendar.cshtml" />
     <Content Include="Views\calendar\_appointmentsList.cshtml" />
     <Content Include="Views\calendar\_appointmentUpdate.cshtml" />
+    <Content Include="Views\calendar\_studioCalendarPopup.cshtml" />
+    <Content Include="Views\scheduling\Index.cshtml" />
+    <Content Include="Views\scheduling\_schedulesList.cshtml" />
+    <Content Include="Views\scheduling\_scheduleDetails.cshtml" />
+    <Content Include="Views\scheduling\_schedulesAddNew.cshtml" />
+    <Content Include="Views\scheduling\_episodesList.cshtml" />
+    <Content Include="Views\scheduling\_studiosList.cshtml" />
+    <Content Include="Views\scheduling\_episodesAddNew.cshtml" />
+    <Content Include="Views\scheduling\_studioAllocationList.cshtml" />
+    <Content Include="Views\scheduling\_studioAllocationAddNew.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

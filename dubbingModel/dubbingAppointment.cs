@@ -26,9 +26,10 @@ namespace dubbingModel
         public string remarks { get; set; }
         public int totalMinutes { get; set; }
         public long workIntno { get; set; }
+        public string actorName { get; set; }
     
-        public virtual studio studio { get; set; }
         public virtual voiceActor voiceActor { get; set; }
         public virtual agreementWork agreementWork { get; set; }
+        public virtual studio studio { get; set; }
     }
 }

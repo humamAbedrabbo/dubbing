@@ -6,8 +6,31 @@ namespace dubbingApp.Models
 {
     public class ViewModels
     {
-        
-       //old
+        public class episodeItem
+        {
+            public dubbingTrnDtl episode { get; set; }
+            public string status { get; set; }
+        }
+        public class studioEpisodeItem
+        {
+            public long studioEpisodeIntno { get; set; }
+            public int episodeNo { get; set; }
+            public string studioNo { get; set; }
+            public bool status { get; set; }
+        }
+        public class scheduleViewModel
+        {
+            public long workIntno { get; set; }
+            public string workName { get; set; }
+            public int episodesPerWeek { get; set; }
+            public long dubbTrnHdrIntno { get; set; }
+            public DateTime fromDate { get; set; }
+            public DateTime thruDate { get; set; }
+            public List<episodeItem> episodesList { get; set; }
+            public List<studioEpisodeItem> studioEpisodesList { get; set; }
+        }
+
+        //old
         public class domainLov
         {
             public string domainCode { get; set; }

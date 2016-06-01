@@ -139,7 +139,7 @@
     <Compile Include="studio.cs">
       <DependentUpon>dubbingDataModel.tt</DependentUpon>
     </Compile>
-    <Compile Include="studioDtl.cs">
+    <Compile Include="studioEpisode.cs">
       <DependentUpon>dubbingDataModel.tt</DependentUpon>
     </Compile>
     <Compile Include="UserProfile.cs">

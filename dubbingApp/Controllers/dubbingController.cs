@@ -22,10 +22,9 @@ namespace dubbingApp.Controllers
         // GET: dubbing
         public ActionResult Index()
         {
-            var x = db.studios.Include(b => b.employee).FirstOrDefault(b => b.studioNo == "01" && b.supervisor.HasValue);
+            var x = db.studios.Include(b => b.employee).FirstOrDefault(b => b.studioNo == "01");
             ViewBag.studio = x.studioIntno;
-            ViewBag.team = "Welcome! " + (x.supervisor.HasValue ? x.employee.fullName : "Supervisor")
-                                        + (x.sound.HasValue ? (" & " + x.employee1.fullName) : " & Sound Technician");
+            ViewBag.team = "Welcome! " + x.employee.fullName + " & " + x.employee1.fullName;
             return View();
         }
 

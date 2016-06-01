@@ -1,13 +1,23 @@
-﻿@model IEnumerable<dubbingModel.studio>
+﻿@model IEnumerable<dubbingModel.dubbDomain>
 
-<div class="container-fluid">
+<div class="container-fluid" style="padding:0px">
     <div class="btn-group-sm">
-        @foreach(dubbingModel.studio item in Model)
-        {
-            string supervisor = item.supervisor.HasValue ? item.employee.fullName : null;
-            string sound = item.sound.HasValue ? item.employee1.fullName : null;
-            string team = "Supervisor: " + supervisor + ", Sound: " + sound;
-            <button class="btn btn-default" onclick="onStudioUpdateClick(@item.studioIntno)" title="@team"><small>Studio @item.studioNo</small></button>
+        @{
+            List<string> std = ViewBag.allocatedList;
+            string btnColor;
+            foreach (dubbingModel.dubbDomain item in Model)
+            {
+                if (std.FirstOrDefault(b => b == item.domainCode) != null)
+                {
+                    btnColor = "btn-success";
+                }
+                else
+                {
+                    btnColor = "btn-default";
+                }
+                <button class="btn @btnColor" onclick="onStudioAllocationClick(@ViewBag.schedule, '@item.domainCode')" title="Allocation"><small>@item.domainValue</small></button>
+            }
         }
     </div>
 </div>
+

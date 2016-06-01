@@ -144,6 +144,7 @@
           </Key>
           <Property Name="dubbAppointIntno" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="voiceActorIntno" Type="bigint" Nullable="false" />
+          <Property Name="actorName" Type="nvarchar" MaxLength="50" Nullable="false" />
           <Property Name="studioIntno" Type="bigint" Nullable="false" />
           <Property Name="appointmentDate" Type="date" Nullable="false" />
           <Property Name="fromTime" Type="datetime" />
@@ -189,6 +190,7 @@
           <Property Name="dubbTrnHdrIntno" Type="bigint" Nullable="false" />
           <Property Name="workIntno" Type="bigint" Nullable="false" />
           <Property Name="orderTrnHdrIntno" Type="bigint" Nullable="false" />
+          <Property Name="episodeNo" Type="int" Nullable="false" />
         </EntityType>
         <EntityType Name="dubbingTrnHdrs">
           <Key>
@@ -337,14 +339,14 @@
           <Property Name="status" Type="nvarchar" MaxLength="50" Nullable="false" />
           <Property Name="clientIntno" Type="bigint" Nullable="false" />
         </EntityType>
-        <EntityType Name="studioDtls">
+        <EntityType Name="studioEpisodes">
           <Key>
-            <PropertyRef Name="studioDtlsIntno" />
+            <PropertyRef Name="studioEpisodeIntno" />
           </Key>
-          <Property Name="studioDtlsIntno" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="studioEpisodeIntno" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="studioIntno" Type="bigint" Nullable="false" />
-          <Property Name="workIntno" Type="bigint" Nullable="false" />
-          <Property Name="isDefault" Type="bit" Nullable="false" />
+          <Property Name="dubbTrnDtlIntno" Type="bigint" Nullable="false" />
+          <Property Name="status" Type="bit" Nullable="false" />
         </EntityType>
         <EntityType Name="studios">
           <Key>
@@ -352,10 +354,11 @@
           </Key>
           <Property Name="studioIntno" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="dubbTrnHdrIntno" Type="bigint" Nullable="false" />
+          <Property Name="workIntno" Type="bigint" Nullable="false" />
           <Property Name="studioNo" Type="nvarchar" MaxLength="50" Nullable="false" />
-          <Property Name="srl" Type="int" Nullable="false" />
-          <Property Name="supervisor" Type="bigint" />
-          <Property Name="sound" Type="bigint" />
+          <Property Name="supervisor" Type="bigint" Nullable="false" />
+          <Property Name="sound" Type="bigint" Nullable="false" />
+          <Property Name="isDefaultTeam" Type="bit" Nullable="false" />
           <Property Name="status" Type="bit" Nullable="false" />
         </EntityType>
         <EntityType Name="UserProfile">
@@ -961,27 +964,39 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK_studioDtls_agreementWorks">
-          <End Role="agreementWorks" Type="Self.agreementWorks" Multiplicity="1" />
-          <End Role="studioDtls" Type="Self.studioDtls" Multiplicity="*" />
+        <Association Name="FK_studioEpisodes_dubbingTrnDtls">
+          <End Role="dubbingTrnDtls" Type="Self.dubbingTrnDtls" Multiplicity="1" />
+          <End Role="studioEpisodes" Type="Self.studioEpisodes" Multiplicity="*" />
           <ReferentialConstraint>
-            <Principal Role="agreementWorks">
-              <PropertyRef Name="workIntno" />
+            <Principal Role="dubbingTrnDtls">
+              <PropertyRef Name="dubbTrnDtlIntno" />
             </Principal>
-            <Dependent Role="studioDtls">
-              <PropertyRef Name="workIntno" />
+            <Dependent Role="studioEpisodes">
+              <PropertyRef Name="dubbTrnDtlIntno" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK_studioDtls_studios">
+        <Association Name="FK_studioEpisodes_studios">
           <End Role="studios" Type="Self.studios" Multiplicity="1" />
-          <End Role="studioDtls" Type="Self.studioDtls" Multiplicity="*" />
+          <End Role="studioEpisodes" Type="Self.studioEpisodes" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="studios">
               <PropertyRef Name="studioIntno" />
             </Principal>
-            <Dependent Role="studioDtls">
+            <Dependent Role="studioEpisodes">
               <PropertyRef Name="studioIntno" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_studios_agreementWorks">
+          <End Role="agreementWorks" Type="Self.agreementWorks" Multiplicity="1" />
+          <End Role="studios" Type="Self.studios" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="agreementWorks">
+              <PropertyRef Name="workIntno" />
+            </Principal>
+            <Dependent Role="studios">
+              <PropertyRef Name="workIntno" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -998,7 +1013,7 @@
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_studios_employees_sound">
-          <End Role="employees" Type="Self.employees" Multiplicity="0..1" />
+          <End Role="employees" Type="Self.employees" Multiplicity="1" />
           <End Role="studios" Type="Self.studios" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="employees">
@@ -1010,7 +1025,7 @@
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_studios_employees_supervisor">
-          <End Role="employees" Type="Self.employees" Multiplicity="0..1" />
+          <End Role="employees" Type="Self.employees" Multiplicity="1" />
           <End Role="studios" Type="Self.studios" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="employees">
@@ -1153,7 +1168,7 @@
           <EntitySet Name="orderTrnHdrs" EntityType="Self.orderTrnHdrs" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="payments" EntityType="Self.payments" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="shipments" EntityType="Self.shipments" Schema="dbo" store:Type="Tables" />
-          <EntitySet Name="studioDtls" EntityType="Self.studioDtls" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="studioEpisodes" EntityType="Self.studioEpisodes" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="studios" EntityType="Self.studios" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="UserProfile" EntityType="Self.UserProfile" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="voiceActors" EntityType="Self.voiceActors" Schema="dbo" store:Type="Tables" />
@@ -1322,13 +1337,17 @@
             <End Role="orderTrnHdrs" EntitySet="orderTrnHdrs" />
             <End Role="shipments" EntitySet="shipments" />
           </AssociationSet>
-          <AssociationSet Name="FK_studioDtls_agreementWorks" Association="Self.FK_studioDtls_agreementWorks">
-            <End Role="agreementWorks" EntitySet="agreementWorks" />
-            <End Role="studioDtls" EntitySet="studioDtls" />
+          <AssociationSet Name="FK_studioEpisodes_dubbingTrnDtls" Association="Self.FK_studioEpisodes_dubbingTrnDtls">
+            <End Role="dubbingTrnDtls" EntitySet="dubbingTrnDtls" />
+            <End Role="studioEpisodes" EntitySet="studioEpisodes" />
           </AssociationSet>
-          <AssociationSet Name="FK_studioDtls_studios" Association="Self.FK_studioDtls_studios">
+          <AssociationSet Name="FK_studioEpisodes_studios" Association="Self.FK_studioEpisodes_studios">
             <End Role="studios" EntitySet="studios" />
-            <End Role="studioDtls" EntitySet="studioDtls" />
+            <End Role="studioEpisodes" EntitySet="studioEpisodes" />
+          </AssociationSet>
+          <AssociationSet Name="FK_studios_agreementWorks" Association="Self.FK_studios_agreementWorks">
+            <End Role="agreementWorks" EntitySet="agreementWorks" />
+            <End Role="studios" EntitySet="studios" />
           </AssociationSet>
           <AssociationSet Name="FK_studios_dubbingTrnHdrs" Association="Self.FK_studios_dubbingTrnHdrs">
             <End Role="dubbingTrnHdrs" EntitySet="dubbingTrnHdrs" />
@@ -1579,7 +1598,37 @@
             <End Role="webpages_Roles" EntitySet="webpages_Roles" />
             <End Role="UserProfile" EntitySet="UserProfiles" />
           </AssociationSet>
+          <EntitySet Name="dubbingTrnDtls" EntityType="DUBBDBModel.dubbingTrnDtl" />
+          <AssociationSet Name="FK_dubbingTrnDtls_agreementWorks" Association="DUBBDBModel.FK_dubbingTrnDtls_agreementWorks">
+            <End Role="agreementWork" EntitySet="agreementWorks" />
+            <End Role="dubbingTrnDtl" EntitySet="dubbingTrnDtls" />
+          </AssociationSet>
+          <AssociationSet Name="FK_dubbingTrnDtls_dubbingTrnHdrs" Association="DUBBDBModel.FK_dubbingTrnDtls_dubbingTrnHdrs">
+            <End Role="dubbingTrnHdr" EntitySet="dubbingTrnHdrs" />
+            <End Role="dubbingTrnDtl" EntitySet="dubbingTrnDtls" />
+          </AssociationSet>
+          <AssociationSet Name="FK_dubbingTrnDtls_orderTrnHdrs" Association="DUBBDBModel.FK_dubbingTrnDtls_orderTrnHdrs">
+            <End Role="orderTrnHdr" EntitySet="orderTrnHdrs" />
+            <End Role="dubbingTrnDtl" EntitySet="dubbingTrnDtls" />
+          </AssociationSet>
+          <EntitySet Name="dubbingAppointments" EntityType="DUBBDBModel.dubbingAppointment" />
+          <AssociationSet Name="FK_dubbingAppointments_voiceActors" Association="DUBBDBModel.FK_dubbingAppointments_voiceActors">
+            <End Role="voiceActor" EntitySet="voiceActors" />
+            <End Role="dubbingAppointment" EntitySet="dubbingAppointments" />
+          </AssociationSet>
+          <AssociationSet Name="FK_dubbingAppointments_agreementWorks" Association="DUBBDBModel.FK_dubbingAppointments_agreementWorks">
+            <End Role="agreementWork" EntitySet="agreementWorks" />
+            <End Role="dubbingAppointment" EntitySet="dubbingAppointments" />
+          </AssociationSet>
           <EntitySet Name="studios" EntityType="DUBBDBModel.studio" />
+          <AssociationSet Name="FK_studios_agreementWorks" Association="DUBBDBModel.FK_studios_agreementWorks">
+            <End Role="agreementWork" EntitySet="agreementWorks" />
+            <End Role="studio" EntitySet="studios" />
+          </AssociationSet>
+          <AssociationSet Name="FK_dubbingAppointments_studios" Association="DUBBDBModel.FK_dubbingAppointments_studios">
+            <End Role="studio" EntitySet="studios" />
+            <End Role="dubbingAppointment" EntitySet="dubbingAppointments" />
+          </AssociationSet>
           <AssociationSet Name="FK_studios_dubbingTrnHdrs" Association="DUBBDBModel.FK_studios_dubbingTrnHdrs">
             <End Role="dubbingTrnHdr" EntitySet="dubbingTrnHdrs" />
             <End Role="studio" EntitySet="studios" />
@@ -1592,40 +1641,14 @@
             <End Role="employee" EntitySet="employees" />
             <End Role="studio" EntitySet="studios" />
           </AssociationSet>
-          <EntitySet Name="dubbingTrnDtls" EntityType="DUBBDBModel.dubbingTrnDtl" />
-          <EntitySet Name="studioDtls" EntityType="DUBBDBModel.studioDtl" />
-          <AssociationSet Name="FK_dubbingTrnDtls_agreementWorks" Association="DUBBDBModel.FK_dubbingTrnDtls_agreementWorks">
-            <End Role="agreementWork" EntitySet="agreementWorks" />
+          <EntitySet Name="studioEpisodes" EntityType="DUBBDBModel.studioEpisode" />
+          <AssociationSet Name="FK_studioEpisodes_dubbingTrnDtls" Association="DUBBDBModel.FK_studioEpisodes_dubbingTrnDtls">
             <End Role="dubbingTrnDtl" EntitySet="dubbingTrnDtls" />
+            <End Role="studioEpisode" EntitySet="studioEpisodes" />
           </AssociationSet>
-          <AssociationSet Name="FK_studioDtls_agreementWorks" Association="DUBBDBModel.FK_studioDtls_agreementWorks">
-            <End Role="agreementWork" EntitySet="agreementWorks" />
-            <End Role="studioDtl" EntitySet="studioDtls" />
-          </AssociationSet>
-          <AssociationSet Name="FK_dubbingTrnDtls_dubbingTrnHdrs" Association="DUBBDBModel.FK_dubbingTrnDtls_dubbingTrnHdrs">
-            <End Role="dubbingTrnHdr" EntitySet="dubbingTrnHdrs" />
-            <End Role="dubbingTrnDtl" EntitySet="dubbingTrnDtls" />
-          </AssociationSet>
-          <AssociationSet Name="FK_dubbingTrnDtls_orderTrnHdrs" Association="DUBBDBModel.FK_dubbingTrnDtls_orderTrnHdrs">
-            <End Role="orderTrnHdr" EntitySet="orderTrnHdrs" />
-            <End Role="dubbingTrnDtl" EntitySet="dubbingTrnDtls" />
-          </AssociationSet>
-          <AssociationSet Name="FK_studioDtls_studios" Association="DUBBDBModel.FK_studioDtls_studios">
+          <AssociationSet Name="FK_studioEpisodes_studios" Association="DUBBDBModel.FK_studioEpisodes_studios">
             <End Role="studio" EntitySet="studios" />
-            <End Role="studioDtl" EntitySet="studioDtls" />
-          </AssociationSet>
-          <EntitySet Name="dubbingAppointments" EntityType="DUBBDBModel.dubbingAppointment" />
-          <AssociationSet Name="FK_dubbingAppointments_studios" Association="DUBBDBModel.FK_dubbingAppointments_studios">
-            <End Role="studio" EntitySet="studios" />
-            <End Role="dubbingAppointment" EntitySet="dubbingAppointments" />
-          </AssociationSet>
-          <AssociationSet Name="FK_dubbingAppointments_voiceActors" Association="DUBBDBModel.FK_dubbingAppointments_voiceActors">
-            <End Role="voiceActor" EntitySet="voiceActors" />
-            <End Role="dubbingAppointment" EntitySet="dubbingAppointments" />
-          </AssociationSet>
-          <AssociationSet Name="FK_dubbingAppointments_agreementWorks" Association="DUBBDBModel.FK_dubbingAppointments_agreementWorks">
-            <End Role="agreementWork" EntitySet="agreementWorks" />
-            <End Role="dubbingAppointment" EntitySet="dubbingAppointments" />
+            <End Role="studioEpisode" EntitySet="studioEpisodes" />
           </AssociationSet>
           </EntityContainer>
         <EntityType Name="agreement">
@@ -1698,8 +1721,8 @@
           <NavigationProperty Name="workOrders" Relationship="DUBBDBModel.FK_workOrders_agreementWorks" FromRole="agreementWork" ToRole="workOrder" />
           <NavigationProperty Name="workPersonnels" Relationship="DUBBDBModel.FK_workPersonnels_agreementWorks" FromRole="agreementWork" ToRole="workPersonnel" />
           <NavigationProperty Name="dubbingTrnDtls" Relationship="DUBBDBModel.FK_dubbingTrnDtls_agreementWorks" FromRole="agreementWork" ToRole="dubbingTrnDtl" />
-          <NavigationProperty Name="studioDtls" Relationship="DUBBDBModel.FK_studioDtls_agreementWorks" FromRole="agreementWork" ToRole="studioDtl" />
           <NavigationProperty Name="dubbingAppointments" Relationship="DUBBDBModel.FK_dubbingAppointments_agreementWorks" FromRole="agreementWork" ToRole="dubbingAppointment" />
+          <NavigationProperty Name="studios" Relationship="DUBBDBModel.FK_studios_agreementWorks" FromRole="agreementWork" ToRole="studio" />
         </EntityType>
         <EntityType Name="carrier">
           <Key>
@@ -1836,8 +1859,8 @@
           <Property Name="isPaid" Type="Boolean" Nullable="false" />
           <Property Name="status" Type="Boolean" Nullable="false" />
           <NavigationProperty Name="payments" Relationship="DUBBDBModel.FK_payments_dubbingTrnHdrs" FromRole="dubbingTrnHdr" ToRole="payment" />
-          <NavigationProperty Name="studios" Relationship="DUBBDBModel.FK_studios_dubbingTrnHdrs" FromRole="dubbingTrnHdr" ToRole="studio" />
           <NavigationProperty Name="dubbingTrnDtls" Relationship="DUBBDBModel.FK_dubbingTrnDtls_dubbingTrnHdrs" FromRole="dubbingTrnHdr" ToRole="dubbingTrnDtl" />
+          <NavigationProperty Name="studios" Relationship="DUBBDBModel.FK_studios_dubbingTrnHdrs" FromRole="dubbingTrnHdr" ToRole="studio" />
         </EntityType>
         <EntityType Name="employee">
           <Key>
@@ -2636,59 +2659,6 @@
           <End Type="DUBBDBModel.webpages_Roles" Role="webpages_Roles" Multiplicity="*" />
           <End Type="DUBBDBModel.UserProfile" Role="UserProfile" Multiplicity="*" />
         </Association>
-        <EntityType Name="studio">
-          <Key>
-            <PropertyRef Name="studioIntno" />
-          </Key>
-          <Property Name="studioIntno" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="dubbTrnHdrIntno" Type="Int64" Nullable="false" />
-          <Property Name="studioNo" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
-          <Property Name="supervisor" Type="Int64" />
-          <Property Name="sound" Type="Int64" />
-          <Property Name="status" Type="Boolean" Nullable="false" />
-          <NavigationProperty Name="dubbingTrnHdr" Relationship="DUBBDBModel.FK_studios_dubbingTrnHdrs" FromRole="studio" ToRole="dubbingTrnHdr" />
-          <NavigationProperty Name="employee" Relationship="DUBBDBModel.FK_studios_employees_sound" FromRole="studio" ToRole="employee" />
-          <NavigationProperty Name="employee1" Relationship="DUBBDBModel.FK_studios_employees_supervisor" FromRole="studio" ToRole="employee" />
-          <Property Name="srl" Type="Int32" Nullable="false" />
-          <NavigationProperty Name="studioDtls" Relationship="DUBBDBModel.FK_studioDtls_studios" FromRole="studio" ToRole="studioDtl" />
-          <NavigationProperty Name="dubbingAppointments" Relationship="DUBBDBModel.FK_dubbingAppointments_studios" FromRole="studio" ToRole="dubbingAppointment" />
-        </EntityType>
-        <Association Name="FK_studios_dubbingTrnHdrs">
-          <End Type="DUBBDBModel.dubbingTrnHdr" Role="dubbingTrnHdr" Multiplicity="1" />
-          <End Type="DUBBDBModel.studio" Role="studio" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="dubbingTrnHdr">
-              <PropertyRef Name="dubbTrnHdrIntno" />
-            </Principal>
-            <Dependent Role="studio">
-              <PropertyRef Name="dubbTrnHdrIntno" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK_studios_employees_sound">
-          <End Type="DUBBDBModel.employee" Role="employee" Multiplicity="0..1" />
-          <End Type="DUBBDBModel.studio" Role="studio" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="employee">
-              <PropertyRef Name="empIntno" />
-            </Principal>
-            <Dependent Role="studio">
-              <PropertyRef Name="sound" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK_studios_employees_supervisor">
-          <End Type="DUBBDBModel.employee" Role="employee" Multiplicity="0..1" />
-          <End Type="DUBBDBModel.studio" Role="studio" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="employee">
-              <PropertyRef Name="empIntno" />
-            </Principal>
-            <Dependent Role="studio">
-              <PropertyRef Name="supervisor" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
         <EntityType Name="dubbingTrnDtl">
           <Key>
             <PropertyRef Name="dubbTrnDtlIntno" />
@@ -2700,17 +2670,8 @@
           <NavigationProperty Name="agreementWork" Relationship="DUBBDBModel.FK_dubbingTrnDtls_agreementWorks" FromRole="dubbingTrnDtl" ToRole="agreementWork" />
           <NavigationProperty Name="dubbingTrnHdr" Relationship="DUBBDBModel.FK_dubbingTrnDtls_dubbingTrnHdrs" FromRole="dubbingTrnDtl" ToRole="dubbingTrnHdr" />
           <NavigationProperty Name="orderTrnHdr" Relationship="DUBBDBModel.FK_dubbingTrnDtls_orderTrnHdrs" FromRole="dubbingTrnDtl" ToRole="orderTrnHdr" />
-        </EntityType>
-        <EntityType Name="studioDtl">
-          <Key>
-            <PropertyRef Name="studioDtlsIntno" />
-          </Key>
-          <Property Name="studioDtlsIntno" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="studioIntno" Type="Int64" Nullable="false" />
-          <Property Name="workIntno" Type="Int64" Nullable="false" />
-          <Property Name="isDefault" Type="Boolean" Nullable="false" />
-          <NavigationProperty Name="agreementWork" Relationship="DUBBDBModel.FK_studioDtls_agreementWorks" FromRole="studioDtl" ToRole="agreementWork" />
-          <NavigationProperty Name="studio" Relationship="DUBBDBModel.FK_studioDtls_studios" FromRole="studioDtl" ToRole="studio" />
+          <NavigationProperty Name="studioEpisodes" Relationship="DUBBDBModel.FK_studioEpisodes_dubbingTrnDtls" FromRole="dubbingTrnDtl" ToRole="studioEpisode" />
+          <Property Name="episodeNo" Type="Int32" Nullable="false" />
         </EntityType>
         <Association Name="FK_dubbingTrnDtls_agreementWorks">
           <End Type="DUBBDBModel.agreementWork" Role="agreementWork" Multiplicity="1" />
@@ -2720,18 +2681,6 @@
               <PropertyRef Name="workIntno" />
             </Principal>
             <Dependent Role="dubbingTrnDtl">
-              <PropertyRef Name="workIntno" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK_studioDtls_agreementWorks">
-          <End Type="DUBBDBModel.agreementWork" Role="agreementWork" Multiplicity="1" />
-          <End Type="DUBBDBModel.studioDtl" Role="studioDtl" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="agreementWork">
-              <PropertyRef Name="workIntno" />
-            </Principal>
-            <Dependent Role="studioDtl">
               <PropertyRef Name="workIntno" />
             </Dependent>
           </ReferentialConstraint>
@@ -2760,18 +2709,6 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK_studioDtls_studios">
-          <End Type="DUBBDBModel.studio" Role="studio" Multiplicity="1" />
-          <End Type="DUBBDBModel.studioDtl" Role="studioDtl" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="studio">
-              <PropertyRef Name="studioIntno" />
-            </Principal>
-            <Dependent Role="studioDtl">
-              <PropertyRef Name="studioIntno" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
         <EntityType Name="dubbingAppointment">
           <Key>
             <PropertyRef Name="dubbAppointIntno" />
@@ -2787,23 +2724,12 @@
           <Property Name="actualThruTime" Type="DateTime" Precision="3" />
           <Property Name="remarks" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
           <Property Name="totalMinutes" Type="Int32" Nullable="false" />
-          <NavigationProperty Name="studio" Relationship="DUBBDBModel.FK_dubbingAppointments_studios" FromRole="dubbingAppointment" ToRole="studio" />
           <NavigationProperty Name="voiceActor" Relationship="DUBBDBModel.FK_dubbingAppointments_voiceActors" FromRole="dubbingAppointment" ToRole="voiceActor" />
           <Property Name="workIntno" Type="Int64" Nullable="false" />
           <NavigationProperty Name="agreementWork" Relationship="DUBBDBModel.FK_dubbingAppointments_agreementWorks" FromRole="dubbingAppointment" ToRole="agreementWork" />
+          <Property Name="actorName" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="studio" Relationship="DUBBDBModel.FK_dubbingAppointments_studios" FromRole="dubbingAppointment" ToRole="studio" />
         </EntityType>
-        <Association Name="FK_dubbingAppointments_studios">
-          <End Type="DUBBDBModel.studio" Role="studio" Multiplicity="1" />
-          <End Type="DUBBDBModel.dubbingAppointment" Role="dubbingAppointment" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="studio">
-              <PropertyRef Name="studioIntno" />
-            </Principal>
-            <Dependent Role="dubbingAppointment">
-              <PropertyRef Name="studioIntno" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
         <Association Name="FK_dubbingAppointments_voiceActors">
           <End Type="DUBBDBModel.voiceActor" Role="voiceActor" Multiplicity="1" />
           <End Type="DUBBDBModel.dubbingAppointment" Role="dubbingAppointment" Multiplicity="*" />
@@ -2825,6 +2751,120 @@
             </Principal>
             <Dependent Role="dubbingAppointment">
               <PropertyRef Name="workIntno" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityType Name="studio">
+          <Key>
+            <PropertyRef Name="studioIntno" />
+          </Key>
+          <Property Name="studioIntno" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="dubbTrnHdrIntno" Type="Int64" Nullable="false" />
+          <Property Name="workIntno" Type="Int64" Nullable="false" />
+          <Property Name="studioNo" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="supervisor" Type="Int64" Nullable="false" />
+          <Property Name="sound" Type="Int64" Nullable="false" />
+          <Property Name="isDefaultTeam" Type="Boolean" Nullable="false" />
+          <Property Name="status" Type="Boolean" Nullable="false" />
+          <NavigationProperty Name="agreementWork" Relationship="DUBBDBModel.FK_studios_agreementWorks" FromRole="studio" ToRole="agreementWork" />
+          <NavigationProperty Name="dubbingAppointments" Relationship="DUBBDBModel.FK_dubbingAppointments_studios" FromRole="studio" ToRole="dubbingAppointment" />
+          <NavigationProperty Name="dubbingTrnHdr" Relationship="DUBBDBModel.FK_studios_dubbingTrnHdrs" FromRole="studio" ToRole="dubbingTrnHdr" />
+          <NavigationProperty Name="employee" Relationship="DUBBDBModel.FK_studios_employees_sound" FromRole="studio" ToRole="employee" />
+          <NavigationProperty Name="employee1" Relationship="DUBBDBModel.FK_studios_employees_supervisor" FromRole="studio" ToRole="employee" />
+          <NavigationProperty Name="studioEpisodes" Relationship="DUBBDBModel.FK_studioEpisodes_studios" FromRole="studio" ToRole="studioEpisode" />
+        </EntityType>
+        <Association Name="FK_studios_agreementWorks">
+          <End Type="DUBBDBModel.agreementWork" Role="agreementWork" Multiplicity="1" />
+          <End Type="DUBBDBModel.studio" Role="studio" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="agreementWork">
+              <PropertyRef Name="workIntno" />
+            </Principal>
+            <Dependent Role="studio">
+              <PropertyRef Name="workIntno" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_dubbingAppointments_studios">
+          <End Type="DUBBDBModel.studio" Role="studio" Multiplicity="1" />
+          <End Type="DUBBDBModel.dubbingAppointment" Role="dubbingAppointment" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="studio">
+              <PropertyRef Name="studioIntno" />
+            </Principal>
+            <Dependent Role="dubbingAppointment">
+              <PropertyRef Name="studioIntno" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_studios_dubbingTrnHdrs">
+          <End Type="DUBBDBModel.dubbingTrnHdr" Role="dubbingTrnHdr" Multiplicity="1" />
+          <End Type="DUBBDBModel.studio" Role="studio" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="dubbingTrnHdr">
+              <PropertyRef Name="dubbTrnHdrIntno" />
+            </Principal>
+            <Dependent Role="studio">
+              <PropertyRef Name="dubbTrnHdrIntno" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_studios_employees_sound">
+          <End Type="DUBBDBModel.employee" Role="employee" Multiplicity="1" />
+          <End Type="DUBBDBModel.studio" Role="studio" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="employee">
+              <PropertyRef Name="empIntno" />
+            </Principal>
+            <Dependent Role="studio">
+              <PropertyRef Name="sound" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_studios_employees_supervisor">
+          <End Type="DUBBDBModel.employee" Role="employee" Multiplicity="1" />
+          <End Type="DUBBDBModel.studio" Role="studio" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="employee">
+              <PropertyRef Name="empIntno" />
+            </Principal>
+            <Dependent Role="studio">
+              <PropertyRef Name="supervisor" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityType Name="studioEpisode">
+          <Key>
+            <PropertyRef Name="studioEpisodeIntno" />
+          </Key>
+          <Property Name="studioEpisodeIntno" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="studioIntno" Type="Int64" Nullable="false" />
+          <Property Name="dubbTrnDtlIntno" Type="Int64" Nullable="false" />
+          <NavigationProperty Name="dubbingTrnDtl" Relationship="DUBBDBModel.FK_studioEpisodes_dubbingTrnDtls" FromRole="studioEpisode" ToRole="dubbingTrnDtl" />
+          <NavigationProperty Name="studio" Relationship="DUBBDBModel.FK_studioEpisodes_studios" FromRole="studioEpisode" ToRole="studio" />
+          <Property Name="status" Type="Boolean" Nullable="false" />
+        </EntityType>
+        <Association Name="FK_studioEpisodes_dubbingTrnDtls">
+          <End Type="DUBBDBModel.dubbingTrnDtl" Role="dubbingTrnDtl" Multiplicity="1" />
+          <End Type="DUBBDBModel.studioEpisode" Role="studioEpisode" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="dubbingTrnDtl">
+              <PropertyRef Name="dubbTrnDtlIntno" />
+            </Principal>
+            <Dependent Role="studioEpisode">
+              <PropertyRef Name="dubbTrnDtlIntno" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_studioEpisodes_studios">
+          <End Type="DUBBDBModel.studio" Role="studio" Multiplicity="1" />
+          <End Type="DUBBDBModel.studioEpisode" Role="studioEpisode" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="studio">
+              <PropertyRef Name="studioIntno" />
+            </Principal>
+            <Dependent Role="studioEpisode">
+              <PropertyRef Name="studioIntno" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -3305,22 +3345,10 @@
               <ScalarProperty Name="RoleId" ColumnName="RoleId" />
             </EndProperty>
           </AssociationSetMapping>
-          <EntitySetMapping Name="studios">
-            <EntityTypeMapping TypeName="DUBBDBModel.studio">
-              <MappingFragment StoreEntitySet="studios">
-                <ScalarProperty Name="srl" ColumnName="srl" />
-                <ScalarProperty Name="status" ColumnName="status" />
-                <ScalarProperty Name="sound" ColumnName="sound" />
-                <ScalarProperty Name="supervisor" ColumnName="supervisor" />
-                <ScalarProperty Name="studioNo" ColumnName="studioNo" />
-                <ScalarProperty Name="dubbTrnHdrIntno" ColumnName="dubbTrnHdrIntno" />
-                <ScalarProperty Name="studioIntno" ColumnName="studioIntno" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
           <EntitySetMapping Name="dubbingTrnDtls">
             <EntityTypeMapping TypeName="DUBBDBModel.dubbingTrnDtl">
               <MappingFragment StoreEntitySet="dubbingTrnDtls">
+                <ScalarProperty Name="episodeNo" ColumnName="episodeNo" />
                 <ScalarProperty Name="orderTrnHdrIntno" ColumnName="orderTrnHdrIntno" />
                 <ScalarProperty Name="workIntno" ColumnName="workIntno" />
                 <ScalarProperty Name="dubbTrnHdrIntno" ColumnName="dubbTrnHdrIntno" />
@@ -3328,19 +3356,10 @@
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
-          <EntitySetMapping Name="studioDtls">
-            <EntityTypeMapping TypeName="DUBBDBModel.studioDtl">
-              <MappingFragment StoreEntitySet="studioDtls">
-                <ScalarProperty Name="isDefault" ColumnName="isDefault" />
-                <ScalarProperty Name="workIntno" ColumnName="workIntno" />
-                <ScalarProperty Name="studioIntno" ColumnName="studioIntno" />
-                <ScalarProperty Name="studioDtlsIntno" ColumnName="studioDtlsIntno" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
           <EntitySetMapping Name="dubbingAppointments">
             <EntityTypeMapping TypeName="DUBBDBModel.dubbingAppointment">
               <MappingFragment StoreEntitySet="dubbingAppointments">
+                <ScalarProperty Name="actorName" ColumnName="actorName" />
                 <ScalarProperty Name="workIntno" ColumnName="workIntno" />
                 <ScalarProperty Name="totalMinutes" ColumnName="totalMinutes" />
                 <ScalarProperty Name="remarks" ColumnName="remarks" />
@@ -3353,6 +3372,30 @@
                 <ScalarProperty Name="studioIntno" ColumnName="studioIntno" />
                 <ScalarProperty Name="voiceActorIntno" ColumnName="voiceActorIntno" />
                 <ScalarProperty Name="dubbAppointIntno" ColumnName="dubbAppointIntno" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="studios">
+            <EntityTypeMapping TypeName="DUBBDBModel.studio">
+              <MappingFragment StoreEntitySet="studios">
+                <ScalarProperty Name="status" ColumnName="status" />
+                <ScalarProperty Name="isDefaultTeam" ColumnName="isDefaultTeam" />
+                <ScalarProperty Name="sound" ColumnName="sound" />
+                <ScalarProperty Name="supervisor" ColumnName="supervisor" />
+                <ScalarProperty Name="studioNo" ColumnName="studioNo" />
+                <ScalarProperty Name="workIntno" ColumnName="workIntno" />
+                <ScalarProperty Name="dubbTrnHdrIntno" ColumnName="dubbTrnHdrIntno" />
+                <ScalarProperty Name="studioIntno" ColumnName="studioIntno" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="studioEpisodes">
+            <EntityTypeMapping TypeName="DUBBDBModel.studioEpisode">
+              <MappingFragment StoreEntitySet="studioEpisodes">
+                <ScalarProperty Name="status" ColumnName="status" />
+                <ScalarProperty Name="dubbTrnDtlIntno" ColumnName="dubbTrnDtlIntno" />
+                <ScalarProperty Name="studioIntno" ColumnName="studioIntno" />
+                <ScalarProperty Name="studioEpisodeIntno" ColumnName="studioEpisodeIntno" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>

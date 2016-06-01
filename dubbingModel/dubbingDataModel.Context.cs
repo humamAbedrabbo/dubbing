@@ -56,9 +56,9 @@ namespace dubbingModel
         public virtual DbSet<workCharge> workCharges { get; set; }
         public virtual DbSet<workOrder> workOrders { get; set; }
         public virtual DbSet<workPersonnel> workPersonnels { get; set; }
-        public virtual DbSet<studio> studios { get; set; }
         public virtual DbSet<dubbingTrnDtl> dubbingTrnDtls { get; set; }
-        public virtual DbSet<studioDtl> studioDtls { get; set; }
         public virtual DbSet<dubbingAppointment> dubbingAppointments { get; set; }
+        public virtual DbSet<studio> studios { get; set; }
+        public virtual DbSet<studioEpisode> studioEpisodes { get; set; }
     }
 }
