@@ -395,5 +395,24 @@ namespace dubbingApp.Controllers
             db.SaveChanges();
             return RedirectToAction("episodesList", new { sch = schedule });
         }
+
+        public ActionResult getDefaultStudioTeam(long work, long schedule, string role)
+        {
+            var x = db.workPersonnels.Include(b => b.employee).Where(b => b.workIntno == work && b.titleType == role).ToList();
+            string team = null;
+            for (int i = 0; i < x.Count(); i++)
+            {
+                long emp = x[i].empIntno;
+                var y = db.studios.FirstOrDefault(b => b.dubbTrnHdrIntno == schedule && b.workIntno == work
+                        && (role == "02" && b.supervisor == emp) || (role == "03" && b.sound == emp));
+                if (i == 0)
+                    team = x[i].employee.fullName;
+                else
+                    team = team + "; " + x[i].employee.fullName;
+                if (y != null)
+                    team = team + " (used)";
+            }
+            return Content(team, "text/html");
+        }
     }
 }

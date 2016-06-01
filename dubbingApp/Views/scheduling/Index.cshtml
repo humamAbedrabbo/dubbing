@@ -5,8 +5,8 @@
 
 <div class="container-fluid">
     <div class="jumbotron" style="padding:5px">
-        <h2>Dubbing Scheduling</h2>
-        <p class="lead"><h5>Manage Dubbing Scheduling Through Allocating the Different Resources, Studios &amp; Studio Teams, to Perform the Dubbing on Planned Episodes.</h5></p>
+        <h2>Dubbing Schedular</h2>
+        <p class="lead"><h5>Optimize Dubbing Scheduling Through Balancing the Allocation of the Different Resources; Works, Studios &amp; Studio Teams, to Perform the Dubbing on Planned / Ready Episodes.</h5></p>
         <label><a href="#" onclick="onSchedulesAddNewClick()">Create New Schedule ...</a></label>
     </div>
 
@@ -20,7 +20,36 @@
             @Html.Action("schedulesList", "scheduling")
         </div>
 
-        <div class="col-md-6" id="epList"></div>
+        <div class="col-md-6" id="epList">
+            <div class="col-sm-12">
+                <label>
+                    <span class="glyphicon glyphicon-lamp alert-warning"></span>
+                    <small>Tips ...</small>
+                </label>
+            </div>
+
+            <p class="col-sm-12">
+                <span class="glyphicon glyphicon-download-alt"></span>
+                <small>
+                    After Creating a New Schedule, Start by Loading the Episodes you Plan to Include in the Current Schedule. A List of Available Episodes will be Shown on the right pane when this button is clicked.
+                </small>
+            </p>
+            <p class="col-sm-12">
+                <small>
+                    &bull; First: Allocate Your Studios, one by one, Selecting the Planned Works and the Studio Team. Use the Add Button "+" to add more Works / Teams
+                </small>
+            </p>
+            <p class="col-sm-12">
+                <small>
+                    &bull; Click the Episodes &radic; and &times; Buttons to Include / Exclude the Allocation of an Episode from a Studio.
+                </small>
+            </p>
+            <p class="col-sm-12">
+                <small>
+                    &bull; Once You Are Satisfied with the Schedule in hand; Clicking on the Schedule Link Will Show the Schedule Bulleting on the right Pane where You can Generate a First Draft of the Dubbing Calendar. This Calendar will Help in Setting Appointments with the Concerned Actors to Perform the Dubbing Activities as per the Schedule.
+                </small>
+            </p>
+        </div>
         <div class="col-md-4" id="details"></div>
     </div>
 
@@ -214,6 +243,21 @@
                     $('#details').html(result);
                 }
             });
+        }
+        function onDefaultTeamClick(schedule1, role1) {
+            if ($('#work').val() !== '') {
+                $.ajax({
+                    url: '@Url.Action("getDefaultStudioTeam", "scheduling")',
+                    type: 'GET',
+                    data: { work: $('#work').val(), schedule: schedule1, role: role1 },
+                    success: function (result) {
+                        alert(result);
+                    }
+                });
+            }
+            else {
+                alert("Work Must be Selected Before Requesting Default Studio Team.");
+            }
         }
         function onAllocationSuccess(ajaxContext) {
             $('#details').html(ajaxContext);
