@@ -1,0 +1,50 @@
+﻿@model IEnumerable<dubbingModel.orderTrnHdr>
+
+<div class="container-fluid" style="padding:0px">
+    <table class="table table-hover">
+        <thead>
+            <tr>
+                <th class="col-sm-1">
+                    <button class="btn btn-default btn-xs pull-left" onclick="onFilterChange()" title="Package">
+                        <span class="glyphicon glyphicon-refresh" aria-hidden="true"></span>
+                    </button>
+                </th>
+                <th class="col-sm-4"><small>Work</small></th>
+                <th class="col-sm-1"><small>Episode</small></th>
+                <th class="col-sm-1"><small>Airing</small></th>
+                <th class="col-sm-1"><small>Dubbing</small></th>
+                <th class="col-sm-1"><small>Upload</small></th>
+                <th class="col-sm-1"><small>Shipment</small></th>
+            </tr>
+        </thead>
+        <tbody>
+            @{ string btnColor; }
+            @foreach (var ep in Model)
+            {
+                string airingDate = ep.expectedDeliveryDate.HasValue ? ep.expectedDeliveryDate.Value.ToString("dd/MM") : null;
+                string plannedDubbing = ep.plannedDubbing.HasValue ? "(" + ep.plannedDubbing.Value.ToString("dd/MM") + ")" : null;
+                string dubbingDate = ep.endDubbing.HasValue ? ep.endDubbing.Value.ToString("dd/MM") : plannedDubbing;
+                string plannedUpload = ep.plannedUpload.HasValue ? "(" + ep.plannedUpload.Value.ToString("dd/MM") + ")" : null;
+                string uploadDate = ep.shipmentLowRes.HasValue ? ep.shipmentLowRes.Value.ToString("dd/MM") : plannedUpload;
+                string plannedShipment = ep.plannedShipment.HasValue ? "(" + ep.plannedShipment.Value.ToString("dd/MM") + ")" : null;
+                string shipmentDate = ep.shipmentFinal.HasValue ? ep.shipmentFinal.Value.ToString("dd/MM") : plannedShipment;
+
+                if (ep.clientClaims.Where(b => b.status == true).Count() != 0) {
+                    btnColor = "btn-danger";
+                }
+                else {
+                    btnColor = "btn-default";
+                }
+                <tr>
+                    <td class="col-sm-1">@Html.CheckBox("epSelect", new { @class = "selectCb", @id = ep.orderTrnHdrIntno })</td>
+                    <td class="col-sm-4"><small>@ep.agreementWork.workName</small></td>
+                    <td class="col-sm-1"><small><button type="button" class="btn btn-xs @btnColor" style="width:40px" onclick="onEpisodeClick(@ep.orderTrnHdrIntno)">@ep.episodeNo</button></small></td>
+                    <td class="col-sm-1"><small>@airingDate</small></td>
+                    <td class="col-sm-1"><small>@dubbingDate</small></td>
+                    <td class="col-sm-1"><small>@uploadDate</small></td>
+                    <td class="col-sm-1"><small>@shipmentDate</small></td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

@@ -9,13 +9,13 @@
         <p class="lead"><h5>Register New Client Orders for Dubbing and Capture First Quality Check Results. Plan Order Episodes for Dubbing, Upload &amp; Shipment. Register Client Feedback on Uploaded Episodes and Track Corrective Actions.</h5></p>
         <label><a href="#" onclick="onOrderAddNewClick()">Register New Order ...</a></label>
     </div>
-    <div class="col-sm-2">
+    <div class="col-sm-2 container-fluid" style="padding:0px">
         @Html.Hidden("workIntnoHF")
         <div>
             <button class="btn btn-info btn-xs work" value="0" title="Select">
                 <span class="glyphicon glyphicon-pushpin" aria-hidden="true"></span>
             </button>
-            <label class="workLbl" id="w0"><small>All ...</small></label>
+            <label class="workLbl" id="w0"><small>New ...</small></label>
         </div>
         @foreach (SelectListItem item in ViewBag.worksList)
         {
@@ -28,31 +28,31 @@
             </div>
         }
     </div>
-    <div class="col-sm-6">
-        <div class="container-fluid">
-            <div class="row">
-                <div class="col-sm-4">
-                    <label><small>Episodes</small></label>
-                    <span><small><input class="episodeFilter" id="fromEpisode" style="width:30px" /></small>&nbsp;-</span>
-                    <span><small><input class="episodeFilter" id="thruEpisode" style="width:30px" /></small></span>
-                </div>
-                <div class="col-sm-8">
-                    <div class="btn-group pull-right" style="padding-bottom:10px">
-                        <button class="btn btn-default btn-xs" onclick="onFilterClick()" title="Filter">All</button>&nbsp;
-                        <button class="btn btn-danger btn-xs" onclick="onFilterClick('01')" title="Filter">New</button>&nbsp;
-                        <button class="btn btn-primary btn-xs" onclick="onFilterClick('02')" title="Filter">Dubbing</button>&nbsp;
-                        <button class="btn btn-info btn-xs" onclick="onFilterClick('03')" title="Filter">Upload</button>&nbsp;
-                        <button class="btn btn-success btn-xs" onclick="onFilterClick('04')" title="Filter">Shipment</button>
-                        <button class="btn btn-default btn-xs" onclick="onFilterClick('05')" title="Filter">Archive</button>
-                    </div>
+
+    <div class="col-sm-6 container-fluid" style="padding:0px">
+        <div class="row container-fluid" id="epFilters" style="padding:0px; padding-bottom:10px; padding-left:10px">
+            <div class="col-sm-4">
+                <label><small>Episodes</small></label>
+                <span><small><input class="episodeFilter" id="fromEpisode" style="width:30px" /></small>&nbsp;-</span>
+                <span><small><input class="episodeFilter" id="thruEpisode" style="width:30px" /></small></span>
+            </div>
+            <div class="col-sm-8" style="padding:0px">
+                <div class="btn-group pull-right">
+                    <button class="btn btn-default btn-xs" onclick="onFilterClick()" title="Filter">All</button>&nbsp;
+                    <button class="btn btn-primary btn-xs" onclick="onFilterClick('02')" title="Filter">For Dubbing</button>&nbsp;
+                    <button class="btn btn-info btn-xs" onclick="onFilterClick('03')" title="Filter">For Upload</button>&nbsp;
+                    <button class="btn btn-success btn-xs" onclick="onFilterClick('04')" title="Filter">For Shipment</button>
+                    <button class="btn btn-default btn-xs" onclick="onFilterClick('05')" title="Filter">Archive</button>
                 </div>
             </div>
         </div>
-        <div id="oList">
+
+        <div class="row container-fluid" id="oList" style="padding:0px; padding-bottom:10px; padding-left:10px">
             @Html.Action("orderItemsList", "orders")
         </div>
     </div>
-    <div class="col-sm-4">
+    
+    <div class="col-sm-4 container-fluid" style="padding:0px">
         <div id="tips">
             @Html.Action("tips", "orders")
         </div>
@@ -69,6 +69,7 @@
             $(window).on('load', function () {
                 $('#w0').css('background-color', 'silver');
                 $('#selectedItemsHF').val(0);
+                $('#epFilters').hide();
             })
 
             $(".work").click(function () {
@@ -81,6 +82,11 @@
 
                 if (workIntno === '0') {
                     workIntno = null;
+                    $('#epFilters').hide();
+                }
+                else
+                {
+                    $('#epFilters').show();
                 }
 
                 $('#workIntnoHF').val(workIntno);

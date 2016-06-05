@@ -152,36 +152,45 @@ namespace dubbingApp.Controllers
                 modelItem.fromDate = schedule.fromDate;
                 modelItem.thruDate = schedule.thruDate;
 
-                var orderItemsList = db.dubbingTrnDtls.Include(b => b.orderTrnHdr)
+                var s = db.dubbingTrnDtls.Where(b => b.dubbTrnHdrIntno == sch && b.workIntno == modelItem.workIntno);
+                if (s.Count() == 0)
+                {
+                    modelItem.isScheduled = false;
+                }
+                else
+                {
+                    modelItem.isScheduled = true;
+                    var orderItemsList = db.dubbingTrnDtls.Include(b => b.orderTrnHdr)
                                     .Where(b => b.dubbTrnHdrIntno == sch && b.workIntno == modelItem.workIntno).OrderBy(b => b.episodeNo);
-                List<ViewModels.episodeItem> epList = new List<ViewModels.episodeItem>();
-                foreach (var oi in orderItemsList)
-                {
-                    ViewModels.episodeItem ep = new ViewModels.episodeItem();
-                    ep.episode = oi;
-                    ep.status = oi.orderTrnHdr.endAdaptation.HasValue ? "02" : "01"; // "01" planned, "02" ready
-                    epList.Add(ep);
-                }
-                modelItem.episodesList = epList;
+                    List<ViewModels.episodeItem> epList = new List<ViewModels.episodeItem>();
+                    foreach (var oi in orderItemsList)
+                    {
+                        ViewModels.episodeItem ep = new ViewModels.episodeItem();
+                        ep.episode = oi;
+                        ep.status = oi.orderTrnHdr.endAdaptation.HasValue ? "02" : "01"; // "01" planned, "02" ready
+                        epList.Add(ep);
+                    }
+                    modelItem.episodesList = epList;
 
-                var x = db.studioEpisodes.Include(b => b.studio)
-                        .Where(b => b.studio.dubbTrnHdrIntno == sch && b.studio.workIntno == modelItem.workIntno)
-                        .OrderBy(b => new { b.studioIntno, b.dubbingTrnDtl.episodeNo, b.status });
-                List<ViewModels.studioEpisodeItem> studiosList = new List<ViewModels.studioEpisodeItem>();
-                foreach (var stdEp in x)
-                {
-                    ViewModels.studioEpisodeItem std = new ViewModels.studioEpisodeItem();
-                    std.studioEpisodeIntno = stdEp.studioEpisodeIntno;
-                    std.episodeNo = stdEp.dubbingTrnDtl.episodeNo;
-                    std.studioNo = stdEp.studio.studioNo;
-                    std.status = stdEp.status;
-                    studiosList.Add(std);
+                    var x = db.studioEpisodes.Include(b => b.studio)
+                            .Where(b => b.studio.dubbTrnHdrIntno == sch && b.studio.workIntno == modelItem.workIntno)
+                            .OrderBy(b => new { b.studioIntno, b.dubbingTrnDtl.episodeNo, b.status });
+                    List<ViewModels.studioEpisodeItem> studiosList = new List<ViewModels.studioEpisodeItem>();
+                    foreach (var stdEp in x)
+                    {
+                        ViewModels.studioEpisodeItem std = new ViewModels.studioEpisodeItem();
+                        std.studioEpisodeIntno = stdEp.studioEpisodeIntno;
+                        std.episodeNo = stdEp.dubbingTrnDtl.episodeNo;
+                        std.studioNo = stdEp.studio.studioNo;
+                        std.status = stdEp.status;
+                        studiosList.Add(std);
+                    }
+                    modelItem.studioEpisodesList = studiosList;
                 }
-                modelItem.studioEpisodesList = studiosList;
                 model.Add(modelItem);
             }
-            //ViewBag.empList = db.employees.Where(b => b.empType == "01" && b.status == true).ToList();
-            return PartialView("_episodesList", model);
+            
+            return PartialView("_episodesList", model.OrderByDescending(b => b.isScheduled));
         }
 
         public ActionResult episodesAddNew(long work, long schedule)
@@ -235,6 +244,7 @@ namespace dubbingApp.Controllers
         public ActionResult loadEpisodesToSchedule(long work, long schedule, string episodes)
         {
             var model = db.dubbingTrnDtls;
+            var studioEpisodesModel = db.studioEpisodes;
             string[] episodesList = episodes.Split(';');
             for (int i = 0; i < episodesList.Count(); i++)
             {
@@ -245,8 +255,19 @@ namespace dubbingApp.Controllers
                 dtl.workIntno = work;
                 dtl.episodeNo = db.orderTrnHdrs.Find(orderItem).episodeNo;
                 model.Add(dtl);
+
+                // create set of studios allocation for the episode if already the studios is allocated for the parent work
+                var x = db.studios.Where(b => b.dubbTrnHdrIntno == schedule && b.workIntno == work && b.status == true).ToList();
+                for (int j = 0; j < x.Count(); j++)
+                {
+                    studioEpisode std = new studioEpisode();
+                    std.studioIntno = x[j].studioIntno;
+                    std.status = true;
+                    studioEpisodesModel.Add(std);
+                }
             }
             db.SaveChanges();
+
             long work1 = work;
             long schedule1 = schedule;
             return RedirectToAction("episodesAddNew", new { work = work1, schedule = schedule1 });

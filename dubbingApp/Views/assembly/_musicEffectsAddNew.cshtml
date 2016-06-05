@@ -1,0 +1,68 @@
+﻿@model dubbingModel.orderTrnDtl
+
+<p><small>Describe Added Music &amp; Effects</small></p>
+@using (Ajax.BeginForm("musicEffectsAddNew", "assembly", new { episode = ViewBag.episode },
+                                    new AjaxOptions()
+                                    {
+                                        HttpMethod = "POST",
+                                        UpdateTargetId = "formResult"
+                                    }
+                                    ))
+{
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+    <div class="form-group-sm">
+        <small>@Html.LabelFor(model => model.trnDate, "Date", htmlAttributes: new { @class = "control-label" })</small>
+        <div>
+            <input type="date" name="trnDate" class="form-control" />
+            @Html.ValidationMessageFor(model => model.trnDate, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+    <div class="form-group-sm">
+        <small>@Html.LabelFor(model => model.empIntno, "Contractor", htmlAttributes: new { @class = "control-label" })</small>
+        <div>
+            @Html.DropDownListFor(model => model.empIntno, ViewBag.contractorsList as SelectList, string.Empty, htmlAttributes: new { @class = "form-control", onchange = "onClientComboChanged()", @id = "clientCombo" })
+            @Html.ValidationMessageFor(model => model.empIntno, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+    <div class="form-group">
+        <small>@Html.LabelFor(model => model.providedService, "Provided ME", htmlAttributes: new { @class = "control-label" })</small>
+        <div>
+            @Html.EditorFor(model => model.providedService, new { htmlAttributes = new { @class = "form-control" } })
+            @Html.ValidationMessageFor(model => model.providedService, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+    <div class="form-group">
+        <small>@Html.LabelFor(model => model.totalMinutes, "Total Minutes", htmlAttributes: new { @class = "control-label" })</small>
+        <div>
+            @Html.EditorFor(model => model.totalMinutes, new { htmlAttributes = new { @class = "form-control" } })
+            @Html.ValidationMessageFor(model => model.totalMinutes, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+    <div class="form-group-sm">
+        <small>@Html.LabelFor(model => model.timeRating, "Punctuality Rating", htmlAttributes: new { @class = "control-label" })</small>
+        <div>
+            @Html.DropDownListFor(model => model.timeRating, ViewBag.ratingsList as SelectList, string.Empty, htmlAttributes: new { @class = "form-control", onchange = "onClientComboChanged()", @id = "clientCombo" })
+            @Html.ValidationMessageFor(model => model.timeRating, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+    <div class="form-group-sm">
+        <small>@Html.LabelFor(model => model.qualityRating, "Quality Rating", htmlAttributes: new { @class = "control-label" })</small>
+        <div>
+            @Html.DropDownListFor(model => model.qualityRating, ViewBag.ratingsList as SelectList, string.Empty, htmlAttributes: new { @class = "form-control", onchange = "onClientComboChanged()", @id = "clientCombo" })
+            @Html.ValidationMessageFor(model => model.qualityRating, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+    <br />
+    <div class="form-group-sm">
+        <button type="submit" class="btn btn-default btn-sm pull-left">Submit</button>
+        <small><label class="alert-success" id="formResult"></label></small>
+    </div>
+}

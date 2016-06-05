@@ -1,0 +1,323 @@
+﻿
+@{
+    ViewBag.Title = "Assembly & Delivery";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container-fluid">
+    <div class="jumbotron" style="padding:5px">
+        <h2>Assemblies &amp; Delivery</h2>
+        <p class="lead"><h5>The Assembly and Delivery of the Final Product involves Capturing the set of Activities which are related to both Mixage and Montage like Introducing completely new ME components, Acknowledgement of Mixage Endorsement, Upload and Shipment. It is also the place to Register and Track Client's Feedback / Claims on the Uploaded / Shipped Materials.</h5></p>
+    </div>
+    
+    <div class="row">
+        <div class="col-md-2">
+            <br /><br />
+            <p>
+                @Html.Label("filterLbl", "Use Filters Below for Short Listing", htmlAttributes: new { @class = "control-label" })
+            </p>
+            <br />
+            <p>
+                @Html.DropDownList("workIntno", ViewBag.worksList as SelectList, "Select Work ...", htmlAttributes: new { @class = "form-control-sm" })
+            </p>
+            <br />
+            <p><a href="#" onclick="onFilterChange('01')">In Dubbing</a></p>
+            <p><a href="#" onclick="onFilterChange('02')">Finished Dubbing</a></p>
+            <p><a href="#" onclick="onFilterChange('03')">Finished Mixage</a></p>
+            <p><a href="#" onclick="onFilterChange('04')">Uploaded</a></p>
+            <p><a href="#" onclick="onFilterChange('05')">Shipped</a></p>
+            <p><a href="#" onclick="onFilterChange()">All ...</a></p>
+        </div>
+
+        <div class="col-md-6" id="episodesList">
+            @Html.Action("episodesList")
+        </div>
+
+        <div class="col-md-4">
+            <div id="episodeDetails"></div>
+            
+            <br />
+            <p><label class="badge alert-info">Endorse ...</label></p>
+            <p>
+                <a href="#" onclick="endorseSelection('01')">Mixage</a>| &nbsp;
+                <a href="#" onclick="endorseSelection('02')">Montage</a>| &nbsp;
+                <a href="#" onclick="endorseSelection('03')">Upload</a>
+            </p>
+            
+            <br />
+            <p><label class="badge alert-info">Add New ...</label></p>
+            <p>
+                <a href="#" class="newActivity1" data-toggle="modal" data-target="#popupForm" onclick="onMusicEffectsAddNewClick()">ME Details</a>| &nbsp;
+                <a href="#" class="newActivity" data-toggle="modal" data-target="#popupForm" onclick="onShipmentDetailsAddNewClick()">Shipment Details</a>| &nbsp;
+                <a href="#" class="newActivity1" data-toggle="modal" data-target="#popupForm" onclick="onClientClaimsAddNewClick()">Client Claim</a>| &nbsp;
+            </p>
+            
+            <br />
+            <div id="addActivity">
+                <p>
+                    <label class="badge alert-info">Upcoming Shipments</label> &nbsp; 
+                    <a href="#" data-toggle="modal" data-target="#popupForm" onclick="onShipmentsAddNewClick()">Add New ...</a>
+                </p>
+                <div id="shipmentsList">
+                    @Html.Action("shipmentsList", "assembly", new { isPopup = false })
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="popupForm" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" id="modalClose" data-dismiss="modal">&times;</button>
+                <div class="modal-title">Form</div>
+            </div>
+            <div class="modal-body" id="popupFormBody">
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default btn-xs" data-dismiss="modal">Cancel</button>
+            </div>
+        </div>
+    </div>
+</div>
+@section Scripts
+{
+    @Scripts.Render("~/bundles/jqueryval")
+
+    <script>
+        $(document).ready(function () {
+            $('#workIntno').change(function () {
+                onFilterChange();
+            });
+        });
+
+        function onFilterChange(status1) {
+            $.ajax({
+                url: '@Url.Action("episodesList", "assembly")',
+                data: { work: $('#workIntno').val(), status: status1 },
+                type: 'GET',
+                success: function (result) {
+                    $('#episodesList').html(result);
+                }
+            })
+        }
+
+        function getSelection() {
+            var episodes1 = '';
+            $('.selectCb').each(function (i, item) {
+                var id = $(this).attr('id');
+                if ($('#' + id).is(':checked')) {
+                    if (episodes1 === '') {
+                        episodes1 = id;
+                    }
+                    else {
+                        episodes1 = episodes1 + ";" + id;
+                    }
+                };
+            });
+            return episodes1;
+        }
+
+        //episodes
+        function endorseSelection(activity1) {
+            var episodes1 = getSelection();
+            if (episodes1 === '') {
+                alert('No Episode Selected for Endorsement.');
+            }
+            else {
+                $.ajax({
+                    url: '@Url.Action("endorseSelectedEpisodes", "assembly")',
+                    data: { work: $('#workIntno').val(), episodes: episodes1, activity: activity1 },
+                    type: 'GET',
+                    success: function (result) {
+                        $('#episodesList').html(result);
+                        alert('Selection Successfully Endorsed.');
+                    }
+                })
+            }
+        }
+        function onEpisodeClick(episode1) {
+            $.ajax({
+                url: '@Url.Action("episodeDetails", "assembly")',
+                type: 'GET',
+                data: { episode: episode1 },
+                success: function (result) {
+                    $('#episodeDetails').html(result);
+                }
+            })
+        }
+        function onCloseClick() {
+            $('#episodeDetails').html(null);
+        }
+        function onShipmentEpisodeDelete(dtl) {
+            $.ajax({
+                url: '@Url.Action("shipmentDetailsDelete", "assembly")',
+                type: 'GET',
+                data: { id: dtl },
+                success: function (result) {
+                    $('#episodeDetails').html(result);
+                }
+            })
+        }
+        function onMeDetailsClick(id1) {
+            $.ajax({
+                url: '@Url.Action("musicEffectsDetails", "assembly")',
+                type: 'GET',
+                data: { id: id1 },
+                success: function (result) {
+                    $('#popupFormBody').html(result);
+                }
+            })
+        }
+
+        //selections
+        $('.newActivity').click(function (event) {
+            var episodes1 = getSelection();
+            if (episodes1 === '') {
+                alert('No Episode Selected for the New Add.');
+                event.stopPropagation();
+            }
+        })
+        $('.newActivity1').click(function (event) {
+            var episodes1 = getSelection();
+            if (episodes1 === '') {
+                alert('No Episode Selected for the New Add.');
+                event.stopPropagation();
+            }
+            else if (episodes1.includes(';')) {
+                alert("Multiple Selection is NOT Allowed for this Operation.");
+                event.stopPropagation();
+            }
+        })
+
+        // shipments
+        function onShipmentsAddNewClick() {
+            $.ajax({
+                url: '@Url.Action("shipmentsAddNew", "assembly")',
+                type: 'GET',
+                success: function (result) {
+                    $('#popupFormBody').html(result);
+                }
+            })
+        }
+        function onShipmentsUpdateClick(ship1) {
+            $.ajax({
+                url: '@Url.Action("shipmentsUpdate", "assembly")',
+                data: { ship: ship1 },
+                type: 'GET',
+                success: function (result) {
+                    $('#popupFormBody').html(result);
+                }
+            })
+        }
+        function onShipmentSuccess() {
+            $.ajax({
+                url: '@Url.Action("shipmentsList", "assembly")',
+                data: { isPopup: false },
+                type: 'GET',
+                success: function (result) {
+                    $('#shipmentsList').html(result);
+                }
+            });
+            $.ajax({
+                url: '@Url.Action("episodesList", "assembly")',
+                data: { work: $('#workIntno').val() },
+                type: 'GET',
+                success: function (result) {
+                    $('#episodesList').html(result);
+                }
+            })
+        }
+        function onShipmentSelectClick(ship1) {
+            var episodes1 = getSelection();
+            $.ajax({
+                url: '@Url.Action("shipmentDetailsAddNew", "assembly")',
+                type: 'GET',
+                data: { ship: ship1, episodes: episodes1 },
+                success: function (result) {
+                    $('#modalClose').click();
+                    $('#formResult').html(result);
+                }
+            })
+        }
+        function onShipmentDetailsClick(ship1) {
+            $.ajax({
+                url: '@Url.Action("episodesList", "assembly")',
+                data: { ship: ship1 },
+                type: 'GET',
+                success: function (result) {
+                    $('#episodesList').html(result);
+                }
+            })
+        }
+        function onShipmentDetailsAddNewClick() {
+            $.ajax({
+                url: '@Url.Action("shipmentsList", "assembly")',
+                type: 'GET',
+                data: { isPopup: true },
+                success: function (result) {
+                    $('#popupFormBody').html(result);
+                }
+            })
+        }
+
+        // music & effects
+        function onMusicEffectsAddNewClick() {
+            var episodes1 = getSelection();
+            $.ajax({
+                url: '@Url.Action("musicEffectsAddNew", "assembly")',
+                type: 'GET',
+                data: { episode: episodes1 },
+                success: function (result) {
+                    $('#popupFormBody').html(result);
+                }
+            })
+        }
+
+        //client claims
+        function onClientClaimsAddNewClick() {
+            var episodes1 = getSelection();
+            $.ajax({
+                url: '@Url.Action("clientClaimsAddNew", "assembly")',
+                type: 'GET',
+                data: { episode: episodes1 },
+                success: function (result) {
+                    $('#popupFormBody').html(result);
+                }
+            })
+        }
+        function onAddClientClaimsSuccess() {
+            onFilterChange();
+        }
+        function onClientClaimsDetailsClick(id1) {
+            $.ajax({
+                url: '@Url.Action("clientClaimsDetails", "assembly")',
+                type: 'GET',
+                data: { id: id1 },
+                success: function (result) {
+                    $('#popupFormBody').html(result);
+                }
+            })
+        }
+        function onClaimEndorseClick(id1) {
+            $.ajax({
+                url: '@Url.Action("clientClaimsEndorse", "assembly")',
+                type: 'GET',
+                data: { id: id1 },
+                success: function (result) {
+                    $('#formResult').html(result);
+                    $.ajax({
+                        url: '@Url.Action("episodesList", "assembly")',
+                        data: { work: $('#workIntno').val() },
+                        type: 'GET',
+                        success: function (result) {
+                            $('#episodesList').html(result);
+                        }
+                    })
+                }
+            })
+        }
+    </script>
+}

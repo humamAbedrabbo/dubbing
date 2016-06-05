@@ -1,0 +1,54 @@
+﻿@model dubbingModel.shipment
+
+<p><small>Provide New Shipment Information</small></p>
+@using (Ajax.BeginForm("shipmentsAddNew", "assembly",
+                                    new AjaxOptions()
+                                    {
+                                        HttpMethod = "POST",
+                                        UpdateTargetId = "formResult",
+                                        OnSuccess = "onShipmentSuccess"
+                                    }
+                                    ))
+{
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+    <div class="form-group-sm">
+        <small>@Html.LabelFor(model => model.shipmentDate, "Shipment Date", htmlAttributes: new { @class = "control-label" })</small>
+        <div>
+            <input type="date" name="shipmentDate" class="form-control" />
+            @Html.ValidationMessageFor(model => model.shipmentDate, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+    <div class="form-group-sm">
+        <small>@Html.LabelFor(model => model.clientIntno, "Client", htmlAttributes: new { @class = "control-label" })</small>
+        <div>
+            @Html.DropDownListFor(model => model.clientIntno, ViewBag.clientsList as SelectList, string.Empty, htmlAttributes: new { @class = "form-control", onchange = "onClientComboChanged()", @id = "clientCombo" })
+            @Html.ValidationMessageFor(model => model.clientIntno, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+    <div class="form-group-sm">
+        <small>@Html.LabelFor(model => model.carrierIntno, "Carrier", htmlAttributes: new { @class = "control-label" })</small>
+        <div>
+            @Html.DropDownListFor(model => model.carrierIntno, ViewBag.carriersList as SelectList, string.Empty, htmlAttributes: new { @class = "form-control", onchange = "onClientComboChanged()", @id = "clientCombo" })
+            @Html.ValidationMessageFor(model => model.carrierIntno, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+    <div class="form-group">
+        <small>@Html.LabelFor(model => model.remarks, "Remarks", htmlAttributes: new { @class = "control-label" })</small>
+        <div>
+            @Html.EditorFor(model => model.remarks, new { htmlAttributes = new { @class = "form-control" } })
+            @Html.ValidationMessageFor(model => model.remarks, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+    <br />
+    <div class="form-group-sm">
+        <button type="submit" class="btn btn-default btn-sm pull-left">Submit</button>
+        <small><label class="alert-success" id="formResult"></label></small>
+    </div>
+}
+

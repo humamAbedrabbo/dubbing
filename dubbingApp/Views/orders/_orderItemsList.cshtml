@@ -56,17 +56,17 @@
                 <table class="table-condensed">
                     <thead>
                         <tr>
-                            <td class="col-sm-2"><label><small>Received</small></label></td>
-                            <td class="col-sm-2"><label><small>On Air</small></label></td>
-                            <td class="col-sm-2"><label><small>Adaptation</small></label></td>
-                            <td class="col-sm-2"><label><small>Dubbing</small></label></td>
-                            <td class="col-sm-2"><label><small>Upload</small></label></td>
-                            <td class="col-sm-2"><label><small>Shipment</small></label></td>
+                            <th class="col-sm-2" style="text-align:center"><small>Received</small></th>
+                            <th class="col-sm-2" style="text-align:center"><small>On Air</small></th>
+                            <th class="col-sm-2" style="text-align:center"><small>Adaptation</small></th>
+                            <th class="col-sm-2" style="text-align:center"><small>Dubbing</small></th>
+                            <th class="col-sm-2" style="text-align:center"><small>Upload</small></th>
+                            <th class="col-sm-2" style="text-align:center"><small>Shipment</small></th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr>
-                            <td class="col-sm-2"><small>
+                            <td class="col-sm-2" style="text-align:center"><small>
                                 @{
                                     if (item.orderReceivedDate.HasValue)
                                     {
@@ -81,7 +81,7 @@
                                     }
                                 }
                             </small></td>
-                            <td class="col-sm-2"><small>
+                            <td class="col-sm-2" style="text-align:center"><small>
                                 @{ 
                                     if(item.expectedDeliveryDate.HasValue)
                                     {

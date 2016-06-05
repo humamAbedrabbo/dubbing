@@ -171,6 +171,7 @@
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\adminController.cs" />
     <Compile Include="Controllers\agreementsController.cs" />
+    <Compile Include="Controllers\assemblyController.cs" />
     <Compile Include="Controllers\calendarController.cs" />
     <Compile Include="Controllers\castingController.cs" />
     <Compile Include="Controllers\clientContactsController.cs" />
@@ -197,6 +198,7 @@
     <Content Include="Content\bootstrap-theme.min.css" />
     <Content Include="Content\bootstrap.css" />
     <Content Include="Content\bootstrap.min.css" />
+    <Content Include="Content\Images\Fardous.png" />
     <Content Include="favicon.ico" />
     <Content Include="Global.asax" />
     <Content Include="Content\Site.css" />
@@ -326,6 +328,16 @@
     <Content Include="Views\scheduling\_episodesAddNew.cshtml" />
     <Content Include="Views\scheduling\_studioAllocationList.cshtml" />
     <Content Include="Views\scheduling\_studioAllocationAddNew.cshtml" />
+    <Content Include="Views\assembly\Index.cshtml" />
+    <Content Include="Views\assembly\_episodesList.cshtml" />
+    <Content Include="Views\assembly\_shipmentsList.cshtml" />
+    <Content Include="Views\assembly\_shipmentsAddNew.cshtml" />
+    <Content Include="Views\assembly\_shipmentsUpdate.cshtml" />
+    <Content Include="Views\assembly\_musicEffectsAddNew.cshtml" />
+    <Content Include="Views\assembly\_clientClaimsAddNew.cshtml" />
+    <Content Include="Views\assembly\_episodeDetails.cshtml" />
+    <Content Include="Views\assembly\_musicEffectsDetails.cshtml" />
+    <Content Include="Views\assembly\_clientClaimsDetails.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

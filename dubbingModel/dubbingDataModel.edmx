@@ -66,19 +66,23 @@
           <Property Name="carrierType" Type="nvarchar" MaxLength="50" Nullable="false" />
           <Property Name="carrierName" Type="nvarchar" MaxLength="50" Nullable="false" />
           <Property Name="othCarrierName" Type="nvarchar" MaxLength="50" Nullable="false" />
-          <Property Name="remarks" Type="nvarchar(max)" />
+          <Property Name="schedule" Type="nvarchar(max)" />
           <Property Name="status" Type="bit" Nullable="false" />
         </EntityType>
-        <EntityType Name="carrierSchedules">
+        <EntityType Name="clientClaims">
           <Key>
-            <PropertyRef Name="carrierScheduleIntno" />
+            <PropertyRef Name="claimIntno" />
           </Key>
-          <Property Name="carrierScheduleIntno" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
-          <Property Name="weekDay" Type="nvarchar" MaxLength="50" Nullable="false" />
-          <Property Name="carrierIntno" Type="bigint" Nullable="false" />
-          <Property Name="flightTime" Type="time" Precision="0" Nullable="false" />
-          <Property Name="departure" Type="nvarchar" MaxLength="50" Nullable="false" />
-          <Property Name="destination" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="claimIntno" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="orderTrnHdrIntno" Type="bigint" Nullable="false" />
+          <Property Name="clientIntno" Type="bigint" Nullable="false" />
+          <Property Name="claimType" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="receivedDate" Type="date" Nullable="false" />
+          <Property Name="claimRefNo" Type="nvarchar" MaxLength="50" />
+          <Property Name="claimDesc" Type="nvarchar(max)" Nullable="false" />
+          <Property Name="refLocation" Type="nvarchar" MaxLength="50" />
+          <Property Name="requiredAction" Type="nvarchar(max)" Nullable="false" />
+          <Property Name="actionDate" Type="date" />
           <Property Name="status" Type="bit" Nullable="false" />
         </EntityType>
         <EntityType Name="clients">
@@ -106,20 +110,6 @@
           <Property Name="contactPhoneNbr" Type="nvarchar" MaxLength="50" />
           <Property Name="contactEmailAddr" Type="nvarchar" MaxLength="50" />
           <Property Name="mailingAddr" Type="nvarchar(max)" />
-          <Property Name="remarks" Type="nvarchar(max)" />
-          <Property Name="status" Type="bit" Nullable="false" />
-        </EntityType>
-        <EntityType Name="deliveryFeedbacks">
-          <Key>
-            <PropertyRef Name="feedbackIntno" />
-          </Key>
-          <Property Name="feedbackIntno" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
-          <Property Name="orderTrnHdrIntno" Type="bigint" Nullable="false" />
-          <Property Name="feedbackType" Type="nvarchar" MaxLength="50" Nullable="false" />
-          <Property Name="receivedDate" Type="date" Nullable="false" />
-          <Property Name="clientRefNo" Type="nvarchar" MaxLength="50" Nullable="false" />
-          <Property Name="feedbackDesc" Type="nvarchar(max)" Nullable="false" />
-          <Property Name="refLocation" Type="nvarchar" MaxLength="50" />
           <Property Name="remarks" Type="nvarchar(max)" />
           <Property Name="status" Type="bit" Nullable="false" />
         </EntityType>
@@ -217,19 +207,6 @@
           <Property Name="status" Type="bit" Nullable="false" />
           <Property Name="accountNo" Type="nvarchar" MaxLength="50" />
         </EntityType>
-        <EntityType Name="feedbackActions">
-          <Key>
-            <PropertyRef Name="actionIntno" />
-          </Key>
-          <Property Name="actionIntno" Type="bigint" Nullable="false" />
-          <Property Name="feedbackIntno" Type="bigint" Nullable="false" />
-          <Property Name="actionParty" Type="nvarchar" MaxLength="50" Nullable="false" />
-          <Property Name="actionToBeTaken" Type="nvarchar" MaxLength="255" />
-          <Property Name="actionDate" Type="date" />
-          <Property Name="checkedBy" Type="nvarchar" MaxLength="50" />
-          <Property Name="checkedDate" Type="datetime" />
-          <Property Name="status" Type="bit" Nullable="false" />
-        </EntityType>
         <EntityType Name="orderBatchTrnHdrs">
           <Key>
             <PropertyRef Name="orderBatchTrnIntno" />
@@ -263,6 +240,7 @@
           </Key>
           <Property Name="orderTrnDtlIntno" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="orderTrnHdrIntno" Type="bigint" Nullable="false" />
+          <Property Name="trnDate" Type="date" />
           <Property Name="activityType" Type="nvarchar" MaxLength="50" Nullable="false" />
           <Property Name="empIntno" Type="bigint" Nullable="false" />
           <Property Name="providedService" Type="nvarchar(max)" />
@@ -325,18 +303,23 @@
           <Property Name="status" Type="bit" Nullable="false" />
           <Property Name="accountNo" Type="nvarchar" MaxLength="50" Nullable="false" />
         </EntityType>
+        <EntityType Name="shipmentDetails">
+          <Key>
+            <PropertyRef Name="shipmentDtlIntno" />
+          </Key>
+          <Property Name="shipmentDtlIntno" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="shipmentIntno" Type="bigint" Nullable="false" />
+          <Property Name="orderTrnHdrIntno" Type="bigint" Nullable="false" />
+        </EntityType>
         <EntityType Name="shipments">
           <Key>
             <PropertyRef Name="shipmentIntno" />
           </Key>
           <Property Name="shipmentIntno" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
-          <Property Name="orderTrnHdrIntno" Type="bigint" Nullable="false" />
           <Property Name="carrierIntno" Type="bigint" />
-          <Property Name="carrierScheduleIntno" Type="bigint" />
-          <Property Name="shipmentMethod" Type="nvarchar" MaxLength="50" Nullable="false" />
           <Property Name="shipmentDate" Type="date" Nullable="false" />
           <Property Name="remarks" Type="nvarchar" MaxLength="50" />
-          <Property Name="status" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="status" Type="bit" Nullable="false" />
           <Property Name="clientIntno" Type="bigint" Nullable="false" />
         </EntityType>
         <EntityType Name="studioEpisodes">
@@ -568,26 +551,26 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK_carrierSchedules_carriers">
-          <End Role="carriers" Type="Self.carriers" Multiplicity="1" />
-          <End Role="carrierSchedules" Type="Self.carrierSchedules" Multiplicity="*" />
+        <Association Name="FK_clientClaims_clients">
+          <End Role="clients" Type="Self.clients" Multiplicity="1" />
+          <End Role="clientClaims" Type="Self.clientClaims" Multiplicity="*" />
           <ReferentialConstraint>
-            <Principal Role="carriers">
-              <PropertyRef Name="carrierIntno" />
+            <Principal Role="clients">
+              <PropertyRef Name="clientIntno" />
             </Principal>
-            <Dependent Role="carrierSchedules">
-              <PropertyRef Name="carrierIntno" />
+            <Dependent Role="clientClaims">
+              <PropertyRef Name="clientIntno" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK_deliveryFeedbacks_orderTrnHdrs">
+        <Association Name="FK_clientClaims_orderTrnHdrs">
           <End Role="orderTrnHdrs" Type="Self.orderTrnHdrs" Multiplicity="1" />
-          <End Role="deliveryFeedbacks" Type="Self.deliveryFeedbacks" Multiplicity="*" />
+          <End Role="clientClaims" Type="Self.clientClaims" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="orderTrnHdrs">
               <PropertyRef Name="orderTrnHdrIntno" />
             </Principal>
-            <Dependent Role="deliveryFeedbacks">
+            <Dependent Role="clientClaims">
               <PropertyRef Name="orderTrnHdrIntno" />
             </Dependent>
           </ReferentialConstraint>
@@ -760,18 +743,6 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK_feedbackActions_deliveryFeedbacks">
-          <End Role="deliveryFeedbacks" Type="Self.deliveryFeedbacks" Multiplicity="1" />
-          <End Role="feedbackActions" Type="Self.feedbackActions" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="deliveryFeedbacks">
-              <PropertyRef Name="feedbackIntno" />
-            </Principal>
-            <Dependent Role="feedbackActions">
-              <PropertyRef Name="feedbackIntno" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
         <Association Name="FK_orderBatchTrnHdrs_agreementWorks">
           <End Role="agreementWorks" Type="Self.agreementWorks" Multiplicity="1" />
           <End Role="orderBatchTrnHdrs" Type="Self.orderBatchTrnHdrs" Multiplicity="*" />
@@ -817,6 +788,18 @@
             </Principal>
             <Dependent Role="orderChecks">
               <PropertyRef Name="orderTrnHdrIntno" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_orderTrnDtls_employees">
+          <End Role="employees" Type="Self.employees" Multiplicity="1" />
+          <End Role="orderTrnDtls" Type="Self.orderTrnDtls" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="employees">
+              <PropertyRef Name="empIntno" />
+            </Principal>
+            <Dependent Role="orderTrnDtls">
+              <PropertyRef Name="empIntno" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -916,6 +899,30 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK_shipmentDetails_orderTrnHdrs">
+          <End Role="orderTrnHdrs" Type="Self.orderTrnHdrs" Multiplicity="1" />
+          <End Role="shipmentDetails" Type="Self.shipmentDetails" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="orderTrnHdrs">
+              <PropertyRef Name="orderTrnHdrIntno" />
+            </Principal>
+            <Dependent Role="shipmentDetails">
+              <PropertyRef Name="orderTrnHdrIntno" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_shipmentDetails_shipments">
+          <End Role="shipments" Type="Self.shipments" Multiplicity="1" />
+          <End Role="shipmentDetails" Type="Self.shipmentDetails" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="shipments">
+              <PropertyRef Name="shipmentIntno" />
+            </Principal>
+            <Dependent Role="shipmentDetails">
+              <PropertyRef Name="shipmentIntno" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK_shipments_carriers">
           <End Role="carriers" Type="Self.carriers" Multiplicity="0..1" />
           <End Role="shipments" Type="Self.shipments" Multiplicity="*" />
@@ -928,18 +935,6 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK_shipments_carrierSchedules">
-          <End Role="carrierSchedules" Type="Self.carrierSchedules" Multiplicity="0..1" />
-          <End Role="shipments" Type="Self.shipments" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="carrierSchedules">
-              <PropertyRef Name="carrierScheduleIntno" />
-            </Principal>
-            <Dependent Role="shipments">
-              <PropertyRef Name="carrierScheduleIntno" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
         <Association Name="FK_shipments_clients">
           <End Role="clients" Type="Self.clients" Multiplicity="1" />
           <End Role="shipments" Type="Self.shipments" Multiplicity="*" />
@@ -949,18 +944,6 @@
             </Principal>
             <Dependent Role="shipments">
               <PropertyRef Name="clientIntno" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK_shipments_orderTrnHdrs">
-          <End Role="orderTrnHdrs" Type="Self.orderTrnHdrs" Multiplicity="1" />
-          <End Role="shipments" Type="Self.shipments" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="orderTrnHdrs">
-              <PropertyRef Name="orderTrnHdrIntno" />
-            </Principal>
-            <Dependent Role="shipments">
-              <PropertyRef Name="orderTrnHdrIntno" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -1150,10 +1133,9 @@
           <EntitySet Name="agreementTerms" EntityType="Self.agreementTerms" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="agreementWorks" EntityType="Self.agreementWorks" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="carriers" EntityType="Self.carriers" Schema="dbo" store:Type="Tables" />
-          <EntitySet Name="carrierSchedules" EntityType="Self.carrierSchedules" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="clientClaims" EntityType="Self.clientClaims" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="clients" EntityType="Self.clients" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="contacts" EntityType="Self.contacts" Schema="dbo" store:Type="Tables" />
-          <EntitySet Name="deliveryFeedbacks" EntityType="Self.deliveryFeedbacks" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="dubbDomain" EntityType="Self.dubbDomain" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="dubbingAppointments" EntityType="Self.dubbingAppointments" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="dubbingSheetDtls" EntityType="Self.dubbingSheetDtls" Schema="dbo" store:Type="Tables" />
@@ -1161,12 +1143,12 @@
           <EntitySet Name="dubbingTrnDtls" EntityType="Self.dubbingTrnDtls" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="dubbingTrnHdrs" EntityType="Self.dubbingTrnHdrs" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="employees" EntityType="Self.employees" Schema="dbo" store:Type="Tables" />
-          <EntitySet Name="feedbackActions" EntityType="Self.feedbackActions" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="orderBatchTrnHdrs" EntityType="Self.orderBatchTrnHdrs" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="orderChecks" EntityType="Self.orderChecks" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="orderTrnDtls" EntityType="Self.orderTrnDtls" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="orderTrnHdrs" EntityType="Self.orderTrnHdrs" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="payments" EntityType="Self.payments" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="shipmentDetails" EntityType="Self.shipmentDetails" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="shipments" EntityType="Self.shipments" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="studioEpisodes" EntityType="Self.studioEpisodes" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="studios" EntityType="Self.studios" Schema="dbo" store:Type="Tables" />
@@ -1205,13 +1187,13 @@
             <End Role="contacts" EntitySet="contacts" />
             <End Role="agreementWorks" EntitySet="agreementWorks" />
           </AssociationSet>
-          <AssociationSet Name="FK_carrierSchedules_carriers" Association="Self.FK_carrierSchedules_carriers">
-            <End Role="carriers" EntitySet="carriers" />
-            <End Role="carrierSchedules" EntitySet="carrierSchedules" />
+          <AssociationSet Name="FK_clientClaims_clients" Association="Self.FK_clientClaims_clients">
+            <End Role="clients" EntitySet="clients" />
+            <End Role="clientClaims" EntitySet="clientClaims" />
           </AssociationSet>
-          <AssociationSet Name="FK_deliveryFeedbacks_orderTrnHdrs" Association="Self.FK_deliveryFeedbacks_orderTrnHdrs">
+          <AssociationSet Name="FK_clientClaims_orderTrnHdrs" Association="Self.FK_clientClaims_orderTrnHdrs">
             <End Role="orderTrnHdrs" EntitySet="orderTrnHdrs" />
-            <End Role="deliveryFeedbacks" EntitySet="deliveryFeedbacks" />
+            <End Role="clientClaims" EntitySet="clientClaims" />
           </AssociationSet>
           <AssociationSet Name="FK_dubbingAppointments_agreementWorks" Association="Self.FK_dubbingAppointments_agreementWorks">
             <End Role="agreementWorks" EntitySet="agreementWorks" />
@@ -1269,10 +1251,6 @@
             <End Role="orderTrnHdrs" EntitySet="orderTrnHdrs" />
             <End Role="dubbingTrnDtls" EntitySet="dubbingTrnDtls" />
           </AssociationSet>
-          <AssociationSet Name="FK_feedbackActions_deliveryFeedbacks" Association="Self.FK_feedbackActions_deliveryFeedbacks">
-            <End Role="deliveryFeedbacks" EntitySet="deliveryFeedbacks" />
-            <End Role="feedbackActions" EntitySet="feedbackActions" />
-          </AssociationSet>
           <AssociationSet Name="FK_orderBatchTrnHdrs_agreementWorks" Association="Self.FK_orderBatchTrnHdrs_agreementWorks">
             <End Role="agreementWorks" EntitySet="agreementWorks" />
             <End Role="orderBatchTrnHdrs" EntitySet="orderBatchTrnHdrs" />
@@ -1288,6 +1266,10 @@
           <AssociationSet Name="FK_orderChecks_orderTrnHdrs" Association="Self.FK_orderChecks_orderTrnHdrs">
             <End Role="orderTrnHdrs" EntitySet="orderTrnHdrs" />
             <End Role="orderChecks" EntitySet="orderChecks" />
+          </AssociationSet>
+          <AssociationSet Name="FK_orderTrnDtls_employees" Association="Self.FK_orderTrnDtls_employees">
+            <End Role="employees" EntitySet="employees" />
+            <End Role="orderTrnDtls" EntitySet="orderTrnDtls" />
           </AssociationSet>
           <AssociationSet Name="FK_orderTrnDtls_orderTrnHdrs" Association="Self.FK_orderTrnDtls_orderTrnHdrs">
             <End Role="orderTrnHdrs" EntitySet="orderTrnHdrs" />
@@ -1321,20 +1303,20 @@
             <End Role="webpages_Roles" EntitySet="webpages_Roles" />
             <End Role="webpages_UsersInRoles" EntitySet="webpages_UsersInRoles" />
           </AssociationSet>
+          <AssociationSet Name="FK_shipmentDetails_orderTrnHdrs" Association="Self.FK_shipmentDetails_orderTrnHdrs">
+            <End Role="orderTrnHdrs" EntitySet="orderTrnHdrs" />
+            <End Role="shipmentDetails" EntitySet="shipmentDetails" />
+          </AssociationSet>
+          <AssociationSet Name="FK_shipmentDetails_shipments" Association="Self.FK_shipmentDetails_shipments">
+            <End Role="shipments" EntitySet="shipments" />
+            <End Role="shipmentDetails" EntitySet="shipmentDetails" />
+          </AssociationSet>
           <AssociationSet Name="FK_shipments_carriers" Association="Self.FK_shipments_carriers">
             <End Role="carriers" EntitySet="carriers" />
             <End Role="shipments" EntitySet="shipments" />
           </AssociationSet>
-          <AssociationSet Name="FK_shipments_carrierSchedules" Association="Self.FK_shipments_carrierSchedules">
-            <End Role="carrierSchedules" EntitySet="carrierSchedules" />
-            <End Role="shipments" EntitySet="shipments" />
-          </AssociationSet>
           <AssociationSet Name="FK_shipments_clients" Association="Self.FK_shipments_clients">
             <End Role="clients" EntitySet="clients" />
-            <End Role="shipments" EntitySet="shipments" />
-          </AssociationSet>
-          <AssociationSet Name="FK_shipments_orderTrnHdrs" Association="Self.FK_shipments_orderTrnHdrs">
-            <End Role="orderTrnHdrs" EntitySet="orderTrnHdrs" />
             <End Role="shipments" EntitySet="shipments" />
           </AssociationSet>
           <AssociationSet Name="FK_studioEpisodes_dubbingTrnDtls" Association="Self.FK_studioEpisodes_dubbingTrnDtls">
@@ -1408,22 +1390,18 @@
           <EntitySet Name="agreementTerms" EntityType="DUBBDBModel.agreementTerm" />
           <EntitySet Name="agreementWorks" EntityType="DUBBDBModel.agreementWork" />
           <EntitySet Name="carriers" EntityType="DUBBDBModel.carrier" />
-          <EntitySet Name="carrierSchedules" EntityType="DUBBDBModel.carrierSchedule" />
           <EntitySet Name="clients" EntityType="DUBBDBModel.client" />
           <EntitySet Name="contacts" EntityType="DUBBDBModel.contact" />
-          <EntitySet Name="deliveryFeedbacks" EntityType="DUBBDBModel.deliveryFeedback" />
           <EntitySet Name="dubbDomains" EntityType="DUBBDBModel.dubbDomain" />
           <EntitySet Name="dubbingSheetDtls" EntityType="DUBBDBModel.dubbingSheetDtl" />
           <EntitySet Name="dubbingSheetHdrs" EntityType="DUBBDBModel.dubbingSheetHdr" />
           <EntitySet Name="dubbingTrnHdrs" EntityType="DUBBDBModel.dubbingTrnHdr" />
           <EntitySet Name="employees" EntityType="DUBBDBModel.employee" />
-          <EntitySet Name="feedbackActions" EntityType="DUBBDBModel.feedbackAction" />
           <EntitySet Name="orderBatchTrnHdrs" EntityType="DUBBDBModel.orderBatchTrnHdr" />
           <EntitySet Name="orderChecks" EntityType="DUBBDBModel.orderCheck" />
           <EntitySet Name="orderTrnDtls" EntityType="DUBBDBModel.orderTrnDtl" />
           <EntitySet Name="orderTrnHdrs" EntityType="DUBBDBModel.orderTrnHdr" />
           <EntitySet Name="payments" EntityType="DUBBDBModel.payment" />
-          <EntitySet Name="shipments" EntityType="DUBBDBModel.shipment" />
           <EntitySet Name="UserProfiles" EntityType="DUBBDBModel.UserProfile" />
           <EntitySet Name="voiceActors" EntityType="DUBBDBModel.voiceActor" />
           <EntitySet Name="webpages_Membership" EntityType="DUBBDBModel.webpages_Membership" />
@@ -1486,33 +1464,9 @@
             <End Role="agreementWork" EntitySet="agreementWorks" />
             <End Role="workPersonnel" EntitySet="workPersonnels" />
           </AssociationSet>
-          <AssociationSet Name="FK_carrierSchedules_carriers" Association="DUBBDBModel.FK_carrierSchedules_carriers">
-            <End Role="carrier" EntitySet="carriers" />
-            <End Role="carrierSchedule" EntitySet="carrierSchedules" />
-          </AssociationSet>
-          <AssociationSet Name="FK_shipments_carriers" Association="DUBBDBModel.FK_shipments_carriers">
-            <End Role="carrier" EntitySet="carriers" />
-            <End Role="shipment" EntitySet="shipments" />
-          </AssociationSet>
-          <AssociationSet Name="FK_shipments_carrierSchedules" Association="DUBBDBModel.FK_shipments_carrierSchedules">
-            <End Role="carrierSchedule" EntitySet="carrierSchedules" />
-            <End Role="shipment" EntitySet="shipments" />
-          </AssociationSet>
-          <AssociationSet Name="FK_shipments_clients" Association="DUBBDBModel.FK_shipments_clients">
-            <End Role="client" EntitySet="clients" />
-            <End Role="shipment" EntitySet="shipments" />
-          </AssociationSet>
           <AssociationSet Name="FK_workOrders_clients" Association="DUBBDBModel.FK_workOrders_clients">
             <End Role="client" EntitySet="clients" />
             <End Role="workOrder" EntitySet="workOrders" />
-          </AssociationSet>
-          <AssociationSet Name="FK_deliveryFeedbacks_orderTrnHdrs" Association="DUBBDBModel.FK_deliveryFeedbacks_orderTrnHdrs">
-            <End Role="orderTrnHdr" EntitySet="orderTrnHdrs" />
-            <End Role="deliveryFeedback" EntitySet="deliveryFeedbacks" />
-          </AssociationSet>
-          <AssociationSet Name="FK_feedbackActions_deliveryFeedbacks" Association="DUBBDBModel.FK_feedbackActions_deliveryFeedbacks">
-            <End Role="deliveryFeedback" EntitySet="deliveryFeedbacks" />
-            <End Role="feedbackAction" EntitySet="feedbackActions" />
           </AssociationSet>
           <AssociationSet Name="FK_dubbingSheetDtls_dubbingSheetHdrs" Association="DUBBDBModel.FK_dubbingSheetDtls_dubbingSheetHdrs">
             <End Role="dubbingSheetHdr" EntitySet="dubbingSheetHdrs" />
@@ -1577,10 +1531,6 @@
           <AssociationSet Name="FK_orderTrnHdrs_workOrders" Association="DUBBDBModel.FK_orderTrnHdrs_workOrders">
             <End Role="workOrder" EntitySet="workOrders" />
             <End Role="orderTrnHdr" EntitySet="orderTrnHdrs" />
-          </AssociationSet>
-          <AssociationSet Name="FK_shipments_orderTrnHdrs" Association="DUBBDBModel.FK_shipments_orderTrnHdrs">
-            <End Role="orderTrnHdr" EntitySet="orderTrnHdrs" />
-            <End Role="shipment" EntitySet="shipments" />
           </AssociationSet>
           <AssociationSet Name="FK_payments_voiceActors" Association="DUBBDBModel.FK_payments_voiceActors">
             <End Role="voiceActor" EntitySet="voiceActors" />
@@ -1649,6 +1599,37 @@
           <AssociationSet Name="FK_studioEpisodes_studios" Association="DUBBDBModel.FK_studioEpisodes_studios">
             <End Role="studio" EntitySet="studios" />
             <End Role="studioEpisode" EntitySet="studioEpisodes" />
+          </AssociationSet>
+          <EntitySet Name="shipmentDetails" EntityType="DUBBDBModel.shipmentDetail" />
+          <AssociationSet Name="FK_shipmentDetails_orderTrnHdrs" Association="DUBBDBModel.FK_shipmentDetails_orderTrnHdrs">
+            <End Role="orderTrnHdr" EntitySet="orderTrnHdrs" />
+            <End Role="shipmentDetail" EntitySet="shipmentDetails" />
+          </AssociationSet>
+          <EntitySet Name="shipments" EntityType="DUBBDBModel.shipment" />
+          <AssociationSet Name="FK_shipments_carriers" Association="DUBBDBModel.FK_shipments_carriers">
+            <End Role="carrier" EntitySet="carriers" />
+            <End Role="shipment" EntitySet="shipments" />
+          </AssociationSet>
+          <AssociationSet Name="FK_shipments_clients" Association="DUBBDBModel.FK_shipments_clients">
+            <End Role="client" EntitySet="clients" />
+            <End Role="shipment" EntitySet="shipments" />
+          </AssociationSet>
+          <AssociationSet Name="FK_shipmentDetails_shipments" Association="DUBBDBModel.FK_shipmentDetails_shipments">
+            <End Role="shipment" EntitySet="shipments" />
+            <End Role="shipmentDetail" EntitySet="shipmentDetails" />
+          </AssociationSet>
+          <EntitySet Name="clientClaims" EntityType="DUBBDBModel.clientClaim" />
+          <AssociationSet Name="FK_clientClaims_clients" Association="DUBBDBModel.FK_clientClaims_clients">
+            <End Role="client" EntitySet="clients" />
+            <End Role="clientClaim" EntitySet="clientClaims" />
+          </AssociationSet>
+          <AssociationSet Name="FK_clientClaims_orderTrnHdrs" Association="DUBBDBModel.FK_clientClaims_orderTrnHdrs">
+            <End Role="orderTrnHdr" EntitySet="orderTrnHdrs" />
+            <End Role="clientClaim" EntitySet="clientClaims" />
+          </AssociationSet>
+          <AssociationSet Name="FK_orderTrnDtls_employees" Association="DUBBDBModel.FK_orderTrnDtls_employees">
+            <End Role="employee" EntitySet="employees" />
+            <End Role="orderTrnDtl" EntitySet="orderTrnDtls" />
           </AssociationSet>
           </EntityContainer>
         <EntityType Name="agreement">
@@ -1732,24 +1713,9 @@
           <Property Name="carrierType" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
           <Property Name="carrierName" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
           <Property Name="othCarrierName" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
-          <Property Name="remarks" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
           <Property Name="status" Type="Boolean" Nullable="false" />
-          <NavigationProperty Name="carrierSchedules" Relationship="DUBBDBModel.FK_carrierSchedules_carriers" FromRole="carrier" ToRole="carrierSchedule" />
+          <Property Name="schedule" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
           <NavigationProperty Name="shipments" Relationship="DUBBDBModel.FK_shipments_carriers" FromRole="carrier" ToRole="shipment" />
-        </EntityType>
-        <EntityType Name="carrierSchedule">
-          <Key>
-            <PropertyRef Name="carrierScheduleIntno" />
-          </Key>
-          <Property Name="carrierScheduleIntno" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="weekDay" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
-          <Property Name="carrierIntno" Type="Int64" Nullable="false" />
-          <Property Name="flightTime" Type="Time" Nullable="false" Precision="0" />
-          <Property Name="departure" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
-          <Property Name="destination" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
-          <Property Name="status" Type="Boolean" Nullable="false" />
-          <NavigationProperty Name="carrier" Relationship="DUBBDBModel.FK_carrierSchedules_carriers" FromRole="carrierSchedule" ToRole="carrier" />
-          <NavigationProperty Name="shipments" Relationship="DUBBDBModel.FK_shipments_carrierSchedules" FromRole="carrierSchedule" ToRole="shipment" />
         </EntityType>
         <EntityType Name="client">
           <Key>
@@ -1762,8 +1728,9 @@
           <Property Name="othClientShortName" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
           <Property Name="status" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
           <NavigationProperty Name="agreements" Relationship="DUBBDBModel.FK_agreements_clients" FromRole="client" ToRole="agreement" />
-          <NavigationProperty Name="shipments" Relationship="DUBBDBModel.FK_shipments_clients" FromRole="client" ToRole="shipment" />
           <NavigationProperty Name="workOrders" Relationship="DUBBDBModel.FK_workOrders_clients" FromRole="client" ToRole="workOrder" />
+          <NavigationProperty Name="shipments" Relationship="DUBBDBModel.FK_shipments_clients" FromRole="client" ToRole="shipment" />
+          <NavigationProperty Name="clientClaims" Relationship="DUBBDBModel.FK_clientClaims_clients" FromRole="client" ToRole="clientClaim" />
         </EntityType>
         <EntityType Name="contact">
           <Key>
@@ -1782,22 +1749,6 @@
           <Property Name="remarks" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
           <Property Name="status" Type="Boolean" Nullable="false" />
           <NavigationProperty Name="agreementWorks" Relationship="DUBBDBModel.FK_agreementWorks_contacts" FromRole="contact" ToRole="agreementWork" />
-        </EntityType>
-        <EntityType Name="deliveryFeedback">
-          <Key>
-            <PropertyRef Name="feedbackIntno" />
-          </Key>
-          <Property Name="feedbackIntno" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="orderTrnHdrIntno" Type="Int64" Nullable="false" />
-          <Property Name="feedbackType" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
-          <Property Name="receivedDate" Type="DateTime" Nullable="false" Precision="0" />
-          <Property Name="clientRefNo" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
-          <Property Name="feedbackDesc" Type="String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="true" />
-          <Property Name="refLocation" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
-          <Property Name="remarks" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
-          <Property Name="status" Type="Boolean" Nullable="false" />
-          <NavigationProperty Name="orderTrnHdr" Relationship="DUBBDBModel.FK_deliveryFeedbacks_orderTrnHdrs" FromRole="deliveryFeedback" ToRole="orderTrnHdr" />
-          <NavigationProperty Name="feedbackActions" Relationship="DUBBDBModel.FK_feedbackActions_deliveryFeedbacks" FromRole="deliveryFeedback" ToRole="feedbackAction" />
         </EntityType>
         <EntityType Name="dubbDomain">
           <Key>
@@ -1884,20 +1835,7 @@
           <NavigationProperty Name="workPersonnels" Relationship="DUBBDBModel.FK_workPersonnels_employees" FromRole="employee" ToRole="workPersonnel" />
           <NavigationProperty Name="studios" Relationship="DUBBDBModel.FK_studios_employees_sound" FromRole="employee" ToRole="studio" />
           <NavigationProperty Name="studios1" Relationship="DUBBDBModel.FK_studios_employees_supervisor" FromRole="employee" ToRole="studio" />
-        </EntityType>
-        <EntityType Name="feedbackAction">
-          <Key>
-            <PropertyRef Name="actionIntno" />
-          </Key>
-          <Property Name="actionIntno" Type="Int64" Nullable="false" />
-          <Property Name="feedbackIntno" Type="Int64" Nullable="false" />
-          <Property Name="actionParty" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
-          <Property Name="actionToBeTaken" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
-          <Property Name="actionDate" Type="DateTime" Precision="0" />
-          <Property Name="checkedBy" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
-          <Property Name="checkedDate" Type="DateTime" Precision="3" />
-          <Property Name="status" Type="Boolean" Nullable="false" />
-          <NavigationProperty Name="deliveryFeedback" Relationship="DUBBDBModel.FK_feedbackActions_deliveryFeedbacks" FromRole="feedbackAction" ToRole="deliveryFeedback" />
+          <NavigationProperty Name="orderTrnDtls" Relationship="DUBBDBModel.FK_orderTrnDtls_employees" FromRole="employee" ToRole="orderTrnDtl" />
         </EntityType>
         <EntityType Name="orderBatchTrnHdr">
           <Key>
@@ -1943,6 +1881,8 @@
           <Property Name="timeRating" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
           <Property Name="qualityRating" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
           <NavigationProperty Name="orderTrnHdr" Relationship="DUBBDBModel.FK_orderTrnDtls_orderTrnHdrs" FromRole="orderTrnDtl" ToRole="orderTrnHdr" />
+          <Property Name="trnDate" Type="DateTime" Precision="0" />
+          <NavigationProperty Name="employee" Relationship="DUBBDBModel.FK_orderTrnDtls_employees" FromRole="orderTrnDtl" ToRole="employee" />
         </EntityType>
         <EntityType Name="orderTrnHdr">
           <Key>
@@ -1975,14 +1915,14 @@
           <Property Name="shipmentFinal" Type="DateTime" Precision="3" />
           <Property Name="status" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
           <NavigationProperty Name="agreementWork" Relationship="DUBBDBModel.FK_orderTrnHdrs_agreementWorks" FromRole="orderTrnHdr" ToRole="agreementWork" />
-          <NavigationProperty Name="deliveryFeedbacks" Relationship="DUBBDBModel.FK_deliveryFeedbacks_orderTrnHdrs" FromRole="orderTrnHdr" ToRole="deliveryFeedback" />
           <NavigationProperty Name="dubbingSheetDtls" Relationship="DUBBDBModel.FK_dubbingSheetDtls_orderTrnHdrs" FromRole="orderTrnHdr" ToRole="dubbingSheetDtl" />
           <NavigationProperty Name="dubbingSheetHdrs" Relationship="DUBBDBModel.FK_dubbingSheetHdrs_orderTrnHdrs" FromRole="orderTrnHdr" ToRole="dubbingSheetHdr" />
           <NavigationProperty Name="orderChecks" Relationship="DUBBDBModel.FK_orderChecks_orderTrnHdrs" FromRole="orderTrnHdr" ToRole="orderCheck" />
           <NavigationProperty Name="orderTrnDtls" Relationship="DUBBDBModel.FK_orderTrnDtls_orderTrnHdrs" FromRole="orderTrnHdr" ToRole="orderTrnDtl" />
           <NavigationProperty Name="workOrder" Relationship="DUBBDBModel.FK_orderTrnHdrs_workOrders" FromRole="orderTrnHdr" ToRole="workOrder" />
-          <NavigationProperty Name="shipments" Relationship="DUBBDBModel.FK_shipments_orderTrnHdrs" FromRole="orderTrnHdr" ToRole="shipment" />
           <NavigationProperty Name="dubbingTrnDtls" Relationship="DUBBDBModel.FK_dubbingTrnDtls_orderTrnHdrs" FromRole="orderTrnHdr" ToRole="dubbingTrnDtl" />
+          <NavigationProperty Name="shipmentDetails" Relationship="DUBBDBModel.FK_shipmentDetails_orderTrnHdrs" FromRole="orderTrnHdr" ToRole="shipmentDetail" />
+          <NavigationProperty Name="clientClaims" Relationship="DUBBDBModel.FK_clientClaims_orderTrnHdrs" FromRole="orderTrnHdr" ToRole="clientClaim" />
         </EntityType>
         <EntityType Name="payment">
           <Key>
@@ -2011,24 +1951,6 @@
           <NavigationProperty Name="dubbingTrnHdr" Relationship="DUBBDBModel.FK_payments_dubbingTrnHdrs" FromRole="payment" ToRole="dubbingTrnHdr" />
           <NavigationProperty Name="employee" Relationship="DUBBDBModel.FK_payments_employees" FromRole="payment" ToRole="employee" />
           <NavigationProperty Name="voiceActor" Relationship="DUBBDBModel.FK_payments_voiceActors" FromRole="payment" ToRole="voiceActor" />
-        </EntityType>
-        <EntityType Name="shipment">
-          <Key>
-            <PropertyRef Name="shipmentIntno" />
-          </Key>
-          <Property Name="shipmentIntno" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="orderTrnHdrIntno" Type="Int64" Nullable="false" />
-          <Property Name="carrierIntno" Type="Int64" />
-          <Property Name="carrierScheduleIntno" Type="Int64" />
-          <Property Name="shipmentMethod" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
-          <Property Name="shipmentDate" Type="DateTime" Nullable="false" Precision="0" />
-          <Property Name="remarks" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
-          <Property Name="status" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
-          <Property Name="clientIntno" Type="Int64" Nullable="false" />
-          <NavigationProperty Name="carrier" Relationship="DUBBDBModel.FK_shipments_carriers" FromRole="shipment" ToRole="carrier" />
-          <NavigationProperty Name="carrierSchedule" Relationship="DUBBDBModel.FK_shipments_carrierSchedules" FromRole="shipment" ToRole="carrierSchedule" />
-          <NavigationProperty Name="client" Relationship="DUBBDBModel.FK_shipments_clients" FromRole="shipment" ToRole="client" />
-          <NavigationProperty Name="orderTrnHdr" Relationship="DUBBDBModel.FK_shipments_orderTrnHdrs" FromRole="shipment" ToRole="orderTrnHdr" />
         </EntityType>
         <EntityType Name="UserProfile">
           <Key>
@@ -2331,54 +2253,6 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK_carrierSchedules_carriers">
-          <End Type="DUBBDBModel.carrier" Role="carrier" Multiplicity="1" />
-          <End Type="DUBBDBModel.carrierSchedule" Role="carrierSchedule" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="carrier">
-              <PropertyRef Name="carrierIntno" />
-            </Principal>
-            <Dependent Role="carrierSchedule">
-              <PropertyRef Name="carrierIntno" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK_shipments_carriers">
-          <End Type="DUBBDBModel.carrier" Role="carrier" Multiplicity="0..1" />
-          <End Type="DUBBDBModel.shipment" Role="shipment" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="carrier">
-              <PropertyRef Name="carrierIntno" />
-            </Principal>
-            <Dependent Role="shipment">
-              <PropertyRef Name="carrierIntno" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK_shipments_carrierSchedules">
-          <End Type="DUBBDBModel.carrierSchedule" Role="carrierSchedule" Multiplicity="0..1" />
-          <End Type="DUBBDBModel.shipment" Role="shipment" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="carrierSchedule">
-              <PropertyRef Name="carrierScheduleIntno" />
-            </Principal>
-            <Dependent Role="shipment">
-              <PropertyRef Name="carrierScheduleIntno" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK_shipments_clients">
-          <End Type="DUBBDBModel.client" Role="client" Multiplicity="1" />
-          <End Type="DUBBDBModel.shipment" Role="shipment" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="client">
-              <PropertyRef Name="clientIntno" />
-            </Principal>
-            <Dependent Role="shipment">
-              <PropertyRef Name="clientIntno" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
         <Association Name="FK_workOrders_clients">
           <End Type="DUBBDBModel.client" Role="client" Multiplicity="1" />
           <End Type="DUBBDBModel.workOrder" Role="workOrder" Multiplicity="*" />
@@ -2388,30 +2262,6 @@
             </Principal>
             <Dependent Role="workOrder">
               <PropertyRef Name="clientIntno" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK_deliveryFeedbacks_orderTrnHdrs">
-          <End Type="DUBBDBModel.orderTrnHdr" Role="orderTrnHdr" Multiplicity="1" />
-          <End Type="DUBBDBModel.deliveryFeedback" Role="deliveryFeedback" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="orderTrnHdr">
-              <PropertyRef Name="orderTrnHdrIntno" />
-            </Principal>
-            <Dependent Role="deliveryFeedback">
-              <PropertyRef Name="orderTrnHdrIntno" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK_feedbackActions_deliveryFeedbacks">
-          <End Type="DUBBDBModel.deliveryFeedback" Role="deliveryFeedback" Multiplicity="1" />
-          <End Type="DUBBDBModel.feedbackAction" Role="feedbackAction" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="deliveryFeedback">
-              <PropertyRef Name="feedbackIntno" />
-            </Principal>
-            <Dependent Role="feedbackAction">
-              <PropertyRef Name="feedbackIntno" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -2604,18 +2454,6 @@
             </Principal>
             <Dependent Role="orderTrnHdr">
               <PropertyRef Name="orderIntno" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK_shipments_orderTrnHdrs">
-          <End Type="DUBBDBModel.orderTrnHdr" Role="orderTrnHdr" Multiplicity="1" />
-          <End Type="DUBBDBModel.shipment" Role="shipment" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="orderTrnHdr">
-              <PropertyRef Name="orderTrnHdrIntno" />
-            </Principal>
-            <Dependent Role="shipment">
-              <PropertyRef Name="orderTrnHdrIntno" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -2868,6 +2706,132 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <EntityType Name="shipmentDetail">
+          <Key>
+            <PropertyRef Name="shipmentDtlIntno" />
+          </Key>
+          <Property Name="shipmentDtlIntno" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="shipmentIntno" Type="Int64" Nullable="false" />
+          <Property Name="orderTrnHdrIntno" Type="Int64" Nullable="false" />
+          <NavigationProperty Name="orderTrnHdr" Relationship="DUBBDBModel.FK_shipmentDetails_orderTrnHdrs" FromRole="shipmentDetail" ToRole="orderTrnHdr" />
+          <NavigationProperty Name="shipment" Relationship="DUBBDBModel.FK_shipmentDetails_shipments" FromRole="shipmentDetail" ToRole="shipment" />
+        </EntityType>
+        <Association Name="FK_shipmentDetails_orderTrnHdrs">
+          <End Type="DUBBDBModel.orderTrnHdr" Role="orderTrnHdr" Multiplicity="1" />
+          <End Type="DUBBDBModel.shipmentDetail" Role="shipmentDetail" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="orderTrnHdr">
+              <PropertyRef Name="orderTrnHdrIntno" />
+            </Principal>
+            <Dependent Role="shipmentDetail">
+              <PropertyRef Name="orderTrnHdrIntno" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityType Name="shipment">
+          <Key>
+            <PropertyRef Name="shipmentIntno" />
+          </Key>
+          <Property Name="shipmentIntno" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="carrierIntno" Type="Int64" />
+          <Property Name="shipmentDate" Type="DateTime" Nullable="false" Precision="0" />
+          <Property Name="remarks" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="status" Type="Boolean" Nullable="false" />
+          <Property Name="clientIntno" Type="Int64" Nullable="false" />
+          <NavigationProperty Name="carrier" Relationship="DUBBDBModel.FK_shipments_carriers" FromRole="shipment" ToRole="carrier" />
+          <NavigationProperty Name="client" Relationship="DUBBDBModel.FK_shipments_clients" FromRole="shipment" ToRole="client" />
+          <NavigationProperty Name="shipmentDetails" Relationship="DUBBDBModel.FK_shipmentDetails_shipments" FromRole="shipment" ToRole="shipmentDetail" />
+        </EntityType>
+        <Association Name="FK_shipments_carriers">
+          <End Type="DUBBDBModel.carrier" Role="carrier" Multiplicity="0..1" />
+          <End Type="DUBBDBModel.shipment" Role="shipment" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="carrier">
+              <PropertyRef Name="carrierIntno" />
+            </Principal>
+            <Dependent Role="shipment">
+              <PropertyRef Name="carrierIntno" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_shipments_clients">
+          <End Type="DUBBDBModel.client" Role="client" Multiplicity="1" />
+          <End Type="DUBBDBModel.shipment" Role="shipment" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="client">
+              <PropertyRef Name="clientIntno" />
+            </Principal>
+            <Dependent Role="shipment">
+              <PropertyRef Name="clientIntno" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_shipmentDetails_shipments">
+          <End Type="DUBBDBModel.shipment" Role="shipment" Multiplicity="1" />
+          <End Type="DUBBDBModel.shipmentDetail" Role="shipmentDetail" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="shipment">
+              <PropertyRef Name="shipmentIntno" />
+            </Principal>
+            <Dependent Role="shipmentDetail">
+              <PropertyRef Name="shipmentIntno" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityType Name="clientClaim">
+          <Key>
+            <PropertyRef Name="claimIntno" />
+          </Key>
+          <Property Name="claimIntno" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="orderTrnHdrIntno" Type="Int64" Nullable="false" />
+          <Property Name="clientIntno" Type="Int64" Nullable="false" />
+          <Property Name="claimType" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="receivedDate" Type="DateTime" Nullable="false" Precision="0" />
+          <Property Name="claimRefNo" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="claimDesc" Type="String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="refLocation" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="requiredAction" Type="String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="actionDate" Type="DateTime" Precision="0" />
+          <Property Name="status" Type="Boolean" Nullable="false" />
+          <NavigationProperty Name="client" Relationship="DUBBDBModel.FK_clientClaims_clients" FromRole="clientClaim" ToRole="client" />
+          <NavigationProperty Name="orderTrnHdr" Relationship="DUBBDBModel.FK_clientClaims_orderTrnHdrs" FromRole="clientClaim" ToRole="orderTrnHdr" />
+        </EntityType>
+        <Association Name="FK_clientClaims_clients">
+          <End Type="DUBBDBModel.client" Role="client" Multiplicity="1" />
+          <End Type="DUBBDBModel.clientClaim" Role="clientClaim" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="client">
+              <PropertyRef Name="clientIntno" />
+            </Principal>
+            <Dependent Role="clientClaim">
+              <PropertyRef Name="clientIntno" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_clientClaims_orderTrnHdrs">
+          <End Type="DUBBDBModel.orderTrnHdr" Role="orderTrnHdr" Multiplicity="1" />
+          <End Type="DUBBDBModel.clientClaim" Role="clientClaim" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="orderTrnHdr">
+              <PropertyRef Name="orderTrnHdrIntno" />
+            </Principal>
+            <Dependent Role="clientClaim">
+              <PropertyRef Name="orderTrnHdrIntno" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_orderTrnDtls_employees">
+          <End Type="DUBBDBModel.employee" Role="employee" Multiplicity="1" />
+          <End Type="DUBBDBModel.orderTrnDtl" Role="orderTrnDtl" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="employee">
+              <PropertyRef Name="empIntno" />
+            </Principal>
+            <Dependent Role="orderTrnDtl">
+              <PropertyRef Name="empIntno" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -2934,25 +2898,12 @@
           <EntitySetMapping Name="carriers">
             <EntityTypeMapping TypeName="DUBBDBModel.carrier">
               <MappingFragment StoreEntitySet="carriers">
+                <ScalarProperty Name="schedule" ColumnName="schedule" />
                 <ScalarProperty Name="status" ColumnName="status" />
-                <ScalarProperty Name="remarks" ColumnName="remarks" />
                 <ScalarProperty Name="othCarrierName" ColumnName="othCarrierName" />
                 <ScalarProperty Name="carrierName" ColumnName="carrierName" />
                 <ScalarProperty Name="carrierType" ColumnName="carrierType" />
                 <ScalarProperty Name="carrierIntno" ColumnName="carrierIntno" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="carrierSchedules">
-            <EntityTypeMapping TypeName="DUBBDBModel.carrierSchedule">
-              <MappingFragment StoreEntitySet="carrierSchedules">
-                <ScalarProperty Name="status" ColumnName="status" />
-                <ScalarProperty Name="destination" ColumnName="destination" />
-                <ScalarProperty Name="departure" ColumnName="departure" />
-                <ScalarProperty Name="flightTime" ColumnName="flightTime" />
-                <ScalarProperty Name="carrierIntno" ColumnName="carrierIntno" />
-                <ScalarProperty Name="weekDay" ColumnName="weekDay" />
-                <ScalarProperty Name="carrierScheduleIntno" ColumnName="carrierScheduleIntno" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
@@ -2983,21 +2934,6 @@
                 <ScalarProperty Name="partyIntno" ColumnName="partyIntno" />
                 <ScalarProperty Name="contactParty" ColumnName="contactParty" />
                 <ScalarProperty Name="contactIntno" ColumnName="contactIntno" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="deliveryFeedbacks">
-            <EntityTypeMapping TypeName="DUBBDBModel.deliveryFeedback">
-              <MappingFragment StoreEntitySet="deliveryFeedbacks">
-                <ScalarProperty Name="status" ColumnName="status" />
-                <ScalarProperty Name="remarks" ColumnName="remarks" />
-                <ScalarProperty Name="refLocation" ColumnName="refLocation" />
-                <ScalarProperty Name="feedbackDesc" ColumnName="feedbackDesc" />
-                <ScalarProperty Name="clientRefNo" ColumnName="clientRefNo" />
-                <ScalarProperty Name="receivedDate" ColumnName="receivedDate" />
-                <ScalarProperty Name="feedbackType" ColumnName="feedbackType" />
-                <ScalarProperty Name="orderTrnHdrIntno" ColumnName="orderTrnHdrIntno" />
-                <ScalarProperty Name="feedbackIntno" ColumnName="feedbackIntno" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
@@ -3072,20 +3008,6 @@
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
-          <EntitySetMapping Name="feedbackActions">
-            <EntityTypeMapping TypeName="DUBBDBModel.feedbackAction">
-              <MappingFragment StoreEntitySet="feedbackActions">
-                <ScalarProperty Name="status" ColumnName="status" />
-                <ScalarProperty Name="checkedDate" ColumnName="checkedDate" />
-                <ScalarProperty Name="checkedBy" ColumnName="checkedBy" />
-                <ScalarProperty Name="actionDate" ColumnName="actionDate" />
-                <ScalarProperty Name="actionToBeTaken" ColumnName="actionToBeTaken" />
-                <ScalarProperty Name="actionParty" ColumnName="actionParty" />
-                <ScalarProperty Name="feedbackIntno" ColumnName="feedbackIntno" />
-                <ScalarProperty Name="actionIntno" ColumnName="actionIntno" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
           <EntitySetMapping Name="orderBatchTrnHdrs">
             <EntityTypeMapping TypeName="DUBBDBModel.orderBatchTrnHdr">
               <MappingFragment StoreEntitySet="orderBatchTrnHdrs">
@@ -3118,6 +3040,7 @@
           <EntitySetMapping Name="orderTrnDtls">
             <EntityTypeMapping TypeName="DUBBDBModel.orderTrnDtl">
               <MappingFragment StoreEntitySet="orderTrnDtls">
+                <ScalarProperty Name="trnDate" ColumnName="trnDate" />
                 <ScalarProperty Name="qualityRating" ColumnName="qualityRating" />
                 <ScalarProperty Name="timeRating" ColumnName="timeRating" />
                 <ScalarProperty Name="totalMinutes" ColumnName="totalMinutes" />
@@ -3183,21 +3106,6 @@
                 <ScalarProperty Name="workIntno" ColumnName="workIntno" />
                 <ScalarProperty Name="dubbTrnHdrIntno" ColumnName="dubbTrnHdrIntno" />
                 <ScalarProperty Name="paymentHdrIntno" ColumnName="paymentHdrIntno" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="shipments">
-            <EntityTypeMapping TypeName="DUBBDBModel.shipment">
-              <MappingFragment StoreEntitySet="shipments">
-                <ScalarProperty Name="clientIntno" ColumnName="clientIntno" />
-                <ScalarProperty Name="status" ColumnName="status" />
-                <ScalarProperty Name="remarks" ColumnName="remarks" />
-                <ScalarProperty Name="shipmentDate" ColumnName="shipmentDate" />
-                <ScalarProperty Name="shipmentMethod" ColumnName="shipmentMethod" />
-                <ScalarProperty Name="carrierScheduleIntno" ColumnName="carrierScheduleIntno" />
-                <ScalarProperty Name="carrierIntno" ColumnName="carrierIntno" />
-                <ScalarProperty Name="orderTrnHdrIntno" ColumnName="orderTrnHdrIntno" />
-                <ScalarProperty Name="shipmentIntno" ColumnName="shipmentIntno" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
@@ -3396,6 +3304,44 @@
                 <ScalarProperty Name="dubbTrnDtlIntno" ColumnName="dubbTrnDtlIntno" />
                 <ScalarProperty Name="studioIntno" ColumnName="studioIntno" />
                 <ScalarProperty Name="studioEpisodeIntno" ColumnName="studioEpisodeIntno" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="shipmentDetails">
+            <EntityTypeMapping TypeName="DUBBDBModel.shipmentDetail">
+              <MappingFragment StoreEntitySet="shipmentDetails">
+                <ScalarProperty Name="orderTrnHdrIntno" ColumnName="orderTrnHdrIntno" />
+                <ScalarProperty Name="shipmentIntno" ColumnName="shipmentIntno" />
+                <ScalarProperty Name="shipmentDtlIntno" ColumnName="shipmentDtlIntno" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="shipments">
+            <EntityTypeMapping TypeName="DUBBDBModel.shipment">
+              <MappingFragment StoreEntitySet="shipments">
+                <ScalarProperty Name="clientIntno" ColumnName="clientIntno" />
+                <ScalarProperty Name="status" ColumnName="status" />
+                <ScalarProperty Name="remarks" ColumnName="remarks" />
+                <ScalarProperty Name="shipmentDate" ColumnName="shipmentDate" />
+                <ScalarProperty Name="carrierIntno" ColumnName="carrierIntno" />
+                <ScalarProperty Name="shipmentIntno" ColumnName="shipmentIntno" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="clientClaims">
+            <EntityTypeMapping TypeName="DUBBDBModel.clientClaim">
+              <MappingFragment StoreEntitySet="clientClaims">
+                <ScalarProperty Name="status" ColumnName="status" />
+                <ScalarProperty Name="actionDate" ColumnName="actionDate" />
+                <ScalarProperty Name="requiredAction" ColumnName="requiredAction" />
+                <ScalarProperty Name="refLocation" ColumnName="refLocation" />
+                <ScalarProperty Name="claimDesc" ColumnName="claimDesc" />
+                <ScalarProperty Name="claimRefNo" ColumnName="claimRefNo" />
+                <ScalarProperty Name="receivedDate" ColumnName="receivedDate" />
+                <ScalarProperty Name="claimType" ColumnName="claimType" />
+                <ScalarProperty Name="clientIntno" ColumnName="clientIntno" />
+                <ScalarProperty Name="orderTrnHdrIntno" ColumnName="orderTrnHdrIntno" />
+                <ScalarProperty Name="claimIntno" ColumnName="claimIntno" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>

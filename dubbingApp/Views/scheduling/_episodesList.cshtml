@@ -10,57 +10,60 @@
                         <label class="badge alert-info">@schedule.workName</label> &nbsp;&nbsp; <small>@schedule.episodesPerWeek Episodes/Week</small>
                     </div>
                     <div class="col-sm-2">
-                        <button class="btn btn-default btn-xs pull-right" onclick="onEpisodesAddNewClick(@schedule.workIntno, @schedule.dubbTrnHdrIntno)" title="Load Episodes">
+                        <button class="btn btn-default btn-xs pull-right" onclick="onEpisodesAddNewClick(@schedule.workIntno, @schedule.dubbTrnHdrIntno)" title="Add Episodes">
                             <span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span>
                         </button>
                     </div>
                 </div>
             </div>
             <div class="panel-body">
-                <div class="row">
-                    @{
-                        if (schedule.episodesList.Count() != 0)
-                        {
-                            <div class="col-sm-1">
-                                <span class="glyphicon glyphicon-film" aria-hidden="true"></span>
-                            </div>
-                        }
-                    }
-                    <div class="col-sm-11 btn-group-xs">
-                        @foreach (var ep in schedule.episodesList)
-                        {
-                            string btnColor = "btn-default";
-                            if (ep.status == "02")
-                            {
-                                btnColor = "btn-success";
-                            }
-                            <button class="btn btn-xs @btnColor" onclick="onEpisodeRemoveClick(@ep.episode.dubbTrnDtlIntno)" title="Remove" style="width:30px">@ep.episode.episodeNo</button>
-                        }
-                    </div>
-                </div>
-                @foreach (var std in schedule.studioEpisodesList.Select(b => b.studioNo).Distinct())
+                @if (schedule.isScheduled)
                 {
                     <div class="row">
-                        <div class="col-sm-1">
-                            <small><label class="alert-info" style="padding:0px">@std</label></small>
-                        </div>
-                        <div class="col-sm-11 btn-group-xs">
-                            @foreach (var ep in schedule.studioEpisodesList.Where(b => b.studioNo == std))
+                        @{
+                            if (schedule.episodesList.Count() != 0)
                             {
-                                if (ep.status == true)
+                                <div class="col-sm-1">
+                                    <span class="glyphicon glyphicon-film" aria-hidden="true"></span>
+                                </div>
+                            }
+                        }
+                        <div class="col-sm-11 btn-group-xs">
+                            @foreach (var ep in schedule.episodesList)
+                            {
+                                string btnColor = "btn-default";
+                                if (ep.status == "02")
                                 {
-                                    <button class="btn btn-xs btn-default" onclick="onStudioEpisodeAllocationToggleClick(@ep.studioEpisodeIntno)" title="Exclude" style="width:30px">&radic;</button>
+                                    btnColor = "btn-success";
                                 }
-                                else
-                                {
-                                    <button class="btn btn-xs btn-default" onclick="onStudioEpisodeAllocationToggleClick(@ep.studioEpisodeIntno)" title="Include" style="width:30px">&times;</button>
-                                }
+                                <button class="btn btn-xs @btnColor" onclick="onEpisodeRemoveClick(@ep.episode.dubbTrnDtlIntno)" title="Remove" style="width:30px">@ep.episode.episodeNo</button>
                             }
                         </div>
                     </div>
+
+                    foreach (var std in schedule.studioEpisodesList.Select(b => b.studioNo).Distinct())
+                    {
+                        <div class="row">
+                            <div class="col-sm-1">
+                                <small><label class="alert-info" style="padding:0px">@std</label></small>
+                            </div>
+                            <div class="col-sm-11 btn-group-xs">
+                                @foreach (var ep in schedule.studioEpisodesList.Where(b => b.studioNo == std))
+                                {
+                                    if (ep.status == true)
+                                    {
+                                        <button class="btn btn-xs btn-default" onclick="onStudioEpisodeAllocationToggleClick(@ep.studioEpisodeIntno)" title="Exclude" style="width:30px">&radic;</button>
+                                    }
+                                    else
+                                    {
+                                        <button class="btn btn-xs btn-default" onclick="onStudioEpisodeAllocationToggleClick(@ep.studioEpisodeIntno)" title="Include" style="width:30px">&times;</button>
+                                    }
+                                }
+                            </div>
+                        </div>
+                    }
                 }
             </div>
-
         </div>
     }
 </div>

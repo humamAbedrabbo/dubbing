@@ -42,9 +42,12 @@ namespace dubbingApp.Controllers
                                             && b.episodeNo <= tEpisode 
                                             );
             var model = x;
-            switch(stage)
+            if (!work.HasValue)// means new orders from all works
+                stage = "01";
+
+            switch (stage)
             {
-                case "01": //new
+                case "01": //New
                     model = x.Where(b => !b.startAdaptation.HasValue && b.status != "06");
                     break;
                 case "02": //completed adaptation & ready for dubbing
@@ -63,6 +66,7 @@ namespace dubbingApp.Controllers
                     model = x.Where(b => b.status != "06");
                     break;
             }
+
             return PartialView("_orderItemsList", model.OrderBy(b => new { b.workIntno, b.episodeNo }).ToList());
         }
 
@@ -358,7 +362,7 @@ namespace dubbingApp.Controllers
         // client complains
         public ActionResult orderItemComplainsList(long id)
         {
-            var model = db.deliveryFeedbacks.Where(b => b.orderTrnHdrIntno == id);
+            var model = db.clientClaims.Where(b => b.orderTrnHdrIntno == id);
             ViewBag.orderItem = id;
             return PartialView("_orderItemComplainsList", model.ToList());
         }
@@ -366,15 +370,15 @@ namespace dubbingApp.Controllers
         public ActionResult orderItemComplainAddNew(long id)
         {
             ViewBag.orderItem = id;
-            ViewBag.feedbackTypesList = LookupModels.getDictionary("feedbackType");
+            ViewBag.claimTypesList = LookupModels.getDictionary("claimType");
             return PartialView("_orderItemComplainAddNew");
         }
 
         [ValidateAntiForgeryToken]
         [HttpPost, ValidateInput(false)]
-        public ActionResult orderItemComplainAddNew(deliveryFeedback item, long id)
+        public ActionResult orderItemComplainAddNew(clientClaim item, long id)
         {
-            var model = db.deliveryFeedbacks;
+            var model = db.clientClaims;
             if (ModelState.IsValid)
             {
                 try
@@ -396,7 +400,7 @@ namespace dubbingApp.Controllers
 
         public ActionResult orderItemComplainEndorse(long id)
         {
-            var model = db.deliveryFeedbacks;
+            var model = db.clientClaims;
             var modelItem = model.Find(id);
             ViewBag.orderItem = modelItem.orderTrnHdrIntno;
             modelItem.status = false;

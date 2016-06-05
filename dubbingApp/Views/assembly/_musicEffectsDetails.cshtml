@@ -1,0 +1,69 @@
+﻿@model dubbingModel.orderTrnDtl
+
+<div>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            <small>Date</small>
+        </dt>
+
+        <dd>
+            @{ 
+                if (Model.trnDate.HasValue)
+                {
+                    @Model.trnDate.Value.ToShortDateString();
+                }
+            }
+        </dd>
+
+        <dt>
+            <small>Media</small>
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.activityType)
+        </dd>
+
+        <dt>
+            <small>Contractor</small>
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.employee.fullName)
+        </dd>
+
+        <dt>
+            <small>Provided ME</small>
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.providedService)
+        </dd>
+
+        <dt>
+            <small>Total Minutes</small>
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.totalMinutes)
+        </dd>
+
+        <dt>
+            <small>Punctuality Rating</small>
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.timeRating)
+        </dd>
+
+        <dt>
+            <small>Quality Rating</small>
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.qualityRating)
+        </dd>
+
+    </dl>
+</div>
+

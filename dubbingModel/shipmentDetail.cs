@@ -12,17 +12,13 @@ namespace dubbingModel
     using System;
     using System.Collections.Generic;
     
-    public partial class feedbackAction
+    public partial class shipmentDetail
     {
-        public long actionIntno { get; set; }
-        public long feedbackIntno { get; set; }
-        public string actionParty { get; set; }
-        public string actionToBeTaken { get; set; }
-        public Nullable<System.DateTime> actionDate { get; set; }
-        public string checkedBy { get; set; }
-        public Nullable<System.DateTime> checkedDate { get; set; }
-        public bool status { get; set; }
+        public long shipmentDtlIntno { get; set; }
+        public long shipmentIntno { get; set; }
+        public long orderTrnHdrIntno { get; set; }
     
-        public virtual deliveryFeedback deliveryFeedback { get; set; }
+        public virtual orderTrnHdr orderTrnHdr { get; set; }
+        public virtual shipment shipment { get; set; }
     }
 }

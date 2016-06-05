@@ -12,26 +12,21 @@ namespace dubbingModel
     using System;
     using System.Collections.Generic;
     
-    public partial class deliveryFeedback
+    public partial class clientClaim
     {
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public deliveryFeedback()
-        {
-            this.feedbackActions = new HashSet<feedbackAction>();
-        }
-    
-        public long feedbackIntno { get; set; }
+        public long claimIntno { get; set; }
         public long orderTrnHdrIntno { get; set; }
-        public string feedbackType { get; set; }
+        public long clientIntno { get; set; }
+        public string claimType { get; set; }
         public System.DateTime receivedDate { get; set; }
-        public string clientRefNo { get; set; }
-        public string feedbackDesc { get; set; }
+        public string claimRefNo { get; set; }
+        public string claimDesc { get; set; }
         public string refLocation { get; set; }
-        public string remarks { get; set; }
+        public string requiredAction { get; set; }
+        public Nullable<System.DateTime> actionDate { get; set; }
         public bool status { get; set; }
     
+        public virtual client client { get; set; }
         public virtual orderTrnHdr orderTrnHdr { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<feedbackAction> feedbackActions { get; set; }
     }
 }

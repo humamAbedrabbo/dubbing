@@ -1,0 +1,56 @@
+﻿@model dubbingModel.shipment
+@{ 
+    string shipmentDate = Model.shipmentDate.ToString("yyyy-MM-dd");
+}
+
+<p><small>Update Shipment Information, Cancel or Endorse</small></p>
+@using (Ajax.BeginForm("shipmentsUpdate", "assembly",
+                                            new AjaxOptions()
+                                            {
+                                                HttpMethod = "POST",
+                                                UpdateTargetId = "formResult",
+                                                OnSuccess = "onShipmentSuccess"
+                                            }
+                                            ))
+{
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+    @Html.HiddenFor(model => model.shipmentIntno)
+    @Html.HiddenFor(model => model.clientIntno)
+
+    <div class="form-group-sm">
+        <small>@Html.LabelFor(model => model.shipmentDate, "Shipment Date", htmlAttributes: new { @class = "control-label" })</small>
+        <div>
+            <input type="date" name="shipmentDate" class="form-control" value="@shipmentDate" />
+            @Html.ValidationMessageFor(model => model.shipmentDate, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+    <div class="form-group-sm">
+        <small>@Html.LabelFor(model => model.carrierIntno, "Carrier", htmlAttributes: new { @class = "control-label" })</small>
+        <div>
+            @Html.DropDownListFor(model => model.carrierIntno, ViewBag.carriersList as SelectList, htmlAttributes: new { @class = "form-control", onchange = "onClientComboChanged()", @id = "clientCombo" })
+            @Html.ValidationMessageFor(model => model.carrierIntno, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+    <div class="form-group">
+        <small>@Html.LabelFor(model => model.remarks, "Remarks", htmlAttributes: new { @class = "control-label" })</small>
+        <div>
+            @Html.EditorFor(model => model.remarks, new { htmlAttributes = new { @class = "form-control" } })
+            @Html.ValidationMessageFor(model => model.remarks, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+    <br />
+    <div class="form-group-sm">
+        <button type="submit" name="updateBtn" class="btn btn-default btn-sm pull-left" value="1">Update Shipment</button>
+        <button type="submit" name="updateBtn" class="btn btn-default btn-sm pull-left" value="2">Endorse Shipment</button>
+        <button type="submit" name="updateBtn" class="btn btn-default btn-sm pull-left" value="3">Delete Shipment</button>
+        <br /><br />
+        <p>
+            <small><label class="alert-success" id="formResult"></label></small>
+        </p>
+    </div>
+    <br />
+}

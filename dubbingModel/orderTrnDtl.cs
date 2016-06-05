@@ -22,7 +22,9 @@ namespace dubbingModel
         public Nullable<int> totalMinutes { get; set; }
         public string timeRating { get; set; }
         public string qualityRating { get; set; }
+        public Nullable<System.DateTime> trnDate { get; set; }
     
         public virtual orderTrnHdr orderTrnHdr { get; set; }
+        public virtual employee employee { get; set; }
     }
 }

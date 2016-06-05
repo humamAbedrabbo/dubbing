@@ -1,0 +1,74 @@
+﻿@model dubbingModel.clientClaim
+
+<div>
+    <p><small>Claim Details &amp; Endorsement</small></p>
+    <dl class="dl-horizontal">
+        <dt>
+            <small>Received Date</small>
+        </dt>
+
+        <dd>
+            @{
+                @Model.receivedDate.ToShortDateString();
+            }
+        </dd>
+
+        <dt>
+            <small>Media</small>
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.claimType)
+        </dd>
+
+        <dt>
+            <small>Client Ref. No.</small>
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.claimRefNo)
+        </dd>
+
+        <dt>
+            <small>Claim Description</small>
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.claimDesc)
+        </dd>
+
+        <dt>
+            <small>Ref. Location</small>
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.refLocation)
+        </dd>
+
+        <dt>
+            <small>Required Action</small>
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.requiredAction)
+        </dd>
+
+        <dt>
+            <small>Action Date</small>
+        </dt>
+
+        <dd>
+            @{
+                if (Model.actionDate.HasValue)
+                {
+                    @Model.actionDate.Value.ToShortDateString()
+                }
+            }
+        </dd>
+
+    </dl>
+</div>
+<p>
+    <button class="btn btn-sm btn-default" onclick="onClaimEndorseClick(@Model.claimIntno)">Endorse Claim</button>    
+    <small><label class="alert-success" id="formResult"></label></small>
+</p>

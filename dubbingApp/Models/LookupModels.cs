@@ -301,26 +301,7 @@ namespace dubbingApp.Models
             return scheduleList;
         }
 
-        public static List<ViewModels.carrierScheduleViewModel> getCarrierScheduleViewModel()
-        {
-            List<ViewModels.carrierScheduleViewModel> csList = new List<ViewModels.carrierScheduleViewModel>();
-            var x = (from A in db.carriers
-                     join B in db.carrierSchedules on A.carrierIntno equals B.carrierIntno
-                     where A.status == true && B.status == true
-                     select new { B.carrierScheduleIntno, A.carrierName, B.weekDay, B.flightTime, B.departure, B.destination, A.remarks }).ToList();
-            for (int i = 0; i < x.Count(); i++)
-            {
-                ViewModels.carrierScheduleViewModel cs = new ViewModels.carrierScheduleViewModel();
-                cs.carrierScheduleIntno = x[i].carrierScheduleIntno.ToString();
-                cs.weekDay = x[i].weekDay;
-                cs.summaryText = x[i].carrierName + " - Flight Time: " + x[i].flightTime
-                                + " (" + decodeDictionaryItem("departure", x[i].departure)
-                                + " -> " + decodeDictionaryItem("destination", x[i].destination) + ")";
-                cs.remarks = x[i].remarks;
-                csList.Add(cs);
-            }
-            return csList;
-        }
+        
 
         public static IEnumerable getCarriersList(string carrierType)
         {
@@ -331,20 +312,6 @@ namespace dubbingApp.Models
                 return x.ToList();
         }
 
-        public static IEnumerable getCarrierSchedulesList(long? carrierIntno)
-        {
-            var x = (from A in db.carriers
-                     join B in db.carrierSchedules on A.carrierIntno equals B.carrierIntno
-                     join C in db.dubbDomains on B.departure equals C.domainCode
-                     join D in db.dubbDomains on B.destination equals D.domainCode
-                     where C.domainName == "departure" && D.domainName == "destination"
-                     select new { B.carrierScheduleIntno, A.carrierIntno, B.flightTime, departure = C.domainValue, destination = D.domainValue });
-            if (carrierIntno.HasValue)
-                return x.Where(b => b.carrierIntno == carrierIntno).ToList();
-            else
-                return x.ToList();
-        }
-        
     }
 }
 

@@ -17,7 +17,6 @@ namespace dubbingModel
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         public carrier()
         {
-            this.carrierSchedules = new HashSet<carrierSchedule>();
             this.shipments = new HashSet<shipment>();
         }
     
@@ -25,11 +24,9 @@ namespace dubbingModel
         public string carrierType { get; set; }
         public string carrierName { get; set; }
         public string othCarrierName { get; set; }
-        public string remarks { get; set; }
         public bool status { get; set; }
+        public string schedule { get; set; }
     
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<carrierSchedule> carrierSchedules { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<shipment> shipments { get; set; }
     }

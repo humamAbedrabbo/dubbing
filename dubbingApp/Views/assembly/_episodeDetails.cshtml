@@ -1,0 +1,82 @@
+﻿<br /><br />
+<div class="container-fluid" style="padding:0px">
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <div class="row">
+                <div class="col-sm-10"><small><label>Episode @ViewBag.episodeNo Summary</label></small></div>
+                <div class="col-sm-2">
+                    <button class="btn btn-default btn-xs pull-right" onclick="onCloseClick()" title="Close">
+                        <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div class="panel-body">
+            @if (ViewBag.shipment != null)
+            {
+                <div class="row">
+                    <div class="col-sm-8">
+                        <small><label>Shipment Date: </label>&nbsp; @ViewBag.shipment</small>
+                    </div>
+                    <div class="col-sm-4">
+                        <button class="btn btn-default btn-xs pull-right" onclick="onShipmentEpisodeDelete(@ViewBag.dtlIntno)" title="Remove from Shipment">
+                            <span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
+                        </button>
+                    </div>
+                </div>
+            }
+            @if (ViewBag.claimsList != null)
+            {
+                <div class="row">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th class="col-sm-10"><small>Claims</small></th>
+                                <th class="col-sm-2"></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var claim in ViewBag.claimsList)
+                            {
+                                <tr>
+                                    <td class="col-sm-10"><small>@claim.claimDesc</small></td>
+                                    <td class="col-sm-2">
+                                        <button class="btn btn-default btn-xs pull-right" data-toggle="modal" data-target="#popupForm" onclick="onClientClaimsDetailsClick(@claim.claimIntno)" title="Modify">
+                                            <span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
+                                        </button>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+            @if (ViewBag.meList != null)
+            {
+                <div class="row">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th class="col-sm-10"><small>Music &amp; Effects</small></th>
+                                <th class="col-sm-2"></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var me in ViewBag.meList)
+                            {
+                                <tr>
+                                    <td class="col-sm-10"><small>@me.providedService</small></td>
+                                    <td class="col-sm-2">
+                                        <button class="btn btn-default btn-xs pull-right" data-toggle="modal" data-target="#popupForm" onclick="onMeDetailsClick(@me.orderTrnDtlIntno)" title="Details">
+                                            <span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
+                                        </button>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+        </div>
+    </div>
+</div>

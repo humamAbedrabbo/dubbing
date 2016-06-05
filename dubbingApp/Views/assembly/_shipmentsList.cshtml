@@ -1,0 +1,50 @@
+﻿@model IEnumerable<dubbingModel.shipment>
+
+@{
+    if (ViewBag.isPopup)
+    {
+        <p><small>Select from the List of Available Shipments, only ONE Shipment for the Delivery of the Selected Episodes</small></p>
+    }
+}
+<div class="container-fluid" style="padding:0px">
+    <table class="table table-condensed">
+        <thead>
+            <tr>
+                <th class="col-sm-2"><small>Date</small></th>
+                <th class="col-sm-3"><small>Client</small></th>
+                <th class="col-sm-3"><small>Carrier</small></th>
+                <th class="col-sm-2"><small></small></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var ship in Model)
+            {
+                <tr>
+                    <td class="col-sm-2"><small>@ship.shipmentDate.ToString("dd/MM")</small></td>
+                    <td class="col-sm-3"><small>@ship.client.clientShortName</small></td>
+                    <td class="col-sm-3"><small>@ship.carrier.carrierName</small></td>
+                    <td class="col-sm-2">
+                        @{
+                            if (ViewBag.isPopup)
+                            {
+                                <button class="btn btn-default btn-xs pull-right" onclick="onShipmentSelectClick(@ship.shipmentIntno)" title="Package"><small>Select</small></button>
+                            }
+                            else
+                            {
+                                <button class="btn btn-default btn-xs pull-right" onclick="onShipmentDetailsClick(@ship.shipmentIntno)" title="Package">
+                                    <span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span>
+                                </button>
+                                <button class="btn btn-default btn-xs pull-right"  data-toggle="modal" data-target="#popupForm" onclick="onShipmentsUpdateClick(@ship.shipmentIntno)" title="Modify">
+                                    <span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
+                                </button>
+                            }
+                        }
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+<label class="alert-success" id="result"></label>
+

@@ -1,4 +1,4 @@
-﻿@model dubbingModel.deliveryFeedback
+﻿@model dubbingModel.clientClaim
 
 <div class="container-fluid">
     @using (Ajax.BeginForm("orderItemComplainAddNew", "orders", new { id = ViewBag.orderItem },
@@ -12,14 +12,6 @@
     {
         @Html.AntiForgeryToken()
         @Html.ValidationSummary(true, "", new { @class = "text-danger" })
-        
-        <div class="form-group">
-            <small>@Html.LabelFor(model => model.feedbackType, "Material", htmlAttributes: new { @class = "control-label col-sm-4" })</small>
-            <div class="col-sm-8">
-                @Html.DropDownListFor(model => model.feedbackType, new SelectList(ViewBag.feedbackTypesList, "key", "value"), string.Empty, htmlAttributes: new { @class = "form-control" })
-                @Html.ValidationMessageFor(model => model.feedbackType, "", new { @class = "text-danger" })
-            </div>
-        </div>
 
         <div class="form-group">
             <small>@Html.LabelFor(model => model.receivedDate, "Received Date", htmlAttributes: new { @class = "control-label col-sm-4" })</small>
@@ -30,18 +22,26 @@
         </div>
 
         <div class="form-group">
-            <small>@Html.LabelFor(model => model.clientRefNo, "Ref. No.", htmlAttributes: new { @class = "control-label col-sm-4" })</small>
+            <small>@Html.LabelFor(model => model.claimType, "Media", htmlAttributes: new { @class = "control-label col-sm-4" })</small>
             <div class="col-sm-8">
-                @Html.EditorFor(model => model.clientRefNo, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.clientRefNo, "", new { @class = "text-danger" })
+                @Html.DropDownListFor(model => model.claimType, new SelectList(ViewBag.claimTypesList, "key", "value"), string.Empty, htmlAttributes: new { @class = "form-control" })
+                @Html.ValidationMessageFor(model => model.claimType, "", new { @class = "text-danger" })
+            </div>
+        </div>
+        
+        <div class="form-group">
+            <small>@Html.LabelFor(model => model.claimRefNo, "Ref. No.", htmlAttributes: new { @class = "control-label col-sm-4" })</small>
+            <div class="col-sm-8">
+                @Html.EditorFor(model => model.claimRefNo, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.claimRefNo, "", new { @class = "text-danger" })
             </div>
         </div>
 
         <div class="form-group">
-            <small>@Html.LabelFor(model => model.feedbackDesc, "Desc", htmlAttributes: new { @class = "control-label col-sm-4" })</small>
+            <small>@Html.LabelFor(model => model.claimDesc, "Desc", htmlAttributes: new { @class = "control-label col-sm-4" })</small>
             <div class="col-sm-8">
-                @Html.EditorFor(model => model.feedbackDesc, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.feedbackDesc, "", new { @class = "text-danger" })
+                @Html.EditorFor(model => model.claimDesc, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.claimDesc, "", new { @class = "text-danger" })
             </div>
         </div>
 
@@ -54,10 +54,18 @@
         </div>
 
         <div class="form-group">
-            <small>@Html.LabelFor(model => model.remarks, "Required Action", htmlAttributes: new { @class = "control-label col-sm-4" })</small>
+            <small>@Html.LabelFor(model => model.requiredAction, "Required Action", htmlAttributes: new { @class = "control-label col-sm-4" })</small>
             <div class="col-sm-8">
-                @Html.EditorFor(model => model.remarks, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.remarks, "", new { @class = "text-danger" })
+                @Html.EditorFor(model => model.requiredAction, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.requiredAction, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            <small>@Html.LabelFor(model => model.actionDate, "Action Date", htmlAttributes: new { @class = "control-label col-sm-4" })</small>
+            <div class="col-sm-8">
+                <input type="date" name="actionDate" />
+                @Html.ValidationMessageFor(model => model.actionDate, "", new { @class = "text-danger" })
             </div>
         </div>
 

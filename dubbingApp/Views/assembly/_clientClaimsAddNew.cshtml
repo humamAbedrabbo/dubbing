@@ -1,0 +1,77 @@
+﻿@model dubbingModel.clientClaim
+
+<p><small>Provide Claim Information</small></p>
+@using (Ajax.BeginForm("clientClaimsAddNew", "assembly", new { episode = ViewBag.episode },
+                                    new AjaxOptions()
+                                    {
+                                        HttpMethod = "POST",
+                                        UpdateTargetId = "formResult",
+                                        OnSuccess = "onAddClientClaimsSuccess"
+                                    }
+                                    ))
+{
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+    <div class="form-group-sm">
+        <small>@Html.LabelFor(model => model.receivedDate, "Received Date", htmlAttributes: new { @class = "control-label" })</small>
+        <div>
+            <input type="date" name="receivedDate" class="form-control" />
+            @Html.ValidationMessageFor(model => model.receivedDate, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+    <div class="form-group-sm">
+        <small>@Html.LabelFor(model => model.claimType, "Media", htmlAttributes: new { @class = "control-label" })</small>
+        <div>
+            @Html.DropDownListFor(model => model.claimType, ViewBag.claimTypesList as SelectList, string.Empty, htmlAttributes: new { @class = "form-control", onchange = "onClientComboChanged()", @id = "clientCombo" })
+            @Html.ValidationMessageFor(model => model.claimType, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+    <div class="form-group">
+        <small>@Html.LabelFor(model => model.claimRefNo, "Ref. No", htmlAttributes: new { @class = "control-label" })</small>
+        <div>
+            @Html.EditorFor(model => model.claimRefNo, new { htmlAttributes = new { @class = "form-control" } })
+            @Html.ValidationMessageFor(model => model.claimRefNo, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+    <div class="form-group">
+        <small>@Html.LabelFor(model => model.claimDesc, "Claim Desc", htmlAttributes: new { @class = "control-label" })</small>
+        <div>
+            @Html.EditorFor(model => model.claimDesc, new { htmlAttributes = new { @class = "form-control" } })
+            @Html.ValidationMessageFor(model => model.claimDesc, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+    <div class="form-group-sm">
+        <small>@Html.LabelFor(model => model.refLocation, "Ref. Location", htmlAttributes: new { @class = "control-label" })</small>
+        <div>
+            @Html.EditorFor(model => model.refLocation, new { htmlAttributes = new { @class = "form-control" } })
+            @Html.ValidationMessageFor(model => model.refLocation, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+    <div class="form-group-sm">
+        <small>@Html.LabelFor(model => model.requiredAction, "Required Actions", htmlAttributes: new { @class = "control-label" })</small>
+        <div>
+            @Html.EditorFor(model => model.requiredAction, new { htmlAttributes = new { @class = "form-control" } })
+            @Html.ValidationMessageFor(model => model.requiredAction, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+    <div class="form-group-sm">
+        <small>@Html.LabelFor(model => model.actionDate, "Action Date", htmlAttributes: new { @class = "control-label" })</small>
+        <div>
+            <input type="date" name="actionDate" class="form-control" />
+            @Html.ValidationMessageFor(model => model.actionDate, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+    <br />
+    <div class="form-group-sm">
+        <button type="submit" class="btn btn-default btn-sm pull-left">Submit</button>
+        <small><label class="alert-success" id="formResult"></label></small>
+    </div>
+}

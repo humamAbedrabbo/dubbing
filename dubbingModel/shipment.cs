@@ -14,19 +14,22 @@ namespace dubbingModel
     
     public partial class shipment
     {
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
+        public shipment()
+        {
+            this.shipmentDetails = new HashSet<shipmentDetail>();
+        }
+    
         public long shipmentIntno { get; set; }
-        public long orderTrnHdrIntno { get; set; }
         public Nullable<long> carrierIntno { get; set; }
-        public Nullable<long> carrierScheduleIntno { get; set; }
-        public string shipmentMethod { get; set; }
         public System.DateTime shipmentDate { get; set; }
         public string remarks { get; set; }
-        public string status { get; set; }
+        public bool status { get; set; }
         public long clientIntno { get; set; }
     
         public virtual carrier carrier { get; set; }
-        public virtual carrierSchedule carrierSchedule { get; set; }
         public virtual client client { get; set; }
-        public virtual orderTrnHdr orderTrnHdr { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<shipmentDetail> shipmentDetails { get; set; }
     }
 }

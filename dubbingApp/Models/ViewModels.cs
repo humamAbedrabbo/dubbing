@@ -26,6 +26,7 @@ namespace dubbingApp.Models
             public long dubbTrnHdrIntno { get; set; }
             public DateTime fromDate { get; set; }
             public DateTime thruDate { get; set; }
+            public bool isScheduled { get; set; }
             public List<episodeItem> episodesList { get; set; }
             public List<studioEpisodeItem> studioEpisodesList { get; set; }
         }
