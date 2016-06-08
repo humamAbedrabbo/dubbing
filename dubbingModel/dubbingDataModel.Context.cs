@@ -41,7 +41,6 @@ namespace dubbingModel
         public virtual DbSet<orderCheck> orderChecks { get; set; }
         public virtual DbSet<orderTrnDtl> orderTrnDtls { get; set; }
         public virtual DbSet<orderTrnHdr> orderTrnHdrs { get; set; }
-        public virtual DbSet<payment> payments { get; set; }
         public virtual DbSet<UserProfile> UserProfiles { get; set; }
         public virtual DbSet<voiceActor> voiceActors { get; set; }
         public virtual DbSet<webpages_Membership> webpages_Membership { get; set; }
@@ -59,5 +58,8 @@ namespace dubbingModel
         public virtual DbSet<shipmentDetail> shipmentDetails { get; set; }
         public virtual DbSet<shipment> shipments { get; set; }
         public virtual DbSet<clientClaim> clientClaims { get; set; }
+        public virtual DbSet<paymentDetail> paymentDetails { get; set; }
+        public virtual DbSet<payment> payments { get; set; }
+        public virtual DbSet<paymentTemp> paymentTemps { get; set; }
     }
 }

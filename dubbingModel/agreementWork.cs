@@ -19,7 +19,6 @@ namespace dubbingModel
         {
             this.orderBatchTrnHdrs = new HashSet<orderBatchTrnHdr>();
             this.orderTrnHdrs = new HashSet<orderTrnHdr>();
-            this.payments = new HashSet<payment>();
             this.workActors = new HashSet<workActor>();
             this.workCharacters = new HashSet<workCharacter>();
             this.workOrders = new HashSet<workOrder>();
@@ -27,6 +26,7 @@ namespace dubbingModel
             this.dubbingTrnDtls = new HashSet<dubbingTrnDtl>();
             this.dubbingAppointments = new HashSet<dubbingAppointment>();
             this.studios = new HashSet<studio>();
+            this.payments = new HashSet<payment>();
         }
     
         public long workIntno { get; set; }
@@ -49,8 +49,6 @@ namespace dubbingModel
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<orderTrnHdr> orderTrnHdrs { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<payment> payments { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<workActor> workActors { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<workCharacter> workCharacters { get; set; }
@@ -64,5 +62,7 @@ namespace dubbingModel
         public virtual ICollection<dubbingAppointment> dubbingAppointments { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<studio> studios { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<payment> payments { get; set; }
     }
 }

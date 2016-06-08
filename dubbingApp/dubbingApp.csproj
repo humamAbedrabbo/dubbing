@@ -180,6 +180,7 @@
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\ManageController.cs" />
     <Compile Include="Controllers\ordersController.cs" />
+    <Compile Include="Controllers\paymentController.cs" />
     <Compile Include="Controllers\schedulingController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
@@ -338,6 +339,12 @@
     <Content Include="Views\assembly\_episodeDetails.cshtml" />
     <Content Include="Views\assembly\_musicEffectsDetails.cshtml" />
     <Content Include="Views\assembly\_clientClaimsDetails.cshtml" />
+    <Content Include="Views\payment\Index.cshtml" />
+    <Content Include="Views\payment\_actorsList.cshtml" />
+    <Content Include="Views\payment\_paymentsDueList.cshtml" />
+    <Content Include="Views\payment\_paymentsAddNew.cshtml" />
+    <Content Include="Views\payment\_paymentsList.cshtml" />
+    <Content Include="Views\payment\_paymentsUpdate.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

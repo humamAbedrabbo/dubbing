@@ -21,7 +21,6 @@
         <EntityTypeShape EntityType="DUBBDBModel.orderCheck" Width="1.5" PointX="18.75" PointY="44.5" />
         <EntityTypeShape EntityType="DUBBDBModel.orderTrnDtl" Width="1.5" PointX="18.75" PointY="47.125" />
         <EntityTypeShape EntityType="DUBBDBModel.orderTrnHdr" Width="1.5" PointX="16.5" PointY="29.5" />
-        <EntityTypeShape EntityType="DUBBDBModel.payment" Width="1.5" PointX="10.5" PointY="30.625" />
         <EntityTypeShape EntityType="DUBBDBModel.UserProfile" Width="1.5" PointX="3" PointY="0.875" />
         <EntityTypeShape EntityType="DUBBDBModel.voiceActor" Width="1.5" PointX="19.5" PointY="39.75" />
         <EntityTypeShape EntityType="DUBBDBModel.webpages_Membership" Width="1.5" PointX="2.75" PointY="3.75" />
@@ -40,7 +39,6 @@
         <AssociationConnector Association="DUBBDBModel.FK_agreementWorks_contacts" />
         <AssociationConnector Association="DUBBDBModel.FK_orderBatchTrnHdrs_agreementWorks" />
         <AssociationConnector Association="DUBBDBModel.FK_orderTrnHdrs_agreementWorks" />
-        <AssociationConnector Association="DUBBDBModel.FK_payments_agreementWorks" />
         <AssociationConnector Association="DUBBDBModel.FK_workActors_agreementWorks" />
         <AssociationConnector Association="DUBBDBModel.FK_workCharacters_agreementWorks" />
         <AssociationConnector Association="DUBBDBModel.FK_workOrders_agreementWorks" />
@@ -54,15 +52,12 @@
         <AssociationConnector Association="DUBBDBModel.FK_dubbingSheetHdrs_orderTrnHdrs" />
         <AssociationConnector Association="DUBBDBModel.FK_dubbingSheetHdrs_voiceActors" />
         <AssociationConnector Association="DUBBDBModel.FK_dubbingSheetHdrs_workCharacters" />
-        <AssociationConnector Association="DUBBDBModel.FK_payments_dubbingTrnHdrs" />
         <AssociationConnector Association="DUBBDBModel.FK_orderBatchTrnHdrs_employees" />
-        <AssociationConnector Association="DUBBDBModel.FK_payments_employees" />
         <AssociationConnector Association="DUBBDBModel.FK_workPersonnels_employees" />
         <AssociationConnector Association="DUBBDBModel.FK_orderBatchTrnHdrs_workOrders" />
         <AssociationConnector Association="DUBBDBModel.FK_orderChecks_orderTrnHdrs" />
         <AssociationConnector Association="DUBBDBModel.FK_orderTrnDtls_orderTrnHdrs" />
         <AssociationConnector Association="DUBBDBModel.FK_orderTrnHdrs_workOrders" />
-        <AssociationConnector Association="DUBBDBModel.FK_payments_voiceActors" />
         <AssociationConnector Association="DUBBDBModel.FK_workActors_voiceActors" />
         <AssociationConnector Association="DUBBDBModel.FK_workActors_workCharacters" />
         <AssociationConnector Association="DUBBDBModel.webpages_UsersInRoles" />
@@ -92,6 +87,13 @@
         <AssociationConnector Association="DUBBDBModel.FK_clientClaims_clients" />
         <AssociationConnector Association="DUBBDBModel.FK_clientClaims_orderTrnHdrs" />
         <AssociationConnector Association="DUBBDBModel.FK_orderTrnDtls_employees" />
+        <EntityTypeShape EntityType="DUBBDBModel.paymentDetail" Width="1.5" PointX="29" PointY="34.5" />
+        <EntityTypeShape EntityType="DUBBDBModel.payment" Width="1.5" PointX="26.75" PointY="32.75" />
+        <AssociationConnector Association="DUBBDBModel.FK_payments_agreementWorks" />
+        <AssociationConnector Association="DUBBDBModel.FK_payments_employees" />
+        <AssociationConnector Association="DUBBDBModel.FK_paymentDetails_payments" />
+        <AssociationConnector Association="DUBBDBModel.FK_payments_voiceActors" />
+        <EntityTypeShape EntityType="DUBBDBModel.paymentTemp" Width="1.5" PointX="5.375" PointY="6.75" />
         </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

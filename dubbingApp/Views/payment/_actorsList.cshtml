@@ -1,0 +1,15 @@
+﻿@model IEnumerable<KeyValuePair<long, String>>
+@{ int cnt = 0; }
+<ol>
+    @foreach(var x in Model)
+    {
+        cnt++;
+        string idx = @cnt.ToString();
+        string[] actor = x.Value.Split('|');
+        string actorName = '"' + actor[0] + '"';
+        <li>
+            <a class="actorMenu" id="@idx" href="#" onclick="onActorSelectClick(@x.Key, @actorName, '@idx')">@actor[0]</a>
+            <span><label class="badge alert-info">@actor[1]</label></span>
+        </li>
+    }
+</ol>

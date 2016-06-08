@@ -279,29 +279,50 @@
           <Property Name="shipmentFinal" Type="datetime" />
           <Property Name="status" Type="nvarchar" MaxLength="50" Nullable="false" />
         </EntityType>
+        <EntityType Name="paymentDetails">
+          <Key>
+            <PropertyRef Name="paymentDtlIntno" />
+          </Key>
+          <Property Name="paymentDtlIntno" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="paymentIntno" Type="bigint" Nullable="false" />
+          <Property Name="dubbingDate" Type="date" Nullable="false" />
+          <Property Name="totalUnits" Type="int" Nullable="false" />
+        </EntityType>
         <EntityType Name="payments">
           <Key>
-            <PropertyRef Name="paymentHdrIntno" />
+            <PropertyRef Name="paymentIntno" />
           </Key>
-          <Property Name="paymentHdrIntno" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
-          <Property Name="dubbTrnHdrIntno" Type="bigint" Nullable="false" />
+          <Property Name="paymentIntno" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="workIntno" Type="bigint" Nullable="false" />
-          <Property Name="costCenterType" Type="nvarchar" MaxLength="50" />
+          <Property Name="costCenterType" Type="nvarchar" MaxLength="50" Nullable="false" />
           <Property Name="voiceActorIntno" Type="bigint" />
           <Property Name="empIntno" Type="bigint" />
-          <Property Name="anonymousName" Type="nvarchar" MaxLength="50" />
-          <Property Name="episodeNo" Type="smallint" Nullable="false" />
+          <Property Name="fullName" Type="nvarchar" MaxLength="50" />
+          <Property Name="episodeNo" Type="smallint" />
           <Property Name="totalScenes" Type="int" Nullable="false" />
-          <Property Name="adjustedTotalScenes" Type="int" Nullable="false" />
           <Property Name="unitRate" Type="int" Nullable="false" />
           <Property Name="paymentDesc" Type="nvarchar(max)" />
           <Property Name="totalAmount" Type="int" Nullable="false" />
           <Property Name="currencyCode" Type="nvarchar" MaxLength="50" Nullable="false" />
           <Property Name="deduction" Type="int" Nullable="false" />
           <Property Name="paymentDate" Type="date" />
-          <Property Name="remarks" Type="nvarchar(max)" />
-          <Property Name="status" Type="bit" Nullable="false" />
           <Property Name="accountNo" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="status" Type="bit" Nullable="false" />
+          <Property Name="isPaid" Type="bit" Nullable="false" />
+          <Property Name="isExported" Type="bit" Nullable="false" />
+        </EntityType>
+        <EntityType Name="paymentTemps">
+          <Key>
+            <PropertyRef Name="tempIntno" />
+          </Key>
+          <Property Name="tempIntno" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="personIntno" Type="bigint" Nullable="false" />
+          <Property Name="personName" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="workIntno" Type="bigint" Nullable="false" />
+          <Property Name="workName" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="trnDate" Type="date" Nullable="false" />
+          <Property Name="totalUnits" Type="int" Nullable="false" />
+          <Property Name="refPaymentIntno" Type="bigint" />
         </EntityType>
         <EntityType Name="shipmentDetails">
           <Key>
@@ -839,6 +860,18 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK_paymentDetails_payments">
+          <End Role="payments" Type="Self.payments" Multiplicity="1" />
+          <End Role="paymentDetails" Type="Self.paymentDetails" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="payments">
+              <PropertyRef Name="paymentIntno" />
+            </Principal>
+            <Dependent Role="paymentDetails">
+              <PropertyRef Name="paymentIntno" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK_payments_agreementWorks">
           <End Role="agreementWorks" Type="Self.agreementWorks" Multiplicity="1" />
           <End Role="payments" Type="Self.payments" Multiplicity="*" />
@@ -848,18 +881,6 @@
             </Principal>
             <Dependent Role="payments">
               <PropertyRef Name="workIntno" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK_payments_dubbingTrnHdrs">
-          <End Role="dubbingTrnHdrs" Type="Self.dubbingTrnHdrs" Multiplicity="1" />
-          <End Role="payments" Type="Self.payments" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="dubbingTrnHdrs">
-              <PropertyRef Name="dubbTrnHdrIntno" />
-            </Principal>
-            <Dependent Role="payments">
-              <PropertyRef Name="dubbTrnHdrIntno" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -1147,7 +1168,9 @@
           <EntitySet Name="orderChecks" EntityType="Self.orderChecks" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="orderTrnDtls" EntityType="Self.orderTrnDtls" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="orderTrnHdrs" EntityType="Self.orderTrnHdrs" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="paymentDetails" EntityType="Self.paymentDetails" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="payments" EntityType="Self.payments" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="paymentTemps" EntityType="Self.paymentTemps" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="shipmentDetails" EntityType="Self.shipmentDetails" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="shipments" EntityType="Self.shipments" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="studioEpisodes" EntityType="Self.studioEpisodes" Schema="dbo" store:Type="Tables" />
@@ -1283,12 +1306,12 @@
             <End Role="workOrders" EntitySet="workOrders" />
             <End Role="orderTrnHdrs" EntitySet="orderTrnHdrs" />
           </AssociationSet>
+          <AssociationSet Name="FK_paymentDetails_payments" Association="Self.FK_paymentDetails_payments">
+            <End Role="payments" EntitySet="payments" />
+            <End Role="paymentDetails" EntitySet="paymentDetails" />
+          </AssociationSet>
           <AssociationSet Name="FK_payments_agreementWorks" Association="Self.FK_payments_agreementWorks">
             <End Role="agreementWorks" EntitySet="agreementWorks" />
-            <End Role="payments" EntitySet="payments" />
-          </AssociationSet>
-          <AssociationSet Name="FK_payments_dubbingTrnHdrs" Association="Self.FK_payments_dubbingTrnHdrs">
-            <End Role="dubbingTrnHdrs" EntitySet="dubbingTrnHdrs" />
             <End Role="payments" EntitySet="payments" />
           </AssociationSet>
           <AssociationSet Name="FK_payments_employees" Association="Self.FK_payments_employees">
@@ -1401,7 +1424,6 @@
           <EntitySet Name="orderChecks" EntityType="DUBBDBModel.orderCheck" />
           <EntitySet Name="orderTrnDtls" EntityType="DUBBDBModel.orderTrnDtl" />
           <EntitySet Name="orderTrnHdrs" EntityType="DUBBDBModel.orderTrnHdr" />
-          <EntitySet Name="payments" EntityType="DUBBDBModel.payment" />
           <EntitySet Name="UserProfiles" EntityType="DUBBDBModel.UserProfile" />
           <EntitySet Name="voiceActors" EntityType="DUBBDBModel.voiceActor" />
           <EntitySet Name="webpages_Membership" EntityType="DUBBDBModel.webpages_Membership" />
@@ -1443,10 +1465,6 @@
           <AssociationSet Name="FK_orderTrnHdrs_agreementWorks" Association="DUBBDBModel.FK_orderTrnHdrs_agreementWorks">
             <End Role="agreementWork" EntitySet="agreementWorks" />
             <End Role="orderTrnHdr" EntitySet="orderTrnHdrs" />
-          </AssociationSet>
-          <AssociationSet Name="FK_payments_agreementWorks" Association="DUBBDBModel.FK_payments_agreementWorks">
-            <End Role="agreementWork" EntitySet="agreementWorks" />
-            <End Role="payment" EntitySet="payments" />
           </AssociationSet>
           <AssociationSet Name="FK_workActors_agreementWorks" Association="DUBBDBModel.FK_workActors_agreementWorks">
             <End Role="agreementWork" EntitySet="agreementWorks" />
@@ -1500,17 +1518,9 @@
             <End Role="workCharacter" EntitySet="workCharacters" />
             <End Role="dubbingSheetHdr" EntitySet="dubbingSheetHdrs" />
           </AssociationSet>
-          <AssociationSet Name="FK_payments_dubbingTrnHdrs" Association="DUBBDBModel.FK_payments_dubbingTrnHdrs">
-            <End Role="dubbingTrnHdr" EntitySet="dubbingTrnHdrs" />
-            <End Role="payment" EntitySet="payments" />
-          </AssociationSet>
           <AssociationSet Name="FK_orderBatchTrnHdrs_employees" Association="DUBBDBModel.FK_orderBatchTrnHdrs_employees">
             <End Role="employee" EntitySet="employees" />
             <End Role="orderBatchTrnHdr" EntitySet="orderBatchTrnHdrs" />
-          </AssociationSet>
-          <AssociationSet Name="FK_payments_employees" Association="DUBBDBModel.FK_payments_employees">
-            <End Role="employee" EntitySet="employees" />
-            <End Role="payment" EntitySet="payments" />
           </AssociationSet>
           <AssociationSet Name="FK_workPersonnels_employees" Association="DUBBDBModel.FK_workPersonnels_employees">
             <End Role="employee" EntitySet="employees" />
@@ -1531,10 +1541,6 @@
           <AssociationSet Name="FK_orderTrnHdrs_workOrders" Association="DUBBDBModel.FK_orderTrnHdrs_workOrders">
             <End Role="workOrder" EntitySet="workOrders" />
             <End Role="orderTrnHdr" EntitySet="orderTrnHdrs" />
-          </AssociationSet>
-          <AssociationSet Name="FK_payments_voiceActors" Association="DUBBDBModel.FK_payments_voiceActors">
-            <End Role="voiceActor" EntitySet="voiceActors" />
-            <End Role="payment" EntitySet="payments" />
           </AssociationSet>
           <AssociationSet Name="FK_workActors_voiceActors" Association="DUBBDBModel.FK_workActors_voiceActors">
             <End Role="voiceActor" EntitySet="voiceActors" />
@@ -1631,6 +1637,25 @@
             <End Role="employee" EntitySet="employees" />
             <End Role="orderTrnDtl" EntitySet="orderTrnDtls" />
           </AssociationSet>
+          <EntitySet Name="paymentDetails" EntityType="DUBBDBModel.paymentDetail" />
+          <EntitySet Name="payments" EntityType="DUBBDBModel.payment" />
+          <AssociationSet Name="FK_payments_agreementWorks" Association="DUBBDBModel.FK_payments_agreementWorks">
+            <End Role="agreementWork" EntitySet="agreementWorks" />
+            <End Role="payment" EntitySet="payments" />
+          </AssociationSet>
+          <AssociationSet Name="FK_payments_employees" Association="DUBBDBModel.FK_payments_employees">
+            <End Role="employee" EntitySet="employees" />
+            <End Role="payment" EntitySet="payments" />
+          </AssociationSet>
+          <AssociationSet Name="FK_paymentDetails_payments" Association="DUBBDBModel.FK_paymentDetails_payments">
+            <End Role="payment" EntitySet="payments" />
+            <End Role="paymentDetail" EntitySet="paymentDetails" />
+          </AssociationSet>
+          <AssociationSet Name="FK_payments_voiceActors" Association="DUBBDBModel.FK_payments_voiceActors">
+            <End Role="voiceActor" EntitySet="voiceActors" />
+            <End Role="payment" EntitySet="payments" />
+          </AssociationSet>
+          <EntitySet Name="paymentTemps" EntityType="DUBBDBModel.paymentTemp" />
           </EntityContainer>
         <EntityType Name="agreement">
           <Key>
@@ -1696,7 +1721,6 @@
           <NavigationProperty Name="contact" Relationship="DUBBDBModel.FK_agreementWorks_contacts" FromRole="agreementWork" ToRole="contact" />
           <NavigationProperty Name="orderBatchTrnHdrs" Relationship="DUBBDBModel.FK_orderBatchTrnHdrs_agreementWorks" FromRole="agreementWork" ToRole="orderBatchTrnHdr" />
           <NavigationProperty Name="orderTrnHdrs" Relationship="DUBBDBModel.FK_orderTrnHdrs_agreementWorks" FromRole="agreementWork" ToRole="orderTrnHdr" />
-          <NavigationProperty Name="payments" Relationship="DUBBDBModel.FK_payments_agreementWorks" FromRole="agreementWork" ToRole="payment" />
           <NavigationProperty Name="workActors" Relationship="DUBBDBModel.FK_workActors_agreementWorks" FromRole="agreementWork" ToRole="workActor" />
           <NavigationProperty Name="workCharacters" Relationship="DUBBDBModel.FK_workCharacters_agreementWorks" FromRole="agreementWork" ToRole="workCharacter" />
           <NavigationProperty Name="workOrders" Relationship="DUBBDBModel.FK_workOrders_agreementWorks" FromRole="agreementWork" ToRole="workOrder" />
@@ -1704,6 +1728,7 @@
           <NavigationProperty Name="dubbingTrnDtls" Relationship="DUBBDBModel.FK_dubbingTrnDtls_agreementWorks" FromRole="agreementWork" ToRole="dubbingTrnDtl" />
           <NavigationProperty Name="dubbingAppointments" Relationship="DUBBDBModel.FK_dubbingAppointments_agreementWorks" FromRole="agreementWork" ToRole="dubbingAppointment" />
           <NavigationProperty Name="studios" Relationship="DUBBDBModel.FK_studios_agreementWorks" FromRole="agreementWork" ToRole="studio" />
+          <NavigationProperty Name="payments" Relationship="DUBBDBModel.FK_payments_agreementWorks" FromRole="agreementWork" ToRole="payment" />
         </EntityType>
         <EntityType Name="carrier">
           <Key>
@@ -1809,7 +1834,6 @@
           <Property Name="thruDate" Type="DateTime" Nullable="false" Precision="0" />
           <Property Name="isPaid" Type="Boolean" Nullable="false" />
           <Property Name="status" Type="Boolean" Nullable="false" />
-          <NavigationProperty Name="payments" Relationship="DUBBDBModel.FK_payments_dubbingTrnHdrs" FromRole="dubbingTrnHdr" ToRole="payment" />
           <NavigationProperty Name="dubbingTrnDtls" Relationship="DUBBDBModel.FK_dubbingTrnDtls_dubbingTrnHdrs" FromRole="dubbingTrnHdr" ToRole="dubbingTrnDtl" />
           <NavigationProperty Name="studios" Relationship="DUBBDBModel.FK_studios_dubbingTrnHdrs" FromRole="dubbingTrnHdr" ToRole="studio" />
         </EntityType>
@@ -1831,11 +1855,11 @@
           <NavigationProperty Name="dubbingSheetDtls1" Relationship="DUBBDBModel.FK_dubbingSheetDtls_employees1" FromRole="employee" ToRole="dubbingSheetDtl" />
           <NavigationProperty Name="dubbingSheetDtls2" Relationship="DUBBDBModel.FK_dubbingSheetDtls_employees2" FromRole="employee" ToRole="dubbingSheetDtl" />
           <NavigationProperty Name="orderBatchTrnHdrs" Relationship="DUBBDBModel.FK_orderBatchTrnHdrs_employees" FromRole="employee" ToRole="orderBatchTrnHdr" />
-          <NavigationProperty Name="payments" Relationship="DUBBDBModel.FK_payments_employees" FromRole="employee" ToRole="payment" />
           <NavigationProperty Name="workPersonnels" Relationship="DUBBDBModel.FK_workPersonnels_employees" FromRole="employee" ToRole="workPersonnel" />
           <NavigationProperty Name="studios" Relationship="DUBBDBModel.FK_studios_employees_sound" FromRole="employee" ToRole="studio" />
           <NavigationProperty Name="studios1" Relationship="DUBBDBModel.FK_studios_employees_supervisor" FromRole="employee" ToRole="studio" />
           <NavigationProperty Name="orderTrnDtls" Relationship="DUBBDBModel.FK_orderTrnDtls_employees" FromRole="employee" ToRole="orderTrnDtl" />
+          <NavigationProperty Name="payments" Relationship="DUBBDBModel.FK_payments_employees" FromRole="employee" ToRole="payment" />
         </EntityType>
         <EntityType Name="orderBatchTrnHdr">
           <Key>
@@ -1924,34 +1948,6 @@
           <NavigationProperty Name="shipmentDetails" Relationship="DUBBDBModel.FK_shipmentDetails_orderTrnHdrs" FromRole="orderTrnHdr" ToRole="shipmentDetail" />
           <NavigationProperty Name="clientClaims" Relationship="DUBBDBModel.FK_clientClaims_orderTrnHdrs" FromRole="orderTrnHdr" ToRole="clientClaim" />
         </EntityType>
-        <EntityType Name="payment">
-          <Key>
-            <PropertyRef Name="paymentHdrIntno" />
-          </Key>
-          <Property Name="paymentHdrIntno" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="dubbTrnHdrIntno" Type="Int64" Nullable="false" />
-          <Property Name="workIntno" Type="Int64" Nullable="false" />
-          <Property Name="costCenterType" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
-          <Property Name="voiceActorIntno" Type="Int64" />
-          <Property Name="empIntno" Type="Int64" />
-          <Property Name="anonymousName" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
-          <Property Name="episodeNo" Type="Int16" Nullable="false" />
-          <Property Name="totalScenes" Type="Int32" Nullable="false" />
-          <Property Name="adjustedTotalScenes" Type="Int32" Nullable="false" />
-          <Property Name="unitRate" Type="Int32" Nullable="false" />
-          <Property Name="paymentDesc" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
-          <Property Name="totalAmount" Type="Int32" Nullable="false" />
-          <Property Name="currencyCode" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
-          <Property Name="deduction" Type="Int32" Nullable="false" />
-          <Property Name="paymentDate" Type="DateTime" Precision="0" />
-          <Property Name="remarks" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
-          <Property Name="status" Type="Boolean" Nullable="false" />
-          <Property Name="accountNo" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
-          <NavigationProperty Name="agreementWork" Relationship="DUBBDBModel.FK_payments_agreementWorks" FromRole="payment" ToRole="agreementWork" />
-          <NavigationProperty Name="dubbingTrnHdr" Relationship="DUBBDBModel.FK_payments_dubbingTrnHdrs" FromRole="payment" ToRole="dubbingTrnHdr" />
-          <NavigationProperty Name="employee" Relationship="DUBBDBModel.FK_payments_employees" FromRole="payment" ToRole="employee" />
-          <NavigationProperty Name="voiceActor" Relationship="DUBBDBModel.FK_payments_voiceActors" FromRole="payment" ToRole="voiceActor" />
-        </EntityType>
         <EntityType Name="UserProfile">
           <Key>
             <PropertyRef Name="UserId" />
@@ -1973,9 +1969,9 @@
           <Property Name="status" Type="Boolean" Nullable="false" />
           <Property Name="accountNo" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
           <NavigationProperty Name="dubbingSheetHdrs" Relationship="DUBBDBModel.FK_dubbingSheetHdrs_voiceActors" FromRole="voiceActor" ToRole="dubbingSheetHdr" />
-          <NavigationProperty Name="payments" Relationship="DUBBDBModel.FK_payments_voiceActors" FromRole="voiceActor" ToRole="payment" />
           <NavigationProperty Name="workActors" Relationship="DUBBDBModel.FK_workActors_voiceActors" FromRole="voiceActor" ToRole="workActor" />
           <NavigationProperty Name="dubbingAppointments" Relationship="DUBBDBModel.FK_dubbingAppointments_voiceActors" FromRole="voiceActor" ToRole="dubbingAppointment" />
+          <NavigationProperty Name="payments" Relationship="DUBBDBModel.FK_payments_voiceActors" FromRole="voiceActor" ToRole="payment" />
         </EntityType>
         <EntityType Name="webpages_Membership">
           <Key>
@@ -2193,18 +2189,6 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK_payments_agreementWorks">
-          <End Type="DUBBDBModel.agreementWork" Role="agreementWork" Multiplicity="1" />
-          <End Type="DUBBDBModel.payment" Role="payment" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="agreementWork">
-              <PropertyRef Name="workIntno" />
-            </Principal>
-            <Dependent Role="payment">
-              <PropertyRef Name="workIntno" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
         <Association Name="FK_workActors_agreementWorks">
           <End Type="DUBBDBModel.agreementWork" Role="agreementWork" Multiplicity="1" />
           <End Type="DUBBDBModel.workActor" Role="workActor" Multiplicity="*" />
@@ -2361,18 +2345,6 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK_payments_dubbingTrnHdrs">
-          <End Type="DUBBDBModel.dubbingTrnHdr" Role="dubbingTrnHdr" Multiplicity="1" />
-          <End Type="DUBBDBModel.payment" Role="payment" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="dubbingTrnHdr">
-              <PropertyRef Name="dubbTrnHdrIntno" />
-            </Principal>
-            <Dependent Role="payment">
-              <PropertyRef Name="dubbTrnHdrIntno" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
         <Association Name="FK_orderBatchTrnHdrs_employees">
           <End Type="DUBBDBModel.employee" Role="employee" Multiplicity="1" />
           <End Type="DUBBDBModel.orderBatchTrnHdr" Role="orderBatchTrnHdr" Multiplicity="*" />
@@ -2381,18 +2353,6 @@
               <PropertyRef Name="empIntno" />
             </Principal>
             <Dependent Role="orderBatchTrnHdr">
-              <PropertyRef Name="empIntno" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK_payments_employees">
-          <End Type="DUBBDBModel.employee" Role="employee" Multiplicity="0..1" />
-          <End Type="DUBBDBModel.payment" Role="payment" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="employee">
-              <PropertyRef Name="empIntno" />
-            </Principal>
-            <Dependent Role="payment">
               <PropertyRef Name="empIntno" />
             </Dependent>
           </ReferentialConstraint>
@@ -2454,18 +2414,6 @@
             </Principal>
             <Dependent Role="orderTrnHdr">
               <PropertyRef Name="orderIntno" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK_payments_voiceActors">
-          <End Type="DUBBDBModel.voiceActor" Role="voiceActor" Multiplicity="0..1" />
-          <End Type="DUBBDBModel.payment" Role="payment" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="voiceActor">
-              <PropertyRef Name="voiceActorIntno" />
-            </Principal>
-            <Dependent Role="payment">
-              <PropertyRef Name="voiceActorIntno" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -2832,6 +2780,104 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <EntityType Name="paymentDetail">
+          <Key>
+            <PropertyRef Name="paymentDtlIntno" />
+          </Key>
+          <Property Name="paymentDtlIntno" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="paymentIntno" Type="Int64" Nullable="false" />
+          <Property Name="dubbingDate" Type="DateTime" Nullable="false" Precision="0" />
+          <Property Name="totalUnits" Type="Int32" Nullable="false" />
+          <NavigationProperty Name="payment" Relationship="DUBBDBModel.FK_paymentDetails_payments" FromRole="paymentDetail" ToRole="payment" />
+        </EntityType>
+        <EntityType Name="payment">
+          <Key>
+            <PropertyRef Name="paymentIntno" />
+          </Key>
+          <Property Name="paymentIntno" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="workIntno" Type="Int64" Nullable="false" />
+          <Property Name="costCenterType" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="voiceActorIntno" Type="Int64" />
+          <Property Name="empIntno" Type="Int64" />
+          <Property Name="fullName" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="episodeNo" Type="Int16" />
+          <Property Name="totalScenes" Type="Int32" Nullable="false" />
+          <Property Name="unitRate" Type="Int32" Nullable="false" />
+          <Property Name="paymentDesc" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="totalAmount" Type="Int32" Nullable="false" />
+          <Property Name="currencyCode" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="deduction" Type="Int32" Nullable="false" />
+          <Property Name="paymentDate" Type="DateTime" Precision="0" />
+          <Property Name="accountNo" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="status" Type="Boolean" Nullable="false" />
+          <Property Name="isPaid" Type="Boolean" Nullable="false" />
+          <Property Name="isExported" Type="Boolean" Nullable="false" />
+          <NavigationProperty Name="agreementWork" Relationship="DUBBDBModel.FK_payments_agreementWorks" FromRole="payment" ToRole="agreementWork" />
+          <NavigationProperty Name="employee" Relationship="DUBBDBModel.FK_payments_employees" FromRole="payment" ToRole="employee" />
+          <NavigationProperty Name="paymentDetails" Relationship="DUBBDBModel.FK_paymentDetails_payments" FromRole="payment" ToRole="paymentDetail" />
+          <NavigationProperty Name="voiceActor" Relationship="DUBBDBModel.FK_payments_voiceActors" FromRole="payment" ToRole="voiceActor" />
+        </EntityType>
+        <Association Name="FK_payments_agreementWorks">
+          <End Type="DUBBDBModel.agreementWork" Role="agreementWork" Multiplicity="1" />
+          <End Type="DUBBDBModel.payment" Role="payment" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="agreementWork">
+              <PropertyRef Name="workIntno" />
+            </Principal>
+            <Dependent Role="payment">
+              <PropertyRef Name="workIntno" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_payments_employees">
+          <End Type="DUBBDBModel.employee" Role="employee" Multiplicity="0..1" />
+          <End Type="DUBBDBModel.payment" Role="payment" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="employee">
+              <PropertyRef Name="empIntno" />
+            </Principal>
+            <Dependent Role="payment">
+              <PropertyRef Name="empIntno" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_paymentDetails_payments">
+          <End Type="DUBBDBModel.payment" Role="payment" Multiplicity="1" />
+          <End Type="DUBBDBModel.paymentDetail" Role="paymentDetail" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="payment">
+              <PropertyRef Name="paymentIntno" />
+            </Principal>
+            <Dependent Role="paymentDetail">
+              <PropertyRef Name="paymentIntno" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_payments_voiceActors">
+          <End Type="DUBBDBModel.voiceActor" Role="voiceActor" Multiplicity="0..1" />
+          <End Type="DUBBDBModel.payment" Role="payment" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="voiceActor">
+              <PropertyRef Name="voiceActorIntno" />
+            </Principal>
+            <Dependent Role="payment">
+              <PropertyRef Name="voiceActorIntno" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityType Name="paymentTemp">
+          <Key>
+            <PropertyRef Name="tempIntno" />
+          </Key>
+          <Property Name="tempIntno" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="personIntno" Type="Int64" Nullable="false" />
+          <Property Name="personName" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="workIntno" Type="Int64" Nullable="false" />
+          <Property Name="workName" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="trnDate" Type="DateTime" Nullable="false" Precision="0" />
+          <Property Name="totalUnits" Type="Int32" Nullable="false" />
+          <Property Name="refPaymentIntno" Type="Int64" />
+        </EntityType>
         </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -3084,31 +3130,6 @@
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
-          <EntitySetMapping Name="payments">
-            <EntityTypeMapping TypeName="DUBBDBModel.payment">
-              <MappingFragment StoreEntitySet="payments">
-                <ScalarProperty Name="accountNo" ColumnName="accountNo" />
-                <ScalarProperty Name="status" ColumnName="status" />
-                <ScalarProperty Name="remarks" ColumnName="remarks" />
-                <ScalarProperty Name="paymentDate" ColumnName="paymentDate" />
-                <ScalarProperty Name="deduction" ColumnName="deduction" />
-                <ScalarProperty Name="currencyCode" ColumnName="currencyCode" />
-                <ScalarProperty Name="totalAmount" ColumnName="totalAmount" />
-                <ScalarProperty Name="paymentDesc" ColumnName="paymentDesc" />
-                <ScalarProperty Name="unitRate" ColumnName="unitRate" />
-                <ScalarProperty Name="adjustedTotalScenes" ColumnName="adjustedTotalScenes" />
-                <ScalarProperty Name="totalScenes" ColumnName="totalScenes" />
-                <ScalarProperty Name="episodeNo" ColumnName="episodeNo" />
-                <ScalarProperty Name="anonymousName" ColumnName="anonymousName" />
-                <ScalarProperty Name="empIntno" ColumnName="empIntno" />
-                <ScalarProperty Name="voiceActorIntno" ColumnName="voiceActorIntno" />
-                <ScalarProperty Name="costCenterType" ColumnName="costCenterType" />
-                <ScalarProperty Name="workIntno" ColumnName="workIntno" />
-                <ScalarProperty Name="dubbTrnHdrIntno" ColumnName="dubbTrnHdrIntno" />
-                <ScalarProperty Name="paymentHdrIntno" ColumnName="paymentHdrIntno" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
           <EntitySetMapping Name="UserProfiles">
             <EntityTypeMapping TypeName="DUBBDBModel.UserProfile">
               <MappingFragment StoreEntitySet="UserProfile">
@@ -3342,6 +3363,54 @@
                 <ScalarProperty Name="clientIntno" ColumnName="clientIntno" />
                 <ScalarProperty Name="orderTrnHdrIntno" ColumnName="orderTrnHdrIntno" />
                 <ScalarProperty Name="claimIntno" ColumnName="claimIntno" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="paymentDetails">
+            <EntityTypeMapping TypeName="DUBBDBModel.paymentDetail">
+              <MappingFragment StoreEntitySet="paymentDetails">
+                <ScalarProperty Name="totalUnits" ColumnName="totalUnits" />
+                <ScalarProperty Name="dubbingDate" ColumnName="dubbingDate" />
+                <ScalarProperty Name="paymentIntno" ColumnName="paymentIntno" />
+                <ScalarProperty Name="paymentDtlIntno" ColumnName="paymentDtlIntno" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="payments">
+            <EntityTypeMapping TypeName="DUBBDBModel.payment">
+              <MappingFragment StoreEntitySet="payments">
+                <ScalarProperty Name="isExported" ColumnName="isExported" />
+                <ScalarProperty Name="isPaid" ColumnName="isPaid" />
+                <ScalarProperty Name="status" ColumnName="status" />
+                <ScalarProperty Name="accountNo" ColumnName="accountNo" />
+                <ScalarProperty Name="paymentDate" ColumnName="paymentDate" />
+                <ScalarProperty Name="deduction" ColumnName="deduction" />
+                <ScalarProperty Name="currencyCode" ColumnName="currencyCode" />
+                <ScalarProperty Name="totalAmount" ColumnName="totalAmount" />
+                <ScalarProperty Name="paymentDesc" ColumnName="paymentDesc" />
+                <ScalarProperty Name="unitRate" ColumnName="unitRate" />
+                <ScalarProperty Name="totalScenes" ColumnName="totalScenes" />
+                <ScalarProperty Name="episodeNo" ColumnName="episodeNo" />
+                <ScalarProperty Name="fullName" ColumnName="fullName" />
+                <ScalarProperty Name="empIntno" ColumnName="empIntno" />
+                <ScalarProperty Name="voiceActorIntno" ColumnName="voiceActorIntno" />
+                <ScalarProperty Name="costCenterType" ColumnName="costCenterType" />
+                <ScalarProperty Name="workIntno" ColumnName="workIntno" />
+                <ScalarProperty Name="paymentIntno" ColumnName="paymentIntno" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="paymentTemps">
+            <EntityTypeMapping TypeName="DUBBDBModel.paymentTemp">
+              <MappingFragment StoreEntitySet="paymentTemps">
+                <ScalarProperty Name="refPaymentIntno" ColumnName="refPaymentIntno" />
+                <ScalarProperty Name="totalUnits" ColumnName="totalUnits" />
+                <ScalarProperty Name="trnDate" ColumnName="trnDate" />
+                <ScalarProperty Name="workName" ColumnName="workName" />
+                <ScalarProperty Name="workIntno" ColumnName="workIntno" />
+                <ScalarProperty Name="personName" ColumnName="personName" />
+                <ScalarProperty Name="personIntno" ColumnName="personIntno" />
+                <ScalarProperty Name="tempIntno" ColumnName="tempIntno" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>

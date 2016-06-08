@@ -14,29 +14,35 @@ namespace dubbingModel
     
     public partial class payment
     {
-        public long paymentHdrIntno { get; set; }
-        public long dubbTrnHdrIntno { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
+        public payment()
+        {
+            this.paymentDetails = new HashSet<paymentDetail>();
+        }
+    
+        public long paymentIntno { get; set; }
         public long workIntno { get; set; }
         public string costCenterType { get; set; }
         public Nullable<long> voiceActorIntno { get; set; }
         public Nullable<long> empIntno { get; set; }
-        public string anonymousName { get; set; }
-        public short episodeNo { get; set; }
+        public string fullName { get; set; }
+        public Nullable<short> episodeNo { get; set; }
         public int totalScenes { get; set; }
-        public int adjustedTotalScenes { get; set; }
         public int unitRate { get; set; }
         public string paymentDesc { get; set; }
         public int totalAmount { get; set; }
         public string currencyCode { get; set; }
         public int deduction { get; set; }
         public Nullable<System.DateTime> paymentDate { get; set; }
-        public string remarks { get; set; }
-        public bool status { get; set; }
         public string accountNo { get; set; }
+        public bool status { get; set; }
+        public bool isPaid { get; set; }
+        public bool isExported { get; set; }
     
         public virtual agreementWork agreementWork { get; set; }
-        public virtual dubbingTrnHdr dubbingTrnHdr { get; set; }
         public virtual employee employee { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<paymentDetail> paymentDetails { get; set; }
         public virtual voiceActor voiceActor { get; set; }
     }
 }

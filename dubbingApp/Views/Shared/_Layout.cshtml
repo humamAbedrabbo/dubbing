@@ -21,8 +21,10 @@
             </div>
             <div class="navbar-collapse collapse">
                 <ul class="nav navbar-nav">
-                    <li>@Html.ActionLink("Home", "Index", "Home")</li>
                     <li>@Html.ActionLink("Admin", "Index", "admin")</li>
+                    <li>@Html.ActionLink("Actors", "Index", "Home")</li>
+                    <li>@Html.ActionLink("Personnel", "Index", "Home")</li>
+                    <li>@Html.ActionLink("Finance", "Index", "payment")</li>
                     <li><img class="img-rounded" height="50" width="60" src="~/Content/Images/Fardous.png" /></li>
                 </ul>
                 @Html.Partial("_LoginPartial")

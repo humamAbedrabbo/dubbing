@@ -31,6 +31,7 @@ namespace dubbingApp.Models
             public List<studioEpisodeItem> studioEpisodesList { get; set; }
         }
 
+        
         //old
         public class domainLov
         {
