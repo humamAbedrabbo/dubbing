@@ -3,7 +3,10 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-@Html.Hidden("dialogueControlHF")
+<input type="hidden" id="studioIntnoHF" value="@ViewBag.studioIntno" />
+<input type="hidden" id="scheduleIntnoHF" value="@ViewBag.scheduleIntno" />
+<input type="hidden" id="dialogueControlHF" />
+
 <div class="container-fluid">
     <div class="jumbotron" style="padding:5px">
         <div class="row">
@@ -48,7 +51,7 @@
 
     <div class="row">
         <div class="col-md-2" id="actorsList">
-            @Html.Action("actorsList", "dubbing", new { std = @ViewBag.studio })
+            @Html.Action("actorsList", "dubbing", new { std = @ViewBag.studioIntno })
         </div>
 
         <div class="col-md-6" id="dialoguesList"></div>
@@ -69,28 +72,31 @@
 
             $(".actorLbl").click(function () {
                 $('.actorLbl').removeClass("badge");
-                var actorIntno = $(this).attr('id');
-                $('#' + actorIntno).addClass("badge");
-
-                $.ajax({
-                    url: '@Url.Action("dialoguesList", "dubbing")',
-                    type: 'GET',
-                    data: { actor: actorIntno },
-                    success: function (result) {
-                        $('#dialoguesList').html(result);
-                    }
-                })
-
-                $.ajax({
-                    url: '@Url.Action("scenesList", "dubbing")',
-                    type: 'GET',
-                    data: { actor: actorIntno },
-                    success: function (result) {
-                        $('#scenesList').html(result);
-                    }
-                })
+                var actor1 = $(this).attr('id');
+                $('#' + actor1).addClass("badge");
             });
         })
+
+        function onActorSelectClick(actor1, actorName1) {
+            //load all actor dialogues
+            $.ajax({
+                url: '@Url.Action("dialoguesList", "dubbing")',
+                type: 'GET',
+                data: { actorIntno: actor1, actorName: actorName1 },
+                success: function (result) {
+                    $('#dialoguesList').html(result);
+                }
+            })
+            //load all actor scenes
+            $.ajax({
+                url: '@Url.Action("scenesList", "dubbing")',
+                type: 'GET',
+                data: { actorIntno: actor1, actorName: actorName1, studio: $('#studioIntnoHF').val() },
+                success: function (result) {
+                    $('#scenesList').html(result);
+                }
+            })
+        }
 
         function onActionClick(dlg) {
             $('#dialogueControlHF').val('1');
@@ -111,6 +117,53 @@
             else {
                 alert('Dialogue Action Not Started Yet!.');
             }
+        }
+
+        function refreshStudio(workName1, episode1, scene1) {
+            $('#currentWork').html(workName1);
+            $('#currentEpisode').html("Episode " + episode1);
+
+            var timeCode;
+            var scene;
+            if (scene1 !== '') {
+                var x = scene1.split('|');
+                scene = x[0];
+                var y = x[1].split(':');
+                var separator;
+
+                if (y.length <= 3) {
+                    separator = " : ";
+                }
+                else {
+                    separator = ":";
+                }
+                $.each(y, function (i, item) {
+                    if (i === 0) {
+                        timeCode = item;
+                    }
+                    else {
+                        timeCode = timeCode + separator + item;
+                    }
+                });
+            }
+            else {
+                scene = '-';
+                timeCode = '00 : 00 : 00';
+            }
+            $('#timeCode').html(timeCode);
+            $('#currentScene').html(scene);
+        }
+
+        function onEpisodeClick(workName1, episode1, sheetHdr1) {
+            $.ajax({
+                url: '@Url.Action("sceneTaken", "dubbing")',
+                type: 'GET',
+                data: { sheetHdr: sheetHdr1 },
+                success: function (item) {
+                    refreshStudio(workName1, episode1, item);
+                }
+            })
+            
         }
     </script>
 }

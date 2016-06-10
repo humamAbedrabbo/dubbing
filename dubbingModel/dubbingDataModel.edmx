@@ -154,6 +154,7 @@
           <Property Name="orderTrnHdrIntno" Type="bigint" Nullable="false" />
           <Property Name="dubbSheetHdrIntno" Type="bigint" Nullable="false" />
           <Property Name="sceneNo" Type="smallint" Nullable="false" />
+          <Property Name="startTimeCode" Type="nvarchar" MaxLength="50" Nullable="false" />
           <Property Name="isTaken" Type="bit" Nullable="false" />
           <Property Name="studioNo" Type="nvarchar" MaxLength="50" />
           <Property Name="supervisor" Type="bigint" />
@@ -1809,6 +1810,7 @@
           <NavigationProperty Name="employee1" Relationship="DUBBDBModel.FK_dubbingSheetDtls_employees1" FromRole="dubbingSheetDtl" ToRole="employee" />
           <NavigationProperty Name="employee2" Relationship="DUBBDBModel.FK_dubbingSheetDtls_employees2" FromRole="dubbingSheetDtl" ToRole="employee" />
           <NavigationProperty Name="orderTrnHdr" Relationship="DUBBDBModel.FK_dubbingSheetDtls_orderTrnHdrs" FromRole="dubbingSheetDtl" ToRole="orderTrnHdr" />
+          <Property Name="startTimeCode" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
         </EntityType>
         <EntityType Name="dubbingSheetHdr">
           <Key>
@@ -3002,6 +3004,7 @@
           <EntitySetMapping Name="dubbingSheetDtls">
             <EntityTypeMapping TypeName="DUBBDBModel.dubbingSheetDtl">
               <MappingFragment StoreEntitySet="dubbingSheetDtls">
+                <ScalarProperty Name="startTimeCode" ColumnName="startTimeCode" />
                 <ScalarProperty Name="takenTimeStamp" ColumnName="takenTimeStamp" />
                 <ScalarProperty Name="assistant" ColumnName="assistant" />
                 <ScalarProperty Name="soundTechnician" ColumnName="soundTechnician" />

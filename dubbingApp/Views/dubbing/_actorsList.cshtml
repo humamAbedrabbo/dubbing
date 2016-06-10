@@ -1,10 +1,13 @@
 ﻿<div class="container-fluid" style="padding:0px">
     <ul>
-        @foreach (SelectListItem actor in new SelectList(ViewBag.actorsList, "voiceActorIntno", "fullName"))
+        @{ int cnt = 0; }
+        @foreach (SelectListItem actor in new SelectList(ViewBag.actorsList, "voiceActorIntno", "actorName"))
         {
-            string actor1 = actor.Value.ToString();
+            cnt++;
+            string actorId = "act" + cnt;
+            string actorName = '"' + actor.Text + '"';
             <li>
-                <a class="actorLbl" id="@actor1" href="#" title="appointments">@actor.Text</a>
+                <a class="actorLbl" id="@actorId" onclick="onActorSelectClick(@actor.Value, @actorName)" href="#" title="appointments">@actor.Text</a>
             </li>
         }
     </ul>

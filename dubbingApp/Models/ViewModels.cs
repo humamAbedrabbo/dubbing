@@ -31,6 +31,20 @@ namespace dubbingApp.Models
             public List<studioEpisodeItem> studioEpisodesList { get; set; }
         }
 
+        public class dubbingSceneViewModel
+        {
+            public long dubbSheetDtlIntno { get; set; }
+            public long dubbSheetHdrIntno { get; set; }
+            public long orderTrnHdrIntno { get; set; }
+            public long workIntno { get; set; }
+            public string workName { get; set; }
+            public int episodeNo { get; set; }
+            public long actorIntno { get; set; }
+            public string actorName { get; set; }
+            public int sceneNo { get; set; }
+            public string startTimeCode { get; set; }
+            public bool isTaken { get; set; }
+        }
         
         //old
         public class domainLov
