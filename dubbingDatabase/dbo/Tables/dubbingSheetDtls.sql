@@ -3,6 +3,7 @@
     [orderTrnHdrIntno]  BIGINT        NOT NULL,
     [dubbSheetHdrIntno] BIGINT        NOT NULL,
     [sceneNo]           SMALLINT      NOT NULL,
+    [startTimeCode]     NVARCHAR (50) NOT NULL,
     [isTaken]           BIT           NOT NULL,
     [studioNo]          NVARCHAR (50) NULL,
     [supervisor]        BIGINT        NULL,
@@ -19,9 +20,8 @@
 
 
 GO
-
 CREATE TRIGGER [dbo].[sceneTakenTrigger]
-   ON  [dbo].[dubbingSheetDtls] 
+   ON  dbo.dubbingSheetDtls 
    AFTER UPDATE
 AS 
 BEGIN
@@ -60,10 +60,6 @@ BEGIN
 				update	dbo.orderTrnHdrs
 				set		endDubbing = SYSDATETIME(), startMixage = SYSDATETIME()
 				where	orderTrnHdrIntno = @orderTrnHdrIntno;
-				
-				update	dbo.dubbingTrnDtls
-				set		status = '04'
-				where	orderTrnHdrIntno = @orderTrnHdrIntno;
 				commit;
 			end;
 			
@@ -79,7 +75,7 @@ BEGIN
 			begin
 				select @cnt = COUNT(*)
 				from dbo.dubbingTrnDtls
-				where dubbTrnHdrIntno = @dubbTrnHdrIntno and (status = '01' or status = '02');
+				where dubbTrnHdrIntno = @dubbTrnHdrIntno;
 				if (@cnt = 0)
 				begin
 					begin transaction;

@@ -3,10 +3,10 @@
 
 <div class="container-fluid">
     <div class="jumbotron" style="padding:10px">
-        <button class="btn btn-success btn-xs" onclick="onActiveClick('02', true)" title="Active">
+        <button class="btn btn-success btn-xs" onclick="onActiveClick(true)" title="Active">
             <span class="glyphicon glyphicon-thumbs-up" aria-hidden="true"></span>
         </button>
-        <button class="btn btn-default btn-xs" onclick="onActiveClick('02', false)" title="Archive">
+        <button class="btn btn-default btn-xs" onclick="onActiveClick(false)" title="Archive">
             <span class="glyphicon glyphicon-thumbs-down" aria-hidden="true"></span>
         </button>
         <label>Personnel List Grouped By Category</label> &nbsp;
@@ -43,28 +43,32 @@
                         @foreach (dubbingModel.employee item in Model.Where(b => b.empType == @empType.Value))
                         {
                             <tr>
-                                <td class="col-sm-3"><small>@item.fullName (@item.empUID)</small></td>
+                                <td class="col-sm-3" title="@item.othFullName"><small>@item.fullName (@item.empUID)</small></td>
                                 <td class="col-sm-2"><small>@item.mobileNo</small></td>
                                 <td class="col-sm-2"><small>@item.landLineNo</small></td>
                                 <td class="col-sm-2"><small>@item.email</small></td>
                                 <td class="col-sm-1"><small>@item.accountNo</small></td>
                                 <td class="col-sm-2">
                                     <div class="pull-right">
-                                        <button class="btn btn-default btn-xs" onclick="onPersonnelRemoveClick(@item.empIntno)" title="Remove">
-                                            <span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
-                                        </button>
                                         @{
                                             string btnColor = "btn-default";
-                                            if (!LookupModels.isPartyHasCharges(item.empIntno, "02"))
+                                            var workChrg = LookupModels.isPartyHasCharges(item.empIntno, "02");
+                                            if (workChrg != "03")
                                             {
-                                                btnColor = "btn-warning";
+                                                if(workChrg == "02")
+                                                {
+                                                    btnColor = "btn-warning";
+                                                }
+                                                <button class="btn @btnColor btn-xs" onclick="onWorkChargesClick(@item.empIntno)" title="Charges">
+                                                    <span class="glyphicon glyphicon-usd" aria-hidden="true"></span>
+                                                </button>
                                             }
                                         }
-                                        <button class="btn @btnColor btn-xs" onclick="onWorkChargesClick(@item.empIntno, '02')" title="Charges">
-                                            <span class="glyphicon glyphicon-usd" aria-hidden="true"></span>
-                                        </button>
                                         <button class="btn btn-primary btn-xs" onclick="onPersonnelUpdateClick(@item.empIntno)" title="Modify">
                                             <span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
+                                        </button>
+                                        <button class="btn btn-default btn-xs" onclick="onPersonnelRemoveClick(@item.empIntno)" title="Remove">
+                                            <span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
                                         </button>
                                     </div>
                                 </td>

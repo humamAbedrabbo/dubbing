@@ -41,6 +41,18 @@ namespace dubbingApp.Controllers
             return PartialView("_sceneHeader");
         }
 
+        public ActionResult scheduledWorksList(long studio, long? schedule)
+        {
+            if (schedule.HasValue)
+            {
+                var model = db.studioEpisodes.Include(b => b.studio).Include(b => b.dubbingTrnDtl).Include(b => b.dubbingTrnDtl.agreementWork)
+                        .Where(b => b.studioIntno == studio && b.studio.dubbTrnHdrIntno == schedule.Value && b.status == true);
+                return PartialView("_scheduledWorksList", model.ToList());
+            }
+            else
+                return PartialView("_scheduledWorksList");
+        }
+
         public ActionResult actorsList(long std)
         {
             //list should be ordered according to appointments
@@ -124,6 +136,24 @@ namespace dubbingApp.Controllers
                 db.SaveChanges();
             }
             return null;
+        }
+
+        public ActionResult progressBarUpdate(long studio, long? schedule)
+        {
+            int progress = 0;
+            if (schedule.HasValue)
+            {
+                var x = (from A in db.studios
+                         join B in db.studioEpisodes on A.studioIntno equals B.studioIntno
+                         join C in db.dubbingTrnDtls on B.dubbTrnDtlIntno equals C.dubbTrnDtlIntno
+                         join D in db.orderTrnHdrs on C.orderTrnHdrIntno equals D.orderTrnHdrIntno
+                         join E in db.dubbingSheetDtls on D.orderTrnHdrIntno equals E.orderTrnHdrIntno
+                         where A.studioIntno == studio && A.dubbTrnHdrIntno == schedule && B.status == true
+                         select new { E.isTaken });
+                progress = x.Where(b => b.isTaken == true).Count() * 100 / x.Count();
+            }
+            
+            return Content(progress.ToString(), "text/html");
         }
     }
 }

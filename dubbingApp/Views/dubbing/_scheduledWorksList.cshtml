@@ -1,0 +1,31 @@
+﻿@model IEnumerable<dubbingModel.studioEpisode>
+
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <small><label>This Week Schedule</label></small>
+    </div>
+    <div class="panel-body">
+        @if (Model != null)
+        {
+            foreach (long work in Model.Select(b => b.dubbingTrnDtl.workIntno).Distinct())
+            {
+                <div class="row">
+                    <div class="col-sm-12">
+                        <small><label class="badge alert-info">@Model.FirstOrDefault(b => b.dubbingTrnDtl.workIntno == work).dubbingTrnDtl.agreementWork.workName</label></small>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-12">
+                        @foreach (var episode in Model.Where(b => b.dubbingTrnDtl.workIntno == work))
+                        {
+                            <span>
+                                <small><label class="badge">@episode.dubbingTrnDtl.episodeNo</label></small>
+                            </span>
+                        }
+                    </div>
+                </div>
+            }
+        }
+        
+    </div>
+</div>

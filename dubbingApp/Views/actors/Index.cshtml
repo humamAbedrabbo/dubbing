@@ -1,0 +1,154 @@
+﻿@{
+    ViewBag.Title = "Admin";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container-fluid">
+    <div class="jumbotron" style="padding:5px">
+        <h2>Actors Master</h2>
+        <p class="lead"><h5>Maintain Voice Actors Records, Define New, Update and Delete Actors.</h5></p>
+    </div>
+    <div class="row">
+        <div class="container-fluid col-sm-9" id="listPartial">
+            @Html.Action("actorsList", "actors", new { isActive = true })
+        </div>
+        <div class="container-fluid col-sm-3" id="detailsPartial"></div>
+    </div>
+
+</div>
+
+<div class="modal fade" id="popupForm" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" id="modalClose" data-dismiss="modal">&times;</button>
+                <div class="modal-title">Charges</div>
+            </div>
+            <div class="modal-body" id="popupFormBody">
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default btn-xs" data-dismiss="modal">Cancel</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts
+{
+    @Scripts.Render("~/bundles/jqueryval")
+
+    <script>
+        function onActiveClick(status) {
+            $('#status').val(status);
+            $.ajax({
+                url: '@Url.Action("actorsList", "actors")',
+                type: 'GET',
+                data: { isActive: status },
+                success: function (result) {
+                    $('#listPartial').html(result);
+                }
+            })
+        }
+
+        function onFilterClick(filter) {
+            if ($('#status').val() === '') {
+                $('#status').val(true);
+            }
+            $.ajax({
+                url: '@Url.Action("actorsList", "actors")',
+                type: 'GET',
+                data: { isActive: $('#status').val(), alpha: filter },
+                success: function (result) {
+                    $('#listPartial').html(result);
+                }
+            })
+        }
+
+        function onActorsAddNewClick() {
+            $.ajax({
+                url: '@Url.Action("actorsAddNew", "actors")',
+                type: 'GET',
+                success: function (result) {
+                    $('#detailsPartial').html(result);
+                }
+            })
+        }
+        function onActorsUpdateClick(actor) {
+            $.ajax({
+                url: '@Url.Action("actorsUpdate", "actors")',
+                type: 'GET',
+                data: { id: actor },
+                success: function (result) {
+                    $('#detailsPartial').html(result);
+                }
+            })
+        }
+        function onActorsRemoveClick(actor) {
+            if (confirm('Please Confirm! About to Remove the Selected Actor from List.')) {
+                $.ajax({
+                    url: '@Url.Action("actorsDelete", "actors")',
+                    type: 'GET',
+                    data: { id: actor },
+                    success: function (result) {
+                        $('#listPartial').html(result);
+                    }
+                })
+            }
+        }
+
+        // actor charges per work
+        function onWorkChargesClick(actor) {
+            $.ajax({
+                url: '@Url.Action("workChargesList", "actors")',
+                type: 'GET',
+                data: { id: actor },
+                success: function (result) {
+                    $('#detailsPartial').html(result);
+                }
+            })
+        }
+        function onWorkChargesAddNewClick(actor) {
+            $.ajax({
+                url: '@Url.Action("workChargesAddNew", "actors")',
+                type: 'GET',
+                data: { id: actor },
+                success: function (result) {
+                    $('#popupFormBody').html(result);
+                }
+            })
+        }
+
+        function onSuccess() {
+            $.ajax({
+                url: '@Url.Action("actorsList", "actors")',
+                type: 'GET',
+                data: { isActive: true },
+                success: function (result) {
+                    $('#listPartial').html(result);
+                }
+            })
+        }
+        function onChargesSuccess(actor) {
+            $.ajax({
+                url: '@Url.Action("workChargesList", "actors")',
+                type: 'GET',
+                data: { id: actor },
+                success: function (result) {
+                    $('#detailsPartial').html(result);
+                }
+            })
+            $.ajax({
+                url: '@Url.Action("actorsList", "actors")',
+                type: 'GET',
+                data: { isActive: true },
+                success: function (result) {
+                    $('#listPartial').html(result);
+                }
+            })
+        }
+        function onCloseClick() {
+            $('#detailsPartial').html(null);
+        }
+    </script>
+}

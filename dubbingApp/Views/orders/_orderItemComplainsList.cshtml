@@ -1,4 +1,4 @@
-﻿@model IEnumerable<dubbingModel.deliveryFeedback>
+﻿@model IEnumerable<dubbingModel.clientClaim>
 @using dubbingApp.Models;
 
 <div class="container-fluid">
@@ -16,19 +16,19 @@
                 </tr>
             </thead>
             <tbody>
-                @foreach (dubbingModel.deliveryFeedback item in Model)
+                @foreach (dubbingModel.clientClaim item in Model)
                 {
                     <tr>
-                        <td class="col-sm-10"><small>@item.feedbackDesc</small></td>
+                        <td class="col-sm-10"><small>@item.claimDesc</small></td>
                         <td class="col-sm-1"><small>@Html.CheckBoxFor(m => @item.status)</small></td>
                         <td class="col-sm-1">
-                            <button class="btn btn-default btn-xs pull-right" onclick="onOrderItemComplainEndorseClick(@item.feedbackIntno)" title="Endorse">
+                            <button class="btn btn-default btn-xs pull-right" onclick="onOrderItemComplainEndorseClick(@item.claimIntno)" title="Endorse">
                                 <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>
                             </button>
                         </td>
                     </tr>
                     <tr>
-                        <td class="col-sm-12"><label><small>Required Action: </small></label>&nbsp;<small>@item.remarks</small></td>
+                        <td class="col-sm-12"><label><small>Required Action: </small></label>&nbsp;<small>@item.requiredAction</small></td>
                     </tr>
                 }
             </tbody>

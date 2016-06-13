@@ -71,22 +71,44 @@ namespace dubbingApp.Models
         //    string langCode = getLangCode();
         //    return db.dubbDomains.SingleOrDefault(b => b.domainName == domainName && b.domainCode == domainCode && b.langCode == langCode).domainValue;
         //}
-        public static bool isPartyHasCharges(long party, string partyType)
+        public static string isPartyHasCharges(long party, string partyType)
         {
-            var x = db.workActors.Where(b => b.voiceActorIntno == party && b.status == true).ToList();
-            
-            bool isCharged = true;
-            foreach (workActor work in x)
+            if (partyType == "01") //actors
             {
-                var y = db.workCharges.Where(b => b.workIntno == work.workIntno && b.workPartyIntno == work.voiceActorIntno
-                                    && b.workPartyType == partyType && b.status == true).ToList();
-                if (y.Count() == 0)
-                    isCharged = false;
+                var x = db.workActors.Include(b => b.agreementWork).Where(b => b.voiceActorIntno == party && b.agreementWork.status == "01" && b.status == true);
+                bool isCharged = true;
+                foreach (workActor work in x)
+                {
+                    var y = db.workCharges.Where(b => b.workIntno == work.workIntno && b.workPartyIntno == work.voiceActorIntno
+                                        && b.workPartyType == partyType && b.status == true).ToList();
+                    if (y.Count() == 0)
+                        isCharged = false;
+                }
+                if (x.Count() != 0 && isCharged)
+                    return "01"; //all charged
+                else if (x.Count() != 0 && !isCharged)
+                    return "02"; //has some uncharged works
+                else
+                    return "03"; //has no work at hand
             }
-            if (x.Count() != 0 && !isCharged)
-                return false;
             else
-                return true;
+            {
+                var x = db.workPersonnels.Include(b => b.agreementWork).Where(b => b.empIntno == party && b.agreementWork.status == "01" && b.status == true);
+                bool isCharged = true;
+                foreach (workPersonnel work in x)
+                {
+                    var y = db.workCharges.Where(b => b.workIntno == work.workIntno && b.workPartyIntno == work.empIntno
+                                        && b.workPartyType == partyType && b.status == true).ToList();
+                    if (y.Count() == 0)
+                        isCharged = false;
+                }
+                if (x.Count() != 0 && isCharged)
+                    return "01"; //all charged
+                else if (x.Count() != 0 && !isCharged)
+                    return "02"; //has some uncharged works
+                else
+                    return "03"; //has no work at hand
+            }
         }
 
         public static IEnumerable getClientsList()

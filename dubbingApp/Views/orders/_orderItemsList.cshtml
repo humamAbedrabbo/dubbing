@@ -36,8 +36,8 @@
                         }
                         @{
                             string complainsColor;
-                            if (item.deliveryFeedbacks.Where(b => b.status == true).Count() != 0) { complainsColor = "btn-danger"; }
-                            else if (item.deliveryFeedbacks.Count() != 0) { complainsColor = "btn-success"; }
+                            if (item.clientClaims.Where(b => b.status == true).Count() != 0) { complainsColor = "btn-danger"; }
+                            else if (item.clientClaims.Count() != 0) { complainsColor = "btn-success"; }
                             else { complainsColor = "btn-default"; }
                         }
                         <button class="btn @complainsColor btn-xs pull-right" onclick="onOrderItemComplainsClick(@item.orderTrnHdrIntno)" title="Client Feedback">

@@ -1,0 +1,142 @@
+﻿@{
+    ViewBag.Title = "Admin";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container-fluid">
+    <div class="jumbotron" style="padding:5px">
+        <h2>Personnel</h2>
+        <p class="lead"><h5>Personnel Allows You to Maintain Records about All Personnel Involved in the Dubbing Process, Studio Supervisors, Sound Technician, the Various Contractors and the Admin Department Employees.</h5></p>
+    </div>
+    <div class="row">
+        <div class="container-fluid col-sm-9" id="listPartial">
+            @Html.Action("personnelList", "personnel", new { isActive = true })
+        </div>
+        <div class="container-fluid col-sm-3" id="detailsPartial"></div>
+    </div>
+
+</div>
+
+<div class="modal fade" id="popupForm" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" id="modalClose" data-dismiss="modal">&times;</button>
+                <div class="modal-title">Charges</div>
+            </div>
+            <div class="modal-body" id="popupFormBody">
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default btn-xs" data-dismiss="modal">Cancel</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts
+{
+    @Scripts.Render("~/bundles/jqueryval")
+
+    <script>
+        function onActiveClick(status) {
+            $('#status').val(status);
+            $.ajax({
+                url: '@Url.Action("personnelList", "personnel")',
+                type: 'GET',
+                data: { isActive: status },
+                success: function (result) {
+                    $('#listPartial').html(result);
+                }
+            })
+        }
+
+        function onPersonnelAddNewClick(empType1) {
+            $.ajax({
+                url: '@Url.Action("personnelAddNew", "personnel")',
+                type: 'GET',
+                data: { empType: empType1 },
+                success: function (result) {
+                    $('#detailsPartial').html(result);
+                }
+            })
+        }
+        function onPersonnelUpdateClick(emp) {
+            $.ajax({
+                url: '@Url.Action("personnelUpdate", "personnel")',
+                type: 'GET',
+                data: { id: emp },
+                success: function (result) {
+                    $('#detailsPartial').html(result);
+                }
+            })
+        }
+        function onPersonnelRemoveClick(emp) {
+            if (confirm('Please Confirm! About to Remove the Selected Personnel from List.')) {
+                $.ajax({
+                    url: '@Url.Action("personnelDelete", "personnel")',
+                    type: 'GET',
+                    data: { id: emp },
+                    success: function (result) {
+                        $('#listPartial').html(result);
+                    }
+                })
+            }
+        }
+
+        function onWorkChargesClick(personnel) {
+            $.ajax({
+                url: '@Url.Action("workChargesList", "personnel")',
+                type: 'GET',
+                data: { id: personnel },
+                success: function (result) {
+                    $('#detailsPartial').html(result);
+                }
+            })
+        }
+        function onWorkChargesAddNewClick(personnel) {
+            $.ajax({
+                url: '@Url.Action("workChargesAddNew", "personnel")',
+                type: 'GET',
+                data: { id: personnel },
+                success: function (result) {
+                    $('#popupFormBody').html(result);
+                }
+            })
+        }
+
+        function onSuccess() {
+            $.ajax({
+                url: '@Url.Action("personnelList", "personnel")',
+                type: 'GET',
+                data: { isActive: true },
+                success: function (result) {
+                    $('#listPartial').html(result);
+                }
+            })
+        }
+
+        function onChargesSuccess(personnel) {
+            $.ajax({
+                url: '@Url.Action("workChargesList", "personnel")',
+                type: 'GET',
+                data: { id: personnel },
+                success: function (result) {
+                    $('#detailsPartial').html(result);
+                }
+            })
+            $.ajax({
+                url: '@Url.Action("personnelList", "personnel")',
+                type: 'GET',
+                data: { isActive: true },
+                success: function (result) {
+                    $('#listPartial').html(result);
+                }
+            })
+        }
+
+        function onCloseClick() {
+            $('#detailsPartial').html(null);
+        }
+    </script>
+}
