@@ -3,9 +3,9 @@
     [orderTrnHdrIntno]  BIGINT        NOT NULL,
     [dubbSheetHdrIntno] BIGINT        NOT NULL,
     [sceneNo]           SMALLINT      NOT NULL,
-    [startTimeCode]     NVARCHAR (50) NOT NULL,
+    [startTimeCode]     NVARCHAR (50) COLLATE Latin1_General_CI_AS NOT NULL,
     [isTaken]           BIT           NOT NULL,
-    [studioNo]          NVARCHAR (50) NULL,
+    [studioNo]          NVARCHAR (50) COLLATE Latin1_General_CI_AS NULL,
     [supervisor]        BIGINT        NULL,
     [soundTechnician]   BIGINT        NULL,
     [assistant]         BIGINT        NULL,
@@ -21,10 +21,9 @@
 
 GO
 CREATE TRIGGER [dbo].[sceneTakenTrigger]
-   ON  dbo.dubbingSheetDtls 
-   AFTER UPDATE
-AS 
-BEGIN
+    ON [dbo].[dubbingSheetDtls]
+    AFTER UPDATE
+    AS BEGIN
 	SET NOCOUNT ON;
 	if UPDATE (isTaken)
 	begin

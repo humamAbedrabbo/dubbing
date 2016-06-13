@@ -2,7 +2,7 @@
     [workPersonnelIntno] BIGINT        IDENTITY (1, 1) NOT NULL,
     [workIntno]          BIGINT        NOT NULL,
     [empIntno]           BIGINT        NOT NULL,
-    [titleType]          NVARCHAR (50) NOT NULL,
+    [titleType]          NVARCHAR (50) COLLATE Latin1_General_CI_AS NOT NULL,
     [fromDate]           DATE          NOT NULL,
     [thruDate]           DATE          NULL,
     [status]             BIT           NOT NULL,

@@ -2,7 +2,7 @@
     [studioIntno]     BIGINT        IDENTITY (1, 1) NOT NULL,
     [dubbTrnHdrIntno] BIGINT        NOT NULL,
     [workIntno]       BIGINT        NOT NULL,
-    [studioNo]        NVARCHAR (50) NOT NULL,
+    [studioNo]        NVARCHAR (50) COLLATE Latin1_General_CI_AS NOT NULL,
     [supervisor]      BIGINT        NOT NULL,
     [sound]           BIGINT        NOT NULL,
     [isDefaultTeam]   BIT           NOT NULL,
