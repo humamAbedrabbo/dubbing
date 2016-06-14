@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "dubbingApp", "dubbingApp\du
 EndProject
 Project("{00D1A9C2-B5F0-4AF3-8072-F6C62B433612}") = "dubbingDatabase", "dubbingDatabase\dubbingDatabase.sqlproj", "{4A35DB03-82E9-40A3-8224-11038FCEFE9A}"
 EndProject
+Project("{00D1A9C2-B5F0-4AF3-8072-F6C62B433612}") = "Database1", "C:\Users\DELL\Desktop\Database1\Database1.sqlproj", "{9C8A5F54-78C0-4410-919A-7515F65E7E74}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -29,6 +31,12 @@ Global
 		{4A35DB03-82E9-40A3-8224-11038FCEFE9A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4A35DB03-82E9-40A3-8224-11038FCEFE9A}.Release|Any CPU.Build.0 = Release|Any CPU
 		{4A35DB03-82E9-40A3-8224-11038FCEFE9A}.Release|Any CPU.Deploy.0 = Release|Any CPU
+		{9C8A5F54-78C0-4410-919A-7515F65E7E74}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9C8A5F54-78C0-4410-919A-7515F65E7E74}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9C8A5F54-78C0-4410-919A-7515F65E7E74}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{9C8A5F54-78C0-4410-919A-7515F65E7E74}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9C8A5F54-78C0-4410-919A-7515F65E7E74}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9C8A5F54-78C0-4410-919A-7515F65E7E74}.Release|Any CPU.Deploy.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

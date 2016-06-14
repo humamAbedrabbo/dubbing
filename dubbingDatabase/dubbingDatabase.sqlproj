@@ -106,53 +106,140 @@
   <ItemGroup>
     <Folder Include="Properties" />
     <Folder Include="dbo\" />
+    <Folder Include="dbo\Tables\" />
     <Folder Include="dbo\Views\" />
-    <Folder Include="dbo\Tables" />
   </ItemGroup>
   <ItemGroup>
+    <Build Include="dbo\Tables\clients.sql">
+      <AnsiNulls>On</AnsiNulls>
+      <QuotedIdentifier>On</QuotedIdentifier>
+    </Build>
+    <Build Include="dbo\Tables\workOrders.sql">
+      <AnsiNulls>On</AnsiNulls>
+      <QuotedIdentifier>On</QuotedIdentifier>
+    </Build>
+    <Build Include="dbo\Tables\dubbDomain.sql">
+      <AnsiNulls>On</AnsiNulls>
+      <QuotedIdentifier>On</QuotedIdentifier>
+    </Build>
+    <Build Include="dbo\Tables\employees.sql">
+      <AnsiNulls>On</AnsiNulls>
+      <QuotedIdentifier>On</QuotedIdentifier>
+    </Build>
+    <Build Include="dbo\Tables\agreementTerms.sql">
+      <AnsiNulls>On</AnsiNulls>
+      <QuotedIdentifier>On</QuotedIdentifier>
+    </Build>
+    <Build Include="dbo\Tables\agreementSpecs.sql">
+      <AnsiNulls>On</AnsiNulls>
+      <QuotedIdentifier>On</QuotedIdentifier>
+    </Build>
+    <Build Include="dbo\Tables\UserProfile.sql">
+      <AnsiNulls>On</AnsiNulls>
+      <QuotedIdentifier>On</QuotedIdentifier>
+    </Build>
+    <Build Include="dbo\Tables\webpages_OAuthMembership.sql">
+      <AnsiNulls>On</AnsiNulls>
+      <QuotedIdentifier>On</QuotedIdentifier>
+    </Build>
+    <Build Include="dbo\Tables\voiceActors.sql">
+      <AnsiNulls>On</AnsiNulls>
+      <QuotedIdentifier>On</QuotedIdentifier>
+    </Build>
+    <Build Include="dbo\Tables\webpages_Membership.sql">
+      <AnsiNulls>On</AnsiNulls>
+      <QuotedIdentifier>On</QuotedIdentifier>
+    </Build>
+    <Build Include="dbo\Tables\workActors.sql">
+      <AnsiNulls>On</AnsiNulls>
+      <QuotedIdentifier>On</QuotedIdentifier>
+    </Build>
+    <Build Include="dbo\Tables\webpages_Roles.sql">
+      <AnsiNulls>On</AnsiNulls>
+      <QuotedIdentifier>On</QuotedIdentifier>
+    </Build>
+    <Build Include="dbo\Tables\workPersonnels.sql">
+      <AnsiNulls>On</AnsiNulls>
+      <QuotedIdentifier>On</QuotedIdentifier>
+    </Build>
+    <Build Include="dbo\Tables\webpages_UsersInRoles.sql">
+      <AnsiNulls>On</AnsiNulls>
+      <QuotedIdentifier>On</QuotedIdentifier>
+    </Build>
+    <Build Include="dbo\Tables\agreementWorks.sql">
+      <AnsiNulls>On</AnsiNulls>
+      <QuotedIdentifier>On</QuotedIdentifier>
+    </Build>
+    <Build Include="dbo\Tables\carriers.sql">
+      <AnsiNulls>On</AnsiNulls>
+      <QuotedIdentifier>On</QuotedIdentifier>
+    </Build>
+    <Build Include="dbo\Tables\workCharges.sql">
+      <AnsiNulls>On</AnsiNulls>
+      <QuotedIdentifier>On</QuotedIdentifier>
+    </Build>
+    <Build Include="dbo\Tables\workCharacters.sql">
+      <AnsiNulls>On</AnsiNulls>
+      <QuotedIdentifier>On</QuotedIdentifier>
+    </Build>
+    <Build Include="dbo\Tables\dubbingSheetHdrs.sql">
+      <AnsiNulls>On</AnsiNulls>
+      <QuotedIdentifier>On</QuotedIdentifier>
+    </Build>
+    <Build Include="dbo\Tables\shipments.sql">
+      <AnsiNulls>On</AnsiNulls>
+      <QuotedIdentifier>On</QuotedIdentifier>
+    </Build>
+    <Build Include="dbo\Tables\payments.sql">
+      <AnsiNulls>On</AnsiNulls>
+      <QuotedIdentifier>On</QuotedIdentifier>
+    </Build>
+    <Build Include="dbo\Tables\agreements.sql">
+      <AnsiNulls>On</AnsiNulls>
+      <QuotedIdentifier>On</QuotedIdentifier>
+    </Build>
+    <Build Include="dbo\Tables\orderTrnHdrs.sql">
+      <AnsiNulls>On</AnsiNulls>
+      <QuotedIdentifier>On</QuotedIdentifier>
+    </Build>
+    <Build Include="dbo\Tables\dubbingSheetDtls.sql">
+      <AnsiNulls>On</AnsiNulls>
+      <QuotedIdentifier>On</QuotedIdentifier>
+    </Build>
+    <Build Include="dbo\Tables\orderTrnDtls.sql">
+      <AnsiNulls>On</AnsiNulls>
+      <QuotedIdentifier>On</QuotedIdentifier>
+    </Build>
+    <Build Include="dbo\Tables\dubbingTrnHdrs.sql">
+      <AnsiNulls>On</AnsiNulls>
+      <QuotedIdentifier>On</QuotedIdentifier>
+    </Build>
+    <Build Include="dbo\Tables\dubbingTrnDtls.sql">
+      <AnsiNulls>On</AnsiNulls>
+      <QuotedIdentifier>On</QuotedIdentifier>
+    </Build>
+    <Build Include="dbo\Tables\dubbingAppointments.sql">
+      <AnsiNulls>On</AnsiNulls>
+      <QuotedIdentifier>On</QuotedIdentifier>
+    </Build>
+    <Build Include="dbo\Tables\orderBatchTrnHdrs.sql">
+      <AnsiNulls>On</AnsiNulls>
+      <QuotedIdentifier>On</QuotedIdentifier>
+    </Build>
+    <Build Include="dbo\Tables\orderChecks.sql">
+      <AnsiNulls>On</AnsiNulls>
+      <QuotedIdentifier>On</QuotedIdentifier>
+    </Build>
+    <Build Include="dbo\Tables\contacts.sql">
+      <AnsiNulls>On</AnsiNulls>
+      <QuotedIdentifier>On</QuotedIdentifier>
+    </Build>
     <Build Include="dbo\Views\userRolesView.sql">
       <AnsiNulls>On</AnsiNulls>
       <QuotedIdentifier>On</QuotedIdentifier>
     </Build>
-    <Build Include="dbo\Tables\agreements.sql" />
-    <Build Include="dbo\Tables\agreementSpecs.sql" />
-    <Build Include="dbo\Tables\agreementTerms.sql" />
-    <Build Include="dbo\Tables\agreementWorks.sql" />
-    <Build Include="dbo\Tables\carriers.sql" />
-    <Build Include="dbo\Tables\clientClaims.sql" />
-    <Build Include="dbo\Tables\clients.sql" />
-    <Build Include="dbo\Tables\contacts.sql" />
-    <Build Include="dbo\Tables\dubbDomain.sql" />
-    <Build Include="dbo\Tables\dubbingAppointments.sql" />
-    <Build Include="dbo\Tables\dubbingSheetDtls.sql" />
-    <Build Include="dbo\Tables\dubbingSheetHdrs.sql" />
-    <Build Include="dbo\Tables\dubbingTrnDtls.sql" />
-    <Build Include="dbo\Tables\dubbingTrnHdrs.sql" />
-    <Build Include="dbo\Tables\employees.sql" />
-    <Build Include="dbo\Tables\orderBatchTrnHdrs.sql" />
-    <Build Include="dbo\Tables\orderChecks.sql" />
-    <Build Include="dbo\Tables\orderTrnDtls.sql" />
-    <Build Include="dbo\Tables\orderTrnHdrs.sql" />
-    <Build Include="dbo\Tables\paymentDetails.sql" />
-    <Build Include="dbo\Tables\payments.sql" />
-    <Build Include="dbo\Tables\paymentTemps.sql" />
-    <Build Include="dbo\Tables\shipmentDetails.sql" />
-    <Build Include="dbo\Tables\shipments.sql" />
-    <Build Include="dbo\Tables\studioEpisodes.sql" />
-    <Build Include="dbo\Tables\studios.sql" />
-    <Build Include="dbo\Tables\UserProfile.sql" />
-    <Build Include="dbo\Tables\voiceActors.sql" />
-    <Build Include="dbo\Tables\webpages_Membership.sql" />
-    <Build Include="dbo\Tables\webpages_OAuthMembership.sql" />
-    <Build Include="dbo\Tables\webpages_Roles.sql" />
-    <Build Include="dbo\Tables\webpages_UsersInRoles.sql" />
-    <Build Include="dbo\Tables\workActors.sql" />
-    <Build Include="dbo\Tables\workCharacters.sql" />
-    <Build Include="dbo\Tables\workCharges.sql" />
-    <Build Include="dbo\Tables\workOrders.sql" />
-    <Build Include="dbo\Tables\workPersonnels.sql" />
   </ItemGroup>
   <ItemGroup>
-    <PostDeploy Include="load.dubbing.data.sql" />
+    <PostDeploy Include="Add Domain.sql" />
   </ItemGroup>
 </Project>
