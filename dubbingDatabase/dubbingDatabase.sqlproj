@@ -110,9 +110,6 @@
     <Folder Include="dbo\Views\" />
   </ItemGroup>
   <ItemGroup>
-    <PostDeploy Include="Add Domain.sql" />
-  </ItemGroup>
-  <ItemGroup>
     <Build Include="dbo\Tables\agreements.sql" />
     <Build Include="dbo\Tables\agreementSpecs.sql" />
     <Build Include="dbo\Tables\agreementTerms.sql" />
@@ -151,5 +148,8 @@
     <Build Include="dbo\Tables\workOrders.sql" />
     <Build Include="dbo\Tables\workPersonnels.sql" />
     <Build Include="dbo\Views\userRolesView.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <PostDeploy Include="load.dubbing.data.sql" />
   </ItemGroup>
 </Project>
