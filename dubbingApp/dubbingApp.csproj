@@ -354,6 +354,7 @@
     <Content Include="Views\actors\_workChargesAddNew.cshtml" />
     <Content Include="Views\actors\_workChargesList.cshtml" />
     <Content Include="Views\dubbing\_scheduledWorksList.cshtml" />
+    <Content Include="Views\dubbing\studioNotAllocated.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

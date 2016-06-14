@@ -31,9 +31,17 @@ namespace dubbingApp.Controllers
                 ViewBag.scheduleIntno = schedule;
             }
             var x = db.studios.Include(b => b.employee).FirstOrDefault(b => (!schedule.HasValue || b.dubbTrnHdrIntno == schedule.Value) && b.studioNo == "01");
-            ViewBag.studioIntno = x.studioIntno;
-            ViewBag.team = "Welcome! " + x.employee1.fullName + " & " + x.employee.fullName;
-            return View();
+            if (x == null)
+            {
+                return View("studioNotAllocated");
+            }
+            else
+            {
+                ViewBag.studioIntno = x.studioIntno;
+                ViewBag.team = "Welcome! " + x.employee1.fullName + " & " + x.employee.fullName;
+                return View();
+            }
+            
         }
 
         public ActionResult sceneHeader()
