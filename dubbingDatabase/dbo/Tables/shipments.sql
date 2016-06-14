@@ -2,7 +2,7 @@
     [shipmentIntno] BIGINT        IDENTITY (1, 1) NOT NULL,
     [carrierIntno]  BIGINT        NULL,
     [shipmentDate]  DATE          NOT NULL,
-    [remarks]       NVARCHAR (50) NULL,
+    [remarks]       NVARCHAR (50) COLLATE Latin1_General_CI_AS NULL,
     [status]        BIT           NOT NULL,
     [clientIntno]   BIGINT        NOT NULL,
     CONSTRAINT [PK_shipments] PRIMARY KEY CLUSTERED ([shipmentIntno] ASC),

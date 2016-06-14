@@ -5,7 +5,7 @@
     [voiceActorIntno]    BIGINT         NOT NULL,
     [fromDate]           DATE           NOT NULL,
     [thruDate]           DATE           NULL,
-    [remarks]            NVARCHAR (MAX) NULL,
+    [remarks]            NVARCHAR (MAX) COLLATE Latin1_General_CI_AS NULL,
     [status]             BIT            NOT NULL,
     [scenesPerHour]      INT            NOT NULL,
     CONSTRAINT [PK_workActors] PRIMARY KEY CLUSTERED ([workActorIntno] ASC),

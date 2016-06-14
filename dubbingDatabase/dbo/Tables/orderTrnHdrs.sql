@@ -3,7 +3,7 @@
     [workIntno]            BIGINT        NOT NULL,
     [orderIntno]           BIGINT        NOT NULL,
     [episodeNo]            SMALLINT      NOT NULL,
-    [priority]             NVARCHAR (50) NULL,
+    [priority]             NVARCHAR (50) COLLATE Latin1_General_CI_AS NULL,
     [orderReceivedDate]    DATETIME      NULL,
     [expectedDeliveryDate] DATETIME      NULL,
     [allowFirstDubbing]    BIT           NULL,
@@ -24,7 +24,7 @@
     [shipmentLowRes]       DATETIME      NULL,
     [plannedShipment]      DATETIME      NULL,
     [shipmentFinal]        DATETIME      NULL,
-    [status]               NVARCHAR (50) NOT NULL,
+    [status]               NVARCHAR (50) COLLATE Latin1_General_CI_AS NOT NULL,
     CONSTRAINT [PK_orderTrnHdrs] PRIMARY KEY CLUSTERED ([orderTrnHdrIntno] ASC),
     CONSTRAINT [FK_orderTrnHdrs_agreementWorks] FOREIGN KEY ([workIntno]) REFERENCES [dbo].[agreementWorks] ([workIntno]),
     CONSTRAINT [FK_orderTrnHdrs_workOrders] FOREIGN KEY ([orderIntno]) REFERENCES [dbo].[workOrders] ([orderIntno])
