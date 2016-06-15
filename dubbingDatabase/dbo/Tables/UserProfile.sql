@@ -1,7 +1,0 @@
-﻿CREATE TABLE [dbo].[UserProfile] (
-    [UserId]   INT           IDENTITY (1, 1) NOT NULL,
-    [UserName] NVARCHAR (56) COLLATE Latin1_General_CI_AS NOT NULL,
-    CONSTRAINT [PK__UserProf__1788CC4C0E8E2250] PRIMARY KEY CLUSTERED ([UserId] ASC),
-    CONSTRAINT [UQ__UserProf__C9F28456116A8EFB] UNIQUE NONCLUSTERED ([UserName] ASC)
-);
-
