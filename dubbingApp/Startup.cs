@@ -9,6 +9,7 @@ namespace dubbingApp
         public void Configuration(IAppBuilder app)
         {
             ConfigureAuth(app);
+            Utils.SecurityManager.InitializeRolesAndUsers();
         }
     }
 }
