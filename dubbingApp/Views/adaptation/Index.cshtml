@@ -1,0 +1,32 @@
+﻿@using dubbingModel
+@model IEnumerable<orderTrnHdr>
+
+@{
+
+    ViewBag.Title = "Index";
+}
+
+
+<h2>Index</h2>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Work</th>
+            <th>Episode</th>
+            <th>Adaptation Start</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+        <tr>
+            <td>@item.agreementWork.workName</td>
+            <td>@item.episodeNo</td>
+            <td>@item.startAdaptation.Value.ToShortDateString()</td>
+            <td><a class="btn btn-primary" href='@Url.Action("Edit", "adaptation", new { id = item.orderIntno})'>Edit</a></td>
+        </tr>
+        }
+    </tbody>
+</table>
