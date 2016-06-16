@@ -52,21 +52,45 @@ namespace dubbingApp.Utils
                 AddUserToRole(Id, "ADMIN");
             }
             Id = CreateUser("asad@fardous.tv", "asad@fardous.tv", "asad@123");
-            AddUserToRole(Id, "GENERAL_MANAGER");
+            if (!string.IsNullOrEmpty(Id))
+            {
+                AddUserToRole(Id, "GENERAL_MANAGER");
+            }
             Id = CreateUser("yamam@fardous.tv", "yamam@fardous.tv", "yamam@123");
-            AddUserToRole(Id, "PRODUCTION_MANAGER");
+            if (!string.IsNullOrEmpty(Id))
+            {
+                AddUserToRole(Id, "PRODUCTION_MANAGER");
+            }
             Id = CreateUser("bassam.alhindy@fardous.tv", "bassam.alhindy@fardous.tv", "bassam.alhindy@123");
-            AddUserToRole(Id, "MONTAGE");
+            if (!string.IsNullOrEmpty(Id))
+            {
+                AddUserToRole(Id, "MONTAGE");
+            }
             Id = CreateUser("saif@fardous.tv", "saif@fardous.tv", "saif@123");
-            AddUserToRole(Id, "STUDIO_SUPERVISOR");
+            if (!string.IsNullOrEmpty(Id))
+            {
+                AddUserToRole(Id, "STUDIO_SUPERVISOR");
+            }
             Id = CreateUser("samers@fardous.tv", "samers@fardous.tv", "samers@123");
-            AddUserToRole(Id, "MIXAGE");
+            if (!string.IsNullOrEmpty(Id))
+            {
+                AddUserToRole(Id, "MIXAGE");
+            }
             Id = CreateUser("samera@fardous.tv", "samera@fardous.tv", "samera@123");
-            AddUserToRole(Id, "MIXAGE");
+            if (!string.IsNullOrEmpty(Id))
+            {
+                AddUserToRole(Id, "MIXAGE");
+            }
             Id = CreateUser("mbustani@fardous.tv", "mbustani@fardous.tv", "mbustani@123");
-            AddUserToRole(Id, "FINANCE_MANAGER");
+            if (!string.IsNullOrEmpty(Id))
+            {
+                AddUserToRole(Id, "FINANCE_MANAGER");
+            }
             Id = CreateUser("wael@fardous.tv", "wael@fardous.tv", "wael@123");
-            AddUserToRole(Id, "STUDIO_SUPERVISOR");
+            if (!string.IsNullOrEmpty(Id))
+            {
+                AddUserToRole(Id, "STUDIO_SUPERVISOR");
+            }
         }
 
         public bool createRole(string roleName)

@@ -1,89 +1,101 @@
 ﻿@model dubbingModel.workCharacter
 
-<div class="container-fluid">
-    @using (Ajax.BeginForm("characterAddNew", "casting", new { id = ViewBag.workIntno},
+<div class="container-fluid" style="padding:0px">
+    <div class="panel-default">
+        <div class="panel-heading">
+            <div class="row">
+                <div class="col-sm-10">
+                    <label>Add New Character</label>
+                </div>
+                <div class="col-sm-2">
+                    <button class="btn btn-default btn-xs pull-right" onclick="onCloseClick()" title="Close">
+                        <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div class="panel-body">
+            @using (Ajax.BeginForm("characterAddNew", "casting", new { id = ViewBag.workIntno },
                                                 new AjaxOptions()
                                                 {
                                                     HttpMethod = "POST",
-                                                    UpdateTargetId = "result"
-                                                },
-                                                new { @class = "form-horizontal" }
-                                                ))
-    {
-        @Html.AntiForgeryToken()
-        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                                                    OnSuccess = "onSuccess"
+                                                }))
+            {
+                @Html.AntiForgeryToken()
+                @Html.ValidationSummary(true, "", new { @class = "text-danger" })
 
-        <div class="form-group">
-            @Html.LabelFor(model => model.characterName, "Used Name", htmlAttributes: new { @class = "control-label col-sm-4" })
-            <div class="col-sm-8">
-                @Html.EditorFor(model => model.characterName, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.characterName, "", new { @class = "text-danger" })
-            </div>
-        </div>
+                <div class="form-group">
+                    @Html.LabelFor(model => model.characterName, "Used Name", htmlAttributes: new { @class = "control-label col-sm-12" })
+                    <div class="col-sm-12">
+                        @Html.EditorFor(model => model.characterName, new { htmlAttributes = new { @class = "form-control" } })
+                        @Html.ValidationMessageFor(model => model.characterName, "", new { @class = "text-danger" })
+                    </div>
+                </div>
 
-        <div class="form-group">
-            @Html.LabelFor(model => model.nickName, "Original Name", htmlAttributes: new { @class = "control-label col-sm-4" })
-            <div class="col-sm-8">
-                @Html.EditorFor(model => model.nickName, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.nickName, "", new { @class = "text-danger" })
-            </div>
-        </div>
+                <div class="form-group">
+                    @Html.LabelFor(model => model.nickName, "Original Name", htmlAttributes: new { @class = "control-label col-sm-12" })
+                    <div class="col-sm-12">
+                        @Html.EditorFor(model => model.nickName, new { htmlAttributes = new { @class = "form-control" } })
+                        @Html.ValidationMessageFor(model => model.nickName, "", new { @class = "text-danger" })
+                    </div>
+                </div>
 
-        <div class="form-group">
-            @Html.LabelFor(model => model.othCharacterName, "Other Name", htmlAttributes: new { @class = "control-label col-sm-4" })
-            <div class="col-sm-8">
-                @Html.EditorFor(model => model.othCharacterName, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.othCharacterName, "", new { @class = "text-danger" })
-            </div>
-        </div>
+                <div class="form-group">
+                    @Html.LabelFor(model => model.othCharacterName, "Other Name", htmlAttributes: new { @class = "control-label col-sm-12" })
+                    <div class="col-sm-12">
+                        @Html.EditorFor(model => model.othCharacterName, new { htmlAttributes = new { @class = "form-control" } })
+                        @Html.ValidationMessageFor(model => model.othCharacterName, "", new { @class = "text-danger" })
+                    </div>
+                </div>
 
-        <div class="form-group">
-            @Html.LabelFor(model => model.characterType, "Type", htmlAttributes: new { @class = "control-label col-sm-4" })
-            <div class="col-sm-8">
-                @Html.DropDownListFor(model => model.characterType, new SelectList(ViewBag.characterTypesList, "key", "value"), string.Empty, htmlAttributes : new { @class = "form-control" })
-                @Html.ValidationMessageFor(model => model.characterType, "", new { @class = "text-danger" })
-            </div>
-        </div>
+                <div class="form-group">
+                    @Html.LabelFor(model => model.characterType, "Type", htmlAttributes: new { @class = "control-label col-sm-12" })
+                    <div class="col-sm-12">
+                        @Html.DropDownListFor(model => model.characterType, new SelectList(ViewBag.characterTypesList, "key", "value"), string.Empty, htmlAttributes: new { @class = "form-control" })
+                        @Html.ValidationMessageFor(model => model.characterType, "", new { @class = "text-danger" })
+                    </div>
+                </div>
 
-        <div class="form-group">
-            @Html.LabelFor(model => model.characterGender, "Gender", htmlAttributes: new { @class = "control-label col-sm-4" })
-            <div class="col-sm-8">
-                @Html.DropDownListFor(model => model.characterGender, new SelectList(ViewBag.characterGendersList, "key", "value"), string.Empty, htmlAttributes: new { @class = "form-control" })
-                @Html.ValidationMessageFor(model => model.characterGender, "", new { @class = "text-danger" })
-            </div>
-        </div>
+                <div class="form-group">
+                    @Html.LabelFor(model => model.characterGender, "Gender", htmlAttributes: new { @class = "control-label col-sm-12" })
+                    <div class="col-sm-12">
+                        @Html.DropDownListFor(model => model.characterGender, new SelectList(ViewBag.characterGendersList, "key", "value"), string.Empty, htmlAttributes: new { @class = "form-control" })
+                        @Html.ValidationMessageFor(model => model.characterGender, "", new { @class = "text-danger" })
+                    </div>
+                </div>
 
-        <div class="form-group">
-            @Html.LabelFor(model => model.characterDesc, "Description", htmlAttributes: new { @class = "control-label col-sm-4" })
-            <div class="col-sm-8">
-                @Html.EditorFor(model => model.characterDesc, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.characterDesc, "", new { @class = "text-danger" })
-            </div>
-        </div>
-        
-        <div class="form-group">
-            @Html.LabelFor(model => model.remarks, "Remarks", htmlAttributes: new { @class = "control-label col-sm-4" })
-            <div class="col-sm-8">
-                @Html.EditorFor(model => model.remarks, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.remarks, "", new { @class = "text-danger" })
-            </div>
-        </div>
-        
-        <div class="form-group">
-            @Html.LabelFor(model => model.sortOrder, "Sort Order", htmlAttributes: new { @class = "control-label col-sm-4" })
-            <div class="col-sm-8">
-                @Html.EditorFor(model => model.sortOrder, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.sortOrder, "", new { @class = "text-danger" })
-            </div>
-        </div>
+                <div class="form-group">
+                    @Html.LabelFor(model => model.characterDesc, "Description", htmlAttributes: new { @class = "control-label col-sm-12" })
+                    <div class="col-sm-12">
+                        @Html.EditorFor(model => model.characterDesc, new { htmlAttributes = new { @class = "form-control" } })
+                        @Html.ValidationMessageFor(model => model.characterDesc, "", new { @class = "text-danger" })
+                    </div>
+                </div>
 
-        <div class="form-group">
-            <div class="col-sm-offset-4 col-sm-8">
-                <button type="submit" class="btn btn-default btn-sm">Submit</button>
-                &nbsp;
-                <a class="btn btn-default btn-sm" onclick="onDismissClick('@ViewBag.workIntno')" role="button">Dismiss</a>
-                <label class="alert-success" id="result"></label>
-            </div>
+                <div class="form-group">
+                    @Html.LabelFor(model => model.remarks, "Remarks", htmlAttributes: new { @class = "control-label col-sm-12" })
+                    <div class="col-sm-12">
+                        @Html.EditorFor(model => model.remarks, new { htmlAttributes = new { @class = "form-control" } })
+                        @Html.ValidationMessageFor(model => model.remarks, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    @Html.LabelFor(model => model.sortOrder, "Sort Order", htmlAttributes: new { @class = "control-label col-sm-12" })
+                    <div class="col-sm-12">
+                        @Html.EditorFor(model => model.sortOrder, new { htmlAttributes = new { @class = "form-control" } })
+                        @Html.ValidationMessageFor(model => model.sortOrder, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="col-sm-12">
+                        <button type="submit" class="btn btn-default btn-sm">Submit</button>
+                        <label class="alert-success" id="formResult"></label>
+                    </div>
+                </div>
+            }
         </div>
-    }
+    </div>
 </div>

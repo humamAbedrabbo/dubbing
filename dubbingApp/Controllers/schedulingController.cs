@@ -9,7 +9,7 @@ using dubbingApp.Models;
 
 namespace dubbingApp.Controllers
 {
-    //[Authorize(Roles = "ADMIN, GENERAL_MANAGER, PRODUCTION_MANAGER")]
+    [Authorize(Roles = "ADMIN, GENERAL_MANAGER, PRODUCTION_MANAGER")]
     public class schedulingController : Controller
     {
         private DUBBDBEntities db = new DUBBDBEntities();

@@ -4,7 +4,6 @@
     [sortOrder]          SMALLINT       NOT NULL,
     [characterType]      NVARCHAR (50)  COLLATE Latin1_General_CI_AS NOT NULL,
     [characterGender]    NVARCHAR (50)  COLLATE Latin1_General_CI_AS NOT NULL,
-    [characterCode]      NVARCHAR (10)  COLLATE Latin1_General_CI_AS NOT NULL,
     [characterName]      NVARCHAR (100) COLLATE Latin1_General_CI_AS NOT NULL,
     [othCharacterName]   NVARCHAR (100) COLLATE Latin1_General_CI_AS NULL,
     [nickName]           NVARCHAR (100) COLLATE Latin1_General_CI_AS NULL,

@@ -402,7 +402,6 @@
           <Property Name="sortOrder" Type="smallint" Nullable="false" />
           <Property Name="characterType" Type="nvarchar" MaxLength="50" Nullable="false" />
           <Property Name="characterGender" Type="nvarchar" MaxLength="50" Nullable="false" />
-          <Property Name="characterCode" Type="nvarchar" MaxLength="10" Nullable="false" />
           <Property Name="characterName" Type="nvarchar" MaxLength="100" Nullable="false" />
           <Property Name="othCharacterName" Type="nvarchar" MaxLength="100" />
           <Property Name="nickName" Type="nvarchar" MaxLength="100" />
@@ -1901,7 +1900,6 @@
           <Property Name="sortOrder" Type="Int16" Nullable="false" />
           <Property Name="characterType" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
           <Property Name="characterGender" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
-          <Property Name="characterCode" Type="String" Nullable="false" MaxLength="10" FixedLength="false" Unicode="true" />
           <Property Name="characterName" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="true" />
           <Property Name="othCharacterName" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
           <Property Name="nickName" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
@@ -3033,7 +3031,6 @@
                 <ScalarProperty Name="nickName" ColumnName="nickName" />
                 <ScalarProperty Name="othCharacterName" ColumnName="othCharacterName" />
                 <ScalarProperty Name="characterName" ColumnName="characterName" />
-                <ScalarProperty Name="characterCode" ColumnName="characterCode" />
                 <ScalarProperty Name="characterGender" ColumnName="characterGender" />
                 <ScalarProperty Name="characterType" ColumnName="characterType" />
                 <ScalarProperty Name="sortOrder" ColumnName="sortOrder" />

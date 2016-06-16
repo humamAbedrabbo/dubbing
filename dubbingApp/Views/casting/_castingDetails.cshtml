@@ -1,11 +1,16 @@
 ﻿@model IEnumerable<dubbingModel.workActor>
 
-<br /><br />
 <div class="panel panel-default">
     <div class="panel-heading">
         <div class="row">
-            <label class="col-sm-12">Casting Details</label>
-            
+            <div class="col-sm-10">
+                <label>Casting Details</label>
+            </div>
+            <div class="col-sm-2">
+                <button class="btn btn-default btn-xs pull-right" onclick="onCloseClick()" title="Close">
+                    <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+                </button>
+            </div>
         </div>
     </div>
     <div class="panel-body">

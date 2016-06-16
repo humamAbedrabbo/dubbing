@@ -2,7 +2,7 @@
 @using dubbingApp.Models;
 
 
-<div class="container-fluid">
+<div class="container-fluid" style="padding:0px">
     @foreach (dubbingModel.workCharacter item in Model)
     {
         <div class="panel panel-default">
@@ -17,7 +17,7 @@
                         <label class="badge alert-info">@item.sortOrder</label>
                         <label>@item.characterName</label>
                     </div>
-                    <div class="col-sm-5">
+                    <div class="col-sm-6">
                         <small>
                             Casting By: &nbsp;
                                 @{
@@ -33,10 +33,6 @@
                                     }
                                 }
                         </small>
-                        
-                    </div>
-                    <div class="col-sm-1">
-                        <small>@item.characterCode</small>
                     </div>
                 </div>
             </div>

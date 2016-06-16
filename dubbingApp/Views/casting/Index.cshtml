@@ -15,29 +15,31 @@
                 </a>
             </div>
         </div>
-        <p class="lead"><h5>Define Key Actors in the Dubbing Production,  Main Characters, Voice Actors and Studio Team.</h5></p>
+        <p class="lead"><h5>Define Main Characters of the Work. Early Casting at this stage saves a lot of efforts at later stages.</h5></p>
         <label><a href="#" onclick="onCharacterAddNewClick('@ViewBag.workIntno')">Add Character ...</a></label>
     </div>
-
-    <div class="col-sm-8">
-        <label>Characters Displayed in Order</label>
-        <div class="btn-group pull-right" style="padding-bottom:10px">
-            <button class="btn btn-default btn-xs" onclick="onFilterClick(@ViewBag.workIntno)">All</button>&nbsp;
-            <button class="btn btn-danger btn-xs" onclick="onFilterClick(@ViewBag.workIntno, '01')">Heros</button>&nbsp;
-            <button class="btn btn-success btn-xs" onclick="onFilterClick(@ViewBag.workIntno, '02')">Main</button>&nbsp;
-            <button class="btn btn-info btn-xs" onclick="onFilterClick(@ViewBag.workIntno, '03')">Secondary</button>
+    
+    <div class="row">
+        <div class="col-sm-8">
+            <label>Characters Displayed in Order</label>
+            <div class="btn-group pull-right" style="padding-bottom:10px">
+                <button class="btn btn-default btn-xs" onclick="onFilterClick(@ViewBag.workIntno)">All</button>&nbsp;
+                <button class="btn btn-danger btn-xs" onclick="onFilterClick(@ViewBag.workIntno, '01')">Heros</button>&nbsp;
+                <button class="btn btn-success btn-xs" onclick="onFilterClick(@ViewBag.workIntno, '02')">Main</button>&nbsp;
+                <button class="btn btn-info btn-xs" onclick="onFilterClick(@ViewBag.workIntno, '03')">Secondary</button>
+            </div>
+            <br /><br />
+            <div id="cList">
+                @Html.Action("charactersList", new { id = ViewBag.workIntno })
+            </div>
         </div>
-        <br /><br />
-        <div id="cList">
-            @Html.Action("charactersList", new { id = ViewBag.workIntno })
+
+        <div class="col-sm-4">
+            <br /><br />
+            <div id="allDetails"></div>
+            <div id="aDetails"></div>
         </div>
     </div>
-
-    <div class="col-sm-4">
-        <div id="allDetails"></div>
-        <div id="aDetails"></div>
-    </div>
-
 </div>
 
 @section Scripts
@@ -78,17 +80,13 @@
                 }
             })
         }
-        function onDismissClick(work) {
+        function onSuccess(ajaxContext) {
+            $('#formResult').html('Successfully Added / Updated.');
+            $('#cList').html(ajaxContext);
+        }
+        function onCloseClick() {
             $('#allDetails').html(null);
             $('#aDetails').html(null);
-            $.ajax({
-                url: '@Url.Action("charactersList", "casting")',
-                data: { id: work },
-                type: 'GET',
-                success: function (result) {
-                    $('#cList').html(result);
-                }
-            })
         }
 
         function onCastingDetailsClick(wrk, chr) {
