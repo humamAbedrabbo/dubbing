@@ -42,8 +42,10 @@
                     <tbody>
                         @foreach (dubbingModel.employee item in Model.Where(b => b.empType == @empType.Value))
                         {
+                            string uid = null;
+                            if(!string.IsNullOrEmpty(item.empUID)) { uid = "(" + item.empUID + ")"; }
                             <tr>
-                                <td class="col-sm-3" title="@item.othFullName"><small>@item.fullName (@item.empUID)</small></td>
+                                <td class="col-sm-3" title="@item.othFullName"><small>@item.fullName @uid</small></td>
                                 <td class="col-sm-2"><small>@item.mobileNo</small></td>
                                 <td class="col-sm-2"><small>@item.landLineNo</small></td>
                                 <td class="col-sm-2"><small>@item.email</small></td>

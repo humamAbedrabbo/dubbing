@@ -123,7 +123,7 @@ namespace dubbingApp.Controllers
                         oi.orderReceivedDate = item.receivedDate;
                         if (item.expectedDeliveryDate.HasValue)
                             oi.expectedDeliveryDate = item.expectedDeliveryDate.Value.AddDays(i);
-                        oi.status = "01";
+                        oi.status = "04";
                         orderItemsModel.Add(oi);
                     }
                     db.SaveChanges();
@@ -199,6 +199,7 @@ namespace dubbingApp.Controllers
                 db.SaveChanges();
             }
             var model1 = db.orderChecks.Where(b => b.orderTrnHdrIntno == orderTrnHdrIntno);
+            ViewBag.orderItem = orderTrnHdrIntno;
             return PartialView("_orderItemIssuesList", model1.ToList());
         }
 
@@ -379,10 +380,12 @@ namespace dubbingApp.Controllers
         public ActionResult orderItemComplainAddNew(clientClaim item, long id)
         {
             var model = db.clientClaims;
+            long client = db.orderTrnHdrs.Find(id).agreementWork.agreement.clientIntno;
             if (ModelState.IsValid)
             {
                 try
                 {
+                    item.clientIntno = client;
                     item.orderTrnHdrIntno = id;
                     item.status = true;
                     model.Add(item);
