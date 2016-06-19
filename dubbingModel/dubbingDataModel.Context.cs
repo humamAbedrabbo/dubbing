@@ -41,11 +41,7 @@ namespace dubbingModel
         public virtual DbSet<orderCheck> orderChecks { get; set; }
         public virtual DbSet<orderTrnDtl> orderTrnDtls { get; set; }
         public virtual DbSet<orderTrnHdr> orderTrnHdrs { get; set; }
-        public virtual DbSet<UserProfile> UserProfiles { get; set; }
         public virtual DbSet<voiceActor> voiceActors { get; set; }
-        public virtual DbSet<webpages_Membership> webpages_Membership { get; set; }
-        public virtual DbSet<webpages_OAuthMembership> webpages_OAuthMembership { get; set; }
-        public virtual DbSet<webpages_Roles> webpages_Roles { get; set; }
         public virtual DbSet<workActor> workActors { get; set; }
         public virtual DbSet<workCharacter> workCharacters { get; set; }
         public virtual DbSet<workCharge> workCharges { get; set; }

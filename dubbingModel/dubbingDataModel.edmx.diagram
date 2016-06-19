@@ -21,11 +21,7 @@
         <EntityTypeShape EntityType="DUBBDBModel.orderCheck" Width="1.5" PointX="18.75" PointY="44.5" />
         <EntityTypeShape EntityType="DUBBDBModel.orderTrnDtl" Width="1.5" PointX="18.75" PointY="47.125" />
         <EntityTypeShape EntityType="DUBBDBModel.orderTrnHdr" Width="1.5" PointX="16.5" PointY="29.5" />
-        <EntityTypeShape EntityType="DUBBDBModel.UserProfile" Width="1.5" PointX="3" PointY="0.875" />
         <EntityTypeShape EntityType="DUBBDBModel.voiceActor" Width="1.5" PointX="19.5" PointY="39.75" />
-        <EntityTypeShape EntityType="DUBBDBModel.webpages_Membership" Width="1.5" PointX="2.75" PointY="3.75" />
-        <EntityTypeShape EntityType="DUBBDBModel.webpages_OAuthMembership" Width="1.5" PointX="4.75" PointY="3.75" />
-        <EntityTypeShape EntityType="DUBBDBModel.webpages_Roles" Width="1.5" PointX="0.75" PointY="0.875" />
         <EntityTypeShape EntityType="DUBBDBModel.workActor" Width="1.5" PointX="12.75" PointY="48.25" />
         <EntityTypeShape EntityType="DUBBDBModel.workCharacter" Width="1.5" PointX="10.5" PointY="65.375" />
         <EntityTypeShape EntityType="DUBBDBModel.workCharge" Width="1.5" PointX="6.75" PointY="0.75" />
@@ -60,7 +56,6 @@
         <AssociationConnector Association="DUBBDBModel.FK_orderTrnHdrs_workOrders" />
         <AssociationConnector Association="DUBBDBModel.FK_workActors_voiceActors" />
         <AssociationConnector Association="DUBBDBModel.FK_workActors_workCharacters" />
-        <AssociationConnector Association="DUBBDBModel.webpages_UsersInRoles" />
         <EntityTypeShape EntityType="DUBBDBModel.dubbingTrnDtl" Width="1.5" PointX="18.75" PointY="33.875" />
         <AssociationConnector Association="DUBBDBModel.FK_dubbingTrnDtls_agreementWorks" />
         <AssociationConnector Association="DUBBDBModel.FK_dubbingTrnDtls_dubbingTrnHdrs" />

@@ -386,13 +386,6 @@
           <Property Name="isDefaultTeam" Type="bit" Nullable="false" />
           <Property Name="status" Type="bit" Nullable="false" />
         </EntityType>
-        <EntityType Name="UserProfile">
-          <Key>
-            <PropertyRef Name="UserId" />
-          </Key>
-          <Property Name="UserId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
-          <Property Name="UserName" Type="nvarchar" MaxLength="56" Nullable="false" />
-        </EntityType>
         <EntityType Name="voiceActors">
           <Key>
             <PropertyRef Name="voiceActorIntno" />
@@ -405,46 +398,6 @@
           <Property Name="email" Type="nvarchar" MaxLength="50" Nullable="false" />
           <Property Name="status" Type="bit" Nullable="false" />
           <Property Name="accountNo" Type="nvarchar" MaxLength="50" />
-        </EntityType>
-        <EntityType Name="webpages_Membership">
-          <Key>
-            <PropertyRef Name="UserId" />
-          </Key>
-          <Property Name="UserId" Type="int" Nullable="false" />
-          <Property Name="CreateDate" Type="datetime" />
-          <Property Name="ConfirmationToken" Type="nvarchar" MaxLength="128" />
-          <Property Name="IsConfirmed" Type="bit" />
-          <Property Name="LastPasswordFailureDate" Type="datetime" />
-          <Property Name="PasswordFailuresSinceLastSuccess" Type="int" Nullable="false" />
-          <Property Name="Password" Type="nvarchar" MaxLength="128" Nullable="false" />
-          <Property Name="PasswordChangedDate" Type="datetime" />
-          <Property Name="PasswordSalt" Type="nvarchar" MaxLength="128" Nullable="false" />
-          <Property Name="PasswordVerificationToken" Type="nvarchar" MaxLength="128" />
-          <Property Name="PasswordVerificationTokenExpirationDate" Type="datetime" />
-        </EntityType>
-        <EntityType Name="webpages_OAuthMembership">
-          <Key>
-            <PropertyRef Name="Provider" />
-            <PropertyRef Name="ProviderUserId" />
-          </Key>
-          <Property Name="Provider" Type="nvarchar" MaxLength="30" Nullable="false" />
-          <Property Name="ProviderUserId" Type="nvarchar" MaxLength="100" Nullable="false" />
-          <Property Name="UserId" Type="int" Nullable="false" />
-        </EntityType>
-        <EntityType Name="webpages_Roles">
-          <Key>
-            <PropertyRef Name="RoleId" />
-          </Key>
-          <Property Name="RoleId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
-          <Property Name="RoleName" Type="nvarchar" MaxLength="256" Nullable="false" />
-        </EntityType>
-        <EntityType Name="webpages_UsersInRoles">
-          <Key>
-            <PropertyRef Name="UserId" />
-            <PropertyRef Name="RoleId" />
-          </Key>
-          <Property Name="UserId" Type="int" Nullable="false" />
-          <Property Name="RoleId" Type="int" Nullable="false" />
         </EntityType>
         <EntityType Name="workActors">
           <Key>
@@ -957,18 +910,6 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="fk_RoleId">
-          <End Role="webpages_Roles" Type="Self.webpages_Roles" Multiplicity="1" />
-          <End Role="webpages_UsersInRoles" Type="Self.webpages_UsersInRoles" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="webpages_Roles">
-              <PropertyRef Name="RoleId" />
-            </Principal>
-            <Dependent Role="webpages_UsersInRoles">
-              <PropertyRef Name="RoleId" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
         <Association Name="FK_shipmentDetails_orderTrnHdrs">
           <End Role="orderTrnHdrs" Type="Self.orderTrnHdrs" Multiplicity="1" />
           <End Role="shipmentDetails" Type="Self.shipmentDetails" Multiplicity="*" />
@@ -1086,18 +1027,6 @@
             </Principal>
             <Dependent Role="studios">
               <PropertyRef Name="supervisor" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="fk_UserId">
-          <End Role="UserProfile" Type="Self.UserProfile" Multiplicity="1" />
-          <End Role="webpages_UsersInRoles" Type="Self.webpages_UsersInRoles" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="UserProfile">
-              <PropertyRef Name="UserId" />
-            </Principal>
-            <Dependent Role="webpages_UsersInRoles">
-              <PropertyRef Name="UserId" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -1226,12 +1155,7 @@
           <EntitySet Name="shipments" EntityType="Self.shipments" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="studioEpisodes" EntityType="Self.studioEpisodes" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="studios" EntityType="Self.studios" Schema="dbo" store:Type="Tables" />
-          <EntitySet Name="UserProfile" EntityType="Self.UserProfile" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="voiceActors" EntityType="Self.voiceActors" Schema="dbo" store:Type="Tables" />
-          <EntitySet Name="webpages_Membership" EntityType="Self.webpages_Membership" Schema="dbo" store:Type="Tables" />
-          <EntitySet Name="webpages_OAuthMembership" EntityType="Self.webpages_OAuthMembership" Schema="dbo" store:Type="Tables" />
-          <EntitySet Name="webpages_Roles" EntityType="Self.webpages_Roles" Schema="dbo" store:Type="Tables" />
-          <EntitySet Name="webpages_UsersInRoles" EntityType="Self.webpages_UsersInRoles" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="workActors" EntityType="Self.workActors" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="workCharacters" EntityType="Self.workCharacters" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="workCharges" EntityType="Self.workCharges" Schema="dbo" store:Type="Tables" />
@@ -1381,10 +1305,6 @@
             <End Role="voiceActors" EntitySet="voiceActors" />
             <End Role="payments" EntitySet="payments" />
           </AssociationSet>
-          <AssociationSet Name="fk_RoleId" Association="Self.fk_RoleId">
-            <End Role="webpages_Roles" EntitySet="webpages_Roles" />
-            <End Role="webpages_UsersInRoles" EntitySet="webpages_UsersInRoles" />
-          </AssociationSet>
           <AssociationSet Name="FK_shipmentDetails_orderTrnHdrs" Association="Self.FK_shipmentDetails_orderTrnHdrs">
             <End Role="orderTrnHdrs" EntitySet="orderTrnHdrs" />
             <End Role="shipmentDetails" EntitySet="shipmentDetails" />
@@ -1424,10 +1344,6 @@
           <AssociationSet Name="FK_studios_employees_supervisor" Association="Self.FK_studios_employees_supervisor">
             <End Role="employees" EntitySet="employees" />
             <End Role="studios" EntitySet="studios" />
-          </AssociationSet>
-          <AssociationSet Name="fk_UserId" Association="Self.fk_UserId">
-            <End Role="UserProfile" EntitySet="UserProfile" />
-            <End Role="webpages_UsersInRoles" EntitySet="webpages_UsersInRoles" />
           </AssociationSet>
           <AssociationSet Name="FK_workActors_agreementWorks" Association="Self.FK_workActors_agreementWorks">
             <End Role="agreementWorks" EntitySet="agreementWorks" />
@@ -1483,11 +1399,7 @@
           <EntitySet Name="orderChecks" EntityType="DUBBDBModel.orderCheck" />
           <EntitySet Name="orderTrnDtls" EntityType="DUBBDBModel.orderTrnDtl" />
           <EntitySet Name="orderTrnHdrs" EntityType="DUBBDBModel.orderTrnHdr" />
-          <EntitySet Name="UserProfiles" EntityType="DUBBDBModel.UserProfile" />
           <EntitySet Name="voiceActors" EntityType="DUBBDBModel.voiceActor" />
-          <EntitySet Name="webpages_Membership" EntityType="DUBBDBModel.webpages_Membership" />
-          <EntitySet Name="webpages_OAuthMembership" EntityType="DUBBDBModel.webpages_OAuthMembership" />
-          <EntitySet Name="webpages_Roles" EntityType="DUBBDBModel.webpages_Roles" />
           <EntitySet Name="workActors" EntityType="DUBBDBModel.workActor" />
           <EntitySet Name="workCharacters" EntityType="DUBBDBModel.workCharacter" />
           <EntitySet Name="workCharges" EntityType="DUBBDBModel.workCharge" />
@@ -1608,10 +1520,6 @@
           <AssociationSet Name="FK_workActors_workCharacters" Association="DUBBDBModel.FK_workActors_workCharacters">
             <End Role="workCharacter" EntitySet="workCharacters" />
             <End Role="workActor" EntitySet="workActors" />
-          </AssociationSet>
-          <AssociationSet Name="webpages_UsersInRoles" Association="DUBBDBModel.webpages_UsersInRoles">
-            <End Role="webpages_Roles" EntitySet="webpages_Roles" />
-            <End Role="UserProfile" EntitySet="UserProfiles" />
           </AssociationSet>
           <EntitySet Name="dubbingTrnDtls" EntityType="DUBBDBModel.dubbingTrnDtl" />
           <AssociationSet Name="FK_dubbingTrnDtls_agreementWorks" Association="DUBBDBModel.FK_dubbingTrnDtls_agreementWorks">
@@ -2019,14 +1927,6 @@
           <NavigationProperty Name="shipmentDetails" Relationship="DUBBDBModel.FK_shipmentDetails_orderTrnHdrs" FromRole="orderTrnHdr" ToRole="shipmentDetail" />
           <NavigationProperty Name="clientClaims" Relationship="DUBBDBModel.FK_clientClaims_orderTrnHdrs" FromRole="orderTrnHdr" ToRole="clientClaim" />
         </EntityType>
-        <EntityType Name="UserProfile">
-          <Key>
-            <PropertyRef Name="UserId" />
-          </Key>
-          <Property Name="UserId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="UserName" Type="String" Nullable="false" MaxLength="56" FixedLength="false" Unicode="true" />
-          <NavigationProperty Name="webpages_Roles" Relationship="DUBBDBModel.webpages_UsersInRoles" FromRole="UserProfile" ToRole="webpages_Roles" />
-        </EntityType>
         <EntityType Name="voiceActor">
           <Key>
             <PropertyRef Name="voiceActorIntno" />
@@ -2043,39 +1943,6 @@
           <NavigationProperty Name="workActors" Relationship="DUBBDBModel.FK_workActors_voiceActors" FromRole="voiceActor" ToRole="workActor" />
           <NavigationProperty Name="dubbingAppointments" Relationship="DUBBDBModel.FK_dubbingAppointments_voiceActors" FromRole="voiceActor" ToRole="dubbingAppointment" />
           <NavigationProperty Name="payments" Relationship="DUBBDBModel.FK_payments_voiceActors" FromRole="voiceActor" ToRole="payment" />
-        </EntityType>
-        <EntityType Name="webpages_Membership">
-          <Key>
-            <PropertyRef Name="UserId" />
-          </Key>
-          <Property Name="UserId" Type="Int32" Nullable="false" />
-          <Property Name="CreateDate" Type="DateTime" Precision="3" />
-          <Property Name="ConfirmationToken" Type="String" MaxLength="128" FixedLength="false" Unicode="true" />
-          <Property Name="IsConfirmed" Type="Boolean" />
-          <Property Name="LastPasswordFailureDate" Type="DateTime" Precision="3" />
-          <Property Name="PasswordFailuresSinceLastSuccess" Type="Int32" Nullable="false" />
-          <Property Name="Password" Type="String" Nullable="false" MaxLength="128" FixedLength="false" Unicode="true" />
-          <Property Name="PasswordChangedDate" Type="DateTime" Precision="3" />
-          <Property Name="PasswordSalt" Type="String" Nullable="false" MaxLength="128" FixedLength="false" Unicode="true" />
-          <Property Name="PasswordVerificationToken" Type="String" MaxLength="128" FixedLength="false" Unicode="true" />
-          <Property Name="PasswordVerificationTokenExpirationDate" Type="DateTime" Precision="3" />
-        </EntityType>
-        <EntityType Name="webpages_OAuthMembership">
-          <Key>
-            <PropertyRef Name="Provider" />
-            <PropertyRef Name="ProviderUserId" />
-          </Key>
-          <Property Name="Provider" Type="String" Nullable="false" MaxLength="30" FixedLength="false" Unicode="true" />
-          <Property Name="ProviderUserId" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="true" />
-          <Property Name="UserId" Type="Int32" Nullable="false" />
-        </EntityType>
-        <EntityType Name="webpages_Roles">
-          <Key>
-            <PropertyRef Name="RoleId" />
-          </Key>
-          <Property Name="RoleId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="RoleName" Type="String" Nullable="false" MaxLength="256" FixedLength="false" Unicode="true" />
-          <NavigationProperty Name="UserProfiles" Relationship="DUBBDBModel.webpages_UsersInRoles" FromRole="webpages_Roles" ToRole="UserProfile" />
         </EntityType>
         <EntityType Name="workActor">
           <Key>
@@ -2511,10 +2378,6 @@
               <PropertyRef Name="workCharacterIntno" />
             </Dependent>
           </ReferentialConstraint>
-        </Association>
-        <Association Name="webpages_UsersInRoles">
-          <End Type="DUBBDBModel.webpages_Roles" Role="webpages_Roles" Multiplicity="*" />
-          <End Type="DUBBDBModel.UserProfile" Role="UserProfile" Multiplicity="*" />
         </Association>
         <EntityType Name="dubbingTrnDtl">
           <Key>
@@ -3253,14 +3116,6 @@
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
-          <EntitySetMapping Name="UserProfiles">
-            <EntityTypeMapping TypeName="DUBBDBModel.UserProfile">
-              <MappingFragment StoreEntitySet="UserProfile">
-                <ScalarProperty Name="UserName" ColumnName="UserName" />
-                <ScalarProperty Name="UserId" ColumnName="UserId" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
           <EntitySetMapping Name="voiceActors">
             <EntityTypeMapping TypeName="DUBBDBModel.voiceActor">
               <MappingFragment StoreEntitySet="voiceActors">
@@ -3272,40 +3127,6 @@
                 <ScalarProperty Name="othFullName" ColumnName="othFullName" />
                 <ScalarProperty Name="fullName" ColumnName="fullName" />
                 <ScalarProperty Name="voiceActorIntno" ColumnName="voiceActorIntno" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="webpages_Membership">
-            <EntityTypeMapping TypeName="DUBBDBModel.webpages_Membership">
-              <MappingFragment StoreEntitySet="webpages_Membership">
-                <ScalarProperty Name="PasswordVerificationTokenExpirationDate" ColumnName="PasswordVerificationTokenExpirationDate" />
-                <ScalarProperty Name="PasswordVerificationToken" ColumnName="PasswordVerificationToken" />
-                <ScalarProperty Name="PasswordSalt" ColumnName="PasswordSalt" />
-                <ScalarProperty Name="PasswordChangedDate" ColumnName="PasswordChangedDate" />
-                <ScalarProperty Name="Password" ColumnName="Password" />
-                <ScalarProperty Name="PasswordFailuresSinceLastSuccess" ColumnName="PasswordFailuresSinceLastSuccess" />
-                <ScalarProperty Name="LastPasswordFailureDate" ColumnName="LastPasswordFailureDate" />
-                <ScalarProperty Name="IsConfirmed" ColumnName="IsConfirmed" />
-                <ScalarProperty Name="ConfirmationToken" ColumnName="ConfirmationToken" />
-                <ScalarProperty Name="CreateDate" ColumnName="CreateDate" />
-                <ScalarProperty Name="UserId" ColumnName="UserId" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="webpages_OAuthMembership">
-            <EntityTypeMapping TypeName="DUBBDBModel.webpages_OAuthMembership">
-              <MappingFragment StoreEntitySet="webpages_OAuthMembership">
-                <ScalarProperty Name="UserId" ColumnName="UserId" />
-                <ScalarProperty Name="ProviderUserId" ColumnName="ProviderUserId" />
-                <ScalarProperty Name="Provider" ColumnName="Provider" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="webpages_Roles">
-            <EntityTypeMapping TypeName="DUBBDBModel.webpages_Roles">
-              <MappingFragment StoreEntitySet="webpages_Roles">
-                <ScalarProperty Name="RoleName" ColumnName="RoleName" />
-                <ScalarProperty Name="RoleId" ColumnName="RoleId" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
@@ -3389,14 +3210,6 @@
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
-          <AssociationSetMapping Name="webpages_UsersInRoles" TypeName="DUBBDBModel.webpages_UsersInRoles" StoreEntitySet="webpages_UsersInRoles">
-            <EndProperty Name="UserProfile">
-              <ScalarProperty Name="UserId" ColumnName="UserId" />
-            </EndProperty>
-            <EndProperty Name="webpages_Roles">
-              <ScalarProperty Name="RoleId" ColumnName="RoleId" />
-            </EndProperty>
-          </AssociationSetMapping>
           <EntitySetMapping Name="dubbingTrnDtls">
             <EntityTypeMapping TypeName="DUBBDBModel.dubbingTrnDtl">
               <MappingFragment StoreEntitySet="dubbingTrnDtls">
