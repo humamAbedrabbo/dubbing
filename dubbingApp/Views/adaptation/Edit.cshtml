@@ -1,0 +1,44 @@
+﻿@using dubbingModel
+@model orderTrnHdr
+
+@{
+    ViewBag.Title = "Edit";
+}
+
+<link href="~/Content/adaptation.css" rel="stylesheet" />
+
+<div class="page-header">
+    <h1 class="right">@Model.agreementWork.workName <small>الحلقة @Model.episodeNo</small></h1>
+</div>
+<div class="row">
+    <div class="col-md-2">
+        <div class="row">
+            <div>Scene details</div>
+            <div>Heros list in the scene</div>
+        </div>
+    </div>
+    <!-- <span class="label label-warning">...</span> -->
+    @Html.Hidden("orderTrnHdrIntno", @Model.orderTrnHdrIntno)
+    <div class="col-md-8">
+        <div id="dialogListContainer">
+            @*@Html.Action("dialogList", "adaptation", new { orderTrnHdrIntno = Model.orderTrnHdrIntno, sceneNo = ViewBag.SceneNo })*@
+        </div>
+    </div>
+    <div class="col-md-2">
+        @Html.Hidden("activeScene", "0")
+        <div id="scenesListContainer">@Html.Action("sceneList", "adaptation", new { orderTrnHdrIntno = Model.orderTrnHdrIntno })</div>
+    </div>
+</div>
+
+@section Scripts
+{
+    
+    <script src="~/Scripts/dubbing/adaptation.js"></script>
+
+    <script>
+        $(function () {
+            addSceneClickEvent(@Model.orderTrnHdrIntno);
+        });
+    </script>
+}
+

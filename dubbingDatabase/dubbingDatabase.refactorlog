@@ -1,0 +1,24 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Operations Version="1.0" xmlns="http://schemas.microsoft.com/sqlserver/dac/Serialization/2012/02">
+  <Operation Name="Rename Refactor" Key="865bf643-3b2f-4f72-a4fb-d4dbd578a951" ChangeDateTime="06/18/2016 23:12:41">
+    <Property Name="ElementName" Value="[dbo].[adaptationDialogs].[Id]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[adaptationDialogs]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="dialogIntno" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="eb0d4f0c-9fd0-4dc4-8d52-a105d1744241" ChangeDateTime="06/18/2016 23:17:33">
+    <Property Name="ElementName" Value="[dbo].[adaptationSubtitles].[Id]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[adaptationSubtitles]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="subtitleIntno" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="32c07917-ff9a-4676-bf60-8e750b875d5d" ChangeDateTime="06/18/2016 23:21:36">
+    <Property Name="ElementName" Value="[dbo].[adaptationSubtitles].[dialogId]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[adaptationSubtitles]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="dialogIntno" />
+  </Operation>
+</Operations>

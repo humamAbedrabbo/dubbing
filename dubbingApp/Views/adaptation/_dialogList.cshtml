@@ -1,0 +1,51 @@
+﻿@using dubbingModel
+@model IEnumerable<adaptationDialog>
+
+<div id="dialogList">
+
+    @foreach (var dialog in Model)
+    {
+
+        <div class="panel panel-default">
+            <!-- Default panel contents -->
+            <div data-id="@dialog.dialogIntno" class="panel-heading">
+                <div class="right">
+                    <span class="pull-right">
+                        <a href="javascript:addDialog();"><span class="glyphicon glyphicon-plus"></span></a>
+                        &nbsp;
+                    </span>
+                    @dialog.dubbingSheetHdr.characterName
+                    <span class="pull-left">                        
+                        <a href="#"><span class="glyphicon glyphicon-remove"></span></a>
+                    </span>
+                </div>
+            </div>
+
+            <!-- Table -->
+            <table class="table table-bordered">          
+                <tbody>
+                    @foreach (var subtitle in dialog.adaptationSubtitles.OrderBy(x => x.subtitleNo).ToList())
+                    {
+                    <tr>
+                        <td style="width:2em;">
+                            <a href="#"><span class="glyphicon glyphicon-remove"></span></a>
+                        </td>
+                        <td style="width:6em;">@subtitle.startTime</td>
+                        <td style="width:6em;">@subtitle.endTime</td>
+                        <td>
+                            <div class="scentence right">
+                                @subtitle.scentence
+                            </div>
+                        </td>
+                        <td style="width:2em;">
+                            <span class="pull-right"><a href="#"><span class="glyphicon glyphicon-plus"></span></a></span>
+                        </td>
+                    </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+
+    }
+
+</div>

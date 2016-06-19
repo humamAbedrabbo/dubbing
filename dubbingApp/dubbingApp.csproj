@@ -178,6 +178,7 @@
     <Compile Include="App_Start\Startup.Auth.cs" />
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\actorsController.cs" />
+    <Compile Include="Controllers\adaptationController.cs" />
     <Compile Include="Controllers\adminController.cs" />
     <Compile Include="Controllers\agreementsController.cs" />
     <Compile Include="Controllers\assemblyController.cs" />
@@ -206,6 +207,7 @@
     <Compile Include="Utils\SecurityManager.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Content\adaptation.css" />
     <Content Include="Content\bootstrap-theme.css" />
     <Content Include="Content\bootstrap-theme.min.css" />
     <Content Include="Content\bootstrap.css" />
@@ -227,6 +229,7 @@
     <Content Include="Scripts\bootstrap.min.js" />
     <None Include="Properties\PublishProfiles\dubbingApp.pubxml" />
     <None Include="Scripts\jquery-2.2.3.intellisense.js" />
+    <Content Include="Scripts\dubbing\adaptation.js" />
     <Content Include="Scripts\jquery-2.2.3.js" />
     <Content Include="Scripts\jquery-2.2.3.min.js" />
     <Content Include="Scripts\jquery-2.2.3.min.map" />
@@ -364,6 +367,10 @@
     <Content Include="Views\actors\_workChargesList.cshtml" />
     <Content Include="Views\dubbing\_scheduledWorksList.cshtml" />
     <Content Include="Views\dubbing\studioNotAllocated.cshtml" />
+    <Content Include="Views\adaptation\Edit.cshtml" />
+    <Content Include="Views\adaptation\Index.cshtml" />
+    <Content Include="Views\adaptation\_sceneList.cshtml" />
+    <Content Include="Views\adaptation\_dialogList.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
