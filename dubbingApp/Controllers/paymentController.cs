@@ -1,11 +1,13 @@
-﻿using System;
+﻿using ClosedXML.Excel;
+using dubbingModel;
+using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
-using System.Data.Entity;
 using System.Web;
 using System.Web.Mvc;
-using dubbingModel;
-using dubbingApp.Models;
+using System.Web.UI;
+using System.Web.UI.WebControls;
 
 namespace dubbingApp.Controllers
 {
@@ -187,6 +189,31 @@ namespace dubbingApp.Controllers
             else
                 return Content("Failed! Please Enter All Data. ", "text/html");
             return Content("Successfully Updated. ", "text/html");
+        }
+        
+        public ActionResult exportToExcel()
+        {
+            var grid = new GridView();
+            grid.DataSource = db.employees.ToList();
+            grid.DataBind();
+
+            Response.ClearContent();
+            Response.Buffer = true;
+            Response.AddHeader("content-disposition", "attachment; filename=DemoExcel.xls");
+            //Response.AppendHeader("ContentType", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+            Response.AppendHeader("ContentType", "application/vnd.ms-excel");
+
+            Response.Charset = "";
+            Response.ContentEncoding = System.Text.Encoding.Unicode;
+            StringWriter objStringWriter = new StringWriter();
+            HtmlTextWriter objHtmlTextWriter = new HtmlTextWriter(objStringWriter);
+
+            grid.RenderControl(objHtmlTextWriter);
+
+            Response.Write(objStringWriter.ToString());
+            Response.Flush();
+            Response.End();
+            return null;
         }
     }
 }

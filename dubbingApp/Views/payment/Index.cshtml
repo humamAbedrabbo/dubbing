@@ -7,7 +7,7 @@
     <div class="jumbotron" style="padding:5px">
         <h2>Payments</h2>
         <p class="lead"><h5>Given the List of Performed Casting / Assignments, Payment Vouchers can be "Generated" (One Voucher Per Dubbing Work), They Can be "Endorsed" (at Payment Time), and Finally They Can be "Exported" to the Accounting System.</h5></p>
-        <p><a class="btn btn-primary" href="#">Export Paid Vouchers &raquo;</a></p>
+        <p><a class="btn btn-primary" href="/payment/exportToExcel">Export Paid Vouchers &raquo;</a></p>
     </div>
 
     <div class="row">
@@ -32,7 +32,7 @@
 
     <script>
         $(document).ready(function () {
-            
+
         });
 
         function onActorSelectClick(id1, name1, idx) {
@@ -111,5 +111,6 @@
         function onCloseClick() {
             $('#details').html(null);
         }
+
     </script>
 }
