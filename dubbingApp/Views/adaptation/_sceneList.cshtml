@@ -1,0 +1,21 @@
+﻿@using dubbingModel
+@model IEnumerable<short>
+
+<div class="panel panel-default">
+    <!-- Default panel contents -->
+    <div class="panel-heading">
+        <a class="btn btn-sm btn-default" href="javascript:addScene(@ViewBag.orderTrnHdrIntno);"><span class="glyphicon glyphicon-plus"></span></a>
+        <a class="btn btn-sm btn-default" href="javascript:deleteScene(@ViewBag.orderTrnHdrIntno);"><span class="glyphicon glyphicon-remove"></span></a>
+    </div>
+    @*<div class="panel-body">
+        
+    </div>*@
+
+    <!-- List group -->
+    <ul id="sceneList" class="list-group">
+        @foreach (var item in Model)
+        {
+            <li class="list-group-item scene" data-scene="@item">@string.Format("{0} {1}", "المشهد", item)</li>
+        }
+    </ul>
+</div>

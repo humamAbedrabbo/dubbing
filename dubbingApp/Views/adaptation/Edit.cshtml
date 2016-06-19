@@ -18,243 +18,26 @@
         </div>
     </div>
     <!-- <span class="label label-warning">...</span> -->
+    @Html.Hidden("orderTrnHdrIntno", @Model.orderTrnHdrIntno)
     <div class="col-md-8">
-        <div class="list-group">
-           
-            <div data-id="1" class="list-group-item">
-                <h4 class="list-group-item-heading right scentence-header">
-                    براتاب سنغ
-                </h4>
-                <div class="scentence">
-                    <hr class="hr" />
-                    <div>
-                        <span class="label label-default">00:00:10</span>
-                        &nbsp;
-                        <span class="label label-default">00:00:40</span>
-                        @*&nbsp;
-                        <span><input class="time-editor" value="00:00:10" /></span>*@
-                    </div>
-                    <p class="list-group-item-text right static-text">
-                        أهلا وسهلا فيكن بقصر سوارنا! .. نحنا كتير مبسوطين بالاحترام والحب الكبير اللي منحتونا ياه بجيتكن لعنا .. صدقا ياجماعة ... ما في شي أعظم بالنسبة إلنا . من الحب والتقدير اللي بتكنوه لعيلتنا واللي منقدرو كتير
-                    </p>
-                    <div class="hidden dynamic-text"></div>
-                    <div class="scentence-tool hidden right">
-                        <a class="editScentence btn-sm btn-default" href="#"><span class="glyphicon glyphicon-edit"></span></a>
-                        <a class="cancelScentence btn-sm btn-default hidden" href="#"><span class="glyphicon glyphicon-remove"></span></a>
-                        <a class="saveScentence btn-sm btn-default hidden" href="#"><span class="glyphicon glyphicon-floppy-disk"></span></a>
-                        <a class="newScentence btn-sm btn-default" href="#"><span class="glyphicon glyphicon-plus"></span></a>
-                    </div>
-                </div>
-            </div>
+        <div id="dialogListContainer">
+            @*@Html.Action("dialogList", "adaptation", new { orderTrnHdrIntno = Model.orderTrnHdrIntno, sceneNo = ViewBag.SceneNo })*@
         </div>
     </div>
     <div class="col-md-2">
-        Scenes
+        @Html.Hidden("activeScene", "0")
+        <div id="scenesListContainer">@Html.Action("sceneList", "adaptation", new { orderTrnHdrIntno = Model.orderTrnHdrIntno })</div>
     </div>
 </div>
 
 @section Scripts
 {
+    
+    <script src="~/Scripts/dubbing/adaptation.js"></script>
+
     <script>
-        // To replace a RegEx in a string with another string
-        String.prototype.replaceAll = function (search, replacement) {
-            var target = this;
-            return target.replace(new RegExp(search, 'g'), replacement);
-        };
-
-        // When pressing Enter, save the scentence and exit the edit mode
-        function textAreaKeyDown() {
-            if (this.event.which == 13) {
-                var elemScentence = $(this).parentsUntil(".scentence");
-                var saveButton = $(this.event.target).closest('.scentence').children('.scentence-tool').children(".saveScentence")[0];
-                $(saveButton).parent().addClass("hidden");
-                $(elemScentence).removeClass("inEdit");
-                saveButton.click();
-            }
-        }
-
-        // Remove all span tags from scentence static text
-        function removeTextTags(elem) {
-            $(elem).children("span").each(function (index) {
-                var s = $(this).text();
-                $(this).replaceWith(s);
-            });
-
-        }
-
-        // Replace the tags with label spans when finish editing
-        function addTextTags(scentence) {
-            var s = scentence;
-
-            s = s.replace(/\.\.\./g, '[t3]');
-            s = s.replace(/\.\./g, '[t2]');
-            s = s.replace(/\./g, '[t1]');
-            s = s.replace(/\[t1\]/g, '<span class="tag label label-success">.</span>');
-            s = s.replace(/\[t2\]/g, '<span class="tag label label-info">..</span>');
-            s = s.replace(/\[t3\]/g, '<span class="tag label label-warning">...</span>');
-
-            return s;
-        }
-
-        // Assign event to edit scentence header and select a character name
-        function addScentenceHeaderClickEvent(e) {
-            $(e).click(function () {
-
-                if (!$(this).hasClass("inEdit")) {
-                    $(this).addClass("inEdit");
-                    var s = $(this).text().trim();
-                    $(this).empty();
-                    $(this).html("<input onkeydown='onCharacterNameKeyDown();' onclick='onCharacterNameInputClick();'  class='character-name form-control' value='" + s + "' />");
-
-                }
-                else {
-                    var s = $(this).children(".character-name").val();
-                    $(this).empty();
-                    $(this).text(s);
-                    $(this).removeClass("inEdit");
-                }
-
-            });
-        }
-
-        function onCharacterNameInputClick() {
-            // stop event from propagation to parent
-            this.event.stopImmediatePropagation();
-        }
-
-        function onCharacterNameKeyDown() {
-            if (this.event.which == 13) {
-                $(this.event.target).parent().click();
-            }
-        }
-
-        // On mouse hover over the scentence, show the toolbar except in editing mode
-        function addScentenceHoverEvent(e) {
-
-            $(e).hover(function () {
-                if (!$(this).hasClass("inEdit")) {
-                    $(this).children(".scentence-tool").toggleClass("hidden");
-                }
-                else {
-                    $(this).children(".scentence-tool").removeClass("hidden");
-                }
-            });
-        }
-
-        // Assign event to add new scentence item and assign the required events
-        function addNewScentanceEvent(e) {
-
-            $(e).click(function () {
-                var elemScentence = $(this).parent().parent();
-                var id = $(elemScentence).parent().data("id") + 1;
-                //var newItem = $(elemScentence.parent().parent()).insertAfter($(elemScentence).parent());
-                var newItem = $("<div data-id='" + id + "' class='list-group-item'><h4 class='list-group-item-heading right'>character</h4><div class='scentence'><hr class='hr' /><div><span class='label label-default'>00:00:00</span>&nbsp;<span class='label label-default'>00:00:00</span></div><p class='list-group-item-text right static-text'>new scentence</p><div class='hidden dynamic-text'></div><div class='scentence-tool hidden right'><a class='editScentence btn-sm btn-default' href='#'><span class='glyphicon glyphicon-edit'></span></a><a class='cancelScentence btn-sm btn-default hidden' href='#'><span class='glyphicon glyphicon-remove'></span></a><a class='saveScentence btn-sm btn-default hidden' href='#'><span class='glyphicon glyphicon-floppy-disk'></span></a><a class='newScentence btn-sm btn-default' href='#'><span class='glyphicon glyphicon-plus'></span></a></div></div></div>").insertAfter(elemScentence.parent());
-                //$(newItem).html("<div data-id='" + id + "' class='list-group-item'><h4 class='list-group-item-heading right'>character</h4><div class='scentence'><hr class='hr' /><div><span class='label label-default'>00:00:00</span>&nbsp;<span class='label label-default'>00:00:00</span></div><p class='list-group-item-text right static-text'>new scentence</p><div class='hidden dynamic-text'></div><div class='scentence-tool hidden right'><a class='editScentence btn-sm btn-default' href='#'><span class='glyphicon glyphicon-edit'></span></a><a class='cancelScentence btn-sm btn-default hidden' href='#'><span class='glyphicon glyphicon-remove'></span></a><a class='saveScentence btn-sm btn-default hidden' href='#'><span class='glyphicon glyphicon-floppy-disk'></span></a><a class='newScentence btn-sm btn-default' href='#'><span class='glyphicon glyphicon-plus'></span></a></div></div></div>");
-
-                addScentenceHoverEvent("[data-id=" + id + "] .scentence");
-                addNewScentanceEvent("[data-id=" + id + "] .newScentence");
-                addEditScentenceEvent("[data-id=" + id + "] .editScentence");
-                addCancelScentenceEvent("[data-id=" + id + "] .cancelScentence");
-                addSaveScentenceEvent("[data-id=" + id + "] .saveScentence");
-                addScentenceHeaderClickEvent("[data-id=" + id + "] .scentence-header");
-            });
-        }
-
-        // Assign event to show the scentence in edit mode
-        function addEditScentenceEvent(e) {
-            $(e).click(function () {
-
-                var elemScentence = $(this).parent().parent();
-                var elemStatic = elemScentence.children(".static-text")[0];
-                var elemDynamic = elemScentence.children(".dynamic-text")[0];
-                var s = $(elemStatic).text().trim();
-                removeTextTags(elemStatic);
-
-                $(elemDynamic).html("<div><textarea onkeydown='textAreaKeyDown()' rows='2' class='form-control dynamic-text right' style='max-width: 100%;'>" + s + "</textarea></div>");
-                $(elemStatic).toggleClass('hidden');
-                $(elemDynamic).fadeToggle('fast', 'linear');
-                $(elemDynamic).toggleClass('hidden');
-                $(".editScentence").addClass("hidden");
-                $(".newScentence").addClass("hidden");
-                $(".cancelScentence").removeClass("hidden");
-                $(".saveScentence").removeClass("hidden");
-                $(elemScentence).addClass("inEdit");
-            });
-        }
-
-        // Assign event to cancel the editing mode and return to read mode
-        function addCancelScentenceEvent(e) {
-            $(e).click(function () {
-                var elemScentence = $(this).parent().parent();
-                var elemStatic = elemScentence.children(".static-text")[0];
-                var elemDynamic = elemScentence.children(".dynamic-text")[0];
-
-                var s = $(elemStatic).text().trim();
-                s = addTextTags(s);
-                $(elemStatic).html(s);
-                $(elemDynamic).fadeOut();
-                $(elemDynamic).toggleClass('hidden');
-                $(elemStatic).toggleClass('hidden');
-                $(elemDynamic).empty();
-                $(".editScentence").removeClass("hidden");
-                $(".newScentence").removeClass("hidden");
-                $(".cancelScentence").addClass("hidden");
-                $(".saveScentence").addClass("hidden");
-                $(elemScentence).removeClass("inEdit");
-            });
-        }
-
-        // Assign event to save the modified scentence
-        function addSaveScentenceEvent(e) {
-            $(e).click(function () {
-                var elemScentence = $(this).parent().parent();
-                var elemStatic = elemScentence.children(".static-text")[0];
-                var elemDynamic = elemScentence.children(".dynamic-text")[0];
-                var s = $($(elemDynamic).children("div").children("textarea")[0]).val();
-                s = addTextTags(s);
-
-
-                $(elemStatic).html(s);
-                $(elemDynamic).fadeOut();
-                $(elemDynamic).toggleClass('hidden');
-                $(elemStatic).toggleClass('hidden');
-                $(elemDynamic).empty();
-                $(".editScentence").removeClass("hidden");
-                $(".newScentence").removeClass("hidden");
-                $(".saveScentence").addClass("hidden");
-                $(".cancelScentence").addClass("hidden");
-                $(elemScentence).removeClass("inEdit");
-            });
-        }
-
-        // Add all basic events to already loaded scentences
-        function addEvents() {
-            $(".list-group-item").each(function (index) {
-
-                var id = $(this).data("id");
-
-                addScentenceHoverEvent("[data-id=" + id + "] .scentence");
-                addNewScentanceEvent("[data-id=" + id + "] .newScentence");
-                addEditScentenceEvent("[data-id=" + id + "] .editScentence");
-                addCancelScentenceEvent("[data-id=" + id + "] .cancelScentence");
-                addSaveScentenceEvent("[data-id=" + id + "] .saveScentence");
-                addScentenceHeaderClickEvent("[data-id=" + id + "] .scentence-header");
-            });
-
-        }
-
-        // TEMPORARY: add tags to loaded scentences
-        function fixTags() {
-            $(".static-text").each(function (index) {
-                var s = $(this).text().trim();
-                s = addTextTags(s);
-                $(this).html(s);
-            });
-        }
-
         $(function () {
-            addEvents();
-            fixTags();
+            addSceneClickEvent(@Model.orderTrnHdrIntno);
         });
     </script>
 }

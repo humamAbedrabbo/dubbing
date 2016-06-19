@@ -61,5 +61,7 @@ namespace dubbingModel
         public virtual DbSet<paymentDetail> paymentDetails { get; set; }
         public virtual DbSet<payment> payments { get; set; }
         public virtual DbSet<paymentTemp> paymentTemps { get; set; }
+        public virtual DbSet<adaptationDialog> adaptationDialogs { get; set; }
+        public virtual DbSet<adaptationSubtitle> adaptationSubtitles { get; set; }
     }
 }
