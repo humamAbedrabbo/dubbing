@@ -142,7 +142,6 @@
     <Build Include="dbo\Tables\workCharges.sql" />
     <Build Include="dbo\Tables\workOrders.sql" />
     <Build Include="dbo\Tables\workPersonnels.sql" />
-    <Build Include="dbo\Views\userRolesView.sql" />
     <Build Include="dbo\Tables\adaptationDialogs.sql" />
     <Build Include="dbo\Tables\adaptationSubtitles.sql" />
   </ItemGroup>
