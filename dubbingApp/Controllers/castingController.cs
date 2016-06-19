@@ -9,7 +9,7 @@ using dubbingApp.Models;
 
 namespace dubbingApp.Controllers
 {
-    //[Authorize(Roles = "ADMIN, GENERAL_MANAGER")]
+    [Authorize(Roles = "ADMIN, GENERAL_MANAGER, PRODUCTION_MANAGER")]
     public class castingController : Controller
     {
         private DUBBDBEntities db = new DUBBDBEntities();
@@ -63,7 +63,8 @@ namespace dubbingApp.Controllers
             }
             else
                 return Content("Failed! Please Enter All Data.", "text/html");
-            return Content("Successfully Created.", "text/html");
+            long id1 = id;
+            return RedirectToAction("charactersList", new { id = id1 });
         }
 
         public ActionResult characterUpdate(long id)
@@ -94,7 +95,8 @@ namespace dubbingApp.Controllers
             }
             else
                 return Content("Failed! Please Enter All Data.", "text/html");
-            return Content("Successfully Updated.", "text/html");
+            long id1 = item.workIntno;
+            return RedirectToAction("charactersList", new { id = id1 });
         }
 
         public ActionResult castingDetails(long work, long character)
@@ -156,7 +158,7 @@ namespace dubbingApp.Controllers
             }
             else
                 return Content("Failed! Please Enter All Data.", "text/html");
-            return Content("Successfully Created.", "text/html");
+            return RedirectToAction("charactersList", new { id = item.workIntno });
         }
 
         public ActionResult actorUpdate(long work, long character)
@@ -185,7 +187,7 @@ namespace dubbingApp.Controllers
             }
             else
                 return Content("Failed! Please Enter All Data.", "text/html");
-            return Content("Successfully Updated.", "text/html");
+            return RedirectToAction("charactersList", new { id = item.workIntno });
         }
 
     }

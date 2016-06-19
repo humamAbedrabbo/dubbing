@@ -27,16 +27,22 @@ namespace dubbingApp.Controllers
 
         public ActionResult actorsList(bool isActive, string alpha)
         {
-            var model = db.voiceActors.Where(b => (string.IsNullOrEmpty(alpha) || b.fullName.StartsWith(alpha)) && b.status == isActive).ToList();
+            var model = db.voiceActors.Where(b => (string.IsNullOrEmpty(alpha) || b.fullName.TrimStart().StartsWith(alpha)) && b.status == isActive && b.voiceActorIntno != 0).ToList();
+            //build alphabetical list out of the recorded actors
             List<string> alphaList = new List<string>();
-            string fl = model[0].fullName.Substring(0, 1).ToUpper();
-            alphaList.Add(fl);
-            for (int i = 1; i < model.Count(); i++)
+            if (string.IsNullOrEmpty(alpha))
             {
-                fl = model[i].fullName.Substring(0, 1).ToUpper();
-                if (!alphaList.Contains(fl))
-                    alphaList.Add(fl);
+                string fl = model[0].fullName.TrimStart().Substring(0, 1).ToUpper();
+                alphaList.Add(fl);
+                for (int i = 1; i < model.Count(); i++)
+                {
+                    fl = model[i].fullName.TrimStart().Substring(0, 1).ToUpper();
+                    if (!alphaList.Contains(fl))
+                        alphaList.Add(fl);
+                }
             }
+            else
+                alphaList.Add(alpha);
             ViewBag.alphaList = alphaList.OrderBy(x => x);
             return PartialView("_actorsList", model);
         }

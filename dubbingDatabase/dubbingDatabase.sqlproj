@@ -136,18 +136,12 @@
     <Build Include="dbo\Tables\shipments.sql" />
     <Build Include="dbo\Tables\studioEpisodes.sql" />
     <Build Include="dbo\Tables\studios.sql" />
-    <Build Include="dbo\Tables\UserProfile.sql" />
     <Build Include="dbo\Tables\voiceActors.sql" />
-    <Build Include="dbo\Tables\webpages_Membership.sql" />
-    <Build Include="dbo\Tables\webpages_OAuthMembership.sql" />
-    <Build Include="dbo\Tables\webpages_Roles.sql" />
-    <Build Include="dbo\Tables\webpages_UsersInRoles.sql" />
     <Build Include="dbo\Tables\workActors.sql" />
     <Build Include="dbo\Tables\workCharacters.sql" />
     <Build Include="dbo\Tables\workCharges.sql" />
     <Build Include="dbo\Tables\workOrders.sql" />
     <Build Include="dbo\Tables\workPersonnels.sql" />
-    <Build Include="dbo\Views\userRolesView.sql" />
   </ItemGroup>
   <ItemGroup>
     <PostDeploy Include="load.dubbing.data.sql" />

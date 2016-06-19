@@ -9,7 +9,7 @@ using dubbingApp.Models;
 
 namespace dubbingApp.Controllers
 {
-    //[Authorize(Roles = "ADMIN, GENERAL_MANAGER, PRODUCTION_MANAGER, MIXAGE, MONTAGE")]
+    [Authorize(Roles = "ADMIN, GENERAL_MANAGER, PRODUCTION_MANAGER, MIXAGE, MONTAGE")]
     public class assemblyController : Controller
     {
         private DUBBDBEntities db = new DUBBDBEntities();

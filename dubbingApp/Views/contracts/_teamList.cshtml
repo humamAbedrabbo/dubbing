@@ -1,31 +1,52 @@
 ﻿@model IEnumerable<dubbingModel.workPersonnel>
 @using dubbingApp.Models;
 
-@foreach (dubbingModel.workPersonnel item in Model)
-{
-<div class="panel panel-default">
-    <div class="panel-heading">
-        <div class="row">
-            <label class="col-sm-9">@LookupModels.decodeDictionaryItem("titleType", item.titleType)</label>
-            <div class="col-sm-3">
-                <button class="btn btn-default btn-xs" onclick="onPersonnelAddNewClick(@ViewBag.workIntno)" title="Add New">
-                    <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
-                </button>
-                <button class="btn btn-default btn-xs" onclick="onPersonnelDeleteClick(@item.workPersonnelIntno)" title="Remove">
-                    <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
-                </button>
+<div class="container-fluid" style="padding:0px">
+    <div class="panel-default">
+        <div class="panel-heading">
+            <div class="row">
+                <div class="col-sm-2">
+                    <button class="btn btn-default btn-xs pull-left" onclick="onPersonnelAddNewClick(@ViewBag.workIntno)" title="Add New">
+                        <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+                    </button>
+                </div>
+                <div class="col-sm-8">
+                    <label>Personnel</label>
+                </div>
+                <div class="col-sm-2">
+                    <button class="btn btn-default btn-xs pull-right" onclick="onCloseClick()" title="Close">
+                        <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+                    </button>
+                </div>
             </div>
         </div>
-    </div>
-    <div class="panel-body">
-        <div class="row">
-            <div class="col-sm-6">
-                <small>@item.employee.fullName</small>
-            </div>
-            <div class="col-sm-6">
-                <small>Since: @item.fromDate.ToShortDateString()</small>
-            </div>
+        <div class="panel-body">
+            @foreach (dubbingModel.workPersonnel item in Model)
+            {
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <div class="row">
+                            <label class="col-sm-10">@LookupModels.decodeDictionaryItem("titleType", item.titleType)</label>
+                            <div class="col-sm-2">
+                                <button class="btn btn-default btn-xs" onclick="onPersonnelDeleteClick(@item.workPersonnelIntno)" title="Remove">
+                                    <span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="panel-body">
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <small>@item.employee.fullName</small>
+                            </div>
+                            <div class="col-sm-6">
+                                <small>Since: @item.fromDate.ToShortDateString()</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
         </div>
     </div>
 </div>
-}
+

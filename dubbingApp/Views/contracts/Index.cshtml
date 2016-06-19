@@ -166,6 +166,21 @@
             })
         })
 
+        function onCloseClick() {
+            var x = $('#clientsList').val(); 
+            if (x != "") {
+                $.ajax({
+                    url: '@Url.Action("clientContactsList", "contracts")',
+                    type: 'GET',
+                    data: { client: x },
+                    success: function (result) {
+                        $('#allDetails').html(result);
+                    }
+                });
+            };
+            $('#allDetails').html(null);
+        }
+
         function onNavigateAway() {
             document.saveData($('#clientsList').val(), $('#agreementsList').val());
         }
@@ -334,7 +349,7 @@
                 })
             }
         }
-        function onTeamDismissClick(work) {
+        function onTeamSuccess(work) {
             $('#pDetails').html(null);
             $.ajax({
                 url: '@Url.Action("teamList", "contracts")',
@@ -345,6 +360,9 @@
                 }
             })
         }
+        function onNewPersonnelCloseClick() {
+            $('#pDetails').html(null);
+        }
         function onClientAddNewSuccess(ajaxContext) {
             $("#clientsList").empty();
             $("#clientsList").append('<option value="">Select Client ...</option>');
@@ -352,7 +370,7 @@
                 $("#clientsList").append('<option value="' + item.Value + '">' +
                 item.Text + '</option>');
             });
-            $('#result').html('Successfully Created.');
+            $('#formResult').html('Successfully Created.');
         }
         function onAgreementAddNewSuccess(ajaxContext) {
             $("#agreementsList").empty();
@@ -361,14 +379,13 @@
                 $("#agreementsList").append('<option value="' + item.Value + '">' +
                 item.Text + '</option>');
             });
-            $('#result').html('Successfully Created.');
+            $('#formResult').html('Successfully Created.');
         }
         function onFailure(ajaxContext) {
             $('#result').html('Failed! Please Correct All Data.');
         }
-        function onDismissClick() {
+        function onWorkSuccess() {
             var x = $('#clientsList').val();
-            $('#allDetails').html(null);
             $.ajax({
                 url: '@Url.Action("contractsList", "contracts")',
                 type: 'GET',
@@ -377,16 +394,6 @@
                     $('#cList').html(result);
                 }
             });
-            if (x != "") {
-                $.ajax({
-                    url: '@Url.Action("clientContactsList", "contracts")',
-                    type: 'GET',
-                    data: { client: x },
-                    success: function (result) {
-                        $('#allDetails').html(result);
-                    }
-                });
-            }
         }
 
         function onCastingClick(work) {

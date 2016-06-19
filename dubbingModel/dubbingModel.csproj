@@ -145,19 +145,7 @@
     <Compile Include="studioEpisode.cs">
       <DependentUpon>dubbingDataModel.tt</DependentUpon>
     </Compile>
-    <Compile Include="UserProfile.cs">
-      <DependentUpon>dubbingDataModel.tt</DependentUpon>
-    </Compile>
     <Compile Include="voiceActor.cs">
-      <DependentUpon>dubbingDataModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="webpages_Membership.cs">
-      <DependentUpon>dubbingDataModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="webpages_OAuthMembership.cs">
-      <DependentUpon>dubbingDataModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="webpages_Roles.cs">
       <DependentUpon>dubbingDataModel.tt</DependentUpon>
     </Compile>
     <Compile Include="workActor.cs">

@@ -6,29 +6,28 @@
 <div class="container-fluid">
     <div class="jumbotron" style="padding:5px">
         <h2>Dubbing Orders Management</h2>
-        <p class="lead"><h5>Register New Client Orders for Dubbing and Capture First Quality Check Results. Plan Order Episodes for Dubbing, Upload &amp; Shipment. Register Client Feedback on Uploaded Episodes and Track Corrective Actions.</h5></p>
+        <p class="lead"><h5>Register New Client Orders and Capture initial Quality Check Results. Plan Order Episodes for Dubbing, Upload &amp; Shipment. Register Client Feedback on Uploaded Episodes and Track Corrective Actions.</h5></p>
         <label><a href="#" onclick="onOrderAddNewClick()">Register New Order ...</a></label>
     </div>
     <div class="col-sm-2 container-fluid" style="padding:0px">
         @Html.Hidden("workIntnoHF")
-        <div>
+        <p>
             <button class="btn btn-info btn-xs work" value="0" title="Select">
                 <span class="glyphicon glyphicon-pushpin" aria-hidden="true"></span>
             </button>
-            <label class="workLbl" id="w0"><small>New ...</small></label>
-        </div>
+            <span class="workLbl" id="w0"><small>New ...</small></span>
+        </p>
         @foreach (SelectListItem item in ViewBag.worksList)
         {
-            <div>
+            string work = "w" + @item.Value.ToString();
+            <p>
                 <button class="btn btn-info btn-xs work" value="@item.Value" title="Select">
                     <span class="glyphicon glyphicon-pushpin" aria-hidden="true"></span>
                 </button>
-                @{ string work = "w" + @item.Value.ToString(); }
-                <label class="workLbl" id="@work"><small>@item.Text</small></label>
-            </div>
+                <span class="workLbl" id="@work"><small>@item.Text</small></span>
+            </p>
         }
     </div>
-
     <div class="col-sm-6 container-fluid" style="padding:0px">
         <div class="row container-fluid" id="epFilters" style="padding:0px; padding-bottom:10px; padding-left:10px">
             <div class="col-sm-4">
@@ -46,7 +45,6 @@
                 </div>
             </div>
         </div>
-
         <div class="row container-fluid" id="oList" style="padding:0px; padding-bottom:10px; padding-left:10px">
             @Html.Action("orderItemsList", "orders")
         </div>
@@ -112,6 +110,17 @@
             })
         })
 
+        function onCloseClick() {
+            $('#allDetails').html(null);
+            $('#tips').fadeIn();
+        }
+        function onIssueCloseClick() {
+            $('#qualityDetails').html(null);
+        }
+        function onComplainCloseClick() {
+            $('#complainDetails').html(null);
+        }
+
         function onClientComboChanged() {
             $("#workCombo").empty();
             $("#workCombo").append('<option value="">Select Work ...</option>');
@@ -153,9 +162,7 @@
                 }
             })
         }
-        function onDismissClick() {
-            $('#allDetails').html(null);
-            $('#tips').fadeIn();
+        function onSuccess() {
             $.ajax({
                 url: '@Url.Action("orderItemsList", "orders")',
                 type: 'GET',
@@ -196,17 +203,32 @@
                     success: function (result) {
                         $('#allDetails').html(result);
                     }
+                });
+                $.ajax({
+                    url: '@Url.Action("orderItemsList", "orders")',
+                    type: 'GET',
+                    data: { work: $('#workIntnoHF').val() },
+                    success: function (result) {
+                        $('#oList').html(result);
+                    }
                 })
             }
         }
-        function onIssuesDismissClick(oItem) {
-            $('#qualityDetails').html(null);
+        function onIssueSuccess(oItem) {
             $.ajax({
                 url: '@Url.Action("orderItemIssuesList", "orders")',
                 type: 'GET',
                 data: { id: oItem },
                 success: function (result) {
                     $('#allDetails').html(result);
+                }
+            })
+            $.ajax({
+                url: '@Url.Action("orderItemsList", "orders")',
+                type: 'GET',
+                data: { work: $('#workIntnoHF').val() },
+                success: function (result) {
+                    $('#oList').html(result);
                 }
             })
         }
@@ -217,7 +239,7 @@
             }
             else {
                 var x = '<small>' + ep + '</small>' + '<button class="btn btn-default btn-xs pull-right" onclick="' + "onSelectedItemRemoveClick('" + oItem + "')" + '" title="Remove">'
-                            + '<span class="glyphicon glyphicon-remove pull-right" aria-hidden="true"></span></button>';
+                            + '<span class="glyphicon glyphicon-trash pull-right" aria-hidden="true"></span></button>';
                 if (!$('#oiCard').length) {
                     $.ajax({
                         url: '@Url.Action("orderItemSelectList", "orders")',
@@ -258,10 +280,7 @@
             $('#adaptors').hide();
             $('#translators').hide();
         }
-        function onCloseClick() {
-            $('#oiCard').removeData();
-            onDismissClick();
-        }
+
         function onScheduleClick(op) {
             $('#scheduleTypeHF').val(op);
             $('#result').html(null);
@@ -325,15 +344,21 @@
                 }
             })
         }
-        function onComplainsDismissClick(oItem) {
-            $('#complainDetails').html(null);
+        function onComplainSuccess(oItem) {
             $.ajax({
                 url: '@Url.Action("orderItemComplainsList", "orders")',
                 type: 'GET',
                 data: { id: oItem },
                 success: function (result) {
                     $('#allDetails').html(result);
-                    $('#tips').fadeIn();
+                }
+            })
+            $.ajax({
+                url: '@Url.Action("orderItemsList", "orders")',
+                type: 'GET',
+                data: { work: $('#workIntnoHF').val() },
+                success: function (result) {
+                    $('#oList').html(result);
                 }
             })
         }
@@ -344,6 +369,14 @@
                 data: { id: fb },
                 success: function (result) {
                     $('#allDetails').html(result);
+                }
+            })
+            $.ajax({
+                url: '@Url.Action("orderItemsList", "orders")',
+                type: 'GET',
+                data: { work: $('#workIntnoHF').val() },
+                success: function (result) {
+                    $('#oList').html(result);
                 }
             })
         }

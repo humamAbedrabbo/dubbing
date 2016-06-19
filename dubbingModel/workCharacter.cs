@@ -26,7 +26,6 @@ namespace dubbingModel
         public short sortOrder { get; set; }
         public string characterType { get; set; }
         public string characterGender { get; set; }
-        public string characterCode { get; set; }
         public string characterName { get; set; }
         public string othCharacterName { get; set; }
         public string nickName { get; set; }

@@ -19,7 +19,6 @@
                     <label class="badge label-info">@LookupModels.decodeDictionaryItem("workType", item.workType)</label>
                 </div>
                 <div class="col-sm-7">
-                    <label>Work Name:</label>&nbsp;&nbsp;
                     <label>@Html.DisplayFor(model => item.workName)</label>
                 </div>
                 <div class="col-sm-3">
@@ -27,11 +26,11 @@
                         <button class="btn btn-default btn-xs" onclick="onContractUpdateClick(@item.workIntno)" title="Modify">
                             <span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
                         </button>
-                        <button class="btn btn-warning btn-xs" onclick="onStudioClick(@item.workIntno)" title="Studio">
-                            <span class="glyphicon glyphicon-film" aria-hidden="true"></span>
-                        </button>
-                        <button class="btn btn-warning btn-xs" onclick="onCastingClick(@item.workIntno)" title="Casting">
+                        <button class="btn btn-warning btn-xs" onclick="onStudioClick(@item.workIntno)" title="Personnel">
                             <span class="glyphicon glyphicon-user" aria-hidden="true"></span>
+                        </button>
+                        <button class="btn btn-warning btn-xs" onclick="onCastingClick(@item.workIntno)" title="Characters and Actors">
+                            <span class="glyphicon glyphicon-facetime-video" aria-hidden="true"></span>
                         </button>
                     </div>
                 </div>
