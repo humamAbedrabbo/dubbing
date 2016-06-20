@@ -7,12 +7,15 @@
     <div class="jumbotron" style="padding:5px">
         <h2>Payments</h2>
         <p class="lead"><h5>Given the List of Performed Casting / Assignments, Payment Vouchers can be "Generated" (One Voucher Per Dubbing Work), They Can be "Endorsed" (at Payment Time), and Finally They Can be "Exported" to the Accounting System.</h5></p>
-        <p><a class="btn btn-primary" href="/payment/exportToExcel">Export Paid Vouchers &raquo;</a></p>
+        <p><a class="btn btn-primary" href="#" onclick="onPaidVouchersClick()">Show Paid Vouchers &raquo;</a></p>
     </div>
 
     <div class="row">
-        <div class="col-sm-3" id="actorsList">
-            @Html.Action("actorsList", "payment")
+        <div class="col-sm-3">
+            <label><small>In-Process Payments</small></label>
+            <div class="col-sm-12" id="actorsList">
+                @Html.Action("actorsList", "payment")
+            </div>
         </div>
         <div class="col-sm-6">
             <div class="row">
@@ -112,5 +115,15 @@
             $('#details').html(null);
         }
 
+        function onPaidVouchersClick() {
+            $.ajax({
+                url: '@Url.Action("paidVouchersList", "payment")',
+                type: 'GET',
+                success: function (result) {
+                    $('#paymentsDueList').html(null);
+                    $('#paymentsList').html(result);
+                }
+            })
+        }
     </script>
 }

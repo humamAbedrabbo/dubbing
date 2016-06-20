@@ -371,6 +371,7 @@
     <Content Include="Views\adaptation\Index.cshtml" />
     <Content Include="Views\adaptation\_sceneList.cshtml" />
     <Content Include="Views\adaptation\_dialogList.cshtml" />
+    <Content Include="Views\payment\_paidVouchersList.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

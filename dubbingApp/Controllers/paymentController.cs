@@ -54,6 +54,12 @@ namespace dubbingApp.Controllers
             return PartialView("_paymentsDueList", model.ToList());
         }
         
+        public ActionResult paidVouchersList()
+        {
+            var model = db.payments.Where(b => b.status == true && b.isPaid == true && b.isExported == false);
+            return PartialView("_paidVouchersList", model.ToList());
+        }
+
         public ActionResult paymentsList(long id, string name)
         {
             var model = db.payments.Where(b => b.voiceActorIntno == id  && b.fullName == name && b.status == true && b.isExported == false);
@@ -193,26 +199,34 @@ namespace dubbingApp.Controllers
         
         public ActionResult exportToExcel()
         {
+            var model = db.payments.Where(b => b.status == true && b.isPaid == true && b.isExported == false);
             var grid = new GridView();
-            grid.DataSource = db.employees.ToList();
+            var exportModel = model.Select(b => new { Actor = b.fullName, AccountNo = b.accountNo, CostCenter = b.agreementWork.workName, TotalScenes = b.totalScenes, TotalAmount = b.totalAmount, PaymentDate = b.paymentDate });
+
+            grid.DataSource = exportModel.ToList();
             grid.DataBind();
 
             Response.ClearContent();
             Response.Buffer = true;
-            Response.AddHeader("content-disposition", "attachment; filename=DemoExcel.xls");
+            Response.AddHeader("content-disposition", "attachment; filename=Payments-" + DateTime.Now.ToString() + ".xls");
             //Response.AppendHeader("ContentType", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
             Response.AppendHeader("ContentType", "application/vnd.ms-excel");
 
-            Response.Charset = "";
-            Response.ContentEncoding = System.Text.Encoding.Unicode;
+            Response.Charset = "UTF-8";
             StringWriter objStringWriter = new StringWriter();
             HtmlTextWriter objHtmlTextWriter = new HtmlTextWriter(objStringWriter);
 
             grid.RenderControl(objHtmlTextWriter);
 
-            Response.Write(objStringWriter.ToString());
+            Response.Output.Write(objStringWriter.ToString());
             Response.Flush();
             Response.End();
+
+            foreach (var x in model)
+            {
+                x.isExported = true;
+            }
+            db.SaveChanges();
             return null;
         }
     }
