@@ -20,10 +20,13 @@ namespace dubbingModel
             this.adaptationSubtitles = new HashSet<adaptationSubtitle>();
         }
     
-        public int dialogIntno { get; set; }
+        public long dialogIntno { get; set; }
         public long dubbSheetHdrIntno { get; set; }
         public short sceneNo { get; set; }
         public Nullable<short> dialogNo { get; set; }
+        public string startTimeCode { get; set; }
+        public string endTimeCode { get; set; }
+        public bool isTaken { get; set; }
     
         public virtual dubbingSheetHdr dubbingSheetHdr { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]

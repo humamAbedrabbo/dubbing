@@ -54,6 +54,55 @@ function addDialog() {
     });
 }
 
+function deleteDialog(dialogIntno) {
+    var url = "/adaptation/deleteDialog";
+    
+    $.ajax({
+        contentType: 'application/json',
+        method: 'GET',
+        url: url,
+        data: { dialogIntno: dialogIntno },
+        success: function (result) {
+            $("#dialogListContainer").empty();
+            $("#dialogListContainer").html(result);
+        }
+    });
+}
+
+function addSubtitle(dialogIntno) {
+    
+    var url = "/adaptation/addSubtitle";
+
+    
+    $.ajax({
+        contentType: 'application/json',
+        method: 'GET',
+        url: url,
+        data: { dialogIntno: dialogIntno },
+        success: function (result) {
+            $("#subtitleListContainer_" + dialogIntno).empty();
+            $("#subtitleListContainer_" + dialogIntno).html(result);
+        }
+    });
+}
+
+function deleteSubtitle(subtitleIntno, dialogIntno) {
+
+    var url = "/adaptation/deleteSubtitle";
+
+
+    $.ajax({
+        contentType: 'application/json',
+        method: 'GET',
+        url: url,
+        data: { subtitleIntno: subtitleIntno },
+        success: function (result) {
+            $("#subtitleListContainer_" + dialogIntno).empty();
+            $("#subtitleListContainer_" + dialogIntno).html(result);
+        }
+    });
+}
+
 function addSceneClickEvent(orderTrnHdrIntno) {
     $(".scene").click(function () {
 
@@ -79,4 +128,6 @@ function addSceneClickEvent(orderTrnHdrIntno) {
         }
 
     });
+
 }
+

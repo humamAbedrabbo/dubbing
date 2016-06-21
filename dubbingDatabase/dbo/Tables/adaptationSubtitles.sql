@@ -1,7 +1,7 @@
 ﻿CREATE TABLE [dbo].[adaptationSubtitles]
 (
-	[subtitleIntno] INT NOT NULL IDENTITY(1,1) PRIMARY KEY,
-	[dialogIntno] INT NOT NULL,
+	[subtitleIntno] BIGINT NOT NULL IDENTITY(1,1) PRIMARY KEY,
+	[dialogIntno] BIGINT NOT NULL,
 	[subtitleNo] smallint NULL,
 	[scentence] nvarchar(500),
 	[startTime] nvarchar(20),

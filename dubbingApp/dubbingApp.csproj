@@ -363,6 +363,7 @@
     <Content Include="Views\adaptation\Index.cshtml" />
     <Content Include="Views\adaptation\_sceneList.cshtml" />
     <Content Include="Views\adaptation\_dialogList.cshtml" />
+    <Content Include="Views\adaptation\_subtitlesList.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

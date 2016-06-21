@@ -109,23 +109,61 @@ namespace dubbingApp.Controllers
         public ActionResult deleteScene(long orderTrnHdrIntno, short sceneNo)
         {
             var ordTrnHdr = ctx.orderTrnHdrs.Include(x => x.agreementWork).First(x => x.orderTrnHdrIntno == orderTrnHdrIntno);
+            
             var sheetDtls = ordTrnHdr.dubbingSheetDtls.Where(x => x.sceneNo == sceneNo);
+            var parentSheetHdrs = sheetDtls.Select(x => x.dubbSheetHdrIntno).Distinct().ToList();
+
             ctx.dubbingSheetDtls.RemoveRange(sheetDtls);
             ctx.SaveChanges();
+
+            //delete dialogs
+            var dialogs = ctx.adaptationDialogs.Where(x => parentSheetHdrs.Contains(x.dubbSheetHdrIntno) && x.sceneNo == sceneNo);
+            ctx.adaptationDialogs.RemoveRange(dialogs);
+            ctx.SaveChanges();
+
+            // renumber dialogs
+            foreach (var h in parentSheetHdrs)
+            {
+                RenumberDialogs(h, sceneNo);
+            }
+
             // decrease sceneNo for next scenes
             sheetDtls = ordTrnHdr.dubbingSheetDtls.Where(x => x.sceneNo > sceneNo);
             foreach(var item in sheetDtls)
             {
+                var childDialogs = ctx.adaptationDialogs.Where(x => x.dubbSheetHdrIntno == item.dubbSheetHdrIntno && x.sceneNo > item.sceneNo);
                 item.sceneNo--;
+                foreach(var d in childDialogs)
+                {
+                    d.sceneNo--;
+                }
             }
             ctx.SaveChanges();
+
+
+
             // delete empty sheet headers
             var sheetHdrs = ordTrnHdr.dubbingSheetHdrs.Where(x => x.dubbingSheetDtls.Count() == 0);
+            //var hdrsIdList = sheetHdrs.Select(x => x.dubbSheetHdrIntno).ToList();
+            
+            //ctx.adaptationDialogs.RemoveRange(dialogs);
             ctx.dubbingSheetHdrs.RemoveRange(sheetHdrs);
             ctx.SaveChanges();
 
 
             return sceneList(orderTrnHdrIntno);
+        }
+
+        public void RenumberDialogs(long sheetHdrIntno, short sceneNo)
+        {
+            var dialogs = ctx.adaptationDialogs.Where(x => x.dubbSheetHdrIntno == sheetHdrIntno && x.sceneNo == sceneNo).OrderBy(x => x.dialogNo);
+            short dialogNo = 1;
+            foreach(var d in dialogs)
+            {
+                d.dialogNo = dialogNo;
+                dialogNo++;
+            }
+            ctx.SaveChanges();
         }
 
         public ActionResult dialogList(long orderTrnHdrIntno ,short sceneNo = 0)
@@ -189,6 +227,65 @@ namespace dubbingApp.Controllers
             ctx.SaveChanges();
 
             return dialogList(orderTrnHdrIntno, sceneNo);
+        }
+
+        public ActionResult deleteDialog(long dialogIntno)
+        {
+            var dialog = ctx.adaptationDialogs.Find(dialogIntno);
+            var sheetHdrIntno = dialog.dubbSheetHdrIntno;
+            var sceneNo = dialog.sceneNo;
+            var dubSheet = ctx.dubbingSheetHdrs.Find(sheetHdrIntno);
+            var orderTrnHdrIntno = dubSheet.orderTrnHdrIntno;
+            ctx.adaptationDialogs.Remove(dialog);
+            ctx.SaveChanges();
+            RenumberDialogs(sheetHdrIntno, sceneNo);
+
+            return dialogList(orderTrnHdrIntno, sceneNo);
+        }
+
+        public ActionResult subtitleList(long dialogIntno)
+        {
+            var subtitles = ctx.adaptationSubtitles.Where(x => x.dialogIntno == dialogIntno).OrderBy(x => x.subtitleNo).ToList();
+            return PartialView("_subtitlesList", subtitles);
+        }
+
+        public ActionResult addSubtitle(long dialogIntno)
+        {
+            var dialog = ctx.adaptationDialogs.Find(dialogIntno);
+            short lastNo = 0 ;
+            if (dialog.adaptationSubtitles.Count() > 0)
+            {
+                lastNo = dialog.adaptationSubtitles.Select(x => x.subtitleNo.Value).Max();
+                lastNo++;
+            }
+            else
+                lastNo = 1;
+            var subtitle = ctx.adaptationSubtitles.Create();
+            subtitle.dialogIntno = dialogIntno;
+            subtitle.scentence = "جملة جديدة";
+            subtitle.subtitleNo = lastNo;
+            subtitle.startTime = "00:00:00";
+            subtitle.endTime = "00:00:00";
+            dialog.adaptationSubtitles.Add(subtitle);
+            ctx.SaveChanges();
+
+            return subtitleList(dialogIntno);
+        }
+
+        public ActionResult deleteSubtitle(long subtitleIntno)
+        {
+            var subtitle = ctx.adaptationSubtitles.Find(subtitleIntno);
+            var dialogIntno = subtitle.dialogIntno;
+            var subtitleNo = subtitle.subtitleNo;
+
+            ctx.adaptationSubtitles.Remove(subtitle);
+            var subtitles = ctx.adaptationSubtitles.Where(x => x.dialogIntno == dialogIntno && x.subtitleNo > subtitleNo).OrderBy(x => x.subtitleNo);
+            foreach(var s in subtitles)
+            {
+                s.subtitleNo--;
+            }
+            ctx.SaveChanges();
+            return subtitleList(dialogIntno);
         }
     }
 }

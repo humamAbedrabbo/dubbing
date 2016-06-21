@@ -14,8 +14,8 @@ namespace dubbingModel
     
     public partial class adaptationSubtitle
     {
-        public int subtitleIntno { get; set; }
-        public int dialogIntno { get; set; }
+        public long subtitleIntno { get; set; }
+        public long dialogIntno { get; set; }
         public Nullable<short> subtitleNo { get; set; }
         public string scentence { get; set; }
         public string startTime { get; set; }

@@ -9,17 +9,20 @@
           <Key>
             <PropertyRef Name="dialogIntno" />
           </Key>
-          <Property Name="dialogIntno" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="dialogIntno" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="dubbSheetHdrIntno" Type="bigint" Nullable="false" />
           <Property Name="sceneNo" Type="smallint" Nullable="false" />
           <Property Name="dialogNo" Type="smallint" />
+          <Property Name="startTimeCode" Type="nvarchar" MaxLength="20" />
+          <Property Name="endTimeCode" Type="nvarchar" MaxLength="20" />
+          <Property Name="isTaken" Type="bit" Nullable="false" />
         </EntityType>
         <EntityType Name="adaptationSubtitles">
           <Key>
             <PropertyRef Name="subtitleIntno" />
           </Key>
-          <Property Name="subtitleIntno" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
-          <Property Name="dialogIntno" Type="int" Nullable="false" />
+          <Property Name="subtitleIntno" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="dialogIntno" Type="bigint" Nullable="false" />
           <Property Name="subtitleNo" Type="smallint" />
           <Property Name="scentence" Type="nvarchar" MaxLength="500" />
           <Property Name="startTime" Type="nvarchar" MaxLength="20" />
@@ -2814,10 +2817,13 @@
           <Key>
             <PropertyRef Name="dialogIntno" />
           </Key>
-          <Property Name="dialogIntno" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="dialogIntno" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="dubbSheetHdrIntno" Type="Int64" Nullable="false" />
           <Property Name="sceneNo" Type="Int16" Nullable="false" />
           <Property Name="dialogNo" Type="Int16" />
+          <Property Name="startTimeCode" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
+          <Property Name="endTimeCode" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
+          <Property Name="isTaken" Type="Boolean" Nullable="false" />
           <NavigationProperty Name="dubbingSheetHdr" Relationship="DUBBDBModel.FK_adaptationDialogs_To_dubbingSheetDtls" FromRole="adaptationDialog" ToRole="dubbingSheetHdr" />
           <NavigationProperty Name="adaptationSubtitles" Relationship="DUBBDBModel.FK_adaptationSubtitles_To_adaptationDialogs" FromRole="adaptationDialog" ToRole="adaptationSubtitle" />
         </EntityType>
@@ -2825,8 +2831,8 @@
           <Key>
             <PropertyRef Name="subtitleIntno" />
           </Key>
-          <Property Name="subtitleIntno" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="dialogIntno" Type="Int32" Nullable="false" />
+          <Property Name="subtitleIntno" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="dialogIntno" Type="Int64" Nullable="false" />
           <Property Name="subtitleNo" Type="Int16" />
           <Property Name="scentence" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
           <Property Name="startTime" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
@@ -3350,6 +3356,9 @@
           <EntitySetMapping Name="adaptationDialogs">
             <EntityTypeMapping TypeName="DUBBDBModel.adaptationDialog">
               <MappingFragment StoreEntitySet="adaptationDialogs">
+                <ScalarProperty Name="isTaken" ColumnName="isTaken" />
+                <ScalarProperty Name="endTimeCode" ColumnName="endTimeCode" />
+                <ScalarProperty Name="startTimeCode" ColumnName="startTimeCode" />
                 <ScalarProperty Name="dialogNo" ColumnName="dialogNo" />
                 <ScalarProperty Name="sceneNo" ColumnName="sceneNo" />
                 <ScalarProperty Name="dubbSheetHdrIntno" ColumnName="dubbSheetHdrIntno" />
