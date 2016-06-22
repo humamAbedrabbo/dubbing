@@ -250,6 +250,20 @@ namespace dubbingApp.Controllers
             return PartialView("_editCharacterName", dialog);
         }
 
+        public ActionResult editSubtitle(long subtitleIntno)
+        {
+            var subtitle = ctx.adaptationSubtitles.Find(subtitleIntno);
+
+            return PartialView("_editSubtitle", subtitle);
+        }
+
+        public void saveSubtitle(long subtitleIntno, string newSubtitle)
+        {
+            var subtitle = ctx.adaptationSubtitles.Find(subtitleIntno);
+            subtitle.scentence = newSubtitle;
+            ctx.SaveChanges();
+        }
+
         public long saveCharacterName(long dialogIntno, string newCharacterName)
         {
             var dialog = ctx.adaptationDialogs.Find(dialogIntno);

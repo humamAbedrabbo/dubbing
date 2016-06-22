@@ -374,6 +374,7 @@
     <Content Include="Views\payment\_paidVouchersList.cshtml" />
     <Content Include="Views\adaptation\_subtitlesList.cshtml" />
     <Content Include="Views\adaptation\_editCharacterName.cshtml" />
+    <Content Include="Views\adaptation\_editSubtitle.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

@@ -5,6 +5,8 @@
     <input onkeydown="javascript: onCharNameInputKeyDown();" id="charName_@Model.dialogIntno" list="characters_@Model.dialogIntno" value="@Model.dubbingSheetHdr.characterName" data-dialog="@Model.dialogIntno" data-id="@Model.dubbingSheetHdr.workCharacterIntno" />
     <datalist id="characters_@Model.dialogIntno">
         <option value="UNKNOWN" />
-        <option value="SAMEER" />
-        <option value="HUMAM" />
+        @foreach(var c in Model.dubbingSheetHdr.orderTrnHdr.agreementWork.workCharacters)
+        {
+            <option value="@c.characterName" />
+        }
     </datalist>
