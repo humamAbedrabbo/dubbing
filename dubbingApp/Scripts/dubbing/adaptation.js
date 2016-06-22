@@ -69,6 +69,65 @@ function deleteDialog(dialogIntno) {
     });
 }
 
+function editCharacterName(dialogIntno) {
+    var url = "/adaptation/editCharacterName";
+
+    $.ajax({
+        contentType: 'application/json',
+        method: 'GET',
+        url: url,
+        data: { dialogIntno: dialogIntno },
+        success: function (result) {
+            $("#charNameContainer_" + dialogIntno).empty();
+            $("#charNameContainer_" + dialogIntno).html(result);
+        }
+    });
+}
+
+function cancelEditCharacterName() {
+    var elem = "#charNameContainer_" + $(this.event.target).data("dialog");
+    $(elem).empty();
+    var oldCharacterName = $(elem).data("charname");
+    var dialogIntno = $(elem).data("dialog");
+    var html = '<a href="javascript: editCharacterName(' + dialogIntno + ');">' + oldCharacterName + '</a>';
+    $(elem).html(html);
+}
+
+function saveEditCharacterName() {
+    var newCharacterName = $(this.event.target).val();
+    var elem = "#charNameContainer_" + $(this.event.target).data("dialog");
+    var dialogIntno = $(elem).data("dialog");
+    var url = "/adaptation/saveCharacterName";
+
+
+    $.ajax({
+        contentType: 'application/json',
+        method: 'GET',
+        url: url,
+        data: { dialogIntno: dialogIntno, newCharacterName: newCharacterName },
+        success: function (result) {
+            $(elem).empty();
+            $(elem).data("charname", newCharacterName);
+            $(elem).data("id", result);
+            
+            var html = '<a href="javascript: editCharacterName(' + dialogIntno + ');">' + newCharacterName + '</a>';
+            $(elem).html(html);
+        }
+    });
+
+
+    
+}
+
+function onCharNameInputKeyDown() {
+    if (this.event.which == 27) {
+        cancelEditCharacterName();
+    }
+    else if (this.event.which == 13) {
+        saveEditCharacterName();
+    }
+}
+
 function addSubtitle(dialogIntno) {
     
     var url = "/adaptation/addSubtitle";

@@ -15,7 +15,9 @@
                         &nbsp;
                     </span>
                     <span>@dialog.dialogNo&nbsp;-&nbsp; </span>
-                    @dialog.dubbingSheetHdr.characterName
+                    <span id="charNameContainer_@dialog.dialogIntno" class="dialog-character" data-charname="@dialog.dubbingSheetHdr.characterName" data-dialog="@dialog.dialogIntno" data-id="@dialog.dubbingSheetHdr.workCharacterIntno">
+                        <a href="javascript: editCharacterName(@dialog.dialogIntno);">@dialog.dubbingSheetHdr.characterName</a>
+                    </span>
                     <span class="pull-left">
                         <a href="javascript:deleteDialog(@dialog.dialogIntno);"><span class="glyphicon glyphicon-remove"></span></a>
                     </span>
