@@ -8,16 +8,16 @@
         {
             <tr data-id="@subtitle.subtitleIntno">
                 <td style="width:2em;">
-                    <a href="javascript: deleteSubtitle(@subtitle.subtitleIntno , @subtitle.dialogIntno);"><span class="glyphicon glyphicon-remove"></span></a>
+                    <a href="javascript: deleteSubtitle(@subtitle.subtitleIntno , @subtitle.dialogIntno);"><span class="glyphicon glyphicon-trash"></span></a>
                 </td>
                 <td style="width:6em;">@subtitle.startTime</td>
                 <td style="width:6em;">@subtitle.endTime</td>
                 <td>
-                    <div class="scentence right">
-                        @subtitle.scentence
+                    <div id="subtitleContainer_@subtitle.subtitleIntno" data-subtitle="@subtitle.subtitleIntno" data-no="@subtitle.subtitleNo"  class="right">
+                        <span class="scentence" onclick="javascript: editSubtitle(@subtitle.subtitleIntno);">@subtitle.scentence</span>
                     </div>
                 </td>
-                <td style="width: 3em; text-align:center;">
+                <td  style="width: 3em; text-align:center;">
                     @subtitle.subtitleNo
                 </td>
                 <td style="width:2em;">

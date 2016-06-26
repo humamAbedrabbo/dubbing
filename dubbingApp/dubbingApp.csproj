@@ -374,13 +374,6 @@
     <Content Include="Views\adaptation\_dialogList.cshtml" />
     <Content Include="Views\payment\_paidVouchersList.cshtml" />
     <Content Include="Views\adaptation\_subtitlesList.cshtml" />
-    <Content Include="Views\dubbing\_subtitlesList.cshtml" />
-    <Content Include="Views\accessRights\Index.cshtml" />
-    <Content Include="Views\accessRights\_rolesList.cshtml" />
-    <Content Include="Views\accessRights\_usersInRoleList.cshtml" />
-    <Content Include="Views\accessRights\_usersUpdate.cshtml" />
-    <Content Include="Views\accessRights\_usersNoRoleList.cshtml" />
-    <Content Include="Views\accessRights\_grantRoleToUser.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

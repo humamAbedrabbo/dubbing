@@ -243,6 +243,87 @@ namespace dubbingApp.Controllers
             return dialogList(orderTrnHdrIntno, sceneNo);
         }
 
+        public ActionResult editCharacterName(long dialogIntno)
+        {
+            var dialog = ctx.adaptationDialogs.Find(dialogIntno);
+
+            return PartialView("_editCharacterName", dialog);
+        }
+
+        public ActionResult editSubtitle(long subtitleIntno)
+        {
+            var subtitle = ctx.adaptationSubtitles.Find(subtitleIntno);
+
+            return PartialView("_editSubtitle", subtitle);
+        }
+
+        public void saveSubtitle(long subtitleIntno, string newSubtitle)
+        {
+            var subtitle = ctx.adaptationSubtitles.Find(subtitleIntno);
+            subtitle.scentence = newSubtitle;
+            ctx.SaveChanges();
+        }
+
+        public long saveCharacterName(long dialogIntno, string newCharacterName)
+        {
+            var dialog = ctx.adaptationDialogs.Find(dialogIntno);
+            var workIntno = dialog.dubbingSheetHdr.orderTrnHdr.agreementWork.workIntno;
+            var sceneNo = dialog.sceneNo;
+            var orderTrnHdrIntno = dialog.dubbingSheetHdr.orderTrnHdrIntno;
+
+            short lastOrderNo = 1;
+            if (ctx.workCharacters.Count(x => x.workIntno == workIntno) == 0)
+                lastOrderNo = 1;
+            else
+            {
+                lastOrderNo = ctx.workCharacters.Where(x => x.workIntno == workIntno).Select(x => x.sortOrder).Max();
+                lastOrderNo++;
+            }
+
+            var workCharacter = ctx.workCharacters.FirstOrDefault(x => x.workIntno == workIntno && (x.characterName.ToUpper() == newCharacterName.ToUpper() || (!string.IsNullOrEmpty(x.othCharacterName) && x.othCharacterName.ToUpper() == newCharacterName.ToUpper())));
+            if(workCharacter == null)
+            {
+                workCharacter = ctx.workCharacters.Create();
+                workCharacter.workIntno = workIntno;
+                workCharacter.sortOrder = lastOrderNo;
+                workCharacter.characterType = "03";
+                workCharacter.characterGender = "01";
+                workCharacter.characterName = newCharacterName;
+                
+                ctx.workCharacters.Add(workCharacter);
+                ctx.SaveChanges();
+            }
+
+            var sheetHdr = ctx.dubbingSheetHdrs.FirstOrDefault(x => x.orderTrnHdrIntno == orderTrnHdrIntno && x.workCharacterIntno == workCharacter.workCharacterIntno);
+            if(sheetHdr == null)
+            {
+                sheetHdr = ctx.dubbingSheetHdrs.Create();
+                sheetHdr.orderTrnHdrIntno = orderTrnHdrIntno;
+                sheetHdr.characterName = newCharacterName;
+                sheetHdr.actorName = "ANONYMOUS";
+                sheetHdr.voiceActorIntno = 0;
+                sheetHdr.workCharacterIntno = workCharacter.workCharacterIntno;
+                ctx.dubbingSheetHdrs.Add(sheetHdr);
+                ctx.SaveChanges();
+            }
+            var sheetDtl = ctx.dubbingSheetDtls.FirstOrDefault(x => x.dubbSheetHdrIntno == sheetHdr.dubbSheetHdrIntno && x.sceneNo == sceneNo);
+            if(sheetDtl == null)
+            {
+                sheetDtl = ctx.dubbingSheetDtls.Create();
+                sheetDtl.dubbSheetHdrIntno = sheetHdr.dubbSheetHdrIntno;
+                sheetDtl.sceneNo = sceneNo;
+                sheetDtl.isTaken = false;
+                sheetDtl.orderTrnHdrIntno = orderTrnHdrIntno;
+                sheetDtl.startTimeCode = "00:00:00";
+                ctx.dubbingSheetDtls.Add(sheetDtl);
+                ctx.SaveChanges();
+            }
+            dialog.dubbSheetHdrIntno = sheetHdr.dubbSheetHdrIntno;
+            ctx.SaveChanges();
+
+            return workCharacter.workCharacterIntno;
+        }
+
         public ActionResult subtitleList(long dialogIntno)
         {
             var subtitles = ctx.adaptationSubtitles.Where(x => x.dialogIntno == dialogIntno).OrderBy(x => x.subtitleNo).ToList();
