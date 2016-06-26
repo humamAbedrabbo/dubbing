@@ -23,7 +23,7 @@ namespace dubbingApp.Controllers
 
         private UserManager<ApplicationUser> UserManager { get; set; }
         private RoleManager<IdentityRole> RoleManager { get; set; }
-        private ApplicationDbContext context;
+        private ApplicationDbContext context = new ApplicationDbContext();
 
         // GET: accessRights
         public ActionResult Index()
@@ -34,14 +34,12 @@ namespace dubbingApp.Controllers
 
         public ActionResult rolesList()
         {
-            context = new ApplicationDbContext();
             var model = context.Roles;
             return PartialView("_rolesList", model.ToList());
         }
 
         public ActionResult usersInRoleList(string role)
         {
-            context = new ApplicationDbContext();
             UserManager = new UserManager<ApplicationUser>(new UserStore<ApplicationUser>(context));
             
             List<ViewModels.usersViewModel> usersList = new List<ViewModels.usersViewModel>();
@@ -63,7 +61,6 @@ namespace dubbingApp.Controllers
 
         public ActionResult usersNoRoleList()
         {
-            context = new ApplicationDbContext();
             UserManager = new UserManager<ApplicationUser>(new UserStore<ApplicationUser>(context));
 
             List<ViewModels.usersViewModel> usersList = new List<ViewModels.usersViewModel>();
@@ -84,7 +81,6 @@ namespace dubbingApp.Controllers
 
         public ActionResult grantRoleToUser(string role)
         {
-            context = new ApplicationDbContext();
             ViewBag.usersList = new SelectList(context.Users.ToList(), "Id", "UserName");
             ViewBag.roleId = role;
             return PartialView("_grantRoleToUser");
@@ -94,7 +90,6 @@ namespace dubbingApp.Controllers
         [HttpPost, ValidateInput(false)]
         public ActionResult grantRoleToUser(IdentityUser user, string roleId)
         {
-            context = new ApplicationDbContext();
             RoleManager = new RoleManager<IdentityRole>(new RoleStore<IdentityRole>(context));
             UserManager = new UserManager<ApplicationUser>(new UserStore<ApplicationUser>(context));
             UserManager.AddToRole(user.Id, RoleManager.FindById(roleId).Name);
@@ -104,7 +99,6 @@ namespace dubbingApp.Controllers
 
         public ActionResult revokeRoleFromUser(string user, string role)
         {
-            context = new ApplicationDbContext();
             RoleManager = new RoleManager<IdentityRole>(new RoleStore<IdentityRole>(context));
             UserManager = new UserManager<ApplicationUser>(new UserStore<ApplicationUser>(context));
             UserManager.RemoveFromRole(user, RoleManager.FindById(role).Name);
@@ -115,7 +109,6 @@ namespace dubbingApp.Controllers
 
         public ActionResult usersUpdate(string user, string role)
         {
-            context = new ApplicationDbContext();
             UserManager = new UserManager<ApplicationUser>(new UserStore<ApplicationUser>(context));
             var model = context.Users.Find(user);
             if (!string.IsNullOrEmpty(role))
@@ -142,7 +135,6 @@ namespace dubbingApp.Controllers
         [HttpPost, ValidateInput(false)]
         public ActionResult usersUpdate(IdentityUser item, string roleId, string submitBtn)
         {
-            context = new ApplicationDbContext();
             UserManager = new UserManager<ApplicationUser>(new UserStore<ApplicationUser>(context));
             ApplicationUser usr = UserManager.FindById(item.Id);
 

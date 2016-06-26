@@ -6,10 +6,12 @@ using System.Web;
 using System.Web.Mvc;
 using dubbingModel;
 using dubbingApp.Models;
+using Microsoft.AspNet.Identity;
+using Microsoft.AspNet.Identity.EntityFramework;
 
 namespace dubbingApp.Controllers
 {
-    [Authorize(Roles = "ADMIN, GENERAL_MANAGER, PRODUCTION_MANAGER, STUDIO_SUPERVISOR")]
+    [Authorize(Roles = "ADMIN, STUDIO_SUPERVISOR, STUDIO_ASSISTANT")]
     public class dubbingController : Controller
     {
         private DUBBDBEntities db = new DUBBDBEntities();
@@ -39,7 +41,9 @@ namespace dubbingApp.Controllers
                 schedule = sch.dubbTrnHdrIntno;
                 ViewBag.scheduleIntno = schedule;
             }
-            var x = db.studios.Include(b => b.employee).FirstOrDefault(b => (!schedule.HasValue || b.dubbTrnHdrIntno == schedule.Value) && b.studioNo == "01");
+            string loginUserName = User.Identity.GetUserName();
+            var x = db.studios.Include(b => b.employee).FirstOrDefault(b => (!schedule.HasValue || b.dubbTrnHdrIntno == schedule.Value) 
+                    && (b.employee1.email == loginUserName || b.employee.email == loginUserName));
             if (x == null)
             {
                 return View("studioNotAllocated");
