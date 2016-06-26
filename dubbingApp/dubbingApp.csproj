@@ -176,6 +176,7 @@
     <Compile Include="App_Start\IdentityConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\Startup.Auth.cs" />
+    <Compile Include="Controllers\accessRightsController.cs" />
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\actorsController.cs" />
     <Compile Include="Controllers\adaptationController.cs" />
@@ -373,6 +374,13 @@
     <Content Include="Views\adaptation\_dialogList.cshtml" />
     <Content Include="Views\payment\_paidVouchersList.cshtml" />
     <Content Include="Views\adaptation\_subtitlesList.cshtml" />
+    <Content Include="Views\dubbing\_subtitlesList.cshtml" />
+    <Content Include="Views\accessRights\Index.cshtml" />
+    <Content Include="Views\accessRights\_rolesList.cshtml" />
+    <Content Include="Views\accessRights\_usersInRoleList.cshtml" />
+    <Content Include="Views\accessRights\_usersUpdate.cshtml" />
+    <Content Include="Views\accessRights\_usersNoRoleList.cshtml" />
+    <Content Include="Views\accessRights\_grantRoleToUser.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

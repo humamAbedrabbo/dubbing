@@ -30,6 +30,7 @@ namespace dubbingApp.Controllers
         {
             var model = db.employees.Where(b => b.status == isActive);
             ViewBag.empTypesList = LookupModels.getDictionary("empType");
+            ViewBag.charges = db.workCharges.Where(b => b.workPartyType == "02" && b.status == true).ToList();
             return PartialView("_personnelList", model.ToList());
         }
 
@@ -101,7 +102,7 @@ namespace dubbingApp.Controllers
             return RedirectToAction("personnelList", new { isActive = true });
         }
 
-        // charges for both personnel and actors
+        // charges for personnel
         public ActionResult workChargesList(long id)
         {
             var model = db.workCharges.Where(b => b.workPartyType == "02" && b.workPartyIntno == id);
@@ -152,5 +153,6 @@ namespace dubbingApp.Controllers
             long id1 = id;
             return RedirectToAction("workChargesList", new { id = id1 });
         }
+        
     }
 }

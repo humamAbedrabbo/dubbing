@@ -19,6 +19,15 @@ namespace dubbingApp.Controllers
             base.Dispose(disposing);
         }
 
+        public class studioUpdateResponse
+        {
+            public string workName { get; set; }
+            public short? episodeNo { get; set; }
+            public short? sceneNo { get; set; }
+            public string startTimeCode { get; set; }
+            public long? sheetDtl { get; set; }
+        }
+
         // GET: dubbing
         public ActionResult Index()
         {
@@ -49,34 +58,20 @@ namespace dubbingApp.Controllers
             return PartialView("_sceneHeader");
         }
 
-        public ActionResult scheduledWorksList(long studio, long? schedule)
-        {
-            if (schedule.HasValue)
-            {
-                var model = db.studioEpisodes.Include(b => b.studio).Include(b => b.dubbingTrnDtl).Include(b => b.dubbingTrnDtl.agreementWork)
-                        .Where(b => b.studioIntno == studio && b.studio.dubbTrnHdrIntno == schedule.Value && b.status == true);
-                return PartialView("_scheduledWorksList", model.ToList());
-            }
-            else
-                return PartialView("_scheduledWorksList");
-        }
-
         public ActionResult actorsList(long std)
         {
-            //list should be ordered according to appointments
-            DateTime dToday = DateTime.Today;
-            string nonCastedCharacter = db.voiceActors.Find(0).fullName;
-            var model = (from A in db.dubbingSheetHdrs
-                         join C in db.dubbingTrnDtls on A.orderTrnHdrIntno equals C.orderTrnHdrIntno
-                         join D in db.dubbingTrnHdrs on C.dubbTrnHdrIntno equals D.dubbTrnHdrIntno
-                         join E in db.studios on D.dubbTrnHdrIntno equals E.dubbTrnHdrIntno
-                         //where E.studioIntno == std && dToday >= D.fromDate && dToday <= D.thruDate && A.actorName != nonCastedCharacter
-                         select A).Include(b => b.workCharacter);
-            ViewBag.actorsList = model.Select(b => new { b.voiceActorIntno, b.actorName }).Distinct().ToList();
-            return PartialView("_actorsList");
+            var model = db.dubbingAppointments.Where(b => b.studioIntno == std).OrderBy(b => new { b.appointmentDate, b.fromTime });
+            return PartialView("_actorsList", model.ToList());
         }
 
-        public ActionResult scenesList(long actorIntno, string actorName, long studio)
+        public ActionResult scheduledWorksList(long studio)
+        {
+            var model = db.studioEpisodes.Include(b => b.dubbingTrnDtl.agreementWork)
+                        .Where(b => b.studioIntno == studio && b.status == true);
+            return PartialView("_scheduledWorksList", model.ToList());
+        }
+
+        public ActionResult scenesList(long actor, string actorName, long studio)
         {
             List<ViewModels.dubbingSceneViewModel> scnList = new List<ViewModels.dubbingSceneViewModel>();
             var model = (from A in db.studioEpisodes
@@ -84,7 +79,7 @@ namespace dubbingApp.Controllers
                          join C in db.orderTrnHdrs on B.orderTrnHdrIntno equals C.orderTrnHdrIntno
                          join D in db.dubbingSheetHdrs on C.orderTrnHdrIntno equals D.orderTrnHdrIntno
                          join E in db.dubbingSheetDtls on D.dubbSheetHdrIntno equals E.dubbSheetHdrIntno
-                         where A.studioIntno == studio && D.voiceActorIntno == actorIntno && D.actorName == actorName
+                         where A.studioIntno == studio && D.voiceActorIntno == actor && D.actorName == actorName
                          select new { E.dubbSheetDtlIntno, B.workIntno, C.orderTrnHdrIntno, C.episodeNo, D.dubbSheetHdrIntno, E.sceneNo, E.startTimeCode, E.isTaken })
                          .OrderBy(b => new { b.workIntno, b.episodeNo, b.sceneNo });
             foreach(var item in model)
@@ -93,12 +88,12 @@ namespace dubbingApp.Controllers
                 scn.dubbSheetDtlIntno = item.dubbSheetDtlIntno;
                 scn.orderTrnHdrIntno = item.orderTrnHdrIntno;
                 scn.dubbSheetHdrIntno = item.dubbSheetHdrIntno;
+                scn.actor = actor;
+                scn.actorName = actorName;
                 long work = item.workIntno;
                 scn.workIntno = work;
                 scn.workName = db.agreementWorks.Find(work).workName;
                 scn.episodeNo = item.episodeNo;
-                scn.actorIntno = actorIntno;
-                scn.actorName = actorName;
                 scn.sceneNo = item.sceneNo;
                 scn.startTimeCode = item.startTimeCode;
                 scn.isTaken = item.isTaken;
@@ -108,42 +103,88 @@ namespace dubbingApp.Controllers
             return PartialView("_scenesList", scnList);
         }
 
-        public ActionResult dialoguesList(long actorIntno, string actorName)
+        public ActionResult dialoguesList(long sheetHdr)
         {
-            //return ordered dialogues per work, episode, actor, scene ordered by start time
-            //dialogue should have an id
-            //scene has sceneNo and isTaken flag
-            return PartialView("_dialoguesList");
-        }
-        
-        public ActionResult sceneTaken(long sheetHdr)
-        {
-            string scene;
-            var x = db.dubbingSheetDtls.Where(b => b.dubbSheetHdrIntno == sheetHdr && !b.isTaken).OrderBy(b => b.sceneNo);
-            if (x.Count() != 0)
+            short scn;
+            var model = db.adaptationDialogs.Include(b => b.dubbingSheetHdr)
+                        .Where(b => b.dubbSheetHdrIntno == sheetHdr && b.isTaken == false)
+                        .OrderBy(b => new { b.sceneNo, b.dialogNo });
+            var x = db.adaptationDialogs.Include(b => b.dubbingSheetHdr)
+                    .FirstOrDefault(b => b.dubbSheetHdrIntno == sheetHdr && b.isTaken == false);
+            if (x != null)
             {
-                scene = x.First().sceneNo + "|" + x.First().startTimeCode;
-                return Content(scene, "text/html");
+                scn = x.sceneNo;
+                return PartialView("_dialoguesList", model.Where(b => b.sceneNo == scn).ToList());
             }
             else
-                return null;    
+                return PartialView("_dialoguesList", model.ToList());
         }
 
-        public ActionResult dialogueTaken(long id, long scene, int episode, long work)
+        public ActionResult subtitlesList(long dialogue)
         {
-            // save dialogue to db - it might be edited by supervisor
-            int inSceneRemainDialog = 2; //get the count of remaining dialogues in the scene
-            if (inSceneRemainDialog == 0)
+            var model = db.adaptationSubtitles.Where(b => b.dialogIntno == dialogue).OrderBy(b => b.subtitleNo);
+            return PartialView("_subtitlesList", model.ToList());
+        }
+
+        public ActionResult selectEpisodeFirstScene(long sheetHdr)
+        {
+            var x = db.dubbingSheetDtls.Where(b => b.dubbSheetHdrIntno == sheetHdr && !b.isTaken).OrderBy(b => b.sceneNo);
+            studioUpdateResponse result = new studioUpdateResponse();
+            if (x.Count() != 0)
+            {
+                var z = x.First();
+                result.sceneNo = z.sceneNo;
+                result.startTimeCode = z.startTimeCode;
+            }
+            return Json(result, JsonRequestBehavior.AllowGet);
+        }
+
+        public ActionResult dialogueTaken(long id)
+        {
+            var dlg = db.adaptationDialogs.Find(id);
+            short sceneNo = dlg.sceneNo;
+            long sheetHdr = dlg.dubbSheetHdrIntno;
+            var dlgList = db.adaptationDialogs.Where(b => b.dubbSheetHdrIntno == sheetHdr && b.sceneNo == sceneNo && b.isTaken == false);
+
+            long orderItem = db.dubbingSheetHdrs.Find(sheetHdr).orderTrnHdrIntno;
+            var orderHdr = db.orderTrnHdrs.Include(b => b.agreementWork).FirstOrDefault(b => b.orderTrnHdrIntno == orderItem);
+
+            studioUpdateResponse result = new studioUpdateResponse();
+            result.workName = orderHdr.agreementWork.workName;
+            result.episodeNo = orderHdr.episodeNo;
+
+            var x = db.dubbingSheetDtls.FirstOrDefault(b => b.dubbSheetHdrIntno == sheetHdr && b.sceneNo == sceneNo);
+            long? dtl = null;
+            if (dlgList.Count() == 1)
             {
                 //update current scene status (isTaken = true) and get next scene
-                var x = db.dubbingSheetDtls.Find(scene);
+                dtl = x.dubbSheetDtlIntno;
                 x.isTaken = true;
-                long sheet = x.dubbSheetHdrIntno;
-                int sceneNo = x.sceneNo;
-                ViewBag.nextScene = db.dubbingSheetDtls.FirstOrDefault(b => b.dubbSheetHdrIntno == sheet && b.sceneNo > sceneNo && b.isTaken == false).dubbSheetDtlIntno;
-                db.SaveChanges();
+                x.takenTimeStamp = DateTime.Now;
+                var y = db.dubbingSheetDtls.FirstOrDefault(b => b.dubbSheetHdrIntno == sheetHdr && b.sceneNo > sceneNo);
+                if (y != null)
+                {
+                    result.sceneNo = y.sceneNo;
+                    result.startTimeCode = y.startTimeCode;
+                    result.sheetDtl = dtl;
+                }
+                else
+                {
+                    result.sceneNo = null;
+                    result.startTimeCode = null;
+                    result.sheetDtl = dtl;
+                }
             }
-            return null;
+            else
+            {
+                result.sceneNo = x.sceneNo;
+                result.startTimeCode = x.startTimeCode;
+                result.sheetDtl = null;
+            }
+            dlg.isTaken = true;
+            db.SaveChanges();
+            
+            return Json(result, JsonRequestBehavior.AllowGet);
         }
 
         public ActionResult progressBarUpdate(long studio, long? schedule)

@@ -1,21 +1,21 @@
 ﻿@model IEnumerable<dubbingModel.studioEpisode>
 
-<div class="panel panel-default">
-    <div class="panel-heading">
-        <small><label>This Week Schedule</label></small>
-    </div>
-    <div class="panel-body">
-        @if (Model != null)
-        {
-            foreach (long work in Model.Select(b => b.dubbingTrnDtl.workIntno).Distinct())
+<div class="container-fluid" style="padding:0px">
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <small><label>This Week Schedule</label></small>
+        </div>
+        <div class="panel-body">
+            @if (Model != null)
             {
-                <div class="row">
-                    <div class="col-sm-12">
-                        <small><label class="badge alert-info">@Model.FirstOrDefault(b => b.dubbingTrnDtl.workIntno == work).dubbingTrnDtl.agreementWork.workName</label></small>
+                foreach (long work in Model.Select(b => b.dubbingTrnDtl.workIntno).Distinct())
+                {
+                    <div class="row">
+                        <div class="col-sm-12 alert-info" style="padding:0px">
+                            <p>@Model.FirstOrDefault(b => b.dubbingTrnDtl.workIntno == work).dubbingTrnDtl.agreementWork.workName</p>
+                        </div>
                     </div>
-                </div>
-                <div class="row">
-                    <div class="col-sm-12">
+                    <div class="row">
                         @foreach (var episode in Model.Where(b => b.dubbingTrnDtl.workIntno == work))
                         {
                             <span>
@@ -23,9 +23,9 @@
                             </span>
                         }
                     </div>
-                </div>
+                }
             }
-        }
-        
+
+        </div>
     </div>
 </div>
