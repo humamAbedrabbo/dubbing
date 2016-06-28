@@ -111,7 +111,7 @@
                 $.ajax({
                     url: '@Url.Action("dialogueTaken", "dubbing")',
                     type: 'GET',
-                    data: { id: id1 },
+                    data: { id: id1, studioIntno: $('#studioIntnoHF').val() },
                     dataType: 'json',
                     cache: false,
                     success: function (result) {

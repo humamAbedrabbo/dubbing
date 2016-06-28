@@ -1,0 +1,37 @@
+﻿@model IEnumerable<dubbingModel.dubbingAppointment>
+
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <div class="row">
+            <div class="col-sm-6">
+                <small><label>Actor</label></small>
+            </div>
+            <div class="col-sm-3">
+                <small><label>Arrival</label></small>
+            </div>
+            <div class="col-sm-3">
+                <small><label>Actual</label></small>
+            </div>
+        </div>
+    </div>
+    <div class="panel-body" style="padding:5px">
+        @foreach (var apt in Model)
+        {
+            string fromTime = apt.fromTime.HasValue ? apt.fromTime.Value.ToString("HH:mm") : null;
+            string actualFromTime = apt.actualFromTime.HasValue ? apt.actualFromTime.Value.ToString("HH:mm") : null;
+            <div class="row">
+                <div class="col-sm-6">
+                    <small>@apt.actorName</small>
+                </div>
+                <div class="col-sm-3">
+                    <small>@fromTime</small>
+                </div>
+                <div class="col-sm-3">
+                    <small>@actualFromTime</small>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+

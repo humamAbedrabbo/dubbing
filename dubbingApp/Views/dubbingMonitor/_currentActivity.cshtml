@@ -1,0 +1,21 @@
+﻿@{ 
+    string studioNo = ViewBag.studioNo;
+    string nowActor = "nowActor" + studioNo;
+    string nowWork = "nowWork" + studioNo;
+    string nowEpisode = "nowEpisode" + studioNo;
+    string nowScene = "nowScene" + studioNo;
+}
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <div class="row">
+            <div class="col-sm-12" id="@nowActor" style="font-size:12px; font-weight:bold">
+            </div>
+        </div>
+    </div>
+    <div class="panel-body" style="padding:5px">
+        <div class="col-sm-12" id="@nowWork" style="font-size:12px; padding:0px"></div>
+        <small>Episode/Scene:</small>&nbsp;
+        <span id="@nowEpisode" style="font-size:12px"></span>/
+        <span id="@nowScene" style="font-size:12px"></span>
+    </div>
+</div>

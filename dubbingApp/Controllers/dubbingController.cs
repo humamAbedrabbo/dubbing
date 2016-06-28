@@ -143,7 +143,7 @@ namespace dubbingApp.Controllers
             return Json(result, JsonRequestBehavior.AllowGet);
         }
 
-        public ActionResult dialogueTaken(long id)
+        public ActionResult dialogueTaken(long id, long studioIntno)
         {
             var dlg = db.adaptationDialogs.Find(id);
             short sceneNo = dlg.sceneNo;
@@ -162,9 +162,15 @@ namespace dubbingApp.Controllers
             if (dlgList.Count() == 1)
             {
                 //update current scene status (isTaken = true) and get next scene
+                var std = db.studios.Find(studioIntno);
                 dtl = x.dubbSheetDtlIntno;
                 x.isTaken = true;
+                x.studioNo = std.studioNo;
+                x.supervisor = std.supervisor;
+                x.soundTechnician = std.sound;
                 x.takenTimeStamp = DateTime.Now;
+
+                //get next scene if any
                 var y = db.dubbingSheetDtls.FirstOrDefault(b => b.dubbSheetHdrIntno == sheetHdr && b.sceneNo > sceneNo);
                 if (y != null)
                 {

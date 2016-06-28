@@ -40,6 +40,7 @@
                         </tr>
                     </thead>
                     <tbody>
+                        @{ var chargesList = ViewBag.charges as List<KeyValuePair<long, string>>; }
                         @foreach (dubbingModel.employee item in Model.Where(b => b.empType == @empType.Value))
                         {
                             string uid = null;
@@ -53,14 +54,14 @@
                                 <td class="col-sm-2">
                                     <div class="pull-right">
                                         @{
-                                            string btnColor = "btn-default";
-                                            var workChrg = LookupModels.isPartyHasCharges(item.empIntno, "02");
-                                            if (workChrg != "03")
-                                            {
-                                                if(workChrg == "02")
+                                                string btnColor = "btn-default";
+                                                var workChrg = chargesList.FirstOrDefault(b => b.Key == item.empIntno).Value;
+                                                if (workChrg != "03")
                                                 {
-                                                    btnColor = "btn-warning";
-                                                }
+                                                    if(workChrg == "02")
+                                                    {
+                                                        btnColor = "btn-warning";
+                                                    }
                                                 <button class="btn @btnColor btn-xs" onclick="onWorkChargesClick(@item.empIntno)" title="Charges">
                                                     <span class="glyphicon glyphicon-usd" aria-hidden="true"></span>
                                                 </button>

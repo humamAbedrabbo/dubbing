@@ -377,6 +377,10 @@
     <Content Include="Views\adaptation\_subtitlesList.cshtml" />
     <Content Include="Views\dubbingRouter\Index.cshtml" />
     <Content Include="Views\dubbingMonitor\Index.cshtml" />
+    <Content Include="Views\dubbingMonitor\_studiosList.cshtml" />
+    <Content Include="Views\dubbingMonitor\_progressList.cshtml" />
+    <Content Include="Views\dubbingMonitor\_actorsList.cshtml" />
+    <Content Include="Views\dubbingMonitor\_currentActivity.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
