@@ -264,6 +264,20 @@ namespace dubbingApp.Controllers
             ctx.SaveChanges();
         }
 
+        public void saveSubtitleStartTime(long subtitleIntno, string startTime)
+        {
+            var subtitle = ctx.adaptationSubtitles.Find(subtitleIntno);
+            subtitle.startTime = startTime;
+            ctx.SaveChanges();
+        }
+
+        public void saveSubtitleEndTime(long subtitleIntno, string endTime)
+        {
+            var subtitle = ctx.adaptationSubtitles.Find(subtitleIntno);
+            subtitle.endTime = endTime;
+            ctx.SaveChanges();
+        }
+
         public long saveCharacterName(long dialogIntno, string newCharacterName)
         {
             var dialog = ctx.adaptationDialogs.Find(dialogIntno);
