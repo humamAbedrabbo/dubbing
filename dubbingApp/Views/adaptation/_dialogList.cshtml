@@ -25,6 +25,13 @@
                 </div>
             </div>
 
+            <div class="panel-body">
+                <div class="form-inline">
+                    <input type='text' style="width: 7em;" data-dialog="@dialog.dialogIntno" class="form-control startDialogTime" value="@dialog.startTimeCode" />
+                    <input type='text' style="width: 7em;" data-dialog="@dialog.dialogIntno" class="form-control endDialogTime" value="@dialog.endTimeCode" />
+                </div>
+            </div>
+
             <div id="subtitleListContainer_@dialog.dialogIntno">
                 @Html.Action("subtitleList", "adaptation", new { dialogIntno = dialog.dialogIntno })
             </div>

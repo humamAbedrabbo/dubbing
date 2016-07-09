@@ -13,8 +13,25 @@
 <div class="row">
     <div class="col-md-2">
         <div class="row">
-            <div>Scene details</div>
-            <div>Heros list in the scene</div>
+            <div class="panel panel-primary">
+                <div class="panel-heading">Scene Detaile</div>
+                <div class="panel-body sceneDetailsContainer">
+                    Start Time:
+
+                    <input type='text' style="" id="sceneStartTime" class="form-control" value="00:00:00" />
+
+                    Taken: 
+                </div>                
+            </div>
+            <div class="panel panel-info">
+                <div class="panel-heading">Characters List</div>
+                <div class="panel-body">
+                    @foreach (var c in Model.agreementWork.workCharacters.OrderBy(x => x.characterName))
+                    {
+                        <div class="label label-default">@c.characterName</div>
+                    }
+                </div>
+            </div>
         </div>
     </div>
     <!-- <span class="label label-warning">...</span> -->

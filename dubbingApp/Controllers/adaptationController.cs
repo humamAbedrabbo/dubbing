@@ -204,7 +204,7 @@ namespace dubbingApp.Controllers
                 ctx.SaveChanges();
             }
 
-            var lastDialogNo = ctx.adaptationDialogs.Where(x => x.dubbSheetHdrIntno == sheetHdr.dubbSheetHdrIntno && x.sceneNo == sceneNo).Select(x => x.dialogNo).Max();
+            var lastDialogNo = ctx.adaptationDialogs.Where(x => x.dubbingSheetHdr.orderTrnHdrIntno == orderTrnHdrIntno && x.sceneNo == sceneNo).Max(x => x.dialogNo);
             if (lastDialogNo == null || lastDialogNo == 0)
                 lastDialogNo = 1;
             else
@@ -214,6 +214,8 @@ namespace dubbingApp.Controllers
             dialog.dialogNo = lastDialogNo;
             dialog.dubbSheetHdrIntno = sheetHdr.dubbSheetHdrIntno;
             dialog.sceneNo = sceneNo;
+            dialog.startTimeCode = "00:00:00";
+            dialog.endTimeCode = "00:00:00";
             ctx.adaptationDialogs.Add(dialog);
             ctx.SaveChanges();
 
@@ -225,6 +227,7 @@ namespace dubbingApp.Controllers
             subtitle.endTime = "00:00:00";
             ctx.adaptationSubtitles.Add(subtitle);
             ctx.SaveChanges();
+            
 
             return dialogList(orderTrnHdrIntno, sceneNo);
         }
@@ -275,6 +278,20 @@ namespace dubbingApp.Controllers
         {
             var subtitle = ctx.adaptationSubtitles.Find(subtitleIntno);
             subtitle.endTime = endTime;
+            ctx.SaveChanges();
+        }
+
+        public void saveDialogStartTime(long dialogIntno, string startTime)
+        {
+            var dialog = ctx.adaptationDialogs.Find(dialogIntno);
+            dialog.startTimeCode = startTime;
+            ctx.SaveChanges();
+        }
+
+        public void saveDialogEndTime(long dialogIntno, string endTime)
+        {
+            var dialog = ctx.adaptationDialogs.Find(dialogIntno);
+            dialog.endTimeCode = endTime;
             ctx.SaveChanges();
         }
 
