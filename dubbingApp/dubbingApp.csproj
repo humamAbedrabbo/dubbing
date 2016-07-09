@@ -176,10 +176,10 @@
     <Compile Include="App_Start\IdentityConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\Startup.Auth.cs" />
+    <Compile Include="Controllers\accessRightsController.cs" />
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\actorsController.cs" />
     <Compile Include="Controllers\adaptationController.cs" />
-    <Compile Include="Controllers\adminController.cs" />
     <Compile Include="Controllers\agreementsController.cs" />
     <Compile Include="Controllers\assemblyController.cs" />
     <Compile Include="Controllers\calendarController.cs" />
@@ -187,6 +187,8 @@
     <Compile Include="Controllers\clientContactsController.cs" />
     <Compile Include="Controllers\contractsController.cs" />
     <Compile Include="Controllers\dubbingController.cs" />
+    <Compile Include="Controllers\dubbingMonitorController.cs" />
+    <Compile Include="Controllers\dubbingRouterController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\ManageController.cs" />
     <Compile Include="Controllers\ordersController.cs" />
@@ -456,12 +458,15 @@
     <Content Include="Views\adaptation\_dialogList.cshtml" />
     <Content Include="Views\payment\_paidVouchersList.cshtml" />
     <Content Include="Views\adaptation\_subtitlesList.cshtml" />
-    <Content Include="Views\adaptation\_editCharacterName.cshtml" />
-    <Content Include="Views\adaptation\_editSubtitle.cshtml" />
+    <Content Include="Views\dubbingRouter\Index.cshtml" />
+    <Content Include="Views\dubbingMonitor\Index.cshtml" />
+    <Content Include="Views\dubbingMonitor\_studiosList.cshtml" />
+    <Content Include="Views\dubbingMonitor\_progressList.cshtml" />
+    <Content Include="Views\dubbingMonitor\_actorsList.cshtml" />
+    <Content Include="Views\dubbingMonitor\_currentActivity.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
-    <Folder Include="Views\admin\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="packages.config" />

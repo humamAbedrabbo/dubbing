@@ -48,6 +48,7 @@
                     </tr>
                 </thead>
                 <tbody>
+                    @{ var chargesList = ViewBag.charges as List<KeyValuePair<long, string>>; }
                     @foreach (dubbingModel.voiceActor item in Model)
                     {
                         <tr>
@@ -60,7 +61,7 @@
                                 <div class="pull-right">
                                     @{
                                         string btnColor = "btn-default";
-                                        var workChrg = LookupModels.isPartyHasCharges(item.voiceActorIntno, "01");
+                                        var workChrg = chargesList.FirstOrDefault(b => b.Key == item.voiceActorIntno).Value;
                                         if (workChrg != "03")
                                         {
                                             if (workChrg == "02")

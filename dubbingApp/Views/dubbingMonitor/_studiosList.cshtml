@@ -1,0 +1,74 @@
+﻿@model IEnumerable<dubbingModel.studio>
+
+<div class="container-fluid" style="padding:0px">
+    <div class="row">
+        <div class="col-sm-4" style="text-align:center"><label>STUDIOS</label></div>
+        <div class="col-sm-3" style="text-align:center"><label>WORK LOAD</label></div>
+        <div class="col-sm-3" style="text-align:center"><label>TODAY ACTORS</label></div>
+        <div class="col-sm-2" style="text-align:center"><label>NOW PLAYING</label></div>
+    </div>
+
+    @foreach (var std in Model)
+    {
+        string studioStartedTime = "studioStartedTime" + std.studioNo;
+        string studioLastTime = "studioLastTime" + std.studioNo;
+        string weekTotalScenes = "weekTotalScenes" + std.studioNo;
+        <div class="row">
+            <div class="col-sm-4" style="padding:0px">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <small><label>@std.employee1.fullName &nbsp; @std.employee.fullName</label></small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="panel-body">
+                        <div class="row">
+                            <div class="col-sm-4">
+                                <div class="badge alert-info pull-left" style="width:75px;height:60px;font-size:50px">@std.studioNo</div>
+                            </div>
+                            <div class="col-sm-8">
+                                <div class="row">
+                                    <div class="col-sm-4" id="@studioStartedTime"><strong>-- : --</strong></div><small>Started</small>
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-4" id="@studioLastTime"><strong>-- : --</strong></div><small>Last Activity</small>
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-4" id="@weekTotalScenes"><strong>0</strong></div><small>Scenes Completed</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-sm-3" style="padding-left:5px;padding-right:0px">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <strong><small>@std.agreementWork.workName</small></strong>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="panel-body">
+                        @foreach (var ep in std.studioEpisodes)
+                        {
+                            <span><small><label class="badge">@ep.dubbingTrnDtl.episodeNo</label></small></span>
+                        }        
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-sm-3" style="padding-left:5px;padding-right:0px">
+                @Html.Action("actorsList", new { studioIntno = std.studioIntno })
+            </div>
+
+            <div class="col-sm-2" style="padding-left:5px;padding-right:0px">
+                @Html.Action("currentActivity", new { studioIntno = std.studioIntno })
+            </div>
+        </div>
+    }
+</div>

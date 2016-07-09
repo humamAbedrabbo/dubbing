@@ -1,13 +1,15 @@
-﻿<div class="container-fluid" style="padding:0px">
-    <ul>
-        @{ int cnt = 0; }
-        @foreach (SelectListItem actor in new SelectList(ViewBag.actorsList, "voiceActorIntno", "actorName"))
+﻿@model IEnumerable <dubbingModel.dubbingAppointment>
+@{ int id = 0; }
+
+<div class="container-fluid" style="padding:0px">
+    <ul style="padding-left:15px">
+        @foreach (var actor in Model.Select(b => new { b.voiceActorIntno, b.actorName }).Distinct())
         {
-            cnt++;
-            string actorId = "act" + cnt;
-            string actorName = '"' + actor.Text + '"';
+            id++;
+            string actorId = "D" + id.ToString();
+            string actorName = '"' + actor.actorName + '"';
             <li>
-                <a class="actorLbl" id="@actorId" onclick="onActorSelectClick(@actor.Value, @actorName)" href="#" title="appointments">@actor.Text</a>
+                <a class="actorLbl" id="@actorId" onclick="onActorSelectClick(@actor.voiceActorIntno, @actorName)" href="#" title="appointments">@actor.actorName</a>
             </li>
         }
     </ul>

@@ -22,9 +22,10 @@
                     <div class="col-sm-10 btn-group-xs">
                         @foreach (var scene in Model.Where(b => b.workIntno == work.workIntno && b.episodeNo == episode.episodeNo))
                         {
+                            string sceneId = scene.dubbSheetDtlIntno.ToString();
                             if (scene.isTaken) { sceneColor = "btn-success"; }
                             else { sceneColor = "btn-default"; }
-                            <button class="btn @sceneColor btn-xs" onclick="onSceneClick(5)" style="width:30px" title="Scene">@scene.sceneNo</button>
+                            <button class="btn @sceneColor btn-xs" onclick="onSceneClick(5)" id="@sceneId" style="width:30px" title="Scene">@scene.sceneNo</button>
                         }
                     </div>
                 </div>

@@ -1,0 +1,16 @@
+﻿@model IEnumerable<Microsoft.AspNet.Identity.EntityFramework.IdentityRole>
+
+<div>
+    @foreach (var role in Model)
+    {
+        <p>
+            <a href="#" class="roleLbl" id="@role.Id" onclick="onRoleClick('@role.Id')"><strong>@role.Name</strong></a>
+        </p>
+    }
+</div>
+<br />
+<strong>-----</strong>
+<br />
+<p>
+    <a href="#" class="roleLbl" id="no-role" onclick="onRoleClick('no-role')"><strong>Users Not Assigned</strong></a>
+</p>

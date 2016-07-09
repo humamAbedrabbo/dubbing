@@ -1,0 +1,102 @@
+﻿@{
+    ViewBag.Title = "Access Rights";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container-fluid">
+    <div class="jumbotron" style="padding:5px">
+        <h2>Access Rights</h2>
+        <p class="lead"><h5>Maintain Users List and their Access Rights through Assigning Users to Predefined Roles.</h5></p>
+    </div>
+    <div class="row">
+        <div class="col-sm-3">
+            @Html.Action("rolesList", "accessRights")
+        </div>
+        <div class="col-sm-6" id="usersInRoleList"></div>
+        <div class="col-sm-3" id="userDetails"></div>
+    </div>
+</div>
+
+@section Scripts
+{
+    @Scripts.Render("~/bundles/jqueryval")
+
+    <script>
+        function onRoleClick(role1) {
+            $('.roleLbl').removeClass('badge');
+            $('#' + role1).addClass('badge');
+            $('#userDetails').html(null);
+
+            if (role1 === 'no-role') {
+                role2 = null;
+                $.ajax({
+                    url: '@Url.Action("usersNoRoleList", "accessRights")',
+                    type: 'GET',
+                    success: function (result) {
+                        $('#usersInRoleList').html(result);
+                    }
+                })
+            }
+            else {
+                $.ajax({
+                    url: '@Url.Action("usersInRoleList", "accessRights")',
+                    type: 'GET',
+                    data: { role: role1 },
+                    success: function (result) {
+                        $('#usersInRoleList').html(result);
+                    }
+                })
+            }
+        }
+        
+        function onGrantUserClick(role1) {
+            $.ajax({
+                url: '@Url.Action("grantRoleToUser", "accessRights")',
+                type: 'GET',
+                data: { role: role1 },
+                success: function (result) {
+                    $('#userDetails').html(result);
+                }
+            })
+        }
+
+        function onRevokeUserClick(user1, role1) {
+            if (confirm('Please Confirm! About to Revoke Role from the Selected User.')) {
+                $.ajax({
+                    url: '@Url.Action("revokeRoleFromUser", "accessRights")',
+                    type: 'GET',
+                    data: { user: user1, role: role1 },
+                    success: function (result) {
+                        $('#usersInRoleList').html(result);
+                    }
+                })
+            }
+        }
+
+        function onUserClick(user1, role1) {
+            $.ajax({
+                url: '@Url.Action("usersUpdate", "accessRights")',
+                type: 'GET',
+                data: { user: user1, role: role1 },
+                success: function (result) {
+                    $('#userDetails').html(result);
+                }
+            })
+        }
+
+        function onSubmitClick(e) {
+            if(!confirm('Please Confirm! About to make Permenant Update / Delete.'))
+            {
+                e.preventDefault();
+            }
+        }
+
+        function onCloseClick() {
+            $('#userDetails').html(null);
+        }
+        function onSuccess(ajaxContext) {
+            $('#formResult').html('Successfully Modified.');
+            $('#usersInRoleList').html(ajaxContext);
+        }
+    </script>
+}

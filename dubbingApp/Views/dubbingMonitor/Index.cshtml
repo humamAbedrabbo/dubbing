@@ -1,0 +1,58 @@
+﻿@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<input type="hidden" id="scheduleHF" value="@ViewBag.schedule"/>
+
+<div class="container-fluid" style="padding:0px">
+    <div class="jumbotron" style="padding:5px">
+        <h2>Dubbing</h2>
+        <p class="lead"><h5>Get Updates about the ongoing Dubbing Activities.</h5></p>
+    </div>
+</div>
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-sm-10">@Html.Action("studiosList", new { schedule = @ViewBag.schedule })</div>
+        <div class="col-sm-2">@Html.Action("progressList", new { schedule = @ViewBag.schedule })</div>
+    </div>
+</div>
+
+@section Scripts
+{
+    @Scripts.Render("~/bundles/jqueryval")
+
+    <script>
+    $(document).ready(function () {
+
+        $(window).on('load', function () {
+            onRefreshClick();
+        })
+    })
+
+    function onRefreshClick() {
+        $.ajax({
+            url: '@Url.Action("refreshAll", "dubbingMonitor")',
+            type: 'GET',
+            data: { schedule: $('#scheduleHF').val() },
+            dataType: 'json',
+            cache: false,
+            success: function (result) {
+                $.each(result, function (i, item) {
+                    $("#studioStartedTime" + item.studioNo).html(item.startedTime);
+                    $("#studioLastTime" + item.studioNo).html(item.lastTime);
+                    $("#weekTotalScenes" + item.studioNo).html(item.completed);
+
+                    $("#nowActor" + item.studioNo).html(item.actor);
+                    $("#nowWork" + item.studioNo).html(item.work);
+                    $("#nowEpisode" + item.studioNo).html(item.episodeNo);
+                    $("#nowScene" + item.studioNo).html(item.sceneNo);
+
+                    $('progress-bar' + item.studioNo).attr('aria-valuenow', item.progress);
+                    $('progress-bar' + item.studioNo).css('width', item.progress);
+                });
+            }
+        })
+    }
+    </script>
+}
