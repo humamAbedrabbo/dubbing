@@ -9,12 +9,12 @@
     <ProductVersion>
     </ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{5F6A3758-58E4-4F01-BB02-1180D54C5254}</ProjectGuid>
+    <ProjectGuid>{416CEC3B-776E-499B-876F-E01DE986875E}</ProjectGuid>
     <ProjectTypeGuids>{349c5851-65df-11da-9384-00065b846f21};{fae04ec0-301f-11d3-bf4b-00c04f79efbc}</ProjectTypeGuids>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>dubbingApp</RootNamespace>
-    <AssemblyName>dubbingApp</AssemblyName>
+    <RootNamespace>clientWeb</RootNamespace>
+    <AssemblyName>clientWeb</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <MvcBuildViews>false</MvcBuildViews>
     <UseIISExpress>true</UseIISExpress>
@@ -44,23 +44,11 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="ClosedXML, Version=0.76.0.0, Culture=neutral, PublicKeyToken=fd1eb21b62ae805b, processorArchitecture=MSIL">
-      <HintPath>..\packages\ClosedXML.0.76.0\lib\net40-client\ClosedXML.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="DocumentFormat.OpenXml, Version=2.5.5631.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\packages\DocumentFormat.OpenXml.2.5\lib\DocumentFormat.OpenXml.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
     <Reference Include="Microsoft.CodeDom.Providers.DotNetCompilerPlatform, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.0\lib\net45\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.CSharp" />
-    <Reference Include="Newtonsoft.Json, Version=8.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\packages\Newtonsoft.Json.8.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
@@ -124,6 +112,9 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>..\packages\Newtonsoft.Json.6.0.4\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
     <Reference Include="EntityFramework">
       <HintPath>..\packages\EntityFramework.6.1.3\lib\net45\EntityFramework.dll</HintPath>
     </Reference>
@@ -176,79 +167,40 @@
     <Compile Include="App_Start\IdentityConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\Startup.Auth.cs" />
-    <Compile Include="Controllers\accessRightsController.cs" />
     <Compile Include="Controllers\AccountController.cs" />
-    <Compile Include="Controllers\actorsController.cs" />
-    <Compile Include="Controllers\adaptationController.cs" />
-    <Compile Include="Controllers\agreementsController.cs" />
-    <Compile Include="Controllers\assemblyController.cs" />
-    <Compile Include="Controllers\calendarController.cs" />
-    <Compile Include="Controllers\castingController.cs" />
-    <Compile Include="Controllers\clientContactsController.cs" />
-    <Compile Include="Controllers\contractsController.cs" />
-    <Compile Include="Controllers\dubbingController.cs" />
-    <Compile Include="Controllers\dubbingMonitorController.cs" />
-    <Compile Include="Controllers\dubbingRouterController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\ManageController.cs" />
-    <Compile Include="Controllers\ordersController.cs" />
-    <Compile Include="Controllers\paymentController.cs" />
-    <Compile Include="Controllers\personnelController.cs" />
-    <Compile Include="Controllers\schedulingController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\IdentityModels.cs" />
-    <Compile Include="Models\LookupModels.cs" />
     <Compile Include="Models\ManageViewModels.cs" />
-    <Compile Include="Models\staticCache.cs" />
-    <Compile Include="Models\ViewModels.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Startup.cs" />
-    <Compile Include="Utils\SecurityManager.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Content\adaptation.css" />
-    <Content Include="Content\bootstrap-theme.css" />
-    <Content Include="Content\bootstrap-theme.min.css" />
     <Content Include="Content\bootstrap.css" />
     <Content Include="Content\bootstrap.min.css" />
     <Content Include="Content\Images\Fardous.png" />
     <Content Include="favicon.ico" />
     <Content Include="Global.asax" />
     <Content Include="Content\Site.css" />
-    <Content Include="fonts\glyphicons-halflings-regular.woff2" />
-    <Content Include="fonts\glyphicons-halflings-regular.woff" />
-    <Content Include="fonts\glyphicons-halflings-regular.ttf" />
-    <Content Include="fonts\glyphicons-halflings-regular.svg" />
-    <Content Include="fonts\glyphicons-halflings-regular.eot" />
-    <Content Include="Content\bootstrap.min.css.map" />
-    <Content Include="Content\bootstrap.css.map" />
-    <Content Include="Content\bootstrap-theme.min.css.map" />
-    <Content Include="Content\bootstrap-theme.css.map" />
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
-    <None Include="Properties\PublishProfiles\dubbingApp.pubxml" />
-    <None Include="Scripts\jquery-2.2.3.intellisense.js" />
-    <Content Include="Scripts\dubbing\adaptation.js" />
-    <Content Include="Scripts\jquery-2.2.3.js" />
-    <Content Include="Scripts\jquery-2.2.3.min.js" />
-    <Content Include="Scripts\jquery-2.2.3.min.map" />
+    <None Include="Scripts\jquery-1.10.2.intellisense.js" />
+    <Content Include="Scripts\jquery-1.10.2.js" />
+    <Content Include="Scripts\jquery-1.10.2.min.js" />
     <None Include="Scripts\jquery.validate-vsdoc.js" />
-    <Content Include="Scripts\jquery.unobtrusive-ajax.js" />
-    <Content Include="Scripts\jquery.unobtrusive-ajax.min.js" />
     <Content Include="Scripts\jquery.validate.js" />
     <Content Include="Scripts\jquery.validate.min.js" />
     <Content Include="Scripts\jquery.validate.unobtrusive.js" />
     <Content Include="Scripts\jquery.validate.unobtrusive.min.js" />
-    <Content Include="Scripts\modernizr-2.8.3.js" />
+    <Content Include="Scripts\modernizr-2.6.2.js" />
     <Content Include="Scripts\respond.js" />
     <Content Include="Scripts\respond.min.js" />
     <Content Include="Scripts\_references.js" />
-    <Content Include="Web.config">
-      <SubType>Designer</SubType>
-    </Content>
+    <Content Include="Web.config" />
     <Content Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </Content>
@@ -261,7 +213,6 @@
     <Content Include="Views\Shared\_Layout.cshtml" />
     <Content Include="Views\Home\About.cshtml" />
     <Content Include="Views\Home\Contact.cshtml" />
-    <Content Include="Views\Home\Index.cshtml" />
     <Content Include="Views\Account\_ExternalLoginsListPartial.cshtml" />
     <Content Include="Views\Account\ConfirmEmail.cshtml" />
     <Content Include="Views\Account\ExternalLoginConfirmation.cshtml" />
@@ -282,118 +233,26 @@
     <Content Include="Views\Manage\VerifyPhoneNumber.cshtml" />
     <Content Include="Views\Shared\Lockout.cshtml" />
     <Content Include="Views\Shared\_LoginPartial.cshtml" />
-    <Content Include="Views\contracts\Index.cshtml" />
-    <Content Include="Views\contracts\_contractsList.cshtml" />
-    <Content Include="Views\contracts\_clientContactsList.cshtml" />
-    <Content Include="Views\contracts\_contractAddNew.cshtml" />
-    <Content Include="Views\contracts\_contractUpdate.cshtml" />
-    <Content Include="Views\contracts\_clientAddNew.cshtml" />
-    <Content Include="Views\contracts\_agreementAddNew.cshtml" />
-    <Content Include="Views\contracts\_clientUpdate.cshtml" />
-    <Content Include="Views\contracts\_agreementUpdate.cshtml" />
-    <Content Include="Views\clientContacts\_clientContactsList.cshtml" />
-    <Content Include="Views\clientContacts\_clientContactAddNew.cshtml" />
-    <Content Include="Views\clientContacts\Index.cshtml" />
-    <Content Include="Views\clientContacts\_clientContactUpdate.cshtml" />
-    <Content Include="Views\agreements\Index.cshtml" />
-    <Content Include="Views\agreements\_specsAddNew.cshtml" />
-    <Content Include="Views\agreements\_specsList.cshtml" />
-    <Content Include="Views\agreements\_termsList.cshtml" />
-    <Content Include="Views\agreements\_termsAddNew.cshtml" />
-    <Content Include="Views\casting\Index.cshtml" />
-    <Content Include="Views\casting\_charactersList.cshtml" />
-    <Content Include="Views\casting\_characterAddNew.cshtml" />
-    <Content Include="Views\casting\_characterUpdate.cshtml" />
-    <Content Include="Views\casting\_actorUpdate.cshtml" />
-    <Content Include="Views\casting\_castingDetails.cshtml" />
-    <Content Include="Views\casting\_actorAddNew.cshtml" />
-    <Content Include="Views\contracts\_teamList.cshtml" />
-    <Content Include="Views\contracts\_teamAddNew.cshtml" />
-    <Content Include="Views\contracts\_contractHistory.cshtml" />
-    <Content Include="Views\orders\Index.cshtml" />
-    <Content Include="Views\orders\_orderItemsList.cshtml" />
-    <Content Include="Views\orders\_orderAddNew.cshtml" />
-    <Content Include="Views\orders\_orderItemIssuesList.cshtml" />
-    <Content Include="Views\orders\_orderItemIssueAddNew.cshtml" />
-    <Content Include="Views\orders\_orderItemSelectList.cshtml" />
-    <Content Include="Views\orders\_orderItemDetails.cshtml" />
-    <Content Include="Views\orders\_orderItemComplainsList.cshtml" />
-    <Content Include="Views\orders\_orderItemComplainAddNew.cshtml" />
-    <Content Include="Views\orders\_tips.cshtml" />
-    <Content Include="Views\personnel\Index.cshtml" />
-    <Content Include="Views\personnel\_personnelList.cshtml" />
-    <Content Include="Views\personnel\_personnelAddNew.cshtml" />
-    <Content Include="Views\personnel\_personnelUpdate.cshtml" />
-    <Content Include="Views\personnel\_workChargesList.cshtml" />
-    <Content Include="Views\actors\_actorsAddNew.cshtml" />
-    <Content Include="Views\actors\_actorsList.cshtml" />
-    <Content Include="Views\actors\_actorsUpdate.cshtml" />
-    <Content Include="Views\personnel\_workChargesAddNew.cshtml" />
-    <Content Include="Views\calendar\Index.cshtml" />
-    <Content Include="Views\calendar\_actorsList.cshtml" />
-    <Content Include="Views\dubbing\Index.cshtml" />
-    <Content Include="Views\dubbing\_actorsList.cshtml" />
-    <Content Include="Views\dubbing\_dialoguesList.cshtml" />
-    <Content Include="Views\dubbing\_sceneHeader.cshtml" />
-    <Content Include="Views\dubbing\_scenesList.cshtml" />
-    <Content Include="Views\calendar\_appointmentsList.cshtml" />
-    <Content Include="Views\calendar\_appointmentUpdate.cshtml" />
-    <Content Include="Views\calendar\_studioCalendarPopup.cshtml" />
-    <Content Include="Views\scheduling\Index.cshtml" />
-    <Content Include="Views\scheduling\_schedulesList.cshtml" />
-    <Content Include="Views\scheduling\_scheduleDetails.cshtml" />
-    <Content Include="Views\scheduling\_schedulesAddNew.cshtml" />
-    <Content Include="Views\scheduling\_episodesList.cshtml" />
-    <Content Include="Views\scheduling\_studiosList.cshtml" />
-    <Content Include="Views\scheduling\_episodesAddNew.cshtml" />
-    <Content Include="Views\scheduling\_studioAllocationList.cshtml" />
-    <Content Include="Views\scheduling\_studioAllocationAddNew.cshtml" />
-    <Content Include="Views\assembly\Index.cshtml" />
-    <Content Include="Views\assembly\_episodesList.cshtml" />
-    <Content Include="Views\assembly\_shipmentsList.cshtml" />
-    <Content Include="Views\assembly\_shipmentsAddNew.cshtml" />
-    <Content Include="Views\assembly\_shipmentsUpdate.cshtml" />
-    <Content Include="Views\assembly\_musicEffectsAddNew.cshtml" />
-    <Content Include="Views\assembly\_clientClaimsAddNew.cshtml" />
-    <Content Include="Views\assembly\_episodeDetails.cshtml" />
-    <Content Include="Views\assembly\_musicEffectsDetails.cshtml" />
-    <Content Include="Views\assembly\_clientClaimsDetails.cshtml" />
-    <Content Include="Views\payment\Index.cshtml" />
-    <Content Include="Views\payment\_actorsList.cshtml" />
-    <Content Include="Views\payment\_paymentsDueList.cshtml" />
-    <Content Include="Views\payment\_paymentsAddNew.cshtml" />
-    <Content Include="Views\payment\_paymentsList.cshtml" />
-    <Content Include="Views\payment\_paymentsUpdate.cshtml" />
-    <Content Include="Views\actors\Index.cshtml" />
-    <Content Include="Views\actors\_workChargesAddNew.cshtml" />
-    <Content Include="Views\actors\_workChargesList.cshtml" />
-    <Content Include="Views\dubbing\_scheduledWorksList.cshtml" />
-    <Content Include="Views\dubbing\studioNotAllocated.cshtml" />
-    <Content Include="Views\adaptation\Edit.cshtml" />
-    <Content Include="Views\adaptation\Index.cshtml" />
-    <Content Include="Views\adaptation\_sceneList.cshtml" />
-    <Content Include="Views\adaptation\_dialogList.cshtml" />
-    <Content Include="Views\payment\_paidVouchersList.cshtml" />
-    <Content Include="Views\adaptation\_subtitlesList.cshtml" />
-    <Content Include="Views\dubbingRouter\Index.cshtml" />
-    <Content Include="Views\dubbingMonitor\Index.cshtml" />
-    <Content Include="Views\dubbingMonitor\_studiosList.cshtml" />
-    <Content Include="Views\dubbingMonitor\_progressList.cshtml" />
-    <Content Include="Views\dubbingMonitor\_actorsList.cshtml" />
-    <Content Include="Views\dubbingMonitor\_currentActivity.cshtml" />
-    <Content Include="Views\accessRights\Index.cshtml" />
-    <Content Include="Views\accessRights\_grantRoleToUser.cshtml" />
-    <Content Include="Views\accessRights\_rolesList.cshtml" />
-    <Content Include="Views\accessRights\_usersInRoleList.cshtml" />
-    <Content Include="Views\accessRights\_usersNoRoleList.cshtml" />
-    <Content Include="Views\accessRights\_usersUpdate.cshtml" />
+    <Content Include="Views\Home\_clientClaimsAddNew.cshtml" />
+    <Content Include="Views\Home\_orderItemClaims.cshtml" />
+    <Content Include="Views\Home\_orderItemDetails.cshtml" />
+    <Content Include="Views\Home\_orderItemIssues.cshtml" />
+    <Content Include="Views\Home\_ordersList.cshtml" />
+    <Content Include="Views\Home\_worksList.cshtml" />
+    <Content Include="Views\Home\Index.cshtml" />
+    <Content Include="Views\Home\accessDenied.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="fonts\glyphicons-halflings-regular.woff" />
+    <Content Include="fonts\glyphicons-halflings-regular.ttf" />
+    <Content Include="fonts\glyphicons-halflings-regular.svg" />
+    <Content Include="fonts\glyphicons-halflings-regular.eot" />
     <Content Include="packages.config" />
     <None Include="Project_Readme.html" />
+    <Content Include="Scripts\jquery-1.10.2.min.map" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\dubbingModel\dubbingModel.csproj">
@@ -417,9 +276,9 @@
         <WebProjectProperties>
           <UseIIS>True</UseIIS>
           <AutoAssignPort>True</AutoAssignPort>
-          <DevelopmentServerPort>3329</DevelopmentServerPort>
+          <DevelopmentServerPort>1370</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>
-          <IISUrl>http://localhost:3329/</IISUrl>
+          <IISUrl>http://localhost:1370/</IISUrl>
           <NTLMAuthentication>False</NTLMAuthentication>
           <UseCustomServer>False</UseCustomServer>
           <CustomServerUrl>

@@ -44,15 +44,20 @@ namespace dubbingApp.Controllers
             
             List<ViewModels.usersViewModel> usersList = new List<ViewModels.usersViewModel>();
             var model = context.Users.Where(b => b.Roles.Select(y => y.RoleId).Contains(role));
-            var z = db.employees.ToList();
-            foreach(var x in model)
+            var z1 = db.employees;
+            var z2 = db.contacts;
+            foreach (var x in model)
             {
                 ViewModels.usersViewModel usr = new ViewModels.usersViewModel();
                 usr.userId = x.Id;
                 usr.roleId = role;
                 usr.userName = x.UserName;
-                if (z.FirstOrDefault(b => b.email == usr.userName && b.status == true) != null)
-                    usr.personnelName = z.FirstOrDefault(b => b.email == usr.userName && b.status == true).fullName;
+                if (z1.FirstOrDefault(b => b.email == usr.userName && b.status == true) != null)
+                    usr.personnelName = z1.FirstOrDefault(b => b.email == usr.userName && b.status == true).fullName;
+                else if (z2.FirstOrDefault(b => b.contactEmailAddr == usr.userName && b.status == true) != null)
+                    usr.personnelName = z2.FirstOrDefault(b => b.contactEmailAddr == usr.userName && b.status == true).contactName;
+                else
+                    usr.personnelName = null;
                 usersList.Add(usr);
             }
             ViewBag.roleId = role;
@@ -65,15 +70,17 @@ namespace dubbingApp.Controllers
 
             List<ViewModels.usersViewModel> usersList = new List<ViewModels.usersViewModel>();
             var model = context.Users.Where(b => !b.Roles.Any());
-            var z = db.employees.ToList();
+            var z1 = db.employees;
             foreach (var x in model)
             {
                 ViewModels.usersViewModel usr = new ViewModels.usersViewModel();
                 usr.userId = x.Id;
                 usr.roleId = null;
                 usr.userName = x.UserName;
-                if (z.FirstOrDefault(b => b.email == usr.userName && b.status == true) != null)
-                    usr.personnelName = z.FirstOrDefault(b => b.email == usr.userName && b.status == true).fullName;
+                if (z1.FirstOrDefault(b => b.email == usr.userName && b.status == true) != null)
+                    usr.personnelName = z1.FirstOrDefault(b => b.email == usr.userName && b.status == true).fullName;
+                else
+                    usr.personnelName = null;
                 usersList.Add(usr);
             }
             return PartialView("_usersNoRoleList", usersList);

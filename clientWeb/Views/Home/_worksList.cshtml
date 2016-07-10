@@ -1,0 +1,24 @@
+﻿@model IEnumerable<dubbingModel.agreementWork>
+
+<div class="container-fluid" style="padding:0px">
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <div class="row">
+                <div class="col-sm-12 col-xs-12">
+                    <label>Works List</label>
+                </div>
+            </div>
+        </div>
+        <div class="panel-body">
+            <ul>
+                @foreach(var work in Model)
+                {
+                    string workLblId = "w" + work.workIntno.ToString();
+                    <li>
+                        <small><a class="workLbl" id="@workLblId" href="#" onclick="onWorkClick(@work.workIntno)">@work.workName</a></small>
+                    </li>
+                }
+            </ul>
+        </div>
+    </div>
+</div>

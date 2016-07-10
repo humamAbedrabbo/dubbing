@@ -1,0 +1,28 @@
+﻿@model IList<string>
+
+<div class="container-fluid" style="padding:0px">
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <div class="row">
+                <div class="col-sm-10">
+                    <label><small>@ViewBag.workName, Episode @ViewBag.episodeNo Schedule</small></label>
+                </div>
+                <div class="col-sm-2">
+                    <button class="btn btn-default btn-xs pull-right" onclick="onCloseClick()" title="Close">
+                        <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div class="panel-body">
+            <dl>
+                @foreach (string str in Model)
+                {
+                    string[] item = str.Split('|');
+                    <dt><small>@item[0]</small></dt>
+                    <dd><small>@item[1]</small></dd>
+                }
+            </dl>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,37 @@
+﻿@model IEnumerable<dubbingModel.orderCheck>
+
+<div class="container-fluid" style="padding:0px">
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <div class="row">
+                <div class="col-sm-10">
+                    <label>Reported Quality Issues</label>
+                </div>
+                <div class="col-sm-2">
+                    <button class="btn btn-default btn-xs pull-right" onclick="onCloseClick()" title="Close">
+                        <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div class="panel-body">
+            <table class="table table-condensed">
+                <thead>
+                    <tr>
+                        <th class="col-xs-10"><small>Issue</small></th>
+                        <th class="col-xs-2"><small>Ok?</small></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var issue in Model)
+                    {
+                        <tr>
+                            <td class="col-xs-10"><small>@issue.checkType</small></td>
+                            <td class="col-xs-2">@Html.CheckBoxFor(model => issue.isAccepted)</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

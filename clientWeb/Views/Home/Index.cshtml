@@ -1,0 +1,134 @@
+﻿@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="jumbotron" style="padding-top:10px; padding-bottom:10px">
+    <h1>DOMS CLIENT</h1>
+    <div style="font-size:14px">
+        <p><small>DOMS is a Dubbing Order Management Web Application for Processing Received Clients' Orders during the Different Production Stages from Adaptation to Dubbing and Shipments, in Compliance with Clients Agreements &amp; Contracts.</small></p>
+        <p><small>This Client Web Application Helps Clients Track Their Submitted Orders and Reported Quality Issues of the Received Media, and Gets Updates about the Dubbing Status and Clients' Claims on The Delivered Media.</small>
+        <a href="#" class="btn btn-primary btn-xs" onclick="onNewClaimClick()">New Claim &raquo;</a></p>
+    </div>
+</div>
+
+<div class="container-fluid">
+    @Html.Hidden("workHF")
+    <div class="row">
+        <div class="col-sm-4 col-xs-4">
+            @Html.Action("worksList")
+        </div>
+        <div class="col-sm-5 col-xs-5" id="ordersList">
+            @Html.Action("ordersList")
+        </div>
+        <div class="col-sm-3 col-xs-3" id="details"></div>
+    </div>
+</div>
+
+@section Scripts
+{
+    @Scripts.Render("~/bundles/jqueryval")
+
+    <script>
+        $(document).ready(function () {
+            $(window).on('load', function () {
+                $('#workHF').val(null);
+            });
+
+            $(".workLbl").click(function () {
+                $('.workLbl').removeClass("badge");
+                var work = $(this).attr('id');
+                $('#' + work).addClass("badge");
+            });
+        })
+
+        function onWorkClick(work1) {
+            $('#workHF').val(work1);
+            $.ajax({
+                url: '@Url.Action("ordersList", "Home")',
+                type: 'GET',
+                data: { work: work1 },
+                success: function (result) {
+                    $('#ordersList').html(result);
+                }
+            })
+        }
+
+        function onEpisodeClick(orderItem1) {
+            $.ajax({
+                url: '@Url.Action("orderItemDetails", "Home")',
+                type: 'GET',
+                data: { orderItem: orderItem1 },
+                success: function (result) {
+                    $('#details').html(result);
+                }
+            })
+        }
+
+        function onIssuesClick(orderItem1) {
+            $.ajax({
+                url: '@Url.Action("orderItemIssues", "Home")',
+                type: 'GET',
+                data: { orderItem: orderItem1 },
+                success: function (result) {
+                    $('#details').html(result);
+                }
+            })
+        }
+
+        function onClaimsClick(orderItem1) {
+            $.ajax({
+                url: '@Url.Action("orderItemClaims", "Home")',
+                type: 'GET',
+                data: { orderItem: orderItem1 },
+                success: function (result) {
+                    $('#details').html(result);
+                }
+            })
+        }
+
+        function onNewClaimClick() {
+            $.ajax({
+                url: '@Url.Action("clientClaimsAddNew", "Home")',
+                type: 'GET',
+                success: function (result) {
+                    $('#details').html(result);
+                }
+            })
+        }
+
+        function onAddClaimSuccess(ajaxContext) {
+            $('#formResult').html(ajaxContext);
+            $.ajax({
+                url: '@Url.Action("ordersList", "Home")',
+                type: 'GET',
+                data: { work: $('#workHF').val() },
+                success: function (result) {
+                    $('#ordersList').html(result);
+                }
+            })
+        }
+
+        function onAddClaimFailure(ajaxContext) {
+            $('#formResult').html(ajaxContext);
+        }
+
+        function onApproveClick(orderItem1) {
+            if (confirm("Please Confirm! About to Approve the Delivered Item.")) {
+                $.ajax({
+                    url: '@Url.Action("approveDelivered", "Home")',
+                    type: 'GET',
+                    data: { orderItem: orderItem1 },
+                    success: function () {
+                        alert("Item Successfully Approved.");
+                    }
+                })
+            }
+        }
+
+        function onCloseClick() {
+            $('#details').html(null);
+        }
+    </script>
+}
+

@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "dubbingApp", "dubbingApp\du
 EndProject
 Project("{00D1A9C2-B5F0-4AF3-8072-F6C62B433612}") = "dubbingDatabase", "dubbingDatabase\dubbingDatabase.sqlproj", "{4A35DB03-82E9-40A3-8224-11038FCEFE9A}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "clientWeb", "clientWeb\clientWeb.csproj", "{416CEC3B-776E-499B-876F-E01DE986875E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -29,6 +31,10 @@ Global
 		{4A35DB03-82E9-40A3-8224-11038FCEFE9A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4A35DB03-82E9-40A3-8224-11038FCEFE9A}.Release|Any CPU.Build.0 = Release|Any CPU
 		{4A35DB03-82E9-40A3-8224-11038FCEFE9A}.Release|Any CPU.Deploy.0 = Release|Any CPU
+		{416CEC3B-776E-499B-876F-E01DE986875E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{416CEC3B-776E-499B-876F-E01DE986875E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{416CEC3B-776E-499B-876F-E01DE986875E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{416CEC3B-776E-499B-876F-E01DE986875E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

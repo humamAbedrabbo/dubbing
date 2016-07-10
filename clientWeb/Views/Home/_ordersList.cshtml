@@ -1,0 +1,67 @@
+﻿@model IEnumerable<clientWeb.Controllers.HomeController.orderItemsViewModel>
+
+@foreach (var work in Model.Select(b => new { b.workIntno, b.workName }).Distinct())
+{
+    <div class="row">
+        <label class="badge alert-info">@work.workName</label>
+    </div>
+
+    <div class="row">
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th class="col-xs-2"><small>Episode</small></th>
+                    <th class="col-xs-3"><small>Status</small></th>
+                    <th class="col-xs-2"><small>Since</small></th>
+                    <th class="col-xs-2"><small>Issues</small></th>
+                    <th class="col-xs-2"><small>Claims</small></th>
+                    <th class="col-xs-1">#</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var orderItem in Model.Where(b => b.workIntno == @work.workIntno))
+                {
+                    <tr>
+                        <td class="col-xs-2">
+                            <button class="btn btn-xs btn-primary" onclick="onEpisodeClick(@orderItem.orderItemId)" title="Schedule"><small>@orderItem.episodeNo</small></button>
+                        </td>
+                        <td class="col-xs-3"><small>@orderItem.status</small></td>
+                        <td class="col-xs-3"><small>@orderItem.since</small></td>
+                        @if (!string.IsNullOrEmpty(orderItem.totalIssues))
+                        {
+                            string btnColor = "btn-success";
+                            if (orderItem.status == "Rejected")
+                            {
+                                btnColor = "btn-danger";
+                            }
+                            <td class="col-xs-2">
+                                <button class="btn btn-xs @btnColor" onclick="onIssuesClick(@orderItem.orderItemId)"><small>@orderItem.totalIssues</small></button>
+                            </td>
+                        }
+                        else
+                        {
+                            <td class="col-xs-2"></td>
+                        }
+                        @if (!string.IsNullOrEmpty(orderItem.totalClaims))
+                        {
+                            <td class="col-xs-2">
+                                <button class="btn btn-xs btn-danger" onclick="onClaimsClick(@orderItem.orderItemId)"><small>@orderItem.totalClaims</small></button>
+                            </td>
+                        }
+                        else
+                        {
+                            <td class="col-xs-2"></td>
+                        }
+                        <td class="col-xs-1">
+                            <button class="btn btn-xs" onclick="onApproveClick(@orderItem.orderItemId)" title="Approve">
+                                <span class="glyphicon glyphicon-thumbs-up"></span>
+                            </button>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}
+
+

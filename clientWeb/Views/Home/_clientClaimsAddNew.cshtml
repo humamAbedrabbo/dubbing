@@ -1,0 +1,81 @@
+﻿@model dubbingModel.clientClaim
+
+<div class="container-fluid" style="padding:0px">
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <div class="row">
+                <div class="col-sm-10">
+                    <label>New Claim Information</label>
+                </div>
+                <div class="col-sm-2">
+                    <button class="btn btn-default btn-xs pull-right" onclick="onCloseClick()" title="Close">
+                        <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div class="panel-body">
+            @using (Ajax.BeginForm("clientClaimsAddNew", "Home",
+                                                new AjaxOptions()
+                                                {
+                                                    HttpMethod = "POST",
+                                                    OnSuccess = "onAddClaimSuccess",
+                                                    OnFailure = "onAddClaimFailure"
+                                                }
+                                                ))
+            {
+                @Html.AntiForgeryToken()
+                @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+                <div class="form-group-sm">
+                    <small>@Html.LabelFor(model => model.claimRefNo, "Claim Ref. No", htmlAttributes: new { @class = "control-label-sm" })</small>
+                    <div>
+                        @Html.EditorFor(model => model.claimRefNo, new { htmlAttributes = new { @class = "form-control" } })
+                        @Html.ValidationMessageFor(model => model.claimRefNo, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+                <div class="form-group-sm">
+                    <small>@Html.LabelFor(model => model.orderTrnHdrIntno, "Delivered Material *", htmlAttributes: new { @class = "control-label-sm" })</small>
+                    <div>
+                        @Html.DropDownListFor(model => model.orderTrnHdrIntno, ViewBag.orderItemsList as SelectList, "Select ...", htmlAttributes: new { @class = "form-control" })
+                        @Html.ValidationMessageFor(model => model.orderTrnHdrIntno, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+                <div class="form-group-sm">
+                    <small>@Html.LabelFor(model => model.claimDesc, "Claim Desc *", htmlAttributes: new { @class = "control-label-sm" })</small>
+                    <div>
+                        @Html.EditorFor(model => model.claimDesc, new { htmlAttributes = new { @class = "form-control" } })
+                        @Html.ValidationMessageFor(model => model.claimDesc, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+                <div class="form-group-sm">
+                    <small>@Html.LabelFor(model => model.refLocation, "Ref. Location", htmlAttributes: new { @class = "control-label-sm" })</small>
+                    <div>
+                        @Html.EditorFor(model => model.refLocation, new { htmlAttributes = new { @class = "form-control" } })
+                        @Html.ValidationMessageFor(model => model.refLocation, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+                <div class="form-group-sm">
+                    <small>@Html.LabelFor(model => model.requiredAction, "Required Actions *", htmlAttributes: new { @class = "control-label-sm" })</small>
+                    <div>
+                        @Html.EditorFor(model => model.requiredAction, new { htmlAttributes = new { @class = "form-control" } })
+                        @Html.ValidationMessageFor(model => model.requiredAction, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+                <br />
+                <div class="form-group-sm">
+                    <button type="submit" class="btn btn-default btn-sm pull-left">Submit</button>
+                    <button type="button" class="btn btn-default btn-sm pull-left" onclick="onNewClaimClick()">More ...</button>
+                    <small><label class="alert-success" id="formResult"></label></small>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+

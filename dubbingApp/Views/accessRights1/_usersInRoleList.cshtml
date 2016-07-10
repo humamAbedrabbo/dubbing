@@ -1,0 +1,47 @@
+﻿@model IEnumerable <dubbingApp.Models.ViewModels.usersViewModel>
+
+<div class="container-fluid">
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <div class="row">
+                <div class="col-sm-11">
+                    <label>Users In Role</label>
+                </div>
+                <div class="col-sm-1">
+                    <button class="btn btn-default btn-xs pull-right" onclick="onGrantUserClick('@ViewBag.roleId')" title="Grant User">
+                        <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div class="panel-body">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th class="col-sm-6"><small>User</small></th>
+                        <th class="col-sm-5"><small>Authenticated</small></th>
+                        <th class="col-sm-1"></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var user in Model)
+                    {
+                        <tr>
+                            <td class="col-sm-6">
+                                <a href="#" onclick="onUserClick('@user.userId', '@user.roleId')"><small>@user.userName</small></a>
+                            </td>
+                            <td class="col-sm-5">
+                                <small>@user.personnelName</small>
+                            </td>
+                            <td class="col-sm-1">
+                                <button class="btn btn-default btn-xs pull-right" onclick="onRevokeUserClick('@user.userId', '@user.roleId')" title="Revoke Role">
+                                    <span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
+                                </button>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

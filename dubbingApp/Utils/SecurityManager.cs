@@ -45,6 +45,7 @@ namespace dubbingApp.Utils
             createRole("STUDIO_ASSISTANT");
             createRole("STUDIO_SUPERVISOR");
             createRole("EDITOR");
+            createRole("CLIENT");
 
             // Please make user name and email both equal
             Id = CreateUser("admin@fardous.tv", "admin@fardous.tv", "f@Rdous2010");
