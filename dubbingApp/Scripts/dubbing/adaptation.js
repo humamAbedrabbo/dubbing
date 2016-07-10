@@ -159,6 +159,74 @@ function saveEditSubtitle() {
     });
 }
 
+function saveSubtitleStartTime() {
+    var  newTime = $(this.event.target).val();    
+    var subtitleIntno = $(this.event.target).data("subtitle");
+    var url = "/adaptation/saveSubtitleStartTime";
+
+
+    $.ajax({
+        contentType: 'application/json',
+        method: 'GET',
+        url: url,
+        data: { subtitleIntno: subtitleIntno, startTime: newTime },
+        success: function (result) {
+           
+        }
+    });
+}
+
+function saveSubtitleEndTime() {
+    var newTime = $(this.event.target).val();
+    var subtitleIntno = $(this.event.target).data("subtitle");
+    var url = "/adaptation/saveSubtitleEndTime";
+
+
+    $.ajax({
+        contentType: 'application/json',
+        method: 'GET',
+        url: url,
+        data: { subtitleIntno: subtitleIntno, endTime: newTime },
+        success: function (result) {
+
+        }
+    });
+}
+
+function saveDialogStartTime() {
+    var newTime = $(this.event.target).val();
+    var dialogIntno = $(this.event.target).data("dialog");
+    var url = "/adaptation/saveDialogStartTime";
+
+
+    $.ajax({
+        contentType: 'application/json',
+        method: 'GET',
+        url: url,
+        data: { dialogIntno: dialogIntno, startTime: newTime },
+        success: function (result) {
+
+        }
+    });
+}
+
+function saveDialogEndTime() {
+    var newTime = $(this.event.target).val();
+    var dialogIntno = $(this.event.target).data("dialog");
+    var url = "/adaptation/saveDialogEndTime";
+
+
+    $.ajax({
+        contentType: 'application/json',
+        method: 'GET',
+        url: url,
+        data: { dialogIntno: dialogIntno, endTime: newTime },
+        success: function (result) {
+
+        }
+    });
+}
+
 function saveEditCharacterName() {
     var newCharacterName = $(this.event.target).val();
     var elem = "#charNameContainer_" + $(this.event.target).data("dialog");
@@ -268,6 +336,40 @@ function addSceneClickEvent(orderTrnHdrIntno) {
                     $("#dialogListContainer").empty();
                     $("#dialogListContainer").html(result);
                     fixTags();
+
+   
+                    $('.startPicker').datetimepicker({
+                        format: 'HH:mm:ss',
+                        viewDate: false
+                        
+                    });
+
+                    $('.endPicker').datetimepicker({
+                        format: 'HH:mm:ss',
+                        viewDate: false
+
+                    });
+
+                    $('.startPicker').on('dp.hide', function () {
+                        saveSubtitleStartTime();
+                    });
+
+                    $('.endPicker').on('dp.hide', function () {
+                        saveSubtitleEndTime();
+                    });
+
+                    $(".startDialogTime").keydown(function (e) {
+                        if (e.which == 13) {
+                            saveDialogStartTime();
+                        }
+                    });
+
+                    $(".endDialogTime").keydown(function (e) {
+                        if (e.which == 13) {
+                            saveDialogEndTime();
+                        }
+                    });
+
                 }
             });
 
