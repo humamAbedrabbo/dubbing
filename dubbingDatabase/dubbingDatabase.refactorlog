@@ -21,4 +21,32 @@
     <Property Name="ParentElementType" Value="SqlTable" />
     <Property Name="NewName" Value="dialogIntno" />
   </Operation>
+  <Operation Name="Rename Refactor" Key="ebfcc02f-a95e-41dc-8f39-e095ea695d2c" ChangeDateTime="07/13/2016 21:56:47">
+    <Property Name="ElementName" Value="[dbo].[scenes].[Id]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[scenes]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="sceneIntno" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="983093ff-df90-4ed6-89cd-b81d04db99f9" ChangeDateTime="07/13/2016 22:02:08">
+    <Property Name="ElementName" Value="[dbo].[dialogs].[Id]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[dialogs]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="dialogIntno" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="c0752e28-2bb5-43f5-813e-a12de86ae030" ChangeDateTime="07/13/2016 22:05:10">
+    <Property Name="ElementName" Value="[dbo].[subtitles].[Id]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[subtitles]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="subtitleIntno" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="4a8ebd89-c8ef-4bb1-9a55-821ba80a85a2" ChangeDateTime="07/13/2016 22:09:22">
+    <Property Name="ElementName" Value="[dbo].[subtitles].[startTimeCode]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[subtitles]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="scentence" />
+  </Operation>
 </Operations>

@@ -24,7 +24,7 @@
         <EntityTypeShape EntityType="DUBBDBModel.voiceActor" Width="1.5" PointX="19.5" PointY="39.75" />
         <EntityTypeShape EntityType="DUBBDBModel.workActor" Width="1.5" PointX="12.75" PointY="48.25" />
         <EntityTypeShape EntityType="DUBBDBModel.workCharacter" Width="1.5" PointX="10.5" PointY="65.375" />
-        <EntityTypeShape EntityType="DUBBDBModel.workCharge" Width="1.5" PointX="6.75" PointY="0.75" />
+        <EntityTypeShape EntityType="DUBBDBModel.workCharge" Width="1.5" PointX="3.625" PointY="1" />
         <EntityTypeShape EntityType="DUBBDBModel.workOrder" Width="1.5" PointX="13.5" PointY="26.25" />
         <EntityTypeShape EntityType="DUBBDBModel.workPersonnel" Width="1.5" PointX="13.5" PointY="32" />
         <AssociationConnector Association="DUBBDBModel.FK_agreements_agreements" />
@@ -88,11 +88,18 @@
         <AssociationConnector Association="DUBBDBModel.FK_payments_employees" />
         <AssociationConnector Association="DUBBDBModel.FK_paymentDetails_payments" />
         <AssociationConnector Association="DUBBDBModel.FK_payments_voiceActors" />
-        <EntityTypeShape EntityType="DUBBDBModel.paymentTemp" Width="1.5" PointX="5.375" PointY="6.75" />
+        <EntityTypeShape EntityType="DUBBDBModel.paymentTemp" Width="1.5" PointX="3.25" PointY="6.625" />
         <EntityTypeShape EntityType="DUBBDBModel.adaptationDialog" Width="1.5" PointX="24" PointY="44" />
         <EntityTypeShape EntityType="DUBBDBModel.adaptationSubtitle" Width="1.5" PointX="26.25" PointY="44.125" />
         <AssociationConnector Association="DUBBDBModel.FK_adaptationDialogs_To_dubbingSheetDtls" />
         <AssociationConnector Association="DUBBDBModel.FK_adaptationSubtitles_To_adaptationDialogs" />
+        <EntityTypeShape EntityType="DUBBDBModel.dialog" Width="1.5" PointX="21" PointY="21.25" />
+        <EntityTypeShape EntityType="DUBBDBModel.scene" Width="1.5" PointX="18.75" PointY="21.25" />
+        <EntityTypeShape EntityType="DUBBDBModel.subtitle" Width="1.5" PointX="24.25" PointY="39.625" />
+        <AssociationConnector Association="DUBBDBModel.FK_dialogs_To_scenes" />
+        <AssociationConnector Association="DUBBDBModel.FK_subtitles_To_dialogs" />
+        <AssociationConnector Association="DUBBDBModel.FK_scenes_To_orderTrnHdrs" />
+        <AssociationConnector Association="DUBBDBModel.FK_subtitles_To_workCharacters" />
         </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>
