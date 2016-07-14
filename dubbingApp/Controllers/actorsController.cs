@@ -34,9 +34,10 @@ namespace dubbingApp.Controllers
 
         public ActionResult actorsList(bool isActive, string alpha)
         {
-            var model = db.voiceActors.Where(b => (string.IsNullOrEmpty(alpha) || b.fullName.TrimStart().StartsWith(alpha)) && b.status == isActive && b.voiceActorIntno != 0).ToList();
-            
-            List<KeyValuePair<long, string>> chargesList = new List<KeyValuePair<long, string>>();
+            var model = db.voiceActors.Where(b => (string.IsNullOrEmpty(alpha) || b.fullName.TrimStart().StartsWith(alpha)) && b.status == isActive && b.voiceActorIntno != 0);
+
+            var chargesList = new List<ViewModels.customPair>();
+            ViewModels.customPair kv;
             string chargedStatus;
             foreach (long actor in model.Select(b => b.voiceActorIntno))
             {
@@ -55,12 +56,13 @@ namespace dubbingApp.Controllers
                     chargedStatus = "02"; //has some uncharged works
                 else
                     chargedStatus = "03"; //has no work at hand
-                KeyValuePair<long, string> kv = new KeyValuePair<long, string>(actor, chargedStatus);
+                kv.Key = actor;
+                kv.Value = chargedStatus;
                 chargesList.Add(kv);
             }
             ViewBag.charges = chargesList;
 
-            return PartialView("_actorsList", model);
+            return PartialView("_actorsList", model.ToList());
         }
 
         public ActionResult actorsAddNew()

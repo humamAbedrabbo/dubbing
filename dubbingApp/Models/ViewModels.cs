@@ -6,6 +6,11 @@ namespace dubbingApp.Models
 {
     public class ViewModels
     {
+        public struct customPair
+        {
+            public long Key;
+            public string Value;
+        }
         public class episodeItem
         {
             public dubbingTrnDtl episode { get; set; }

@@ -13,7 +13,7 @@
             </tr>
         </thead>
         <tbody>
-            @{ var chargesList = ViewBag.charges as List<KeyValuePair<long, string>>; }
+            @{ var chargesList = ViewBag.charges as List<dubbingApp.Models.ViewModels.customPair>; }
             @foreach (dubbingModel.voiceActor item in Model)
             {
                 <tr>
@@ -26,7 +26,7 @@
                         <div class="pull-right">
                             @{
                                 string btnColor = "btn-default";
-                                var workChrg = chargesList.FirstOrDefault(b => b.Key == item.voiceActorIntno).Value;
+                                string workChrg = chargesList.Find(b => b.Key == item.voiceActorIntno).Value;
                                 if (workChrg != "03")
                                 {
                                     if (workChrg == "02")

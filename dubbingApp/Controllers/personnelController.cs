@@ -30,7 +30,8 @@ namespace dubbingApp.Controllers
         {
             var model = db.employees.Where(b => b.status == isActive);
             ViewBag.empTypesList = LookupModels.getDictionary("empType");
-            List<KeyValuePair<long, string>> chargesList = new List<KeyValuePair<long, string>>();
+            var chargesList = new List<ViewModels.customPair>();
+            ViewModels.customPair kv;
             string chargedStatus;
             foreach (long emp in model.Select(b => b.empIntno))
             {
@@ -49,7 +50,8 @@ namespace dubbingApp.Controllers
                     chargedStatus = "02"; //has some uncharged works
                 else
                     chargedStatus = "03"; //has no work at hand
-                KeyValuePair<long, string> kv = new KeyValuePair<long, string>(emp, chargedStatus);
+                kv.Key = emp;
+                kv.Value = chargedStatus;
                 chargesList.Add(kv);
             }
             ViewBag.charges = chargesList;
@@ -175,6 +177,5 @@ namespace dubbingApp.Controllers
             long id1 = id;
             return RedirectToAction("workChargesList", new { id = id1 });
         }
-        
     }
 }
