@@ -136,6 +136,17 @@
           <Property Name="remarks" Type="nvarchar(max)" />
           <Property Name="status" Type="bit" Nullable="false" />
         </EntityType>
+        <EntityType Name="dialogs">
+          <Key>
+            <PropertyRef Name="dialogIntno" />
+          </Key>
+          <Property Name="dialogIntno" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="sceneIntno" Type="bigint" Nullable="false" />
+          <Property Name="dialogNo" Type="smallint" Nullable="false" />
+          <Property Name="startTimeCode" Type="nvarchar" MaxLength="20" />
+          <Property Name="endTimeCode" Type="nvarchar" MaxLength="20" />
+          <Property Name="isTaken" Type="bit" Nullable="false" />
+        </EntityType>
         <EntityType Name="dubbDomain">
           <Key>
             <PropertyRef Name="domainIntno" />
@@ -348,6 +359,17 @@
           <Property Name="totalUnits" Type="int" Nullable="false" />
           <Property Name="refPaymentIntno" Type="bigint" />
         </EntityType>
+        <EntityType Name="scenes">
+          <Key>
+            <PropertyRef Name="sceneIntno" />
+          </Key>
+          <Property Name="sceneIntno" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="orderTrnHdrIntno" Type="bigint" Nullable="false" />
+          <Property Name="sceneNo" Type="smallint" Nullable="false" />
+          <Property Name="startTimeCode" Type="nvarchar" MaxLength="20" />
+          <Property Name="endTimeCode" Type="nvarchar" MaxLength="20" />
+          <Property Name="isTaken" Type="bit" Nullable="false" />
+        </EntityType>
         <EntityType Name="shipmentDetails">
           <Key>
             <PropertyRef Name="shipmentDtlIntno" />
@@ -388,6 +410,19 @@
           <Property Name="sound" Type="bigint" Nullable="false" />
           <Property Name="isDefaultTeam" Type="bit" Nullable="false" />
           <Property Name="status" Type="bit" Nullable="false" />
+        </EntityType>
+        <EntityType Name="subtitles">
+          <Key>
+            <PropertyRef Name="subtitleIntno" />
+          </Key>
+          <Property Name="subtitleIntno" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="dialogIntno" Type="bigint" Nullable="false" />
+          <Property Name="subtitleNo" Type="smallint" Nullable="false" />
+          <Property Name="workCharacterIntno" Type="bigint" />
+          <Property Name="characterName" Type="nvarchar" MaxLength="100" />
+          <Property Name="scentence" Type="nvarchar" MaxLength="500" Nullable="false" />
+          <Property Name="startTimeCode" Type="nvarchar" MaxLength="20" />
+          <Property Name="endTimeCode" Type="nvarchar" MaxLength="20" />
         </EntityType>
         <EntityType Name="voiceActors">
           <Key>
@@ -597,6 +632,20 @@
             </Principal>
             <Dependent Role="clientClaims">
               <PropertyRef Name="orderTrnHdrIntno" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_dialogs_To_scenes">
+          <End Role="scenes" Type="Self.scenes" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="dialogs" Type="Self.dialogs" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="scenes">
+              <PropertyRef Name="sceneIntno" />
+            </Principal>
+            <Dependent Role="dialogs">
+              <PropertyRef Name="sceneIntno" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -912,6 +961,18 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK_scenes_To_orderTrnHdrs">
+          <End Role="orderTrnHdrs" Type="Self.orderTrnHdrs" Multiplicity="1" />
+          <End Role="scenes" Type="Self.scenes" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="orderTrnHdrs">
+              <PropertyRef Name="orderTrnHdrIntno" />
+            </Principal>
+            <Dependent Role="scenes">
+              <PropertyRef Name="orderTrnHdrIntno" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK_shipmentDetails_orderTrnHdrs">
           <End Role="orderTrnHdrs" Type="Self.orderTrnHdrs" Multiplicity="1" />
           <End Role="shipmentDetails" Type="Self.shipmentDetails" Multiplicity="*" />
@@ -1032,6 +1093,32 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK_subtitles_To_dialogs">
+          <End Role="dialogs" Type="Self.dialogs" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="subtitles" Type="Self.subtitles" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="dialogs">
+              <PropertyRef Name="dialogIntno" />
+            </Principal>
+            <Dependent Role="subtitles">
+              <PropertyRef Name="dialogIntno" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_subtitles_To_workCharacters">
+          <End Role="workCharacters" Type="Self.workCharacters" Multiplicity="0..1" />
+          <End Role="subtitles" Type="Self.subtitles" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="workCharacters">
+              <PropertyRef Name="workCharacterIntno" />
+            </Principal>
+            <Dependent Role="subtitles">
+              <PropertyRef Name="workCharacterIntno" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK_workActors_agreementWorks">
           <End Role="agreementWorks" Type="Self.agreementWorks" Multiplicity="1" />
           <End Role="workActors" Type="Self.workActors" Multiplicity="*" />
@@ -1139,6 +1226,7 @@
           <EntitySet Name="clientClaims" EntityType="Self.clientClaims" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="clients" EntityType="Self.clients" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="contacts" EntityType="Self.contacts" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="dialogs" EntityType="Self.dialogs" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="dubbDomain" EntityType="Self.dubbDomain" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="dubbingAppointments" EntityType="Self.dubbingAppointments" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="dubbingSheetDtls" EntityType="Self.dubbingSheetDtls" Schema="dbo" store:Type="Tables" />
@@ -1153,10 +1241,12 @@
           <EntitySet Name="paymentDetails" EntityType="Self.paymentDetails" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="payments" EntityType="Self.payments" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="paymentTemps" EntityType="Self.paymentTemps" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="scenes" EntityType="Self.scenes" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="shipmentDetails" EntityType="Self.shipmentDetails" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="shipments" EntityType="Self.shipments" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="studioEpisodes" EntityType="Self.studioEpisodes" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="studios" EntityType="Self.studios" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="subtitles" EntityType="Self.subtitles" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="voiceActors" EntityType="Self.voiceActors" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="workActors" EntityType="Self.workActors" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="workCharacters" EntityType="Self.workCharacters" Schema="dbo" store:Type="Tables" />
@@ -1202,6 +1292,10 @@
           <AssociationSet Name="FK_clientClaims_orderTrnHdrs" Association="Self.FK_clientClaims_orderTrnHdrs">
             <End Role="orderTrnHdrs" EntitySet="orderTrnHdrs" />
             <End Role="clientClaims" EntitySet="clientClaims" />
+          </AssociationSet>
+          <AssociationSet Name="FK_dialogs_To_scenes" Association="Self.FK_dialogs_To_scenes">
+            <End Role="scenes" EntitySet="scenes" />
+            <End Role="dialogs" EntitySet="dialogs" />
           </AssociationSet>
           <AssociationSet Name="FK_dubbingAppointments_agreementWorks" Association="Self.FK_dubbingAppointments_agreementWorks">
             <End Role="agreementWorks" EntitySet="agreementWorks" />
@@ -1307,6 +1401,10 @@
             <End Role="voiceActors" EntitySet="voiceActors" />
             <End Role="payments" EntitySet="payments" />
           </AssociationSet>
+          <AssociationSet Name="FK_scenes_To_orderTrnHdrs" Association="Self.FK_scenes_To_orderTrnHdrs">
+            <End Role="orderTrnHdrs" EntitySet="orderTrnHdrs" />
+            <End Role="scenes" EntitySet="scenes" />
+          </AssociationSet>
           <AssociationSet Name="FK_shipmentDetails_orderTrnHdrs" Association="Self.FK_shipmentDetails_orderTrnHdrs">
             <End Role="orderTrnHdrs" EntitySet="orderTrnHdrs" />
             <End Role="shipmentDetails" EntitySet="shipmentDetails" />
@@ -1346,6 +1444,14 @@
           <AssociationSet Name="FK_studios_employees_supervisor" Association="Self.FK_studios_employees_supervisor">
             <End Role="employees" EntitySet="employees" />
             <End Role="studios" EntitySet="studios" />
+          </AssociationSet>
+          <AssociationSet Name="FK_subtitles_To_dialogs" Association="Self.FK_subtitles_To_dialogs">
+            <End Role="dialogs" EntitySet="dialogs" />
+            <End Role="subtitles" EntitySet="subtitles" />
+          </AssociationSet>
+          <AssociationSet Name="FK_subtitles_To_workCharacters" Association="Self.FK_subtitles_To_workCharacters">
+            <End Role="workCharacters" EntitySet="workCharacters" />
+            <End Role="subtitles" EntitySet="subtitles" />
           </AssociationSet>
           <AssociationSet Name="FK_workActors_agreementWorks" Association="Self.FK_workActors_agreementWorks">
             <End Role="agreementWorks" EntitySet="agreementWorks" />
@@ -1634,6 +1740,25 @@
           <AssociationSet Name="FK_adaptationSubtitles_To_adaptationDialogs" Association="DUBBDBModel.FK_adaptationSubtitles_To_adaptationDialogs">
             <End Role="adaptationDialog" EntitySet="adaptationDialogs" />
             <End Role="adaptationSubtitle" EntitySet="adaptationSubtitles" />
+          </AssociationSet>
+          <EntitySet Name="dialogs" EntityType="DUBBDBModel.dialog" />
+          <EntitySet Name="scenes" EntityType="DUBBDBModel.scene" />
+          <EntitySet Name="subtitles" EntityType="DUBBDBModel.subtitle" />
+          <AssociationSet Name="FK_dialogs_To_scenes" Association="DUBBDBModel.FK_dialogs_To_scenes">
+            <End Role="scene" EntitySet="scenes" />
+            <End Role="dialog" EntitySet="dialogs" />
+          </AssociationSet>
+          <AssociationSet Name="FK_subtitles_To_dialogs" Association="DUBBDBModel.FK_subtitles_To_dialogs">
+            <End Role="dialog" EntitySet="dialogs" />
+            <End Role="subtitle" EntitySet="subtitles" />
+          </AssociationSet>
+          <AssociationSet Name="FK_scenes_To_orderTrnHdrs" Association="DUBBDBModel.FK_scenes_To_orderTrnHdrs">
+            <End Role="orderTrnHdr" EntitySet="orderTrnHdrs" />
+            <End Role="scene" EntitySet="scenes" />
+          </AssociationSet>
+          <AssociationSet Name="FK_subtitles_To_workCharacters" Association="DUBBDBModel.FK_subtitles_To_workCharacters">
+            <End Role="workCharacter" EntitySet="workCharacters" />
+            <End Role="subtitle" EntitySet="subtitles" />
           </AssociationSet>
           </EntityContainer>
         <EntityType Name="agreement">
@@ -1928,6 +2053,7 @@
           <NavigationProperty Name="dubbingTrnDtls" Relationship="DUBBDBModel.FK_dubbingTrnDtls_orderTrnHdrs" FromRole="orderTrnHdr" ToRole="dubbingTrnDtl" />
           <NavigationProperty Name="shipmentDetails" Relationship="DUBBDBModel.FK_shipmentDetails_orderTrnHdrs" FromRole="orderTrnHdr" ToRole="shipmentDetail" />
           <NavigationProperty Name="clientClaims" Relationship="DUBBDBModel.FK_clientClaims_orderTrnHdrs" FromRole="orderTrnHdr" ToRole="clientClaim" />
+          <NavigationProperty Name="scenes" Relationship="DUBBDBModel.FK_scenes_To_orderTrnHdrs" FromRole="orderTrnHdr" ToRole="scene" />
         </EntityType>
         <EntityType Name="voiceActor">
           <Key>
@@ -1980,6 +2106,7 @@
           <NavigationProperty Name="agreementWork" Relationship="DUBBDBModel.FK_workCharacters_agreementWorks" FromRole="workCharacter" ToRole="agreementWork" />
           <NavigationProperty Name="dubbingSheetHdrs" Relationship="DUBBDBModel.FK_dubbingSheetHdrs_workCharacters" FromRole="workCharacter" ToRole="dubbingSheetHdr" />
           <NavigationProperty Name="workActors" Relationship="DUBBDBModel.FK_workActors_workCharacters" FromRole="workCharacter" ToRole="workActor" />
+          <NavigationProperty Name="subtitles" Relationship="DUBBDBModel.FK_subtitles_To_workCharacters" FromRole="workCharacter" ToRole="subtitle" />
         </EntityType>
         <EntityType Name="workCharge">
           <Key>
@@ -2867,6 +2994,99 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <EntityType Name="dialog">
+          <Key>
+            <PropertyRef Name="dialogIntno" />
+          </Key>
+          <Property Name="dialogIntno" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="sceneIntno" Type="Int64" Nullable="false" />
+          <Property Name="dialogNo" Type="Int16" Nullable="false" />
+          <Property Name="startTimeCode" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
+          <Property Name="endTimeCode" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
+          <Property Name="isTaken" Type="Boolean" Nullable="false" />
+          <NavigationProperty Name="scene" Relationship="DUBBDBModel.FK_dialogs_To_scenes" FromRole="dialog" ToRole="scene" />
+          <NavigationProperty Name="subtitles" Relationship="DUBBDBModel.FK_subtitles_To_dialogs" FromRole="dialog" ToRole="subtitle" />
+        </EntityType>
+        <EntityType Name="scene">
+          <Key>
+            <PropertyRef Name="sceneIntno" />
+          </Key>
+          <Property Name="sceneIntno" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="orderTrnHdrIntno" Type="Int64" Nullable="false" />
+          <Property Name="sceneNo" Type="Int16" Nullable="false" />
+          <Property Name="startTimeCode" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
+          <Property Name="endTimeCode" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
+          <Property Name="isTaken" Type="Boolean" Nullable="false" />
+          <NavigationProperty Name="dialogs" Relationship="DUBBDBModel.FK_dialogs_To_scenes" FromRole="scene" ToRole="dialog" />
+          <NavigationProperty Name="orderTrnHdr" Relationship="DUBBDBModel.FK_scenes_To_orderTrnHdrs" FromRole="scene" ToRole="orderTrnHdr" />
+        </EntityType>
+        <EntityType Name="subtitle">
+          <Key>
+            <PropertyRef Name="subtitleIntno" />
+          </Key>
+          <Property Name="subtitleIntno" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="dialogIntno" Type="Int64" Nullable="false" />
+          <Property Name="subtitleNo" Type="Int16" Nullable="false" />
+          <Property Name="workCharacterIntno" Type="Int64" />
+          <Property Name="characterName" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="scentence" Type="String" Nullable="false" MaxLength="500" FixedLength="false" Unicode="true" />
+          <Property Name="startTimeCode" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
+          <Property Name="endTimeCode" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="dialog" Relationship="DUBBDBModel.FK_subtitles_To_dialogs" FromRole="subtitle" ToRole="dialog" />
+          <NavigationProperty Name="workCharacter" Relationship="DUBBDBModel.FK_subtitles_To_workCharacters" FromRole="subtitle" ToRole="workCharacter" />
+        </EntityType>
+        <Association Name="FK_dialogs_To_scenes">
+          <End Type="DUBBDBModel.scene" Role="scene" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Type="DUBBDBModel.dialog" Role="dialog" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="scene">
+              <PropertyRef Name="sceneIntno" />
+            </Principal>
+            <Dependent Role="dialog">
+              <PropertyRef Name="sceneIntno" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_subtitles_To_dialogs">
+          <End Type="DUBBDBModel.dialog" Role="dialog" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Type="DUBBDBModel.subtitle" Role="subtitle" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="dialog">
+              <PropertyRef Name="dialogIntno" />
+            </Principal>
+            <Dependent Role="subtitle">
+              <PropertyRef Name="dialogIntno" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_scenes_To_orderTrnHdrs">
+          <End Type="DUBBDBModel.orderTrnHdr" Role="orderTrnHdr" Multiplicity="1" />
+          <End Type="DUBBDBModel.scene" Role="scene" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="orderTrnHdr">
+              <PropertyRef Name="orderTrnHdrIntno" />
+            </Principal>
+            <Dependent Role="scene">
+              <PropertyRef Name="orderTrnHdrIntno" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_subtitles_To_workCharacters">
+          <End Type="DUBBDBModel.workCharacter" Role="workCharacter" Multiplicity="0..1" />
+          <End Type="DUBBDBModel.subtitle" Role="subtitle" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="workCharacter">
+              <PropertyRef Name="workCharacterIntno" />
+            </Principal>
+            <Dependent Role="subtitle">
+              <PropertyRef Name="workCharacterIntno" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -3372,6 +3592,44 @@
                 <ScalarProperty Name="endTime" ColumnName="endTime" />
                 <ScalarProperty Name="startTime" ColumnName="startTime" />
                 <ScalarProperty Name="scentence" ColumnName="scentence" />
+                <ScalarProperty Name="subtitleNo" ColumnName="subtitleNo" />
+                <ScalarProperty Name="dialogIntno" ColumnName="dialogIntno" />
+                <ScalarProperty Name="subtitleIntno" ColumnName="subtitleIntno" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="dialogs">
+            <EntityTypeMapping TypeName="DUBBDBModel.dialog">
+              <MappingFragment StoreEntitySet="dialogs">
+                <ScalarProperty Name="isTaken" ColumnName="isTaken" />
+                <ScalarProperty Name="endTimeCode" ColumnName="endTimeCode" />
+                <ScalarProperty Name="startTimeCode" ColumnName="startTimeCode" />
+                <ScalarProperty Name="dialogNo" ColumnName="dialogNo" />
+                <ScalarProperty Name="sceneIntno" ColumnName="sceneIntno" />
+                <ScalarProperty Name="dialogIntno" ColumnName="dialogIntno" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="scenes">
+            <EntityTypeMapping TypeName="DUBBDBModel.scene">
+              <MappingFragment StoreEntitySet="scenes">
+                <ScalarProperty Name="isTaken" ColumnName="isTaken" />
+                <ScalarProperty Name="endTimeCode" ColumnName="endTimeCode" />
+                <ScalarProperty Name="startTimeCode" ColumnName="startTimeCode" />
+                <ScalarProperty Name="sceneNo" ColumnName="sceneNo" />
+                <ScalarProperty Name="orderTrnHdrIntno" ColumnName="orderTrnHdrIntno" />
+                <ScalarProperty Name="sceneIntno" ColumnName="sceneIntno" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="subtitles">
+            <EntityTypeMapping TypeName="DUBBDBModel.subtitle">
+              <MappingFragment StoreEntitySet="subtitles">
+                <ScalarProperty Name="endTimeCode" ColumnName="endTimeCode" />
+                <ScalarProperty Name="startTimeCode" ColumnName="startTimeCode" />
+                <ScalarProperty Name="scentence" ColumnName="scentence" />
+                <ScalarProperty Name="characterName" ColumnName="characterName" />
+                <ScalarProperty Name="workCharacterIntno" ColumnName="workCharacterIntno" />
                 <ScalarProperty Name="subtitleNo" ColumnName="subtitleNo" />
                 <ScalarProperty Name="dialogIntno" ColumnName="dialogIntno" />
                 <ScalarProperty Name="subtitleIntno" ColumnName="subtitleIntno" />

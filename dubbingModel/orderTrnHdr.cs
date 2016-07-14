@@ -24,6 +24,7 @@ namespace dubbingModel
             this.dubbingTrnDtls = new HashSet<dubbingTrnDtl>();
             this.shipmentDetails = new HashSet<shipmentDetail>();
             this.clientClaims = new HashSet<clientClaim>();
+            this.scenes = new HashSet<scene>();
         }
     
         public long orderTrnHdrIntno { get; set; }
@@ -69,5 +70,7 @@ namespace dubbingModel
         public virtual ICollection<shipmentDetail> shipmentDetails { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<clientClaim> clientClaims { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<scene> scenes { get; set; }
     }
 }
