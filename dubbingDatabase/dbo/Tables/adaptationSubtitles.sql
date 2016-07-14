@@ -5,6 +5,6 @@
 	[subtitleNo] smallint NULL,
 	[scentence] nvarchar(500),
 	[startTime] nvarchar(20),
-	[endTime] nvarchar(20), 
-    CONSTRAINT [FK_adaptationSubtitles_To_adaptationDialogs] FOREIGN KEY ([dialogIntno]) REFERENCES [adaptationDialogs]([dialogIntno]) on delete cascade
+	[endTime] nvarchar(20) 
+    CONSTRAINT [FK_adaptationSubtitles_To_adaptationDialogs] FOREIGN KEY ([dialogIntno]) REFERENCES [adaptationDialogs]([dialogIntno]) on delete cascade 
 )
