@@ -186,6 +186,7 @@
     <Compile Include="Controllers\castingController.cs" />
     <Compile Include="Controllers\clientContactsController.cs" />
     <Compile Include="Controllers\contractsController.cs" />
+    <Compile Include="Controllers\dischargingController.cs" />
     <Compile Include="Controllers\dubbingController.cs" />
     <Compile Include="Controllers\dubbingMonitorController.cs" />
     <Compile Include="Controllers\dubbingRouterController.cs" />
@@ -471,6 +472,12 @@
     <Content Include="Views\actors\_actorsUpdate.cshtml" />
     <Content Include="Views\actors\_workChargesAddNew.cshtml" />
     <Content Include="Views\actors\_workChargesList.cshtml" />
+    <Content Include="Views\dubbing\_subtitlesList.cshtml" />
+    <Content Include="Views\discharging\Index.cshtml" />
+    <Content Include="Views\discharging\_castingList.cshtml" />
+    <Content Include="Views\discharging\_castingUpdate.cshtml" />
+    <Content Include="Views\discharging\_episodesList.cshtml" />
+    <Content Include="Views\orders\_uploadPlanning.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

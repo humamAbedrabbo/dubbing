@@ -19,6 +19,7 @@ namespace dubbingModel
         {
             this.dubbingSheetDtls = new HashSet<dubbingSheetDtl>();
             this.adaptationDialogs = new HashSet<adaptationDialog>();
+            this.subtitles = new HashSet<subtitle>();
         }
     
         public long dubbSheetHdrIntno { get; set; }
@@ -35,5 +36,7 @@ namespace dubbingModel
         public virtual workCharacter workCharacter { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<adaptationDialog> adaptationDialogs { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<subtitle> subtitles { get; set; }
     }
 }

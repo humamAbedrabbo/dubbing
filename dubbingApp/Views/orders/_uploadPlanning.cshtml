@@ -3,7 +3,8 @@
         <div class="panel-heading">
             <div class="row">
                 <div class="col-sm-10">
-                    <label>Episodes Selection Card</label>
+                    <label>Upload Planning</label>
+                    <p><small>Selected Episodes MUST belong to the SAME Work</small></p>
                 </div>
                 <div class="col-sm-2">
                     <button class="btn btn-default btn-xs" onclick="onCloseClick()" title="Close">
@@ -54,16 +55,16 @@
                         @Html.DropDownList("translator", ViewBag.translatorsList as SelectList, "Select Personnel ...", htmlAttributes: new { @class = "form-control" })
                     </span>
                 </div>
-                <div class="form-group-sm" id="scheduleDateCtrl">
-                    <label><small>Schedule Date</small></label>
-                    <span><input type="date" class="form-control" name="scheduleDate" /></span>
+                <div class="form-group-sm" id="cardAction1">
+                    <label><small>Assign Date</small></label>
+                    <span><input type="date" name="assignDate" /></span>
                 </div>
-                <div class="form-group-sm" id="dueDateCtrl">
+                <div class="form-group-sm" id="cardAction2">
                     <label><small>Due Date</small></label>
-                    <span><input type="date" class="form-control" name="dueDate" /></span>
+                    <span><input type="date" name="dueDate" /></span>
                 </div>
-                <div class="form-group-sm" id="submitBtn">
-                    <button type="submit" class="btn btn-default" onclick="onListSubmitClick()">Submit</button>
+                <div class="form-group-sm">
+                    <button type="submit" class="btn btn-default btn-xs" onclick="onListSubmitClick()">Submit</button>
                 </div>
                 <div>
                     <small><label class="alert-success" id="result"></label></small>

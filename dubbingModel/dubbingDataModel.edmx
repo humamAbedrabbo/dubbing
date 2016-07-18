@@ -4,7 +4,7 @@
   <edmx:Runtime>
     <!-- SSDL content -->
     <edmx:StorageModels>
-    <Schema Namespace="DUBBDBModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+    <Schema Namespace="DUBBDBModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2008" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
         <EntityType Name="adaptationDialogs">
           <Key>
             <PropertyRef Name="dialogIntno" />
@@ -418,8 +418,7 @@
           <Property Name="subtitleIntno" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="dialogIntno" Type="bigint" Nullable="false" />
           <Property Name="subtitleNo" Type="smallint" Nullable="false" />
-          <Property Name="workCharacterIntno" Type="bigint" />
-          <Property Name="characterName" Type="nvarchar" MaxLength="100" />
+          <Property Name="dubbSheetHdrIntno" Type="bigint" Nullable="false" />
           <Property Name="scentence" Type="nvarchar" MaxLength="500" Nullable="false" />
           <Property Name="startTimeCode" Type="nvarchar" MaxLength="20" />
           <Property Name="endTimeCode" Type="nvarchar" MaxLength="20" />
@@ -1107,15 +1106,15 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK_subtitles_To_workCharacters">
-          <End Role="workCharacters" Type="Self.workCharacters" Multiplicity="0..1" />
+        <Association Name="FK_subtitles_To_dubbingSheetHdrs">
+          <End Role="dubbingSheetHdrs" Type="Self.dubbingSheetHdrs" Multiplicity="1" />
           <End Role="subtitles" Type="Self.subtitles" Multiplicity="*" />
           <ReferentialConstraint>
-            <Principal Role="workCharacters">
-              <PropertyRef Name="workCharacterIntno" />
+            <Principal Role="dubbingSheetHdrs">
+              <PropertyRef Name="dubbSheetHdrIntno" />
             </Principal>
             <Dependent Role="subtitles">
-              <PropertyRef Name="workCharacterIntno" />
+              <PropertyRef Name="dubbSheetHdrIntno" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -1449,8 +1448,8 @@
             <End Role="dialogs" EntitySet="dialogs" />
             <End Role="subtitles" EntitySet="subtitles" />
           </AssociationSet>
-          <AssociationSet Name="FK_subtitles_To_workCharacters" Association="Self.FK_subtitles_To_workCharacters">
-            <End Role="workCharacters" EntitySet="workCharacters" />
+          <AssociationSet Name="FK_subtitles_To_dubbingSheetHdrs" Association="Self.FK_subtitles_To_dubbingSheetHdrs">
+            <End Role="dubbingSheetHdrs" EntitySet="dubbingSheetHdrs" />
             <End Role="subtitles" EntitySet="subtitles" />
           </AssociationSet>
           <AssociationSet Name="FK_workActors_agreementWorks" Association="Self.FK_workActors_agreementWorks">
@@ -1756,8 +1755,8 @@
             <End Role="orderTrnHdr" EntitySet="orderTrnHdrs" />
             <End Role="scene" EntitySet="scenes" />
           </AssociationSet>
-          <AssociationSet Name="FK_subtitles_To_workCharacters" Association="DUBBDBModel.FK_subtitles_To_workCharacters">
-            <End Role="workCharacter" EntitySet="workCharacters" />
+          <AssociationSet Name="FK_subtitles_To_dubbingSheetHdrs" Association="DUBBDBModel.FK_subtitles_To_dubbingSheetHdrs">
+            <End Role="dubbingSheetHdr" EntitySet="dubbingSheetHdrs" />
             <End Role="subtitle" EntitySet="subtitles" />
           </AssociationSet>
           </EntityContainer>
@@ -1930,6 +1929,7 @@
           <NavigationProperty Name="voiceActor" Relationship="DUBBDBModel.FK_dubbingSheetHdrs_voiceActors" FromRole="dubbingSheetHdr" ToRole="voiceActor" />
           <NavigationProperty Name="workCharacter" Relationship="DUBBDBModel.FK_dubbingSheetHdrs_workCharacters" FromRole="dubbingSheetHdr" ToRole="workCharacter" />
           <NavigationProperty Name="adaptationDialogs" Relationship="DUBBDBModel.FK_adaptationDialogs_To_dubbingSheetDtls" FromRole="dubbingSheetHdr" ToRole="adaptationDialog" />
+          <NavigationProperty Name="subtitles" Relationship="DUBBDBModel.FK_subtitles_To_dubbingSheetHdrs" FromRole="dubbingSheetHdr" ToRole="subtitle" />
         </EntityType>
         <EntityType Name="dubbingTrnHdr">
           <Key>
@@ -2106,7 +2106,6 @@
           <NavigationProperty Name="agreementWork" Relationship="DUBBDBModel.FK_workCharacters_agreementWorks" FromRole="workCharacter" ToRole="agreementWork" />
           <NavigationProperty Name="dubbingSheetHdrs" Relationship="DUBBDBModel.FK_dubbingSheetHdrs_workCharacters" FromRole="workCharacter" ToRole="dubbingSheetHdr" />
           <NavigationProperty Name="workActors" Relationship="DUBBDBModel.FK_workActors_workCharacters" FromRole="workCharacter" ToRole="workActor" />
-          <NavigationProperty Name="subtitles" Relationship="DUBBDBModel.FK_subtitles_To_workCharacters" FromRole="workCharacter" ToRole="subtitle" />
         </EntityType>
         <EntityType Name="workCharge">
           <Key>
@@ -3027,13 +3026,12 @@
           <Property Name="subtitleIntno" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="dialogIntno" Type="Int64" Nullable="false" />
           <Property Name="subtitleNo" Type="Int16" Nullable="false" />
-          <Property Name="workCharacterIntno" Type="Int64" />
-          <Property Name="characterName" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
           <Property Name="scentence" Type="String" Nullable="false" MaxLength="500" FixedLength="false" Unicode="true" />
           <Property Name="startTimeCode" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
           <Property Name="endTimeCode" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
           <NavigationProperty Name="dialog" Relationship="DUBBDBModel.FK_subtitles_To_dialogs" FromRole="subtitle" ToRole="dialog" />
-          <NavigationProperty Name="workCharacter" Relationship="DUBBDBModel.FK_subtitles_To_workCharacters" FromRole="subtitle" ToRole="workCharacter" />
+          <Property Name="dubbSheetHdrIntno" Type="Int64" Nullable="false" />
+          <NavigationProperty Name="dubbingSheetHdr" Relationship="DUBBDBModel.FK_subtitles_To_dubbingSheetHdrs" FromRole="subtitle" ToRole="dubbingSheetHdr" />
         </EntityType>
         <Association Name="FK_dialogs_To_scenes">
           <End Type="DUBBDBModel.scene" Role="scene" Multiplicity="1">
@@ -3075,15 +3073,15 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK_subtitles_To_workCharacters">
-          <End Type="DUBBDBModel.workCharacter" Role="workCharacter" Multiplicity="0..1" />
+        <Association Name="FK_subtitles_To_dubbingSheetHdrs">
+          <End Type="DUBBDBModel.dubbingSheetHdr" Role="dubbingSheetHdr" Multiplicity="1" />
           <End Type="DUBBDBModel.subtitle" Role="subtitle" Multiplicity="*" />
           <ReferentialConstraint>
-            <Principal Role="workCharacter">
-              <PropertyRef Name="workCharacterIntno" />
+            <Principal Role="dubbingSheetHdr">
+              <PropertyRef Name="dubbSheetHdrIntno" />
             </Principal>
             <Dependent Role="subtitle">
-              <PropertyRef Name="workCharacterIntno" />
+              <PropertyRef Name="dubbSheetHdrIntno" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -3625,11 +3623,10 @@
           <EntitySetMapping Name="subtitles">
             <EntityTypeMapping TypeName="DUBBDBModel.subtitle">
               <MappingFragment StoreEntitySet="subtitles">
+                <ScalarProperty Name="dubbSheetHdrIntno" ColumnName="dubbSheetHdrIntno" />
                 <ScalarProperty Name="endTimeCode" ColumnName="endTimeCode" />
                 <ScalarProperty Name="startTimeCode" ColumnName="startTimeCode" />
                 <ScalarProperty Name="scentence" ColumnName="scentence" />
-                <ScalarProperty Name="characterName" ColumnName="characterName" />
-                <ScalarProperty Name="workCharacterIntno" ColumnName="workCharacterIntno" />
                 <ScalarProperty Name="subtitleNo" ColumnName="subtitleNo" />
                 <ScalarProperty Name="dialogIntno" ColumnName="dialogIntno" />
                 <ScalarProperty Name="subtitleIntno" ColumnName="subtitleIntno" />

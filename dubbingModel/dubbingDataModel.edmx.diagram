@@ -4,7 +4,7 @@
   <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
     <!-- Diagram content (shape and connector positions) -->
     <edmx:Diagrams>
-      <Diagram DiagramId="f86500cc867247d1bfdf66221ad39a95" Name="Diagram1" ZoomLevel="63">
+      <Diagram DiagramId="f86500cc867247d1bfdf66221ad39a95" Name="Diagram1" ZoomLevel="59">
         <EntityTypeShape EntityType="DUBBDBModel.agreement" Width="1.5" PointX="3" PointY="31.125" />
         <EntityTypeShape EntityType="DUBBDBModel.agreementSpec" Width="1.5" PointX="5.25" PointY="39.5" />
         <EntityTypeShape EntityType="DUBBDBModel.agreementTerm" Width="1.5" PointX="5.25" PointY="31" />
@@ -99,7 +99,7 @@
         <AssociationConnector Association="DUBBDBModel.FK_dialogs_To_scenes" />
         <AssociationConnector Association="DUBBDBModel.FK_subtitles_To_dialogs" />
         <AssociationConnector Association="DUBBDBModel.FK_scenes_To_orderTrnHdrs" />
-        <AssociationConnector Association="DUBBDBModel.FK_subtitles_To_workCharacters" />
+        <AssociationConnector Association="DUBBDBModel.FK_subtitles_To_dubbingSheetHdrs" />
         </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

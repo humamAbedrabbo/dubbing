@@ -240,10 +240,10 @@ SET IDENTITY_INSERT [dbo].[agreementTerms] OFF
 
 
 SET IDENTITY_INSERT [dbo].[employees] ON
-INSERT INTO [dbo].[employees] ([empIntno], [empType], [empUID], [fullName], [othFullName], [mobileNo], [landLineNo], [email], [status], [accountNo]) VALUES (1, N'01', N'8', N'Seif Abu Asa''d', N'سيف أبو أسعد', N'611 0000', N'seif@fardous.tv', N'1', 1, NULL)
-INSERT INTO [dbo].[employees] ([empIntno], [empType], [empUID], [fullName], [othFullName], [mobileNo], [landLineNo], [email], [status], [accountNo]) VALUES (2, N'01', N'25', N'Bassam Alhindi', N'بسام الهندي', N'611', N'bassam@fardous.tv', N'1', 1, NULL)
-INSERT INTO [dbo].[employees] ([empIntno], [empType], [empUID], [fullName], [othFullName], [mobileNo], [landLineNo], [email], [status], [accountNo]) VALUES (3, N'01', N'23', N'Samer Abu Assali', N'سامر أبو عسلي', N'611', N'samer@fardous.tv', N'1', 1, NULL)
-INSERT INTO [dbo].[employees] ([empIntno], [empType], [empUID], [fullName], [othFullName], [mobileNo], [landLineNo], [email], [status], [accountNo]) VALUES (4, N'01', NULL, N'Khalil Haddad', N'خليل حداد', N'611', N'khalil.haddad@gmail.com', N'1', 1, NULL)
+INSERT INTO [dbo].[employees] ([empIntno], [empType], [empUID], [fullName], [othFullName], [mobileNo], [landLineNo], [email], [status], [accountNo]) VALUES (1, N'01', N'8', N'Seif Abu Asa''d', N'سيف أبو أسعد', N'611 0000', N'1', N'saif@fardous.tv', 1, NULL)
+INSERT INTO [dbo].[employees] ([empIntno], [empType], [empUID], [fullName], [othFullName], [mobileNo], [landLineNo], [email], [status], [accountNo]) VALUES (2, N'01', N'25', N'Bassam Alhindi', N'بسام الهندي', N'611', N'1', N'bassam@fardous.tv', 1, NULL)
+INSERT INTO [dbo].[employees] ([empIntno], [empType], [empUID], [fullName], [othFullName], [mobileNo], [landLineNo], [email], [status], [accountNo]) VALUES (3, N'01', N'23', N'Samer Abu Assali', N'سامر أبو عسلي', N'611', N'1', N'samer@fardous.tv', 1, NULL)
+INSERT INTO [dbo].[employees] ([empIntno], [empType], [empUID], [fullName], [othFullName], [mobileNo], [landLineNo], [email], [status], [accountNo]) VALUES (4, N'01', NULL, N'Khalil Haddad', N'خليل حداد', N'611', N'1', N'khalil.haddad@gmail.com', 1, NULL)
 INSERT INTO [dbo].[employees] ([empIntno], [empType], [empUID], [fullName], [othFullName], [mobileNo], [landLineNo], [email], [status], [accountNo]) VALUES (5, N'05', NULL, N'Iass Oueshek', N'اياس عويشق', N'0033646622659', N'5135581', N'iass2002@hotmail.com', 1, NULL)
 INSERT INTO [dbo].[employees] ([empIntno], [empType], [empUID], [fullName], [othFullName], [mobileNo], [landLineNo], [email], [status], [accountNo]) VALUES (6, N'05', NULL, N'Suliman Deeb', N'سليمان ديب', N'993250159', N'NA', N'deeb282@hotmail.com', 1, NULL)
 INSERT INTO [dbo].[employees] ([empIntno], [empType], [empUID], [fullName], [othFullName], [mobileNo], [landLineNo], [email], [status], [accountNo]) VALUES (7, N'05', NULL, N'Abdulaa Malla Mahmoud', N'عبد الله ملا محمود', N'933385307', N'NA', N'aboodmalla@hotmail.com', 1, NULL)

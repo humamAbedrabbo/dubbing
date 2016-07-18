@@ -91,47 +91,6 @@ namespace dubbingApp.Controllers
             return PartialView("_scheduleDetails", detailsList);
         }
 
-        public ActionResult generateCalendar(long schedule)
-        {
-            var model = db.dubbingAppointments;
-            DateTime fromDate = db.dubbingTrnHdrs.Find(schedule).fromDate;
-
-            var x = (from A in db.studios
-                     join B in db.studioEpisodes on A.studioIntno equals B.studioIntno
-                     join C in db.dubbingTrnDtls on B.dubbTrnDtlIntno equals C.dubbTrnDtlIntno
-                     join D in db.orderTrnHdrs on C.orderTrnHdrIntno equals D.orderTrnHdrIntno
-                     join E in db.dubbingSheetHdrs on D.orderTrnHdrIntno equals E.orderTrnHdrIntno
-                     where A.dubbTrnHdrIntno == schedule && A.status == true && B.status == true
-                     select new { A.studioIntno, A.workIntno, E.voiceActorIntno, E.actorName, totalScenes = E.dubbingSheetDtls.Count() }).Distinct().ToList();
-
-            for (int i = 0; i < x.Count(); i++)
-            {
-                long actor = x[i].voiceActorIntno;
-                string actorName = x[i].actorName;
-                long studio = x[i].studioIntno;
-                long work = x[i].workIntno;
-                var y = db.dubbingAppointments.Where(b => b.voiceActorIntno == actor && b.actorName == actorName && b.studioIntno == studio).ToList();
-                if (y.Count() == 0)
-                {
-                    dubbingAppointment apt = new dubbingAppointment();
-                    apt.voiceActorIntno = actor;
-                    apt.actorName = actorName;
-                    apt.studioIntno = studio;
-                    apt.appointmentDate = fromDate;
-                    apt.workIntno = work;
-                    apt.totalScenes = x[i].totalScenes;
-                    var sph = db.workActors.FirstOrDefault(b => b.voiceActorIntno == actor && b.workIntno == work && b.status == true);
-                    if (sph != null && sph.scenesPerHour != 0)
-                        apt.totalMinutes = x[i].totalScenes * 60 / sph.scenesPerHour;
-                    else
-                        apt.totalMinutes = 0;
-                    model.Add(apt);
-                }
-            }
-            db.SaveChanges();
-            return null;
-        }
-        
         //works and episodes
         public ActionResult episodesList(long sch)
         {
@@ -198,45 +157,17 @@ namespace dubbingApp.Controllers
             var hdr = db.dubbingTrnHdrs.Find(schedule);
             List<string> episodesList = new List<string>();
             // find planned episodes suitable for the dubbing schedule
-            var x = db.orderTrnHdrs.Where(b => b.workIntno == work && !b.startDubbing.HasValue && !b.endAdaptation.HasValue && b.plannedDubbing.HasValue && b.status == "04").ToList();
-            episodesList.Add("Planned (Adaptation Not Ready)|");
-            int cnt = 0;
-            int last = 0;
+            var x = db.orderTrnHdrs.Where(b => b.workIntno == work && !b.startDubbing.HasValue && b.plannedUpload.HasValue && b.status == "04").ToList();
+            string episode;
             foreach (orderTrnHdr item in x)
             {
-                var x1 = db.dubbingTrnDtls.FirstOrDefault(b => b.orderTrnHdrIntno == item.orderTrnHdrIntno);
-                if (x1 == null && item.plannedDubbing >= hdr.fromDate && item.plannedDubbing <= hdr.thruDate)
-                {
-                    cnt++;
-                    episodesList.Add(item.orderTrnHdrIntno + "|" + item.episodeNo);
-                }
+                episode = item.orderTrnHdrIntno + "|" + item.episodeNo + "|" + LookupModels.decodeDictionaryItem("priority", item.priority) + "|" 
+                        + item.plannedUpload.Value.ToString("dd/MM") + "|" + item.endAdaptation.HasValue;
+                episodesList.Add(episode);
             }
-            if (cnt == 0)
-            {
-                episodesList[0] = "Planned: None|";
-                last = 1;
-            }
-            else
-            {
-                last = cnt + 1;
-                cnt = 0;
-            }
-
-            //find episodes with finalized adaptation
-            var y = db.orderTrnHdrs.Include(b => b.agreementWork).Where(b => !b.startDubbing.HasValue && b.endAdaptation.HasValue && b.status == "04").ToList();
-            episodesList.Add("Adaptation Ready|");
-            foreach (orderTrnHdr item in y)
-            {
-                var y1 = db.dubbingTrnDtls.FirstOrDefault(b => b.orderTrnHdrIntno == item.orderTrnHdrIntno);
-                if (y1 == null)
-                {
-                    cnt++;
-                    episodesList.Add(item.orderTrnHdrIntno + "|" + item.episodeNo);
-                }
-            }
-            if (cnt == 0)
-                episodesList[last] = "Adaptation Ready: None|";
+            
             ViewBag.work = work;
+            ViewBag.workName = db.agreementWorks.Find(work).workName;
             ViewBag.schedule = schedule;
             return PartialView("_episodesAddNew", episodesList);
         }

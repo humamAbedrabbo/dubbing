@@ -1,0 +1,42 @@
+﻿@model IEnumerable<dubbingApp.Models.ViewModels.castingListViewModel>
+@{ TempData["actorsList"] = ViewBag.actorsList;
+   TempData["orderItem"] = ViewBag.orderItem; }
+
+<div class="container-fluid" style="padding:0px">
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <div class="row">
+                <div class="col-sm-10">
+                    <label>Characters List Participating in @ViewBag.workEpisode</label>
+                </div>
+                @{ 
+                    string btnColor = "btn-default";
+                    if (ViewBag.isGenerated)
+                    {
+                        btnColor = "btn-success";
+                    }
+                }
+                <div class="col-sm-2">
+                    <button class="btn @btnColor btn-xs pull-right" id="calendarBtn" onclick="onGenerateCalendarClick(@ViewBag.orderItem)" title="Generate Calendar">
+                        <span class="glyphicon glyphicon-calendar" aria-hidden="true"></span>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div class="panel-body">
+            <div class="row">
+                <div class="col-sm-3"><label><small>Character</small></label></div>
+                <div class="col-sm-2"><label><small>Total Scenes</small></label></div>
+                <div class="col-sm-3"><label><small>Actor</small></label></div>
+                <div class="col-sm-3"><label><small>Anonymous</small></label></div>
+                <div class="col-sm-1"><label><small>#</small></label></div>
+            </div>
+            @foreach (var item in Model)
+            {
+                <div class="row">
+                    @Html.Partial("_castingUpdate", item)
+                </div>
+            }
+        </div>
+    </div>
+</div>

@@ -13,7 +13,7 @@
             </tr>
         </thead>
         <tbody>
-            @{ var chargesList = ViewBag.charges as List<dubbingApp.Models.ViewModels.customPair>; }
+            @*@{ var chargesList = ViewBag.charges as List<dubbingApp.Models.ViewModels.customPair>; }*@
             @foreach (dubbingModel.voiceActor item in Model)
             {
                 <tr>
@@ -24,7 +24,7 @@
                     <td class="col-sm-1"><small>@item.accountNo</small></td>
                     <td class="col-sm-2">
                         <div class="pull-right">
-                            @{
+                            @*@{
                                 string btnColor = "btn-default";
                                 string workChrg = chargesList.Find(b => b.Key == item.voiceActorIntno).Value;
                                 if (workChrg != "03")
@@ -37,7 +37,10 @@
                                         <span class="glyphicon glyphicon-usd" aria-hidden="true"></span>
                                     </button>
                                 }
-                            }
+                            }*@
+                            <button class="btn btn-default btn-xs" onclick="onWorkChargesClick(@item.voiceActorIntno)" title="Charges">
+                                <span class="glyphicon glyphicon-usd" aria-hidden="true"></span>
+                            </button>
                             <button class="btn btn-primary btn-xs" onclick="onActorsUpdateClick(@item.voiceActorIntno)" title="Modify">
                                 <span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
                             </button>

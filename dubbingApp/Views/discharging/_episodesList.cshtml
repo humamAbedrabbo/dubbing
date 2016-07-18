@@ -1,0 +1,23 @@
+﻿@model IEnumerable<dubbingModel.orderTrnHdr>
+
+<div class="container-fluid" style="padding:0px">
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <div class="row">
+                <div class="col-sm-12">
+                    <label>Ready Episodes</label>
+                </div>
+            </div>
+        </div>
+        <div class="panel-body">
+            <ul style="padding:5px">
+                @foreach(var oi in Model)
+                {
+                    <li>
+                        <small><a href="#" class="episodeLbl" id="@oi.orderTrnHdrIntno" onclick="onEpisodeSelectClick(@oi.orderTrnHdrIntno)">@oi.agreementWork.workName / @oi.episodeNo</a></small>
+                    </li>
+                }
+            </ul>
+        </div>
+    </div>
+</div>

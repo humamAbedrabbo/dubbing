@@ -44,7 +44,8 @@ namespace dubbingApp.Controllers
                 var model = db.contacts.Where(b => b.partyIntno == client && b.contactParty == "01" && b.status == true);
                 return PartialView("_clientContactsList", model.ToList());
             }
-            return null;
+            else
+                return null;
         }
 
         // clients
@@ -170,10 +171,10 @@ namespace dubbingApp.Controllers
         }
 
         // contracts
-        public ActionResult contractsList(long? client, long? agreement)
+        public ActionResult contractsList(long? client, long? agreement, string status)
         {
             var model = db.agreementWorks.Include(b => b.agreement)
-                        .Where(b => (!client.HasValue || b.agreement.clientIntno == client) && (!agreement.HasValue || b.agreementIntno == agreement) && (b.status == "01" || b.status == "02"));
+                        .Where(b => (!client.HasValue || b.agreement.clientIntno == client) && (!agreement.HasValue || b.agreementIntno == agreement) && b.status == status);
             return PartialView("_contractsList", model.ToList());
         }
 
@@ -256,8 +257,10 @@ namespace dubbingApp.Controllers
             historyList.Add("Total Received|" + x.Count());
             historyList.Add("Last Received|" + x.Max(b => b.orderReceivedDate.Value).ToShortDateString());
             historyList.Add("Total Rejected|" + x.Where(b => b.status == "03").Count());
-            historyList.Add("Total Uploaded|" + x.Where(b => b.shipmentLowRes.HasValue && !b.shipmentFinal.HasValue).Count());
-            historyList.Add("Last Uploaded|" + x.Where(b => b.shipmentLowRes.HasValue && !b.shipmentFinal.HasValue).Max(b => b.shipmentLowRes.Value).ToShortDateString());
+            int u = x.Where(b => b.shipmentLowRes.HasValue && !b.shipmentFinal.HasValue).Count();
+            historyList.Add("Total Uploaded|" + u);
+            if (u != 0)
+                historyList.Add("Last Uploaded|" + x.Where(b => b.shipmentLowRes.HasValue && !b.shipmentFinal.HasValue).Max(b => b.shipmentLowRes.Value).ToShortDateString());
             historyList.Add("Total Shipped|" + x.Where(b => b.shipmentFinal.HasValue).Count());
 
             ViewBag.workIntno = id;
@@ -278,8 +281,9 @@ namespace dubbingApp.Controllers
                 return Content("Failed! Please Correct All Data. " + e.Message, "text/html");
             }
 
-            var model1 = db.agreementWorks.Include(b => b.agreement).Where(b => (!client.HasValue || b.agreement.clientIntno == client) && (!agreement.HasValue || b.agreementIntno == agreement) && (b.status == "01" || b.status == "02"));
-            return PartialView("_contractsList", model1.ToList());
+            long? client1 = client;
+            long? agreement1 = agreement;
+            return RedirectToAction("contractsList", new { client = client1, agreement = agreement1, status = "01" });
         }
 
         // personnel

@@ -38,7 +38,7 @@ namespace dubbingApp.Models
 
         public class dubbingSceneViewModel
         {
-            public long dubbSheetDtlIntno { get; set; }
+            public long sceneIntno { get; set; }
             public long dubbSheetHdrIntno { get; set; }
             public long orderTrnHdrIntno { get; set; }
             public long workIntno { get; set; }
@@ -59,5 +59,15 @@ namespace dubbingApp.Models
             public string personnelName { get; set; }
         }
         
+        public class castingListViewModel
+        {
+            public long dubbSheetHdrIntno { get; set; }
+            public long orderTrnHdrIntno { get; set; }
+            public long? workCharacterIntno { get; set; }
+            public string characterName { get; set; }
+            public long voiceActorIntno { get; set; }
+            public string actorName { get; set; }
+            public int totalScenes { get; set; }
+        }
     }
 }

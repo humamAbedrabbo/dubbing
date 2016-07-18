@@ -30,31 +30,31 @@ namespace dubbingApp.Controllers
         {
             var model = db.employees.Where(b => b.status == isActive);
             ViewBag.empTypesList = LookupModels.getDictionary("empType");
-            var chargesList = new List<ViewModels.customPair>();
-            ViewModels.customPair kv;
-            string chargedStatus;
-            foreach (long emp in model.Select(b => b.empIntno))
-            {
-                var x = db.workPersonnels.Include(b => b.agreementWork).Where(b => b.empIntno == emp && b.agreementWork.status == "01" && b.status == true);
-                bool isCharged = true;
-                foreach (workPersonnel work in x)
-                {
-                    var y = db.workCharges.Where(b => b.workIntno == work.workIntno && b.workPartyIntno == work.empIntno
-                                        && b.workPartyType == "02" && b.status == true).ToList();
-                    if (y.Count() == 0)
-                        isCharged = false;
-                }
-                if (x.Count() != 0 && isCharged)
-                    chargedStatus = "01"; //all charged
-                else if (x.Count() != 0 && !isCharged)
-                    chargedStatus = "02"; //has some uncharged works
-                else
-                    chargedStatus = "03"; //has no work at hand
-                kv.Key = emp;
-                kv.Value = chargedStatus;
-                chargesList.Add(kv);
-            }
-            ViewBag.charges = chargesList;
+            //var chargesList = new List<ViewModels.customPair>();
+            //ViewModels.customPair kv;
+            //string chargedStatus;
+            //foreach (long emp in model.Select(b => b.empIntno))
+            //{
+            //    var x = db.workPersonnels.Include(b => b.agreementWork).Where(b => b.empIntno == emp && b.agreementWork.status == "01" && b.status == true);
+            //    bool isCharged = true;
+            //    foreach (workPersonnel work in x)
+            //    {
+            //        var y = db.workCharges.Where(b => b.workIntno == work.workIntno && b.workPartyIntno == work.empIntno
+            //                            && b.workPartyType == "02" && b.status == true).ToList();
+            //        if (y.Count() == 0)
+            //            isCharged = false;
+            //    }
+            //    if (x.Count() != 0 && isCharged)
+            //        chargedStatus = "01"; //all charged
+            //    else if (x.Count() != 0 && !isCharged)
+            //        chargedStatus = "02"; //has some uncharged works
+            //    else
+            //        chargedStatus = "03"; //has no work at hand
+            //    kv.Key = emp;
+            //    kv.Value = chargedStatus;
+            //    chargesList.Add(kv);
+            //}
+            //ViewBag.charges = chargesList;
             return PartialView("_personnelList", model.ToList());
         }
 

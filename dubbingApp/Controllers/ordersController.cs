@@ -218,7 +218,7 @@ namespace dubbingApp.Controllers
 
         [ValidateAntiForgeryToken]
         [HttpPost, ValidateInput(false)]
-        public ActionResult scheduleAddNew(string oiListHF, DateTime? scheduleDate, string scheduleTypeHF, long? adaptor, long? translator)
+        public ActionResult scheduleAddNew(string oiListHF, DateTime? scheduleDate, DateTime? dueDate, string scheduleTypeHF, long? adaptor, long? translator)
         {
             if (scheduleDate.HasValue)
             {
@@ -259,20 +259,40 @@ namespace dubbingApp.Controllers
                             model.Find(id).plannedShipment = scheduleDate.Value;
                             break;
                         case "04":
-                            model.Find(id).startAdaptation = scheduleDate.Value;
-                            orderTrnDtl dtl = new orderTrnDtl();
-                            dtl.orderTrnHdrIntno = id;
-                            dtl.activityType = "02";
-                            dtl.empIntno = adaptor.Value;
-                            model1.Add(dtl);
+                            var modelItem = model.Find(id);
+                            modelItem.startAdaptation = scheduleDate.Value;
+                            modelItem.startDischarge = dueDate;
+                            var x1 = db.orderTrnDtls.FirstOrDefault(b => b.orderTrnHdrIntno == id && b.activityType == "02");
+                            if (x1 == null)
+                            {
+                                orderTrnDtl dtl = new orderTrnDtl();
+                                dtl.orderTrnHdrIntno = id;
+                                dtl.activityType = "02";
+                                dtl.empIntno = adaptor.Value;
+                                model1.Add(dtl);
+                            }
+                            else
+                            {
+                                x1.empIntno = adaptor.Value;
+                            }
                             break;
                         case "05":
-                            model.Find(id).endTranslation = scheduleDate.Value;
-                            orderTrnDtl dtl2 = new orderTrnDtl();
-                            dtl2.orderTrnHdrIntno = id;
-                            dtl2.activityType = "01";
-                            dtl2.empIntno = translator.Value;
-                            model1.Add(dtl2);
+                            var modelItem2 = model.Find(id);
+                            modelItem2.startTranslation = scheduleDate.Value;
+                            modelItem2.endTranslation = dueDate;
+                            var x2 = db.orderTrnDtls.FirstOrDefault(b => b.orderTrnHdrIntno == id && b.activityType == "01");
+                            if(x2 == null)
+                            {
+                                orderTrnDtl dtl2 = new orderTrnDtl();
+                                dtl2.orderTrnHdrIntno = id;
+                                dtl2.activityType = "01";
+                                dtl2.empIntno = translator.Value;
+                                model1.Add(dtl2);
+                            }
+                            else
+                            {
+                                x2.empIntno = translator.Value;
+                            }
                             break;
                     }
                 }

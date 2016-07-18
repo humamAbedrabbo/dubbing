@@ -1,9 +1,23 @@
-﻿@model IEnumerable<dubbingModel.adaptationSubtitle>
+﻿@model IEnumerable<dubbingModel.subtitle>
+@{ long sheetHdr = ViewBag.sheetHdr; }
 
 <div dir="rtl">
     @foreach (var str in Model)
     {
-        <span>@str.scentence</span>
+        if (str.dubbSheetHdrIntno == sheetHdr)
+        {
+            <div class="row">
+                <div class="col-sm-4"><strong>@str.dubbingSheetHdr.characterName</strong></div>
+                <div class="col-sm-8">@str.scentence</div>
+            </div>
+        }
+        else
+        {
+            <div class="row" style="background-color:lightgray">
+                <div class="col-sm-4"><strong>@str.dubbingSheetHdr.characterName</strong></div>
+                <div class="col-sm-8">@str.scentence</div>
+            </div>
+        }
     }
 </div>
 

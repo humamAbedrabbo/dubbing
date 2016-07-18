@@ -112,6 +112,7 @@
 
         function onCloseClick() {
             $('#allDetails').html(null);
+            $('#oiCard').val(null);
             $('#tips').fadeIn();
         }
         function onIssueCloseClick() {
@@ -248,7 +249,9 @@
                         success: function (result) {
                             $('#tips').fadeOut();
                             $('#allDetails').html(result);
-                            $('#cardAction').hide();
+                            $('#scheduleDateCtrl').hide();
+                            $('#dueDateCtrl').hide();
+                            $('#submitBtn').hide();
                             $('#adaptors').hide();
                             $('#translators').hide();
                             $('#oiCard').append($('<li/>', { id: oItem, html: x }));
@@ -276,7 +279,9 @@
                     $('#oiListHF').val(x);
                 }
             });
-            $('#cardAction').hide();
+            $('#scheduleDateCtrl').hide();
+            $('#dueDateCtrl').hide();
+            $('#submitBtn').hide();
             $('#adaptors').hide();
             $('#translators').hide();
         }
@@ -284,19 +289,27 @@
         function onScheduleClick(op) {
             $('#scheduleTypeHF').val(op);
             $('#result').html(null);
-            $('#cardAction').show();
+            $('#scheduleDateCtrl').show();
+            $('#dueDateCtrl').hide();
+            $('#submitBtn').show();
         }
         function onAdaptationClick(op) {
             $('#scheduleTypeHF').val(op);
-            $('#result').html(null);
-            $('#cardAction').show();
+            $('#translators').hide();
             $('#adaptors').show();
+            $('#result').html(null);
+            $('#scheduleDateCtrl').show();
+            $('#dueDateCtrl').show();
+            $('#submitBtn').show();
         }
         function onTranslationClick(op) {
             $('#scheduleTypeHF').val(op);
-            $('#result').html(null);
-            $('#cardAction').show();
+            $('#adaptors').hide();
             $('#translators').show();
+            $('#result').html(null);
+            $('#scheduleDateCtrl').show();
+            $('#dueDateCtrl').show();
+            $('#submitBtn').show();
         }
 
         function onOrderItemDetailsClick(oItem) {

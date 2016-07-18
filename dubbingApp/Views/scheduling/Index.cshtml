@@ -137,22 +137,6 @@
                 });
             }
         }
-        function onGenerateCalendarClick(schedule1) {
-            if (confirm("Please Confirm! About to Generate Studios Calendar & Actors' Appointments Draft.")) {
-                $('#result').html(null);
-                $.ajax({
-                    url: '@Url.Action("generateCalendar", "scheduling")',
-                    type: 'GET',
-                    data: { schedule: schedule1 },
-                    success: function (result) {
-                        $('#result').html("Calendar Successfully Generated.");
-                    },
-                    error: function () {
-                        $('#result').html("Failed! Unable to Generate Calendar.");
-                    }
-                });
-            }
-        }
 
         //works and episodes
         function onEpisodesAddNewClick(work1, schedule1) {

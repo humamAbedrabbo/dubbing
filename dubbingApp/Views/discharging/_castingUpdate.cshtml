@@ -1,0 +1,46 @@
+﻿@model dubbingApp.Models.ViewModels.castingListViewModel
+
+@using (Ajax.BeginForm("castingUpdate", "discharging",
+                                new AjaxOptions()
+                                {
+                                    HttpMethod = "POST",
+                                    OnSuccess = "onSuccess(" + TempData["orderItem"] + ")",
+                                    OnFailure = "onFailure"
+                                }, new { @class="form-inline"}))
+{
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+    @Html.HiddenFor(m => m.dubbSheetHdrIntno)
+    @Html.HiddenFor(m => m.orderTrnHdrIntno)
+    @Html.HiddenFor(m => m.workCharacterIntno)
+
+    <div class="form-group-sm col-sm-3">
+        <small>
+            @Html.DisplayFor(model => model.characterName, new { htmlAttributes = new { @class = "form-control-static" } })
+        </small>
+    </div>
+
+    <div class="form-group-sm col-sm-2">
+        <small>
+            @Html.DisplayFor(model => model.totalScenes, new { htmlAttributes = new { @class = "form-control-static" } })
+        </small>
+    </div>
+
+    <div class="form-group-sm col-sm-3">
+        <small>
+            @Html.DropDownListFor(model => model.voiceActorIntno, TempData["actorsList"] as SelectList, htmlAttributes: new { @class = "form-control" })
+        </small>
+    </div>
+
+    <div class="form-group-sm col-sm-3">
+        <small>
+            @Html.EditorFor(model => model.actorName, new { htmlAttributes = new { @class = "form-control" } })
+        </small>
+    </div>
+
+    <div class="form-group-sm col-sm-1">
+        <button type="submit" class="btn btn-default btn-xs" title="Save">
+            <span class="glyphicon glyphicon-floppy-disk" aria-hidden="true"></span>
+        </button>
+    </div>
+}

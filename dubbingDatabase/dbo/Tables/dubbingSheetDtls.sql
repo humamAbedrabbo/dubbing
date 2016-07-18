@@ -3,7 +3,6 @@
     [orderTrnHdrIntno]  BIGINT        NOT NULL,
     [dubbSheetHdrIntno] BIGINT        NOT NULL,
     [sceneNo]           SMALLINT      NOT NULL,
-    [startTimeCode]     NVARCHAR (50) COLLATE Latin1_General_CI_AS NOT NULL,
     [isTaken]           BIT           NOT NULL,
     [studioNo]          NVARCHAR (50) COLLATE Latin1_General_CI_AS NULL,
     [supervisor]        BIGINT        NULL,

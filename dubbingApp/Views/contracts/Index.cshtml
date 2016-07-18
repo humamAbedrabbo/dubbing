@@ -43,10 +43,25 @@
             <div>
                 <a href="#" onclick="onAgreementAddNewClick()">New Agreement</a>
             </div>
+            <br /><br />
+
+            <label class="badge alert-info">Contracts ...</label>
+            <div>
+                <a href="#" onclick="onContractStatusClick('01')">Active</a>
+            </div>
+            <div>
+                <a href="#" onclick="onContractStatusClick('02')">Suspended</a>
+            </div>
+            <div>
+                <a href="#" onclick="onContractStatusClick('04')">Canceled</a>
+            </div>
+            <div>
+                <a href="#" onclick="onContractStatusClick('03')">Archived</a>
+            </div>
         </div>
         
         <div class="col-sm-6" id="cList">
-            @Html.Action("contractsList", "contracts")
+            @Html.Action("contractsList", "contracts", new { status = "01" })
         </div>
         <div class="col-sm-4">
             <div id="allDetails"></div>
@@ -114,7 +129,7 @@
                         $.ajax({
                             url: '@Url.Action("contractsList", "contracts")',
                             type: 'GET',
-                            data: { client: $('#clientsList').val(), agreement: null },
+                            data: { client: $('#clientsList').val(), agreement: null, status: '01' },
                             success: function (result) {
                                 $('#cList').html(result);
                             }
@@ -158,7 +173,7 @@
                 $.ajax({
                     url: '@Url.Action("contractsList", "contracts")',
                     type: 'GET',
-                    data: { client: $('#clientsList').val(), agreement: $('#agreementsList').val() },
+                    data: { client: $('#clientsList').val(), agreement: $('#agreementsList').val(), status: '01' },
                     success: function (result) {
                         $('#cList').html(result);
                     }
@@ -288,7 +303,7 @@
                 }
             })
         }
-        function onContractStatusClick(wrk, st) {
+        function onContractChangeStatusClick(wrk, st) {
             if (confirm('Please Confirm! About to Remove the Selected Item from the Active Contracts List.')) {
                 $.ajax({
                     url: '@Url.Action("contractStatusChange", "contracts")',
@@ -296,6 +311,7 @@
                     data: { client: $('#clientsList').val(), agreement: $('#agreementsList').val(), work: wrk, newStatus: st },
                     success: function (result) {
                         $('#cList').html(result);
+                        $('#allDetails').html(null);
                     }
                 })
             }
@@ -389,7 +405,7 @@
             $.ajax({
                 url: '@Url.Action("contractsList", "contracts")',
                 type: 'GET',
-                data: { client: x },
+                data: { client: x, agreement: null, status: '01' },
                 success: function (result) {
                     $('#cList').html(result);
                 }
@@ -410,6 +426,18 @@
                     $('#allDetails').html(result);
                 }
             })
+        }
+
+        function onContractStatusClick(status1) {
+            $('#allDetails').html(null);
+            $.ajax({
+                url: '@Url.Action("contractsList", "contracts")',
+                type: 'GET',
+                data: { client: $('#clientsList').val(), agreement: $('#agreementsList').val(), status: status1 },
+                success: function (result) {
+                    $('#cList').html(result);
+                }
+            });
         }
     </script>
 }

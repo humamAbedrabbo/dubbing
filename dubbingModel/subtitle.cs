@@ -17,13 +17,12 @@ namespace dubbingModel
         public long subtitleIntno { get; set; }
         public long dialogIntno { get; set; }
         public short subtitleNo { get; set; }
-        public Nullable<long> workCharacterIntno { get; set; }
-        public string characterName { get; set; }
         public string scentence { get; set; }
         public string startTimeCode { get; set; }
         public string endTimeCode { get; set; }
+        public long dubbSheetHdrIntno { get; set; }
     
         public virtual dialog dialog { get; set; }
-        public virtual workCharacter workCharacter { get; set; }
+        public virtual dubbingSheetHdr dubbingSheetHdr { get; set; }
     }
 }
