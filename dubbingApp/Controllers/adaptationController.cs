@@ -2,7 +2,9 @@
 using System;
 using System.Collections.Generic;
 using System.Data.Entity;
+using System.IO;
 using System.Linq;
+using System.Text;
 using System.Web;
 using System.Web.Mvc;
 
@@ -347,7 +349,50 @@ namespace dubbingApp.Controllers
             subtitle.endTimeCode = endTime;
             ctx.SaveChanges();
         }
-        
-        
+
+        public FileStreamResult downloadFile(long orderTrnHdrIntno)
+        {
+            var order = ctx.orderTrnHdrs.Find(orderTrnHdrIntno);
+            StringBuilder sb = new StringBuilder();
+            int line = 1;
+
+            foreach(var scene in order.scenes.OrderBy(x => x.sceneNo))
+            {
+                foreach(var dialog in scene.dialogs.OrderBy(x => x.dialogNo))
+                {
+                    foreach(var subtitle in dialog.subtitles.OrderBy(x => x.subtitleNo))
+                    {
+                        sb.AppendFormat("{0}", line);
+                        sb.AppendLine();
+                        sb.AppendFormat("{0},1 --> {1},1", subtitle.startTimeCode, subtitle.endTimeCode);
+                        sb.AppendLine();
+                        sb.AppendFormat("<font size=\"36px\" color=\"white\">{0}</font>", subtitle.scentence);
+                        sb.AppendLine();
+                        line++;
+                    }
+                }
+            }
+
+            string fileName =  order.agreementWork.workName + " - " + order.episodeNo + ".srt";
+            UTF8Encoding encoding = new UTF8Encoding();
+            byte[] contentAsBytes = encoding.GetBytes(sb.ToString());
+            var stream = new MemoryStream(contentAsBytes);
+
+
+            //FileInfo info = new FileInfo(fileName);
+            //if (!info.Exists)
+            //{
+            //    using (StreamWriter writer = info.CreateText())
+            //    {
+            //        writer.WriteLine(sb.ToString());
+
+            //    }
+            //}
+
+            return File(stream, "text/plain", fileName);
+
+        }
+
+
     }    
 }

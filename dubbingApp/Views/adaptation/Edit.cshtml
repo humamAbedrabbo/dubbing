@@ -34,6 +34,8 @@
         </div>
     </div>
     <div class="col-md-2">
+        <a style="margin-bottom: 5px;" class="btn btn-success form-control" href='@Url.Action("downloadFile", new { @Model.orderTrnHdrIntno })'>Download</a>
+        <br />
         <div id="scenesListContainer">
             @Html.Action("sceneList", "adaptation", new { orderTrnHdrIntno = Model.orderTrnHdrIntno })
         </div>

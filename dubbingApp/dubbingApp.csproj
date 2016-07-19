@@ -310,6 +310,8 @@
     <Content Include="Content\_bootstrap-datetimepicker.less" />
     <Content Include="Content\bootstrap-datetimepicker-build.less" />
     <None Include="Properties\PublishProfiles\dubbingApp.pubxml" />
+    <None Include="Properties\PublishProfiles\dubbingApp2016 - FTP.pubxml" />
+    <None Include="Properties\PublishProfiles\dubbingApp2016 - Web Deploy.pubxml" />
     <None Include="Properties\PublishProfiles\dubbingApp2016.pubxml" />
     <None Include="Scripts\jquery-2.2.3.intellisense.js" />
     <Content Include="Scripts\dubbing\adaptation.js" />

@@ -1,0 +1,16 @@
+1
+01:00:00,1 --> 01:01:00,1
+<font size="36px" color="white">جملة جديدة .</font>
+2
+01:03:00,1 --> 01:05:00,1
+<font size="36px" color="white">جملة جديدة ...</font>
+3
+00:00:00,1 --> 00:00:00,1
+<font size="36px" color="white">جملة جديدة</font>
+4
+00:00:00,1 --> 00:00:00,1
+<font size="36px" color="white">جملة جديدة</font>
+5
+00:00:00,1 --> 00:00:00,1
+<font size="36px" color="white">جملة جديدة</font>
+
