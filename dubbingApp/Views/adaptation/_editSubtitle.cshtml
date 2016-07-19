@@ -2,3 +2,4 @@
 @model subtitle
 
 <input style="width:100%; max-width:100%;" onkeydown="onSubtitleInputKeyDown()" id="scentence_@Model.subtitleIntno" data-subtitle="@Model.subtitleIntno" data-original="@Model.scentence" value="@Model.scentence" />
+@Html.Hidden("oldSubtitle_" + Model.subtitleIntno.ToString(), Model.scentence)
