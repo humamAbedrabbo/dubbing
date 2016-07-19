@@ -1,41 +1,12 @@
 ﻿@using dubbingModel
-@model IEnumerable<adaptationSubtitle>
+@model IEnumerable<subtitle>
 
 <!-- Table -->
 <table class="table table-bordered">
     <tbody>
         @foreach (var subtitle in Model)
         {
-            <tr data-id="@subtitle.subtitleIntno">
-                <td style="width: 3em;">
-                    <a href="javascript: deleteSubtitle(@subtitle.subtitleIntno , @subtitle.dialogIntno);"><span class="glyphicon glyphicon-trash"></span></a>
-                </td>
-                <td style="width: 7em;">
-                    <input type='text' style="" data-subtitle="@subtitle.subtitleIntno" class="form-control startPicker" value="@subtitle.startTime" />
-                    @*<div class="form-group">
-                        <div class='input-group date startPicker'>
-                            <input type='text' style="width:10em;" class="form-control" value="@subtitle.startTime" />
-                            <span class="input-group-addon">
-                                <span class="glyphicon glyphicon-time"></span>
-                            </span>
-                        </div>
-                    </div>*@
-                </td>
-                <td style="width: 7em;">
-                    <input type='text' style="" data-subtitle="@subtitle.subtitleIntno" class="form-control endPicker" value="@subtitle.endTime" />
-                </td>
-                <td>
-                    <div id="subtitleContainer_@subtitle.subtitleIntno" data-subtitle="@subtitle.subtitleIntno" data-no="@subtitle.subtitleNo"  class="right">
-                        <span class="scentence" onclick="javascript: editSubtitle(@subtitle.subtitleIntno);">@subtitle.scentence</span>
-                    </div>
-                </td>
-                <td  style="width: 3em; text-align:center;">
-                    @subtitle.subtitleNo
-                </td>
-                <td style="width:2em;">
-                    <span class="pull-right"><a href="javascript: addSubtitle(@subtitle.dialogIntno);"><span class="glyphicon glyphicon-plus"></span></a></span>
-                </td>
-            </tr>
+            @Html.Partial("_subtitleDetails", subtitle)
         }
 
     </tbody>

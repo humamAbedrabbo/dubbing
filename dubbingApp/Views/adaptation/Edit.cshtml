@@ -8,42 +8,35 @@
 <link href="~/Content/adaptation.css" rel="stylesheet" />
 
 <div class="page-header">
-    <h1 class="right">@Model.agreementWork.workName <small>الحلقة @Model.episodeNo</small></h1>
+    <h1 style="text-align:center;">@Model.agreementWork.workName <small>/ @Model.episodeNo</small></h1>
 </div>
 <div class="row">
+    @Html.Hidden("orderTrnHdrIntno", @Model.orderTrnHdrIntno)
+    @Html.Hidden("activeScene", "0")
+
     <div class="col-md-2">
         <div class="row">
-            <div class="panel panel-primary">
-                <div class="panel-heading">Scene Detaile</div>
-                <div class="panel-body sceneDetailsContainer">
-                    Start Time:
+            
+            <div id="sceneDetailsContainer"></div>
 
-                    <input type='text' style="" id="sceneStartTime" class="form-control" value="00:00:00" />
-
-                    Taken: 
-                </div>                
-            </div>
             <div class="panel panel-info">
                 <div class="panel-heading">Characters List</div>
-                <div class="panel-body">
-                    @foreach (var c in Model.agreementWork.workCharacters.OrderBy(x => x.characterName))
-                    {
-                        <div class="label label-default">@c.characterName</div>
-                    }
+                <div id="charactersList">
+                    
                 </div>
             </div>
         </div>
     </div>
     <!-- <span class="label label-warning">...</span> -->
-    @Html.Hidden("orderTrnHdrIntno", @Model.orderTrnHdrIntno)
     <div class="col-md-8">
         <div id="dialogListContainer">
             @*@Html.Action("dialogList", "adaptation", new { orderTrnHdrIntno = Model.orderTrnHdrIntno, sceneNo = ViewBag.SceneNo })*@
         </div>
     </div>
     <div class="col-md-2">
-        @Html.Hidden("activeScene", "0")
-        <div id="scenesListContainer">@Html.Action("sceneList", "adaptation", new { orderTrnHdrIntno = Model.orderTrnHdrIntno })</div>
+        <div id="scenesListContainer">
+            @Html.Action("sceneList", "adaptation", new { orderTrnHdrIntno = Model.orderTrnHdrIntno })
+        </div>
     </div>
 </div>
 
@@ -54,9 +47,13 @@
 
     <script>
         $(function () {
-            addSceneClickEvent(@Model.orderTrnHdrIntno);
 
+            setActiveScene(1);
             fixTags();
+            charactersList();
+            // addSceneClickEvent(@Model.orderTrnHdrIntno);
+
+            // fixTags();
 
             
         });

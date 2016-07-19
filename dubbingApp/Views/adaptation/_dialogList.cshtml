@@ -1,40 +1,13 @@
 ﻿@using dubbingModel
-@model IEnumerable<adaptationDialog>
+@model IEnumerable<dialog>
 
 <div id="dialogList">
 
     @foreach (var dialog in Model)
     {
 
-        <div class="panel panel-default">
-            <!-- Default panel contents -->
-            <div data-id="@dialog.dialogIntno" class="panel-heading dialog">
-                <div class="right">
-                    <span class="pull-right">
-                        <a href="javascript:addDialog();"><span class="glyphicon glyphicon-plus"></span></a>
-                        &nbsp;
-                    </span>
-                    <span class="badge">@dialog.dialogNo</span>
-                    &nbsp;
-                    <span id="charNameContainer_@dialog.dialogIntno" class="dialog-character" data-charname="@dialog.dubbingSheetHdr.characterName" data-dialog="@dialog.dialogIntno" data-id="@dialog.dubbingSheetHdr.workCharacterIntno">
-                        <a href="javascript: editCharacterName(@dialog.dialogIntno);">@dialog.dubbingSheetHdr.characterName</a>
-                    </span>
-                    <span class="pull-left">
-                        <a href="javascript:deleteDialog(@dialog.dialogIntno);"><span class="glyphicon glyphicon-trash"></span></a>
-                    </span>
-                </div>
-            </div>
-
-            <div class="panel-body">
-                <div class="form-inline">
-                    <input type='text' style="width: 7em;" data-dialog="@dialog.dialogIntno" class="form-control startDialogTime" value="@dialog.startTimeCode" />
-                    <input type='text' style="width: 7em;" data-dialog="@dialog.dialogIntno" class="form-control endDialogTime" value="@dialog.endTimeCode" />
-                </div>
-            </div>
-
-            <div id="subtitleListContainer_@dialog.dialogIntno">
-                @Html.Action("subtitleList", "adaptation", new { dialogIntno = dialog.dialogIntno })
-            </div>
+        <div class="dialogContainer_@dialog.dialogIntno">
+            @Html.Partial("_dialogDetails", dialog)
         </div>
 
     }

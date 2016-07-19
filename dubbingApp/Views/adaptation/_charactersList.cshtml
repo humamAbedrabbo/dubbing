@@ -1,0 +1,10 @@
+﻿@using dubbingModel
+@model IEnumerable<string>
+
+<div class="list-group">
+    @foreach (var item in Model)
+    {
+        <button type="button" class="list-group-item">@item</button>
+    }
+    
+</div>

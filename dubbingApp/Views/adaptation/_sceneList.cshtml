@@ -1,12 +1,17 @@
 ﻿@using dubbingModel
-@model IEnumerable<short>
+@model IEnumerable<scene>
 
 <div class="panel panel-default">
     <!-- Default panel contents -->
     <div class="panel-heading">
-        <a class="btn btn-sm btn-default" href="javascript:addScene(@ViewBag.orderTrnHdrIntno);"><span class="glyphicon glyphicon-plus"></span></a>
-        <a class="btn btn-sm btn-default" href="javascript:deleteScene(@ViewBag.orderTrnHdrIntno);"><span class="glyphicon glyphicon-trash"></span></a>
+        <a class="btn btn-sm btn-default" href="javascript:addScene();">
+            <span class="glyphicon glyphicon-plus"></span>
+        </a>
+        <a class="btn btn-sm btn-default" href="javascript:deleteScene();">
+            <span class="glyphicon glyphicon-trash"></span>
+        </a>
     </div>
+
     @*<div class="panel-body">
         
     </div>*@
@@ -15,7 +20,7 @@
     <ul id="sceneList" class="list-group">
         @foreach (var item in Model)
         {
-            <li class="list-group-item scene" data-scene="@item">@string.Format("{0} {1}", "المشهد", item)</li>
+            <li class="list-group-item scene" onclick="sceneOnClick();" data-sceneIntno="@item.sceneIntno" data-sceneNo="@item.sceneNo">@string.Format("{0} {1}", "المشهد", item.sceneNo)</li>
         }
     </ul>
 </div>

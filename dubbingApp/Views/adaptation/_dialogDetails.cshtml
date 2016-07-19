@@ -1,0 +1,32 @@
+﻿@using dubbingModel
+@model dialog
+
+
+<div class="panel panel-default" id="dialogPanel_@Model.dialogIntno">
+    <!-- Default panel contents -->
+    <div data-id="@Model.dialogIntno" class="panel-heading dialog">
+        <div class="right">
+            <span class="pull-right">
+                <a href="javascript:addDialog();"><span class="glyphicon glyphicon-plus"></span></a>
+                &nbsp;
+            </span>
+            <span class="badge">@Model.dialogNo</span>
+            &nbsp;
+
+            <span class="pull-left">
+                <a href="javascript:deleteDialog(@Model.dialogIntno);" data-dialogintno="@Model.dialogIntno"><span class="glyphicon glyphicon-trash"></span></a>
+            </span>
+        </div>
+    </div>
+
+    <div class="panel-body">
+        <div class="form-inline">
+            <input id="dialogStartTimeCode_@Model.dialogIntno" onkeydown="onDialogTimeCodeKeyDown();" type='text' style="width: 7em;" data-dialog="@Model.dialogIntno" class="form-control" data-original="@Model.startTimeCode" value="@Model.startTimeCode" />
+            <input id="dialogEndTimeCode_@Model.dialogIntno" onkeydown="onDialogTimeCodeKeyDown();" type='text' style="width: 7em;" data-dialog="@Model.dialogIntno" class="form-control" data-original="@Model.endTimeCode" value="@Model.endTimeCode" />
+        </div>
+    </div>
+
+    <div id="subtitleListContainer_@Model.dialogIntno">        
+        @Html.Action("subtitlesList", "adaptation", new { dialogIntno = Model.dialogIntno })
+    </div>
+</div>

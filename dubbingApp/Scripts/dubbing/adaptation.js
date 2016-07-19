@@ -27,16 +27,58 @@ function removeTextTags(elem) {
 
 }
 
-// TEMPORARY: add tags to loaded scentences
-function fixTags() {
-    $(".scentence").each(function (index) {
-        var s = $(this).text().trim();
-        s = addTextTags(s);
-        $(this).html(s);
+function getOrderTrnHdrIntno()
+{
+    return $("#orderTrnHdrIntno").val();
+}
+
+function getActiveScene()
+{
+    return $("#activeScene").val();
+}
+
+function getActiveSceneIntno() {
+    var sceneNo = getActiveScene();
+    var elem = $(".scene[data-sceneno='" + sceneNo + "']");
+    return elem.data("sceneintno");
+}
+
+function setActiveScene(sceneNo)
+{
+    $("#activeScene").val(sceneNo);
+    $(".scene").removeClass("active");
+    $(".scene[data-sceneno='" + sceneNo + "']").addClass("active");
+    sceneDetails();
+    dialogList();
+}
+
+function charactersList() {
+    var orderTrnHdrIntno = getOrderTrnHdrIntno();
+    var url = "/adaptation/charactersList";
+    $.ajax({
+        contentType: 'application/json',
+        method: 'GET',
+        url: url,
+        data: { orderTrnHdrIntno: orderTrnHdrIntno },
+        success: function (result) {
+            $("#charactersList").empty();
+            $("#charactersList").html(result);
+        }
     });
 }
 
-function addScene(orderTrnHdrIntno) {
+// scene functions
+function sceneOnClick() {
+    if (!$(this.event.target).hasClass("active")) {
+        //$(".scene").removeClass("active");
+        //$(this).addClass("active");
+        var sceneNo = $(this.event.target).data("sceneno");
+        setActiveScene(sceneNo);
+    }
+}
+
+function addScene() {
+    var orderTrnHdrIntno = getOrderTrnHdrIntno();
     var url = "/adaptation/addScene";
     $.ajax({
         contentType: 'application/json',
@@ -45,16 +87,73 @@ function addScene(orderTrnHdrIntno) {
         data: { orderTrnHdrIntno: orderTrnHdrIntno },
         success: function (result) {
             $("#scenesListContainer").empty();
-            $("#scenesListContainer").html(result);
-            addSceneClickEvent(orderTrnHdrIntno);
-                  
+            $("#scenesListContainer").html(result);            
         }
     });
 }
 
-function deleteScene(orderTrnHdrIntno) {
+function sceneDetails() {
+    var sceneNo = getActiveScene();
+    var elem = $(".scene[data-sceneno='" + sceneNo + "']");
+    if (elem.hasClass("active")) {
+        var sceneIntno = elem.data("sceneintno");        
+        var url = "/adaptation/sceneDetails";
+
+        $.ajax({
+            contentType: 'application/json',
+            method: 'GET',
+            url: url,
+            data: { sceneIntno: sceneIntno },
+            success: function (result) {
+                $("#sceneDetailsContainer").empty();
+                $("#sceneDetailsContainer").html(result);
+            }
+        });
+    }
+}
+
+function saveSceneTimeCode() {
+    var sceneIntno = $("#sceneStartTimeCode").data("sceneintno");
+    var sceneStartTimeCode = $("#sceneStartTimeCode").val();
+    var sceneEndTimeCode = $("#sceneEndTimeCode").val();
+    var url = "/adaptation/saveSceneTimeCode";
+
+    $.ajax({
+        contentType: 'application/json',
+        method: 'GET',
+        url: url,
+        data: { sceneIntno: sceneIntno, startTimeCode: sceneStartTimeCode, endTimeCode: sceneEndTimeCode },
+        success: function (result) {
+            $("#sceneDetailsContainer").empty();
+            $("#sceneDetailsContainer").html(result);
+            $(".sceneDetailsPanel").removeClass("panel-primary");
+            $(".sceneDetailsPanel").addClass("panel-success");
+        }
+    });
+}
+
+function onSceneTimeCodeKeyDown() {
+    if ($(".sceneDetailsPanel").hasClass("panel-primary")) {
+        $(".sceneDetailsPanel").addClass("panel-warning");
+        $(".sceneDetailsPanel").removeClass("panel-primary");
+    }
+
+    if (this.event.which == 27) {
+        sceneDetails();
+        if ($(".sceneDetailsPanel").hasClass("panel-warning")) {
+            $(".sceneDetailsPanel").addClass("panel-primary");
+            $(".sceneDetailsPanel").removeClass("panel-warning");
+        }
+    }
+    else if (this.event.which == 13) {
+        saveSceneTimeCode();         
+    }
+}
+
+function deleteScene() {
+    var orderTrnHdrIntno = getOrderTrnHdrIntno();
     var url = "/adaptation/deleteScene";
-    var sceneNo = $("#activeScene").val();
+    var sceneNo = getActiveScene();
 
     $.ajax({
         contentType: 'application/json',
@@ -63,32 +162,50 @@ function deleteScene(orderTrnHdrIntno) {
         data: { orderTrnHdrIntno: orderTrnHdrIntno, sceneNo: sceneNo },
         success: function (result) {
             $("#scenesListContainer").empty();
-            $("#scenesListContainer").html(result);
-            addSceneClickEvent(orderTrnHdrIntno);
+            $("#scenesListContainer").html(result);            
+        }
+    });
+}
 
+// dialog functions
+function dialogList() {
+    var sceneIntno = getActiveSceneIntno();
+    var url = "/adaptation/dialogList";
+    $.ajax({
+        contentType: 'application/json',
+        method: 'GET',
+        url: url,
+        data: { sceneIntno: sceneIntno },
+        success: function (result) {
+            $("#dialogListContainer").empty();
+            $("#dialogListContainer").html(result);
+            fixTags();
+            fixTimes();
         }
     });
 }
 
 function addDialog() {
+    var sceneIntno = getActiveSceneIntno();
     var url = "/adaptation/addDialog";
-    var orderTrnHdrIntno = $("#orderTrnHdrIntno").val();
-    var sceneNo = $("#activeScene").val();
     $.ajax({
         contentType: 'application/json',
         method: 'GET',
         url: url,
-        data: { orderTrnHdrIntno: orderTrnHdrIntno, sceneNo: sceneNo },
+        data: { sceneIntno: sceneIntno },
         success: function (result) {
             $("#dialogListContainer").empty();
             $("#dialogListContainer").html(result);
+            fixTags();
+            fixTimes();
         }
     });
 }
 
 function deleteDialog(dialogIntno) {
+    var sceneIntno = getActiveSceneIntno();
+    // var dialogIntno = $(this).data("dialogintno");
     var url = "/adaptation/deleteDialog";
-    
     $.ajax({
         contentType: 'application/json',
         method: 'GET',
@@ -97,42 +214,187 @@ function deleteDialog(dialogIntno) {
         success: function (result) {
             $("#dialogListContainer").empty();
             $("#dialogListContainer").html(result);
+            fixTags();
+            fixTimes();
         }
     });
 }
 
-function editCharacterName(dialogIntno) {
-    var url = "/adaptation/editCharacterName";
+function saveDialogTimeCode(dialogIntno) {
+    
+    var dialogStartTimeCode = $("#dialogStartTimeCode_" + dialogIntno).val();
+    var dialogEndTimeCode = $("#dialogEndTimeCode_" + dialogIntno).val();
+    var url = "/adaptation/saveDialogTimeCode";
 
+    $.ajax({
+        contentType: 'application/json',
+        method: 'GET',
+        url: url,
+        data: { dialogIntno: dialogIntno, startTimeCode: dialogStartTimeCode, endTimeCode: dialogEndTimeCode },
+        success: function (result) {
+            $("#dialogContainer_" + dialogIntno).empty();
+            $("#dialogContainer_" + dialogIntno).html(result);
+            fixTimes();
+        }
+    });
+}
+
+function onDialogTimeCodeKeyDown() {
+    var dialogIntno = $(this.event.target).data("dialog");
+    $("#dialogPanel_" + dialogIntno).removeClass("panel-default");
+    $("#dialogPanel_" + dialogIntno).removeClass("panel-success");
+    $("#dialogPanel_" + dialogIntno).addClass("panel-warning");
+    if (this.event.which == 27) {
+        var oldValue = $(this.event.target).data("original");
+        $(this.event.target).val(oldValue);
+        $("#dialogPanel_" + dialogIntno).removeClass("panel-warning");
+        $("#dialogPanel_" + dialogIntno).removeClass("panel-success");
+        $("#dialogPanel_" + dialogIntno).addClass("panel-default");
+    }
+    else if (this.event.which == 13) {
+        
+        saveDialogTimeCode(dialogIntno);
+        $("#dialogPanel_" + dialogIntno).removeClass("panel-default");
+        $("#dialogPanel_" + dialogIntno).removeClass("panel-warning");
+        $("#dialogPanel_" + dialogIntno).addClass("panel-success");
+    }
+}
+
+// subtitle functions
+function addSubtitle(dialogIntno) {
+    var url = "/adaptation/addSubtitle";
     $.ajax({
         contentType: 'application/json',
         method: 'GET',
         url: url,
         data: { dialogIntno: dialogIntno },
         success: function (result) {
-            $("#charNameContainer_" + dialogIntno).empty();
-            $("#charNameContainer_" + dialogIntno).html(result);
+            $("#subtitleListContainer_" + dialogIntno).empty();
+            $("#subtitleListContainer_" + dialogIntno).html(result);
+            fixTags();
+            fixTimes();
         }
     });
 }
 
-function cancelEditCharacterName() {
-    var elem = "#charNameContainer_" + $(this.event.target).data("dialog");
-    $(elem).empty();
-    var oldCharacterName = $(elem).data("charname");
-    var dialogIntno = $(elem).data("dialog");
-    var html = '<a href="javascript: editCharacterName(' + dialogIntno + ');">' + oldCharacterName + '</a>';
-    $(elem).html(html);
+function deleteSubtitle(subtitleIntno, dialogIntno) {
+    
+    var url = "/adaptation/deleteSubtitle";
+    $.ajax({
+        contentType: 'application/json',
+        method: 'GET',
+        url: url,
+        data: { subtitleIntno: subtitleIntno },
+        success: function (result) {
+            $("#subtitleListContainer_" + dialogIntno).empty();
+            $("#subtitleListContainer_" + dialogIntno).html(result);
+            fixTags();
+            fixTimes();
+        }
+    });
 }
 
-function cancelEditSubtitle() {    
+function editCharacter(subtitleIntno) {
+    var oldName = $("#subtitle_" + subtitleIntno).text();
+    $("#characterContainer_" + subtitleIntno).empty();
+    var url = "/adaptation/editCharacter";
+
+    $.ajax({
+        contentType: 'application/json',
+        method: 'GET',
+        url: url,
+        data: { subtitleIntno: subtitleIntno },
+        success: function (result) {
+            $("#characterContainer_" + subtitleIntno).empty();
+            $("#characterContainer_" + subtitleIntno).html(result);
+        }
+    });
+}
+
+function onCharNameKeyDown() {
+    if (this.event.which == 27) {
+        var oldName = $(this.event.target).data("original");
+        var subtitleIntno = $(this.event.target).data("id");
+        var html = '<a id="subtitle_' + subtitleIntno + '" data-subtitle="' + subtitleIntno + '" href="javascript:editCharacter(' + subtitleIntno + ');">' + oldName + '</a>';
+        $("#characterContainer_" + subtitleIntno).empty();
+        $("#characterContainer_" + subtitleIntno).html(html);
+    }
+    else if (this.event.which == 13) {
+        var newName = $(this.event.target).val();
+        var subtitleIntno = $(this.event.target).data("id");
+        saveCharacter(subtitleIntno, newName);
+    }
+}
+
+function saveCharacter(subtitleIntno, newName) {
+    var url = "/adaptation/saveCharacter";
+
+    $.ajax({
+        contentType: 'application/json',
+        method: 'GET',
+        url: url,
+        data: { subtitleIntno: subtitleIntno, newName: newName },
+        success: function (result) {
+            $("#characterContainer_" + subtitleIntno).empty();
+            var html = '<a id="subtitle_' + subtitleIntno + '" data-subtitle="' + subtitleIntno + '" href="javascript:editCharacter(' + subtitleIntno + ');">' + newName + '</a>';
+            $("#characterContainer_" + subtitleIntno).html(html);
+        }
+    });
+}
+
+function fixTags() {
+    $(".scentence").each(function (index) {
+        var s = $(this).text().trim();
+        s = addTextTags(s);
+        $(this).html(s);
+    });
+}
+
+function fixTimes() {
+    $('.startPicker').datetimepicker({
+        format: 'HH:mm:ss',
+        viewDate: false
+
+    });
+
+    $('.endPicker').datetimepicker({
+        format: 'HH:mm:ss',
+        viewDate: false
+
+    });
+
+    $('.startPicker').on('dp.hide', function () {
+        saveSubtitleStartTime();
+    });
+
+    $('.endPicker').on('dp.hide', function () {
+        saveSubtitleEndTime();
+    });
+}
+
+function editSubtitle(subtitleIntno) {
+    var url = "/adaptation/editSubtitle";
+
+    $.ajax({
+        contentType: 'application/json',
+        method: 'GET',
+        url: url,
+        data: { subtitleIntno: subtitleIntno },
+        success: function (result) {
+            $("#subtitleContainer_" + subtitleIntno).empty();
+            $("#subtitleContainer_" + subtitleIntno).html(result);
+        }
+    });
+}
+
+function cancelEditSubtitle() {
     var elem = "#subtitleContainer_" + $(this.event.target).data("subtitle");
     var subtitleIntno = $(this.event.target).data("subtitle");
     var oldSubtitle = $("#oldSubtitle_" + subtitleIntno).val();
 
     $(elem).empty();
-    
-    
+
+
     var html = '<span onclick="javascript: editSubtitle(' + subtitleIntno + ');">' + addTextTags(oldSubtitle) + '</span>';
     $(elem).html(html);
 }
@@ -151,7 +413,7 @@ function saveEditSubtitle() {
         data: { subtitleIntno: subtitleIntno, newSubtitle: newSubtitle },
         success: function (result) {
             $(elem).empty();
-            
+
 
             var html = '<span onclick="javascript: editSubtitle(' + subtitleIntno + ');">' + addTextTags(newSubtitle) + '</span>';
             $(elem).html(html);
@@ -159,10 +421,20 @@ function saveEditSubtitle() {
     });
 }
 
+function onSubtitleInputKeyDown() {
+    if (this.event.which == 27) {
+        cancelEditSubtitle();
+    }
+    else if (this.event.which == 13) {
+        saveEditSubtitle();
+    }
+}
+
+
 function saveSubtitleStartTime() {
-    var  newTime = $(this.event.target).val();    
+    var newTime = $(this.event.target).val();
     var subtitleIntno = $(this.event.target).data("subtitle");
-    var url = "/adaptation/saveSubtitleStartTime";
+    var url = "/adaptation/saveSubtitleStartTimeCode";
 
 
     $.ajax({
@@ -171,7 +443,7 @@ function saveSubtitleStartTime() {
         url: url,
         data: { subtitleIntno: subtitleIntno, startTime: newTime },
         success: function (result) {
-           
+
         }
     });
 }
@@ -179,7 +451,7 @@ function saveSubtitleStartTime() {
 function saveSubtitleEndTime() {
     var newTime = $(this.event.target).val();
     var subtitleIntno = $(this.event.target).data("subtitle");
-    var url = "/adaptation/saveSubtitleEndTime";
+    var url = "/adaptation/saveSubtitleEndTimeCode";
 
 
     $.ajax({
@@ -192,130 +464,15 @@ function saveSubtitleEndTime() {
         }
     });
 }
+/**************************************************************************************************************/
+/*
 
-function saveDialogStartTime() {
-    var newTime = $(this.event.target).val();
-    var dialogIntno = $(this.event.target).data("dialog");
-    var url = "/adaptation/saveDialogStartTime";
-
-
-    $.ajax({
-        contentType: 'application/json',
-        method: 'GET',
-        url: url,
-        data: { dialogIntno: dialogIntno, startTime: newTime },
-        success: function (result) {
-
-        }
-    });
-}
-
-function saveDialogEndTime() {
-    var newTime = $(this.event.target).val();
-    var dialogIntno = $(this.event.target).data("dialog");
-    var url = "/adaptation/saveDialogEndTime";
+// TEMPORARY: add tags to loaded scentences
 
 
-    $.ajax({
-        contentType: 'application/json',
-        method: 'GET',
-        url: url,
-        data: { dialogIntno: dialogIntno, endTime: newTime },
-        success: function (result) {
-
-        }
-    });
-}
-
-function saveEditCharacterName() {
-    var newCharacterName = $(this.event.target).val();
-    var elem = "#charNameContainer_" + $(this.event.target).data("dialog");
-    var dialogIntno = $(elem).data("dialog");
-    var url = "/adaptation/saveCharacterName";
 
 
-    $.ajax({
-        contentType: 'application/json',
-        method: 'GET',
-        url: url,
-        data: { dialogIntno: dialogIntno, newCharacterName: newCharacterName },
-        success: function (result) {
-            $(elem).empty();
-            $(elem).data("charname", newCharacterName);
-            $(elem).data("id", result);
-            
-            var html = '<a href="javascript: editCharacterName(' + dialogIntno + ');">' + newCharacterName + '</a>';
-            $(elem).html(html);
-        }
-    });    
-}
 
-function onCharNameInputKeyDown() {
-    if (this.event.which == 27) {
-        cancelEditCharacterName();
-    }
-    else if (this.event.which == 13) {
-        saveEditCharacterName();
-    }
-}
-
-function onSubtitleInputKeyDown() {
-    if (this.event.which == 27) {
-        cancelEditSubtitle();
-    }
-    else if (this.event.which == 13) {
-        saveEditSubtitle();
-    }
-}
-
-function addSubtitle(dialogIntno) {
-    
-    var url = "/adaptation/addSubtitle";
-
-    
-    $.ajax({
-        contentType: 'application/json',
-        method: 'GET',
-        url: url,
-        data: { dialogIntno: dialogIntno },
-        success: function (result) {
-            $("#subtitleListContainer_" + dialogIntno).empty();
-            $("#subtitleListContainer_" + dialogIntno).html(result);
-        }
-    });
-}
-
-function deleteSubtitle(subtitleIntno, dialogIntno) {
-
-    var url = "/adaptation/deleteSubtitle";
-
-
-    $.ajax({
-        contentType: 'application/json',
-        method: 'GET',
-        url: url,
-        data: { subtitleIntno: subtitleIntno },
-        success: function (result) {
-            $("#subtitleListContainer_" + dialogIntno).empty();
-            $("#subtitleListContainer_" + dialogIntno).html(result);
-        }
-    });
-}
-
-function editSubtitle(subtitleIntno) {
-    var url = "/adaptation/editSubtitle";
-
-    $.ajax({
-        contentType: 'application/json',
-        method: 'GET',
-        url: url,
-        data: { subtitleIntno: subtitleIntno },
-        success: function (result) {
-            $("#subtitleContainer_" + subtitleIntno).empty();
-            $("#subtitleContainer_" + subtitleIntno).html(result);
-        }
-    });
-}
 
 function addSceneClickEvent(orderTrnHdrIntno) {
     $(".scene").click(function () {
@@ -379,3 +536,4 @@ function addSceneClickEvent(orderTrnHdrIntno) {
 
 }
 
+*/

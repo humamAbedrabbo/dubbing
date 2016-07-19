@@ -478,6 +478,14 @@
     <Content Include="Views\discharging\_castingUpdate.cshtml" />
     <Content Include="Views\discharging\_episodesList.cshtml" />
     <Content Include="Views\orders\_uploadPlanning.cshtml" />
+    <Content Include="Views\adaptation\_charactersList.cshtml" />
+    <Content Include="Views\adaptation\_dialogDetails.cshtml" />
+    <Content Include="Views\adaptation\_editCharacter.cshtml" />
+    <Content Include="Views\adaptation\_editCharacterName.cshtml" />
+    <Content Include="Views\adaptation\_editSubtitle.cshtml" />
+    <Content Include="Views\adaptation\_namesList.cshtml" />
+    <Content Include="Views\adaptation\_sceneDetails.cshtml" />
+    <Content Include="Views\adaptation\_subtitleDetails.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
