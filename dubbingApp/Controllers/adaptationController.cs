@@ -39,9 +39,20 @@ namespace dubbingApp.Controllers
             
         }
 
-        public ActionResult Edit(int? id)
+        public ActionResult CompleteAdaptation(long id)
         {
-            var model = ctx.orderTrnHdrs.Include(x => x.agreementWork).First(x => x.orderIntno == id);
+            var order = ctx.orderTrnHdrs.Find(id);
+            if(order.startAdaptation.HasValue && !order.endAdaptation.HasValue)
+            {
+                order.endAdaptation = DateTime.Now;
+                ctx.SaveChanges();
+            }
+            return RedirectToAction("Index");
+        }
+
+        public ActionResult Edit(long? id)
+        {
+            var model = ctx.orderTrnHdrs.Include(x => x.agreementWork).First(x => x.orderTrnHdrIntno == id);
 
             return View(model);
         }

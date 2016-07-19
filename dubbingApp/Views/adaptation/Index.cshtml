@@ -16,6 +16,7 @@
             <th>Episode</th>
             <th>Adaptation Start</th>
             <th></th>
+            <th></th>
         </tr>
     </thead>
     <tbody>
@@ -25,7 +26,8 @@
             <td>@item.agreementWork.workName</td>
             <td>@item.episodeNo</td>
             <td>@item.startAdaptation.Value.ToShortDateString()</td>
-            <td><a class="btn btn-primary" href='@Url.Action("Edit", "adaptation", new { id = item.orderIntno})'>Edit</a></td>
+            <td><a class="btn btn-primary" href='@Url.Action("Edit", "adaptation", new { id = item.orderTrnHdrIntno})'>Edit</a></td>
+            <td><a class="btn btn-success" href='@Url.Action("CompleteAdaptation", "adaptation", new { id = item.orderTrnHdrIntno})'>Complete Work</a></td>
         </tr>
         }
     </tbody>
