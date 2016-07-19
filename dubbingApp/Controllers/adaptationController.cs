@@ -10,6 +10,7 @@ using System.Web.Mvc;
 
 namespace dubbingApp.Controllers
 {
+    [Authorize(Roles = "ADMIN, GENERAL_MANAGER, EDITOR, STUDIO_SUPERVISOR")]
     public class adaptationController : Controller
     {
         DUBBDBEntities ctx = new DUBBDBEntities();
