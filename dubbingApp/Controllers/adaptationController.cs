@@ -20,7 +20,23 @@ namespace dubbingApp.Controllers
         {
             // Get list of episodes where adaptation is in progress
             var model = ctx.orderTrnHdrs.Include(x => x.agreementWork).Where(x => x.startAdaptation.HasValue && !x.endAdaptation.HasValue).ToList();
+            if (User.IsInRole("EDITOR"))
+            {
+                var employee = ctx.employees.FirstOrDefault(x => x.email.ToUpper() == User.Identity.Name);
+                if(employee == null)
+                {
+                    model.Clear();
+                }
+                else
+                {
+                    var userWorks = ctx.workPersonnels.Where(x => x.empIntno == employee.empIntno && x.status == true && (x.titleType == "04" || x.titleType == "05" || x.titleType == "06")).Select(x => x.workIntno).ToList() ;
+                    model = model.Where(x => userWorks.Contains(x.agreementWork.workIntno)).ToList();
+                }
+                
+            }
+
             return View(model);
+            
         }
 
         public ActionResult Edit(int? id)
