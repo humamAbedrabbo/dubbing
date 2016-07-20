@@ -338,6 +338,7 @@ function saveCharacter(subtitleIntno, newName) {
             $("#characterContainer_" + subtitleIntno).empty();
             var html = '<a id="subtitle_' + subtitleIntno + '" data-subtitle="' + subtitleIntno + '" href="javascript:editCharacter(' + subtitleIntno + ');">' + newName + '</a>';
             $("#characterContainer_" + subtitleIntno).html(html);
+            updateCharactersList();
         }
     });
 }
@@ -464,76 +465,19 @@ function saveSubtitleEndTime() {
         }
     });
 }
-/**************************************************************************************************************/
-/*
 
-// TEMPORARY: add tags to loaded scentences
+function updateCharactersList() {
+    var orderTrnHdrIntno = getOrderTrnHdrIntno();
+    var url = "/adaptation/charactersList";
 
-
-
-
-
-
-function addSceneClickEvent(orderTrnHdrIntno) {
-    $(".scene").click(function () {
-
-        if (!$(this).hasClass("active")) {
-            $(".scene").removeClass("active");
-            $(this).addClass("active");
-            var sceneNo = $(this).data("scene");
-            $("#activeScene").val(sceneNo);
-
-            var url = "/adaptation/dialogList";
-            $.ajax({
-                contentType: 'application/json',
-                method: 'GET',
-                url: url,
-                data: { orderTrnHdrIntno: orderTrnHdrIntno, sceneNo: sceneNo },
-                success: function (result) {
-                    $("#dialogListContainer").empty();
-                    $("#dialogListContainer").html(result);
-                    fixTags();
-
-   
-                    $('.startPicker').datetimepicker({
-                        format: 'HH:mm:ss',
-                        viewDate: false
-                        
-                    });
-
-                    $('.endPicker').datetimepicker({
-                        format: 'HH:mm:ss',
-                        viewDate: false
-
-                    });
-
-                    $('.startPicker').on('dp.hide', function () {
-                        saveSubtitleStartTime();
-                    });
-
-                    $('.endPicker').on('dp.hide', function () {
-                        saveSubtitleEndTime();
-                    });
-
-                    $(".startDialogTime").keydown(function (e) {
-                        if (e.which == 13) {
-                            saveDialogStartTime();
-                        }
-                    });
-
-                    $(".endDialogTime").keydown(function (e) {
-                        if (e.which == 13) {
-                            saveDialogEndTime();
-                        }
-                    });
-
-                }
-            });
-
+    $.ajax({
+        contentType: 'application/json',
+        method: 'GET',
+        url: url,
+        data: { orderTrnHdrIntno: orderTrnHdrIntno },
+        success: function (result) {
+            $("#charactersList").empty();
+            $("#charactersList").html(result);
         }
-
     });
-
 }
-
-*/
