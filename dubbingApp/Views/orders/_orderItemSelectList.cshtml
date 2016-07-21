@@ -13,62 +13,21 @@
             </div>
         </div>
         <div class="panel-body">
-            @using (Ajax.BeginForm("scheduleAddNew", "orders",
-                            new AjaxOptions()
-                            {
-                                HttpMethod = "POST",
-                                UpdateTargetId = "result"
-                            },
-                            new { @class = "form-horizontal" }
-                            ))
-            {
-                @Html.AntiForgeryToken()
-                @Html.Hidden("oiListHF")
-                @Html.Hidden("scheduleTypeHF")
+            @Html.Hidden("oiListHF")
 
-                <div class="form-group-sm">
-                    <ol id="oiCard"></ol>
-                </div>
-                <br />
+            <div class="row">
+                <ol id="oiCard" style="padding-left:30px; padding-right:20px"></ol>
+            </div>
+            <br />
 
-                <div>
-                    <a href="#" onclick="onScheduleClick('01')">Add to Dubbing Schedule</a><label>|</label>
-                    <a href="#" onclick="onScheduleClick('02')">Add to Upload Schedule</a><label>|</label>
-                    <a href="#" onclick="onScheduleClick('03')">Add to Shipment Schedule</a><label>|</label>
-                    <a href="#" onclick="onTranslationClick('05')">Record Translation Info</a><label>|</label>
-                    <a href="#" onclick="onAdaptationClick('04')">Send to Adaptation</a>
-                </div>
-                <br />
+            <div class="row" style="text-align:center">
+                <a href="#" onclick="onScheduleClick()">Add to Schedule</a><label>&nbsp;|</label>
+                <a href="#" onclick="onAdaptationClick()">Send to Adaptation</a>
+            </div>
+            <br />
 
-                <div class="form-group-sm" id="adaptors">
-                    <label class="alert-warning"><small>For Adaptation, Selected Episodes MUST Belong to ONLY ONE Work</small></label>
-                    <label><small>Assigned To</small></label>
-                    <span>
-                        @Html.DropDownList("adaptor", ViewBag.adaptorsList as SelectList, "Select Personnel ...", htmlAttributes: new { @class = "form-control" })
-                    </span>
-                </div>
-                <div class="form-group-sm" id="translators">
-                    <label class="alert-warning"><small>For Translation, Selected Episodes MUST Belong to ONLY ONE Work</small></label>
-                    <label><small>Assigned To</small></label>
-                    <span>
-                        @Html.DropDownList("translator", ViewBag.translatorsList as SelectList, "Select Personnel ...", htmlAttributes: new { @class = "form-control" })
-                    </span>
-                </div>
-                <div class="form-group-sm" id="scheduleDateCtrl">
-                    <label><small>Schedule Date</small></label>
-                    <span><input type="date" class="form-control" name="scheduleDate" /></span>
-                </div>
-                <div class="form-group-sm" id="dueDateCtrl">
-                    <label><small>Due Date</small></label>
-                    <span><input type="date" class="form-control" name="dueDate" /></span>
-                </div>
-                <div class="form-group-sm" id="submitBtn">
-                    <button type="submit" class="btn btn-default" onclick="onListSubmitClick()">Submit</button>
-                </div>
-                <div>
-                    <small><label class="alert-success" id="result"></label></small>
-                </div>
-            }
+            <div class="row" id="result"></div>
+            <div class="row" id="selectionAction"></div>
         </div>
     </div>
 </div>

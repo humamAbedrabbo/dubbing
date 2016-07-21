@@ -157,7 +157,10 @@ namespace dubbingApp.Controllers
             var hdr = db.dubbingTrnHdrs.Find(schedule);
             List<string> episodesList = new List<string>();
             // find planned episodes suitable for the dubbing schedule
-            var x = db.orderTrnHdrs.Where(b => b.workIntno == work && !b.startDubbing.HasValue && b.plannedUpload.HasValue && b.status == "04").ToList();
+            var x1 = db.dubbingTrnDtls.Where(b => b.dubbTrnHdrIntno == schedule).Select(b => b.orderTrnHdrIntno).ToList();
+            var x = db.orderTrnHdrs.Where(b => b.workIntno == work && !b.startDubbing.HasValue 
+                && b.plannedUpload.HasValue && !x1.Contains(b.orderTrnHdrIntno) && b.status == "04")
+                .OrderBy(b => b.episodeNo);
             string episode;
             foreach (orderTrnHdr item in x)
             {
@@ -196,8 +199,8 @@ namespace dubbingApp.Controllers
                     std.status = true;
                     studioEpisodesModel.Add(std);
                 }
+                db.SaveChanges();
             }
-            db.SaveChanges();
 
             long work1 = work;
             long schedule1 = schedule;
@@ -252,7 +255,8 @@ namespace dubbingApp.Controllers
         public ActionResult studioAllocationList(long schedule, string studio)
         {
             var model = db.studios.Include(b => b.agreementWork).Include(b => b.employee)
-                        .Where(b => b.dubbTrnHdrIntno == schedule && b.studioNo == studio && b.status == true);
+                        .Where(b => b.dubbTrnHdrIntno == schedule && b.studioNo == studio && b.status == true)
+                        .OrderBy(b => b.workIntno);
             ViewBag.studio = studio;
             ViewBag.schedule = schedule;
             return PartialView("_studioAllocationList", model.ToList());
@@ -276,7 +280,7 @@ namespace dubbingApp.Controllers
         public ActionResult studioAllocationAddNew(studio item, long schedule, string studioNo)
         {
             var model = db.studios;
-            var x = db.studios.Where(b => b.dubbTrnHdrIntno == schedule && b.studioNo == studioNo && b.supervisor == item.supervisor && b.status == true).ToList();
+            var x = db.studios.Where(b => b.dubbTrnHdrIntno == schedule && b.workIntno == item.workIntno && b.studioNo == studioNo && b.supervisor == item.supervisor && b.status == true).ToList();
             if (x.Count() == 0)
             {
                 item.dubbTrnHdrIntno = schedule;
@@ -294,8 +298,7 @@ namespace dubbingApp.Controllers
                 }
                 db.SaveChanges();
             }
-            else
-                return new HttpStatusCodeResult(500, "Error message");
+            
             long schedule1 = schedule;
             return RedirectToAction("studioAllocationList", new { schedule = schedule1, studio = studioNo });
         }

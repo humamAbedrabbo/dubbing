@@ -12,19 +12,17 @@
     <div class="col-sm-2 container-fluid" style="padding:0px">
         @Html.Hidden("workIntnoHF")
         <p>
-            <button class="btn btn-info btn-xs work" value="0" title="Select">
-                <span class="glyphicon glyphicon-pushpin" aria-hidden="true"></span>
-            </button>
-            <span class="workLbl" id="w0"><small>New ...</small></span>
+            <a href="#" class="workLbl" id="w0" onclick="onWorkSelectClick(null, '01', 'w0')"><small>New ...</small></a>
         </p>
+        <p>
+            <a href="#" class="workLbl" id="all" onclick="onWorkSelectClick(null, null, 'all')"><small>All Works</small></a>
+        </p>
+        
         @foreach (SelectListItem item in ViewBag.worksList)
         {
             string work = "w" + @item.Value.ToString();
             <p>
-                <button class="btn btn-info btn-xs work" value="@item.Value" title="Select">
-                    <span class="glyphicon glyphicon-pushpin" aria-hidden="true"></span>
-                </button>
-                <span class="workLbl" id="@work"><small>@item.Text</small></span>
+                <a href="#" class="workLbl" id="@work" onclick="onWorkSelectClick(@item.Value, null, '@work')"><small>@item.Text</small></a>
             </p>
         }
     </div>
@@ -35,18 +33,23 @@
                 <span><small><input class="episodeFilter" id="fromEpisode" style="width:30px" /></small>&nbsp;-</span>
                 <span><small><input class="episodeFilter" id="thruEpisode" style="width:30px" /></small></span>
             </div>
-            <div class="col-sm-8" style="padding:0px">
+            <div class="col-sm-2" style="padding:0px">
+                <div class="btn-group">
+                    <button class="btn btn-primary btn-xs" onclick="onFilterClick()" title="All Episodes">All</button>&nbsp;
+                    <button class="btn btn-default btn-xs" onclick="onFilterClick('06')" title="Endorsed Episodes">Archive</button>
+                </div>
+            </div>
+            <div class="col-sm-6" style="padding:0px">
                 <div class="btn-group pull-right">
-                    <button class="btn btn-default btn-xs" onclick="onFilterClick()" title="Filter">All</button>&nbsp;
-                    <button class="btn btn-primary btn-xs" onclick="onFilterClick('02')" title="Filter">For Dubbing</button>&nbsp;
-                    <button class="btn btn-info btn-xs" onclick="onFilterClick('03')" title="Filter">For Upload</button>&nbsp;
-                    <button class="btn btn-success btn-xs" onclick="onFilterClick('04')" title="Filter">For Shipment</button>
-                    <button class="btn btn-default btn-xs" onclick="onFilterClick('05')" title="Filter">Archive</button>
+                    <button class="btn btn-info btn-xs" onclick="onFilterClick('02')" title="Delayed Adaptation">! Adaptation</button>&nbsp;
+                    <button class="btn btn-warning btn-xs" onclick="onFilterClick('03')" title="Delayed Dubbing">! Dubbing</button>&nbsp;
+                    <button class="btn btn-danger btn-xs" onclick="onFilterClick('04')" title="Delayed Upload">! Upload</button>
+                    <button class="btn btn-danger btn-xs" onclick="onFilterClick('05')" title="Delayed Shipment">! Shipment</button>
                 </div>
             </div>
         </div>
         <div class="row container-fluid" id="oList" style="padding:0px; padding-bottom:10px; padding-left:10px">
-            @Html.Action("orderItemsList", "orders")
+            @Html.Action("orderItemsList", "orders", new { stage = "01" })
         </div>
     </div>
     
@@ -67,35 +70,6 @@
             $(window).on('load', function () {
                 $('#w0').css('background-color', 'silver');
                 $('#selectedItemsHF').val(0);
-                $('#epFilters').hide();
-            })
-
-            $(".work").click(function () {
-                $('#fromEpisode').val(null);
-                $('#thruEpisode').val(null);
-                $('.workLbl').css('background-color', 'white');
-                var workIntno = $(this).attr('value');
-                var work = 'w' + workIntno;
-                $('#' + work).css('background-color', 'silver');
-
-                if (workIntno === '0') {
-                    workIntno = null;
-                    $('#epFilters').hide();
-                }
-                else
-                {
-                    $('#epFilters').show();
-                }
-
-                $('#workIntnoHF').val(workIntno);
-                $.ajax({
-                    url: '@Url.Action("orderItemsList", "orders")',
-                    type: 'GET',
-                    data: { work: workIntno },
-                    success: function (result) {
-                        $('#oList').html(result);
-                    }
-                })
             })
 
             $('.episodeFilter').change(function () {
@@ -110,10 +84,30 @@
             })
         })
 
+        function onWorkSelectClick(work1, stage1, workLbl) {
+            $('#fromEpisode').val(null);
+            $('#thruEpisode').val(null);
+            $('.workLbl').css('background-color', 'white');
+            $('#' + workLbl).css('background-color', 'silver');
+            $('#workIntnoHF').val(work1);
+
+            $.ajax({
+                url: '@Url.Action("orderItemsList", "orders")',
+                type: 'GET',
+                data: { work: work1, stage: stage1 },
+                success: function (result) {
+                    $('#oList').html(result);
+                }
+            })
+        }
+
         function onCloseClick() {
             $('#allDetails').html(null);
             $('#oiCard').val(null);
             $('#tips').fadeIn();
+        }
+        function onActionCloseClick() {
+            $('#selectionAction').html(null);
         }
         function onIssueCloseClick() {
             $('#qualityDetails').html(null);
@@ -144,7 +138,7 @@
             $.ajax({
                 url: '@Url.Action("orderItemsList", "orders")',
                 type: 'GET',
-                data: { work: $('#workIntnoHF').val(), stage: filter },
+                data: { work: null, stage: filter },
                 success: function (result) {
                     $('#oList').html(result);
                 }
@@ -245,15 +239,9 @@
                     $.ajax({
                         url: '@Url.Action("orderItemSelectList", "orders")',
                         type: 'GET',
-                        data: { id: oItem },
                         success: function (result) {
                             $('#tips').fadeOut();
                             $('#allDetails').html(result);
-                            $('#scheduleDateCtrl').hide();
-                            $('#dueDateCtrl').hide();
-                            $('#submitBtn').hide();
-                            $('#adaptors').hide();
-                            $('#translators').hide();
                             $('#oiCard').append($('<li/>', { id: oItem, html: x }));
                         }
                     })
@@ -279,37 +267,29 @@
                     $('#oiListHF').val(x);
                 }
             });
-            $('#scheduleDateCtrl').hide();
-            $('#dueDateCtrl').hide();
-            $('#submitBtn').hide();
-            $('#adaptors').hide();
-            $('#translators').hide();
         }
 
-        function onScheduleClick(op) {
-            $('#scheduleTypeHF').val(op);
-            $('#result').html(null);
-            $('#scheduleDateCtrl').show();
-            $('#dueDateCtrl').hide();
-            $('#submitBtn').show();
+        function onScheduleClick() {
+            onListSubmitClick();
+            $.ajax({
+                url: '@Url.Action("scheduleAddNew", "orders")',
+                type: 'GET',
+                data: { oiList: $('#oiListHF').val() },
+                success: function (result) {
+                    $('#selectionAction').html(result);
+                }
+            })
         }
-        function onAdaptationClick(op) {
-            $('#scheduleTypeHF').val(op);
-            $('#translators').hide();
-            $('#adaptors').show();
-            $('#result').html(null);
-            $('#scheduleDateCtrl').show();
-            $('#dueDateCtrl').show();
-            $('#submitBtn').show();
-        }
-        function onTranslationClick(op) {
-            $('#scheduleTypeHF').val(op);
-            $('#adaptors').hide();
-            $('#translators').show();
-            $('#result').html(null);
-            $('#scheduleDateCtrl').show();
-            $('#dueDateCtrl').show();
-            $('#submitBtn').show();
+        function onAdaptationClick() {
+            onListSubmitClick();
+            $.ajax({
+                url: '@Url.Action("adaptationAddNew", "orders")',
+                type: 'GET',
+                data: { oiList: $('#oiListHF').val() },
+                success: function (result) {
+                    $('#selectionAction').html(result);
+                }
+            })
         }
 
         function onOrderItemDetailsClick(oItem) {
@@ -392,6 +372,19 @@
                     $('#oList').html(result);
                 }
             })
+        }
+
+        function onScheduleDateChange(e, fdw){
+            var days = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+            var d = days[(new Date($('#dubbingDateCtrl').val())).getDay()];
+            alert(d);
+            if(d !== fdw) {
+                alert('Dubbing Schedule MUST start on ' + fdw + ', As per the System Settings. Please Modify.')
+                e.preventDefault();
+            }
+            else {
+                onListSubmitClick();
+            }
         }
     </script>
 }

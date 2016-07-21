@@ -19,10 +19,12 @@
         <tbody>
             @foreach (var ship in Model)
             {
+                string carrierName;
+                if(ship.carrierIntno.HasValue) { carrierName = ship.carrier.carrierName; } else { carrierName = null; }
                 <tr>
                     <td class="col-sm-2"><small>@ship.shipmentDate.ToString("dd/MM")</small></td>
                     <td class="col-sm-3"><small>@ship.client.clientShortName</small></td>
-                    <td class="col-sm-3"><small>@ship.carrier.carrierName</small></td>
+                    <td class="col-sm-3"><small>@carrierName</small></td>
                     <td class="col-sm-2">
                         @{
                             if (ViewBag.isPopup)

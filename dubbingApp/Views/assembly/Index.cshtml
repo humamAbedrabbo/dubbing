@@ -12,13 +12,12 @@
     
     <div class="row">
         <div class="col-md-2">
-            <br /><br />
             <p>
-                @Html.Label("filterLbl", "Use Filters Below for Short Listing", htmlAttributes: new { @class = "control-label" })
+                <small>@Html.Label("filterLbl", "Use Filters Below for Short Listing", htmlAttributes: new { @class = "control-label" })</small>
             </p>
             <br />
             <p>
-                @Html.DropDownList("workIntno", ViewBag.worksList as SelectList, "Select Work ...", htmlAttributes: new { @class = "form-control-sm" })
+                @Html.DropDownList("workIntno", ViewBag.worksList as SelectList, "Select Work ...", htmlAttributes: new { @class = "form-control" })
             </p>
             <br />
             <p><a href="#" onclick="onFilterChange('01')">In Dubbing</a></p>
@@ -27,6 +26,11 @@
             <p><a href="#" onclick="onFilterChange('04')">Uploaded</a></p>
             <p><a href="#" onclick="onFilterChange('05')">Shipped</a></p>
             <p><a href="#" onclick="onFilterChange()">All ...</a></p>
+            <br /><br />
+
+            <div id="carriersList">
+                @Html.Action("carriersList")
+            </div>
         </div>
 
         <div class="col-md-6" id="episodesList">
@@ -36,7 +40,6 @@
         <div class="col-md-4">
             <div id="episodeDetails"></div>
             
-            <br />
             <p><label class="badge alert-info">Endorse ...</label></p>
             <p>
                 <a href="#" onclick="endorseSelection('01')">Mixage</a>| &nbsp;
@@ -317,6 +320,36 @@
                             $('#episodesList').html(result);
                         }
                     })
+                }
+            })
+        }
+
+        //carrier
+        function onNewCarrierClick() {
+            $.ajax({
+                url: '@Url.Action("carriersAddNew", "assembly")',
+                type: 'GET',
+                success: function (result) {
+                    $('#popupFormBody').html(result);
+                }
+            })
+        }
+        function onCarrierSuccess() {
+            $.ajax({
+                url: '@Url.Action("carriersList", "assembly")',
+                type: 'GET',
+                success: function (result) {
+                    $('#carriersList').html(result);
+                }
+            })
+        }
+        function onCarrierUpdateClick(id1) {
+            $.ajax({
+                url: '@Url.Action("carriersUpdate", "assembly")',
+                type: 'GET',
+                data: {id: id1 },
+                success: function (result) {
+                    $('#popupFormBody').html(result);
                 }
             })
         }

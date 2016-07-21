@@ -42,24 +42,29 @@ namespace dubbingApp.Controllers
                                             && b.episodeNo <= tEpisode 
                                             );
             var model = x;
-            if (!work.HasValue)// means new orders from all works
-                stage = "01";
-
+            DateTime todayDate = DateTime.Today.Date;
             switch (stage)
             {
                 case "01": //New
                     model = x.Where(b => !b.startAdaptation.HasValue && b.status != "06");
                     break;
-                case "02": //completed adaptation & ready for dubbing
-                    model = x.Where(b => b.endAdaptation.HasValue && !b.startDubbing.HasValue && b.status != "06");
+                case "02": //delayed adaptation
+                    model = x.Where(b => b.startAdaptation.HasValue && !b.endAdaptation.HasValue && !b.startDubbing.HasValue
+                            && b.startDischarge.HasValue && b.startDischarge.Value < todayDate  && b.status != "06");
                     break;
-                case "03": //completed dubbing & ready for upload
-                    model = x.Where(b => b.endDubbing.HasValue && !b.shipmentLowRes.HasValue && b.status != "06");
+                case "03": //delayed dubbing
+                    model = x.Where(b => b.startDubbing.HasValue && (!b.endDubbing.HasValue || !b.endMixage.HasValue || !b.endMontage.HasValue)
+                            && b.plannedUpload.HasValue && b.plannedUpload.Value < todayDate && b.status != "06");
                     break;
-                case "04": //completed upload & ready for shipment
-                    model = x.Where(b => b.shipmentLowRes.HasValue && !b.shipmentFinal.HasValue && b.status != "06");
+                case "04": //delayed upload
+                    model = x.Where(b => b.plannedUpload.HasValue && b.shipmentLowRes.HasValue && !b.shipmentFinal.HasValue
+                            && b.plannedUpload.Value < todayDate && b.status != "06");
                     break;
-                case "05": //Archive: endorsed orders
+                case "05": //delayed shipment
+                    model = x.Where(b => b.plannedShipment.HasValue && b.shipmentLowRes.HasValue && !b.shipmentFinal.HasValue
+                            && b.plannedShipment.Value < todayDate && b.status != "06");
+                    break;
+                case "06": //Archive: endorsed orders
                     model = x.Where(b => b.status == "06");
                     break;
                 default:
@@ -204,103 +209,110 @@ namespace dubbingApp.Controllers
         }
 
         // planning dubbing, upload and shipment
-        public ActionResult orderItemSelectList(long id)
+        public ActionResult orderItemSelectList()
         {
-            long work = db.orderTrnHdrs.Find(id).workIntno;
+            return PartialView("_orderItemSelectList");
+        }
+
+        public ActionResult scheduleAddNew(string oiList)
+        {
+            ViewBag.fdw = LookupModels.decodeDictionaryItem("settings", "fdw");
+            ViewBag.oiList = oiList;
+            return PartialView("_scheduleAddNew");
+        }
+        
+        [ValidateAntiForgeryToken]
+        [HttpPost, ValidateInput(false)]
+        public ActionResult scheduleAddNew(string oiList, DateTime? dubbingDate, DateTime? uploadDate, DateTime? shipmentDate)
+        {
+            var model = db.orderTrnHdrs;
+            string[] oiList1 = oiList.Split(';');
+            bool changes = false;
+            foreach(string item in oiList1)
+            {
+                var modelItem = model.Find(long.Parse(item));
+                if (dubbingDate.HasValue || uploadDate.HasValue || shipmentDate.HasValue)
+                    changes = true;
+                
+                if (dubbingDate.HasValue)
+                    modelItem.plannedDubbing = dubbingDate;
+                if (uploadDate.HasValue)
+                    modelItem.plannedUpload = uploadDate;
+                if (shipmentDate.HasValue)
+                    modelItem.plannedShipment = shipmentDate;
+            }
+            if (changes)
+                db.SaveChanges();
+            return Content("Successfully Scheduled. ", "text/html");
+        }
+
+        // adaptation assignment
+        public ActionResult adaptationAddNew(long? work, string oiList)
+        {
             ViewBag.adaptorsList = new SelectList(db.workPersonnels.Include(b => b.employee)
-                                .Where(b => b.workIntno == work && (b.titleType == "04" || b.titleType == "06") && b.status == true)
+                                .Where(b => (!work.HasValue || b.workIntno == work) && (b.titleType == "04" || b.titleType == "06") && b.status == true)
                                 .Select(b => new { b.employee.empIntno, b.employee.fullName }), "empIntno", "fullName");
             ViewBag.translatorsList = new SelectList(db.workPersonnels.Include(b => b.employee)
-                                .Where(b => b.workIntno == work && (b.titleType == "04" || b.titleType == "05") && b.status == true)
+                                .Where(b => (!work.HasValue || b.workIntno == work) && (b.titleType == "04" || b.titleType == "05") && b.status == true)
                                 .Select(b => new { b.employee.empIntno, b.employee.fullName }), "empIntno", "fullName");
-            return PartialView("_orderItemSelectList");
+            ViewBag.oiList = oiList;
+            return PartialView("_adaptationAddNew");
         }
 
         [ValidateAntiForgeryToken]
         [HttpPost, ValidateInput(false)]
-        public ActionResult scheduleAddNew(string oiListHF, DateTime? scheduleDate, DateTime? dueDate, string scheduleTypeHF, long? adaptor, long? translator)
+        public ActionResult adaptationAddNew(string oiList, long? editor, long? translator, DateTime? startTranslation, DateTime? endTranslation, DateTime? startAdaptation, DateTime? endAdaptation)
         {
-            if (scheduleDate.HasValue)
+            var model = db.orderTrnHdrs;
+            var dtlModel = db.orderTrnDtls;
+            string[] oiList1 = oiList.Split(';');
+            foreach (string item in oiList1)
             {
-                var model = db.orderTrnHdrs;
-                var model1 = db.orderTrnDtls;
-                string[] oiList = oiListHF.Split(';');
+                long id = long.Parse(item);
+                var modelItem = model.Find(id);
+                if (startTranslation.HasValue)
+                    modelItem.startTranslation = startTranslation;
+                if (endTranslation.HasValue)
+                    modelItem.endTranslation = endTranslation;
+                if (startAdaptation.HasValue)
+                    modelItem.startAdaptation = startAdaptation;
+                if (endAdaptation.HasValue)
+                    modelItem.startDischarge = endAdaptation;
 
-                // input data validation
-                var z = LookupModels.decodeDictionaryItem("settings", "fdw").ToUpper();
-                DateTime dt = scheduleDate.Value;
-                if (scheduleTypeHF == "01" && dt.DayOfWeek.ToString().ToUpper() != z)
-                    return Content("The Date for Scheduling MUST Start on " + z + ". ", "text/html");
-                if (scheduleTypeHF == "04" || scheduleTypeHF == "05") //adaptation & translation
+                if(editor.HasValue)
                 {
-                    if ((scheduleTypeHF == "04" && !adaptor.HasValue) || (scheduleTypeHF == "05" && !translator.HasValue))
-                        return Content("Please Provide the Assigned Personnel. ", "text/html");
-                    long work = db.orderTrnHdrs.Find(long.Parse(oiList[0])).workIntno;
-                    for (int i = 1; i < oiList.Count(); i++)
+                    var x1 = dtlModel.FirstOrDefault(b => b.orderTrnHdrIntno == id && b.activityType == "02");
+                    if (x1 == null)
                     {
-                        long tmp = db.orderTrnHdrs.Find(long.Parse(oiList[i])).workIntno;
-                        if (tmp != work)
-                            return Content("Failed! Selected Episodes Belong to Different Works. Please Correct Selection. ", "text/html");
+                        orderTrnDtl dtl = new orderTrnDtl();
+                        dtl.orderTrnHdrIntno = id;
+                        dtl.empIntno = editor.Value;
+                        dtl.activityType = "02";
+                    }
+                    else
+                    {
+                        x1.empIntno = editor.Value;
                     }
                 }
-                
-                foreach(string item in oiList)
+
+                if (translator.HasValue)
                 {
-                    long id = long.Parse(item);
-                    switch (scheduleTypeHF)
+                    var x2 = dtlModel.FirstOrDefault(b => b.orderTrnHdrIntno == id && b.activityType == "01");
+                    if (x2 == null)
                     {
-                        case "01":
-                            model.Find(id).plannedDubbing = scheduleDate.Value;
-                            break;
-                        case "02":
-                            model.Find(id).plannedUpload = scheduleDate.Value;
-                            break;
-                        case "03":
-                            model.Find(id).plannedShipment = scheduleDate.Value;
-                            break;
-                        case "04":
-                            var modelItem = model.Find(id);
-                            modelItem.startAdaptation = scheduleDate.Value;
-                            modelItem.startDischarge = dueDate;
-                            var x1 = db.orderTrnDtls.FirstOrDefault(b => b.orderTrnHdrIntno == id && b.activityType == "02");
-                            if (x1 == null)
-                            {
-                                orderTrnDtl dtl = new orderTrnDtl();
-                                dtl.orderTrnHdrIntno = id;
-                                dtl.activityType = "02";
-                                dtl.empIntno = adaptor.Value;
-                                model1.Add(dtl);
-                            }
-                            else
-                            {
-                                x1.empIntno = adaptor.Value;
-                            }
-                            break;
-                        case "05":
-                            var modelItem2 = model.Find(id);
-                            modelItem2.startTranslation = scheduleDate.Value;
-                            modelItem2.endTranslation = dueDate;
-                            var x2 = db.orderTrnDtls.FirstOrDefault(b => b.orderTrnHdrIntno == id && b.activityType == "01");
-                            if(x2 == null)
-                            {
-                                orderTrnDtl dtl2 = new orderTrnDtl();
-                                dtl2.orderTrnHdrIntno = id;
-                                dtl2.activityType = "01";
-                                dtl2.empIntno = translator.Value;
-                                model1.Add(dtl2);
-                            }
-                            else
-                            {
-                                x2.empIntno = translator.Value;
-                            }
-                            break;
+                        orderTrnDtl dtl = new orderTrnDtl();
+                        dtl.orderTrnHdrIntno = id;
+                        dtl.empIntno = translator.Value;
+                        dtl.activityType = "01";
+                    }
+                    else
+                    {
+                        x2.empIntno = translator.Value;
                     }
                 }
-                db.SaveChanges();
             }
-            else
-                return Content("Please Select a Date for Scheduling. ", "text/html");
-            return Content("Successfully Recorded / Scheduled. ", "text/html");
+            db.SaveChanges();
+            return Content("Successfully Assigned. ", "text/html");
         }
 
         // order item details

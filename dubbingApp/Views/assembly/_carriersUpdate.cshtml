@@ -1,0 +1,61 @@
+﻿@model dubbingModel.carrier
+
+@using (Ajax.BeginForm("carriersUpdate", "assembly",
+                                    new AjaxOptions()
+                                    {
+                                        HttpMethod = "POST",
+                                        UpdateTargetId = "formResult",
+                                        OnSuccess = "onCarrierSuccess"
+                                    }
+                                    ))
+{
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+    
+    @Html.HiddenFor(model => model.carrierIntno)
+    <div class="form-group-sm">
+        <small>@Html.LabelFor(model => model.carrierType, "Type", htmlAttributes: new { @class = "control-label" })</small>
+        <div>
+            @Html.DropDownListFor(model => model.carrierType, ViewBag.carrierTypesList as SelectList, string.Empty, htmlAttributes: new { @class = "form-control" })
+            @Html.ValidationMessageFor(model => model.carrierType, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+    <div class="form-group-sm">
+        <small>@Html.LabelFor(model => model.carrierName, "Name", htmlAttributes: new { @class = "control-label" })</small>
+        <div>
+            @Html.EditorFor(model => model.carrierName, new { htmlAttributes = new { @class = "form-control" } })
+            @Html.ValidationMessageFor(model => model.carrierName, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+    <div class="form-group-sm">
+        <small>@Html.LabelFor(model => model.othCarrierName, "Other Name", htmlAttributes: new { @class = "control-label" })</small>
+        <div>
+            @Html.EditorFor(model => model.othCarrierName, new { htmlAttributes = new { @class = "form-control" } })
+            @Html.ValidationMessageFor(model => model.othCarrierName, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+    <div class="form-group-sm">
+        <small>@Html.LabelFor(model => model.schedule, "Schedule", htmlAttributes: new { @class = "control-label" })</small>
+        <div>
+            @Html.EditorFor(model => model.schedule, new { htmlAttributes = new { @class = "form-control" } })
+            @Html.ValidationMessageFor(model => model.schedule, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+    <div class="form-group-sm">
+        <small>@Html.LabelFor(model => model.status, "Active?", htmlAttributes: new { @class = "control-label" })</small>
+        <div>
+            @Html.CheckBoxFor(model => model.status, new { htmlAttributes = new { @class = "form-control" } })
+            @Html.ValidationMessageFor(model => model.status, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+    <br />
+    <div class="form-group-sm">
+        <button type="submit" class="btn btn-default btn-sm pull-left">Submit</button>
+        <small><label class="alert-success" id="formResult"></label></small>
+    </div>
+}

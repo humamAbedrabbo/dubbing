@@ -1,0 +1,27 @@
+﻿@model IEnumerable<dubbingModel.carrier>
+
+<div class="container-fluid" style="padding:0px">
+    <div class="panel panel-primary">
+        <div class="panel-heading">
+            <div class="row">
+                <div class="col-sm-8">
+                    <small><label>Carriers</label></small>
+                </div>
+                <div class="col-sm-4">
+                    <button class="btn btn-default btn-xs pull-right" data-toggle="modal" data-target="#popupForm" onclick="onNewCarrierClick()" title="New">
+                        <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div class="panel-body">
+            @foreach (var cr in Model)
+            {
+                <p>
+                    <a href="#" id="@cr.carrierIntno" onclick="onCarrierUpdateClick(@cr.carrierIntno)" data-toggle="modal" data-target="#popupForm"><small>@cr.carrierName</small></a>
+                </p>
+            }
+        </div>
+    </div>
+</div>
+

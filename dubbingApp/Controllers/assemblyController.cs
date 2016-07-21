@@ -363,5 +363,51 @@ namespace dubbingApp.Controllers
             return Content("Claim Successfully Endorsed.", "text/html");
         }
         
+        public ActionResult carriersList()
+        {
+            var model = db.carriers.Where(b => b.status == true);
+            return PartialView("_carriersList", model.ToList());
+        }
+
+        public ActionResult carriersAddNew()
+        {
+            ViewBag.carrierTypesList = new SelectList(LookupModels.getDictionary("carrierType"), "Key", "Value");
+            return PartialView("_carriersAddNew");
+        }
+
+        [ValidateAntiForgeryToken]
+        [HttpPost, ValidateInput(false)]
+        public ActionResult carriersAddNew(carrier item)
+        {
+            var model = db.carriers;
+            if(ModelState.IsValid)
+            {
+                item.status = true;
+                model.Add(item);
+                db.SaveChanges();
+            }
+            return Content("Carrier Successfully Added.", "text/html");
+        }
+
+        public ActionResult carriersUpdate(long id)
+        {
+            var model = db.carriers.Find(id);
+            ViewBag.carrierTypesList = new SelectList(LookupModels.getDictionary("carrierType"), "Key", "Value");
+            return PartialView("_carriersUpdate", model);
+        }
+
+        [ValidateAntiForgeryToken]
+        [HttpPost, ValidateInput(false)]
+        public ActionResult carriersUpdate(carrier item)
+        {
+            var model = db.carriers;
+            if(ModelState.IsValid)
+            {
+                var modelItem = model.Find(item.carrierIntno);
+                UpdateModel(modelItem);
+                db.SaveChanges();
+            }
+            return Content("Carrier Successfully Updated.", "text/html");
+        }
     }
 }

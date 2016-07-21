@@ -11,11 +11,13 @@ namespace dubbingApp.Models
             public long Key;
             public string Value;
         }
+
         public class episodeItem
         {
             public dubbingTrnDtl episode { get; set; }
             public string status { get; set; }
         }
+
         public class studioEpisodeItem
         {
             public long studioEpisodeIntno { get; set; }
@@ -23,6 +25,7 @@ namespace dubbingApp.Models
             public string studioNo { get; set; }
             public bool status { get; set; }
         }
+
         public class scheduleViewModel
         {
             public long workIntno { get; set; }
