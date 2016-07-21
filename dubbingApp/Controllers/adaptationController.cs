@@ -2,402 +2,425 @@
 using System;
 using System.Collections.Generic;
 using System.Data.Entity;
+using System.IO;
 using System.Linq;
+using System.Text;
 using System.Web;
 using System.Web.Mvc;
 
 namespace dubbingApp.Controllers
 {
+    [Authorize(Roles = "ADMIN, GENERAL_MANAGER, EDITOR, STUDIO_SUPERVISOR")]
     public class adaptationController : Controller
     {
         DUBBDBEntities ctx = new DUBBDBEntities();
 
-        // GET: adaptations
+         // GET: adaptations
         public ActionResult Index()
         {
             // Get list of episodes where adaptation is in progress
             var model = ctx.orderTrnHdrs.Include(x => x.agreementWork).Where(x => x.startAdaptation.HasValue && !x.endAdaptation.HasValue).ToList();
-            return View(model);
-        }
-
-        public ActionResult Edit(int? id)
-        {
-            var model = ctx.orderTrnHdrs.Include(x => x.agreementWork).First(x => x.orderIntno == id);
-            var scenes = model.dubbingSheetDtls.Select(x => x.sceneNo).Distinct().OrderBy(x => x);
-            /*
-             * 1- select scenes of the selected episode ordered by seqNo
-             * 2- 
-             */ 
-
-            return View(model);
-        }
-
-        
-        public ActionResult sceneList(long orderTrnHdrIntno)
-        {
-            var ordHdr = ctx.orderTrnHdrs.Include(x => x.agreementWork).First(x => x.orderTrnHdrIntno == orderTrnHdrIntno);
-            var model = new List<short>();
-            if (ordHdr.dubbingSheetHdrs.Count() > 0)
+            if (User.IsInRole("EDITOR"))
             {
-                model = ordHdr.dubbingSheetDtls.Select(x => x.sceneNo).Distinct().OrderBy(x => x).ToList();
+                var employee = ctx.employees.FirstOrDefault(x => x.email.ToUpper() == User.Identity.Name);
+                if(employee == null)
+                {
+                    model.Clear();
+                }
+                else
+                {
+                    var userWorks = ctx.workPersonnels.Where(x => x.empIntno == employee.empIntno && x.status == true && (x.titleType == "04" || x.titleType == "05" || x.titleType == "06")).Select(x => x.workIntno).ToList() ;
+                    model = model.Where(x => userWorks.Contains(x.agreementWork.workIntno)).ToList();
+                }
+                
             }
 
-
-            ViewBag.orderTrnHdrIntno = orderTrnHdrIntno;
-            return PartialView("_sceneList", model);
+            return View(model);
             
         }
 
-        public ActionResult  addScene(long orderTrnHdrIntno)
+        public ActionResult CompleteAdaptation(long id)
         {
-            var ordTrnHdr = ctx.orderTrnHdrs.Include(x => x.agreementWork).First(x => x.orderTrnHdrIntno == orderTrnHdrIntno);
-            short sceneNo = 1;
-            if (ordTrnHdr.dubbingSheetDtls.Count() > 0)
+            var order = ctx.orderTrnHdrs.Find(id);
+            if(order.startAdaptation.HasValue && !order.endAdaptation.HasValue)
             {
-                sceneNo = ordTrnHdr.dubbingSheetDtls.Select(x => x.sceneNo).Max() ;
+                order.endAdaptation = DateTime.Now;
+                ctx.SaveChanges();
+            }
+            return RedirectToAction("Index");
+        }
+
+        public ActionResult Edit(long? id)
+        {
+            var model = ctx.orderTrnHdrs.Include(x => x.agreementWork).First(x => x.orderTrnHdrIntno == id);
+
+            return View(model);
+        }
+
+       public ActionResult sceneList(long orderTrnHdrIntno)
+        {
+            var order = ctx.orderTrnHdrs.Include(x => x.agreementWork).First(x => x.orderTrnHdrIntno == orderTrnHdrIntno);
+            var model = order.scenes.OrderBy(x => x.sceneNo).ToList();
+            ViewBag.orderTrnHdrIntno = orderTrnHdrIntno;
+
+            return PartialView("_sceneList", model);            
+        }
+
+        public ActionResult sceneDetails(long sceneIntno)
+        {
+            var model = ctx.scenes.Find(sceneIntno);
+
+            return PartialView("_sceneDetails", model);
+        }
+
+        public ActionResult addScene(long orderTrnHdrIntno)
+        {
+            var order = ctx.orderTrnHdrs.Include(x => x.agreementWork).First(x => x.orderTrnHdrIntno == orderTrnHdrIntno);
+            short sceneNo = 1;
+
+            if(order.scenes.Count() > 0)
+            {
+                sceneNo = order.scenes.Max(x => x.sceneNo);
                 sceneNo++;
             }
 
-            var sheetHdr = ordTrnHdr.dubbingSheetHdrs.Where(x => x.orderTrnHdrIntno == orderTrnHdrIntno && x.characterName == "UNKNOWN").FirstOrDefault();
-            if (sheetHdr == null)
-            {
-                sheetHdr = ctx.dubbingSheetHdrs.Create();
-                sheetHdr.orderTrnHdrIntno = orderTrnHdrIntno;
-                sheetHdr.voiceActorIntno = 0;
-                sheetHdr.actorName = "ANONYMOUS";
-                sheetHdr.characterName = "UNKNOWN";
-                ctx.dubbingSheetHdrs.Add(sheetHdr);
-                ctx.SaveChanges();
-            }
-
-            var sheetDtl = ctx.dubbingSheetDtls.Create();
-            sheetDtl.dubbSheetHdrIntno = sheetHdr.dubbSheetHdrIntno;
-            sheetDtl.orderTrnHdrIntno = orderTrnHdrIntno;
-            sheetDtl.sceneNo = sceneNo;
-            sheetDtl.isTaken = false;
-            sheetDtl.startTimeCode = "00:00:00";
-            ctx.dubbingSheetDtls.Add(sheetDtl);
+            var newScene = ctx.scenes.Create();
+            newScene.orderTrnHdrIntno = orderTrnHdrIntno;
+            newScene.sceneNo = sceneNo;
+            ctx.scenes.Add(newScene);
             ctx.SaveChanges();
 
-            var lastDialogNo = ctx.adaptationDialogs.Where(x => x.dubbSheetHdrIntno == sheetHdr.dubbSheetHdrIntno && x.sceneNo == sceneNo).Select(x => x.dialogNo).Max();
-            if (lastDialogNo == null || lastDialogNo == 0)
-                lastDialogNo = 1;
-            else
-                lastDialogNo++;
-
-            var dialog = ctx.adaptationDialogs.Create();
-            dialog.dialogNo = lastDialogNo;
-            dialog.dubbSheetHdrIntno = sheetHdr.dubbSheetHdrIntno;
-            dialog.sceneNo = sceneNo;
-            ctx.adaptationDialogs.Add(dialog);
+            // add default dialog to the new scene
+            var newDialog = ctx.dialogs.Create();
+            newDialog.sceneIntno = newScene.sceneIntno;
+            newDialog.dialogNo = 1;
+            ctx.dialogs.Add(newDialog);
             ctx.SaveChanges();
 
-            var subtitle = ctx.adaptationSubtitles.Create();
-            subtitle.dialogIntno = dialog.dialogIntno;
-            subtitle.subtitleNo = 1;
-            subtitle.scentence = "جملة جديدة";
-            subtitle.startTime = "00:00:00";
-            subtitle.endTime = "00:00:00";
-            ctx.adaptationSubtitles.Add(subtitle);
+            // add default subtitle to the new dialog
+            var newSubtitle = ctx.subtitles.Create();
+            newSubtitle.dialogIntno = newDialog.dialogIntno;
+            newSubtitle.subtitleNo = 1;
+            newSubtitle.scentence = "جملة جديدة";
+            newSubtitle.startTimeCode = "00:00:00";
+            newSubtitle.endTimeCode = "00:00:00";
+            newSubtitle.dubbSheetHdrIntno = getDefaultCharacter(newDialog.scene.orderTrnHdrIntno);
+            ctx.subtitles.Add(newSubtitle);
             ctx.SaveChanges();
-
-
 
             return sceneList(orderTrnHdrIntno);
         }
 
         public ActionResult deleteScene(long orderTrnHdrIntno, short sceneNo)
         {
-            var ordTrnHdr = ctx.orderTrnHdrs.Include(x => x.agreementWork).First(x => x.orderTrnHdrIntno == orderTrnHdrIntno);
-            
-            var sheetDtls = ordTrnHdr.dubbingSheetDtls.Where(x => x.sceneNo == sceneNo);
-            var parentSheetHdrs = sheetDtls.Select(x => x.dubbSheetHdrIntno).Distinct().ToList();
-
-            ctx.dubbingSheetDtls.RemoveRange(sheetDtls);
+            var scenes = ctx.scenes.Where(x => x.orderTrnHdrIntno == orderTrnHdrIntno && x.sceneNo == sceneNo);
+            ctx.scenes.RemoveRange(scenes);
             ctx.SaveChanges();
-
-            //delete dialogs
-            var dialogs = ctx.adaptationDialogs.Where(x => parentSheetHdrs.Contains(x.dubbSheetHdrIntno) && x.sceneNo == sceneNo);
-            ctx.adaptationDialogs.RemoveRange(dialogs);
-            ctx.SaveChanges();
-
-            // renumber dialogs
-            foreach (var h in parentSheetHdrs)
-            {
-                RenumberDialogs(h, sceneNo);
-            }
-
-            // decrease sceneNo for next scenes
-            sheetDtls = ordTrnHdr.dubbingSheetDtls.Where(x => x.sceneNo > sceneNo);
-            foreach(var item in sheetDtls)
-            {
-                var childDialogs = ctx.adaptationDialogs.Where(x => x.dubbSheetHdrIntno == item.dubbSheetHdrIntno && x.sceneNo > item.sceneNo);
-                item.sceneNo--;
-                foreach(var d in childDialogs)
-                {
-                    d.sceneNo--;
-                }
-            }
-            ctx.SaveChanges();
-
-
-
-            // delete empty sheet headers
-            var sheetHdrs = ordTrnHdr.dubbingSheetHdrs.Where(x => x.dubbingSheetDtls.Count() == 0);
-            //var hdrsIdList = sheetHdrs.Select(x => x.dubbSheetHdrIntno).ToList();
-            
-            //ctx.adaptationDialogs.RemoveRange(dialogs);
-            ctx.dubbingSheetHdrs.RemoveRange(sheetHdrs);
-            ctx.SaveChanges();
-
-
+            renumberScenes(orderTrnHdrIntno, sceneNo);
             return sceneList(orderTrnHdrIntno);
         }
 
-        public void RenumberDialogs(long sheetHdrIntno, short sceneNo)
+        public ActionResult saveSceneTimeCode(long sceneIntno, string startTimeCode, string endTimeCode)
         {
-            var dialogs = ctx.adaptationDialogs.Where(x => x.dubbSheetHdrIntno == sheetHdrIntno && x.sceneNo == sceneNo).OrderBy(x => x.dialogNo);
-            short dialogNo = 1;
-            foreach(var d in dialogs)
+            var scene = ctx.scenes.Find(sceneIntno);
+            scene.startTimeCode = startTimeCode;
+            scene.endTimeCode = endTimeCode;
+            ctx.SaveChanges();
+            return PartialView("_sceneDetails", scene);
+        }
+
+        private void renumberScenes(long orderTrnHdrIntno, short sceneNo)
+        {
+            var scenes = ctx.scenes.Where(x => x.orderTrnHdrIntno == orderTrnHdrIntno && x.sceneNo > sceneNo).OrderBy(x => x.sceneNo);
+            foreach(var item in scenes)
             {
-                d.dialogNo = dialogNo;
+                item.sceneNo--;
+            }
+            ctx.SaveChanges();
+        }
+
+        public ActionResult dialogList(long sceneIntno)
+        {
+            var model = ctx.dialogs.Where(x => x.sceneIntno == sceneIntno).OrderBy(x => x.dialogNo).ToList();
+            return PartialView("_dialogList", model);
+        }
+
+        public ActionResult dialogDetails(dialog dialog)
+        {
+            
+            return PartialView("_dialogDetails", dialog);
+        }
+
+        public ActionResult addDialog(long sceneIntno)
+        {
+            var scene = ctx.scenes.Find(sceneIntno);
+            short dialogNo = 1;
+            if(scene.dialogs.Count() > 0)
+            {
+                dialogNo = scene.dialogs.Max(x => x.dialogNo);
                 dialogNo++;
             }
-            ctx.SaveChanges();
-        }
 
-        public ActionResult dialogList(long orderTrnHdrIntno ,short sceneNo = 0)
-        {
-            var ordTrnHdr = ctx.orderTrnHdrs.Include(x => x.agreementWork).First(x => x.orderTrnHdrIntno == orderTrnHdrIntno);
-            var sheetHdrs = ordTrnHdr.dubbingSheetHdrs.Select(x => x.dubbSheetHdrIntno).ToList();
-            var dialogs = ctx.adaptationDialogs.Include(x => x.dubbingSheetHdr).Where(x => sheetHdrs.Contains(x.dubbSheetHdrIntno) && x.sceneNo == sceneNo).OrderBy(x => x.dialogNo).ToList();
-            ViewBag.SceneNo = sceneNo;
-            return PartialView("_dialogList", dialogs);
-        }
-
-        public ActionResult addDialog(long orderTrnHdrIntno, short sceneNo)
-        {
-            var ordTrnHdr = ctx.orderTrnHdrs.Include(x => x.agreementWork).First(x => x.orderTrnHdrIntno == orderTrnHdrIntno);
-            var sheetHdr = ordTrnHdr.dubbingSheetHdrs.Where(x => x.orderTrnHdrIntno == orderTrnHdrIntno && x.characterName == "UNKNOWN").FirstOrDefault();
-            if (sheetHdr == null)
-            {
-                sheetHdr = ctx.dubbingSheetHdrs.Create();
-                sheetHdr.orderTrnHdrIntno = orderTrnHdrIntno;
-                sheetHdr.voiceActorIntno = 0;
-                sheetHdr.actorName = "ANONYMOUS";
-                sheetHdr.characterName = "UNKNOWN";
-                ctx.dubbingSheetHdrs.Add(sheetHdr);
-                ctx.SaveChanges();
-            }
-
-            var scene = sheetHdr.dubbingSheetDtls.Where(x => x.dubbSheetHdrIntno == sheetHdr.dubbSheetHdrIntno && x.sceneNo == sceneNo).FirstOrDefault();
-            if (scene == null)
-            {
-                scene = ctx.dubbingSheetDtls.Create();
-                scene.orderTrnHdrIntno = orderTrnHdrIntno;
-                scene.sceneNo = sceneNo;
-                scene.dubbSheetHdrIntno = sheetHdr.dubbSheetHdrIntno;
-                scene.isTaken = false;
-                scene.startTimeCode = "00:00:00";
-
-                ctx.dubbingSheetDtls.Add(scene);
-                ctx.SaveChanges();
-            }
-
-            var lastDialogNo = ctx.adaptationDialogs.Where(x => x.dubbingSheetHdr.orderTrnHdrIntno == orderTrnHdrIntno && x.sceneNo == sceneNo).Max(x => x.dialogNo);
-            if (lastDialogNo == null || lastDialogNo == 0)
-                lastDialogNo = 1;
-            else
-                lastDialogNo++;
-
-            var dialog = ctx.adaptationDialogs.Create();
-            dialog.dialogNo = lastDialogNo;
-            dialog.dubbSheetHdrIntno = sheetHdr.dubbSheetHdrIntno;
-            dialog.sceneNo = sceneNo;
-            dialog.startTimeCode = "00:00:00";
-            dialog.endTimeCode = "00:00:00";
-            ctx.adaptationDialogs.Add(dialog);
+            var newDialog = ctx.dialogs.Create();
+            newDialog.sceneIntno = sceneIntno;
+            newDialog.dialogNo = dialogNo;
+            ctx.dialogs.Add(newDialog);
             ctx.SaveChanges();
 
-            var subtitle = ctx.adaptationSubtitles.Create();
-            subtitle.dialogIntno = dialog.dialogIntno;
-            subtitle.subtitleNo = 1;
-            subtitle.scentence = "جملة جديدة";
-            subtitle.startTime = "00:00:00";
-            subtitle.endTime = "00:00:00";
-            ctx.adaptationSubtitles.Add(subtitle);
+            // add default subtitle to the new dialog
+            var newSubtitle = ctx.subtitles.Create();
+            newSubtitle.dialogIntno = newDialog.dialogIntno;
+            newSubtitle.subtitleNo = 1;
+            newSubtitle.scentence = "جملة جديدة";
+            newSubtitle.startTimeCode = "00:00:00";
+            newSubtitle.endTimeCode = "00:00:00";
+            newSubtitle.dubbSheetHdrIntno = getDefaultCharacter(newDialog.scene.orderTrnHdrIntno);
+            ctx.subtitles.Add(newSubtitle);
             ctx.SaveChanges();
-            
 
-            return dialogList(orderTrnHdrIntno, sceneNo);
+            return dialogList(sceneIntno);
         }
 
         public ActionResult deleteDialog(long dialogIntno)
         {
-            var dialog = ctx.adaptationDialogs.Find(dialogIntno);
-            var sheetHdrIntno = dialog.dubbSheetHdrIntno;
-            var sceneNo = dialog.sceneNo;
-            var dubSheet = ctx.dubbingSheetHdrs.Find(sheetHdrIntno);
-            var orderTrnHdrIntno = dubSheet.orderTrnHdrIntno;
-            ctx.adaptationDialogs.Remove(dialog);
+            var dialog = ctx.dialogs.Find(dialogIntno);
+            long sceneIntno = dialog.sceneIntno;
+            short dialogNo = dialog.dialogNo;
+            ctx.dialogs.Remove(dialog);
             ctx.SaveChanges();
-            RenumberDialogs(sheetHdrIntno, sceneNo);
+            renumberDialogs(sceneIntno, dialogNo);
 
-            return dialogList(orderTrnHdrIntno, sceneNo);
+            return dialogList(sceneIntno);
         }
 
-        public ActionResult editCharacterName(long dialogIntno)
+        private void renumberDialogs(long sceneIntno, short dialogNo)
         {
-            var dialog = ctx.adaptationDialogs.Find(dialogIntno);
+            var dialogs = ctx.dialogs.Where(x => x.sceneIntno == sceneIntno && x.dialogNo > dialogNo).OrderBy(x => x.dialogNo);
+            foreach (var item in dialogs)
+            {
+                item.dialogNo--;
+            }
+            ctx.SaveChanges();
+        }
 
-            return PartialView("_editCharacterName", dialog);
+        public ActionResult saveDialogTimeCode(long dialogIntno, string startTimeCode, string endTimeCode)
+        {
+            var dialog = ctx.dialogs.Find(dialogIntno);
+            dialog.startTimeCode = startTimeCode;
+            dialog.endTimeCode = endTimeCode;
+            ctx.SaveChanges();
+            return dialogDetails(dialog);
+        }
+
+        public ActionResult subtitlesList(long dialogIntno)
+        {
+            var model = ctx.subtitles.Where(x => x.dialogIntno == dialogIntno).OrderBy(x => x.subtitleNo).ToList();
+            return PartialView("_subtitlesList", model);
+        }
+
+        public ActionResult subtitleDetails(subtitle subtitle)
+        {
+
+            return PartialView("_subtitleDetails", subtitle);
+        }
+
+        public ActionResult addSubtitle(long dialogIntno)
+        {
+            var dialog = ctx.dialogs.Find(dialogIntno);
+            short subtitleNo = 1;
+            if(dialog.subtitles.Count() > 0)
+            {
+                subtitleNo = dialog.subtitles.Max(x => x.subtitleNo);
+                subtitleNo++;
+            }
+
+            var newSubtitle = ctx.subtitles.Create();
+            newSubtitle.dialogIntno = dialogIntno;
+            newSubtitle.subtitleNo = subtitleNo;
+            newSubtitle.scentence = "جملة جديدة";
+            newSubtitle.startTimeCode = "00:00:00";
+            newSubtitle.endTimeCode = "00:00:00";
+            newSubtitle.dubbSheetHdrIntno = getDefaultCharacter(dialog.scene.orderTrnHdrIntno);
+            ctx.subtitles.Add(newSubtitle);
+            ctx.SaveChanges();
+
+            return subtitlesList(dialogIntno);
+        }
+
+        public ActionResult deleteSubtitle(long subtitleIntno)
+        {
+            var subtitle = ctx.subtitles.Find(subtitleIntno);
+            var dialogIntno = subtitle.dialogIntno;
+            var subtitleNo = subtitle.subtitleNo;
+
+            ctx.subtitles.Remove(subtitle);
+            ctx.SaveChanges();
+            renumberSubtitles(dialogIntno, subtitleNo);
+
+            return subtitlesList(dialogIntno);
+        }
+
+        private long getDefaultCharacter(long orderTrnHdrIntno)
+        {
+            var dubbSheetHdr = ctx.dubbingSheetHdrs.FirstOrDefault(x => x.orderTrnHdrIntno == orderTrnHdrIntno && x.characterName.ToUpper() == "UNKNOWN");
+            if(dubbSheetHdr == null)
+            {
+                dubbSheetHdr = ctx.dubbingSheetHdrs.Create();
+                dubbSheetHdr.orderTrnHdrIntno = orderTrnHdrIntno;
+                dubbSheetHdr.characterName = "UNKNOWN";
+                dubbSheetHdr.voiceActorIntno = 0;
+                dubbSheetHdr.actorName = "ANONYMOUS";
+                ctx.dubbingSheetHdrs.Add(dubbSheetHdr);
+                ctx.SaveChanges();
+            }
+
+            return dubbSheetHdr.dubbSheetHdrIntno;
+        }
+
+        private void renumberSubtitles(long dialogIntno, short subtitleNo)
+        {
+            var subtitles = ctx.subtitles.Where(x => x.dialogIntno == dialogIntno && x.subtitleNo > subtitleNo).OrderBy(x => x.subtitleNo);
+            foreach (var item in subtitles)
+            {
+                item.subtitleNo--;
+            }
+            ctx.SaveChanges();
+        }
+
+        public ActionResult editCharacter(long subtitleIntno)
+        {
+            var model = ctx.subtitles.Find(subtitleIntno);
+            return PartialView("_editCharacter", model);
+        }
+
+        public ActionResult getCharactersList(long subtitleIntno)
+        {
+            var subtitle = ctx.subtitles.Find(subtitleIntno);
+
+            var order = subtitle.dubbingSheetHdr.orderTrnHdr ;
+            var list = order.agreementWork.workCharacters.Select(x => x.characterName).ToList();
+            var list2 = ctx.dubbingSheetHdrs.Where(x => x.orderTrnHdrIntno == order.orderTrnHdrIntno).Select(x => x.characterName).ToList();
+            list.AddRange(list2);
+            HashSet<string> names = new HashSet<string>();
+            foreach (var s in list)
+                names.Add(s);
+            return PartialView("_namesList", names.OrderBy(x=> x));
+        }
+
+        public ActionResult charactersList(long orderTrnHdrIntno)
+        {
+            var order = ctx.orderTrnHdrs.Find(orderTrnHdrIntno);
+            var list = order.agreementWork.workCharacters.Select(x => x.characterName).ToList();
+            var list2 = ctx.dubbingSheetHdrs.Where(x => x.orderTrnHdrIntno == order.orderTrnHdrIntno).Select(x => x.characterName).ToList();
+            list.AddRange(list2);
+            HashSet<string> names = new HashSet<string>();
+            foreach (var s in list)
+                names.Add(s);
+            return PartialView("_charactersList", names.OrderBy(x => x));
+        }
+
+        public void saveCharacter(long subtitleIntno, string newName)
+        {
+            var subtitle = ctx.subtitles.Find(subtitleIntno);
+            var order = subtitle.dubbingSheetHdr.orderTrnHdr;
+            var sheetHdr = ctx.dubbingSheetHdrs.FirstOrDefault(x => x.orderTrnHdrIntno == order.orderTrnHdrIntno && x.characterName.ToUpper() == newName.ToUpper());
+            if(sheetHdr == null)
+            {
+                sheetHdr = ctx.dubbingSheetHdrs.Create();
+                sheetHdr.orderTrnHdrIntno = order.orderTrnHdrIntno;
+                sheetHdr.characterName = newName;
+                sheetHdr.voiceActorIntno = 0;
+                sheetHdr.actorName = "ANONYMOUS";
+                var workChar = order.agreementWork.workCharacters.FirstOrDefault(x => x.characterName.ToUpper() == newName.ToUpper());
+                if(workChar != null)
+                {
+                    sheetHdr.workCharacterIntno = workChar.workCharacterIntno;
+                    var workActor = workChar.workActors.FirstOrDefault(x => x.status == true);
+                    if(workActor != null)
+                    {
+                        sheetHdr.voiceActorIntno = workActor.voiceActorIntno;
+                        sheetHdr.actorName = workActor.voiceActor.fullName;
+                    }
+                }
+                ctx.dubbingSheetHdrs.Add(sheetHdr);
+                ctx.SaveChanges();
+            }
+
+            subtitle.dubbSheetHdrIntno = sheetHdr.dubbSheetHdrIntno;
+            ctx.SaveChanges();
         }
 
         public ActionResult editSubtitle(long subtitleIntno)
         {
-            var subtitle = ctx.adaptationSubtitles.Find(subtitleIntno);
+            var subtitle = ctx.subtitles.Find(subtitleIntno);
 
             return PartialView("_editSubtitle", subtitle);
         }
 
         public void saveSubtitle(long subtitleIntno, string newSubtitle)
         {
-            var subtitle = ctx.adaptationSubtitles.Find(subtitleIntno);
+            var subtitle = ctx.subtitles.Find(subtitleIntno);
             subtitle.scentence = newSubtitle;
             ctx.SaveChanges();
         }
 
-        public void saveSubtitleStartTime(long subtitleIntno, string startTime)
+        public void saveSubtitleStartTimeCode(long subtitleIntno, string startTime)
         {
-            var subtitle = ctx.adaptationSubtitles.Find(subtitleIntno);
-            subtitle.startTime = startTime;
+            var subtitle = ctx.subtitles.Find(subtitleIntno);
+            subtitle.startTimeCode = startTime;
             ctx.SaveChanges();
         }
 
-        public void saveSubtitleEndTime(long subtitleIntno, string endTime)
+        public void saveSubtitleEndTimeCode(long subtitleIntno, string endTime)
         {
-            var subtitle = ctx.adaptationSubtitles.Find(subtitleIntno);
-            subtitle.endTime = endTime;
+            var subtitle = ctx.subtitles.Find(subtitleIntno);
+            subtitle.endTimeCode = endTime;
             ctx.SaveChanges();
         }
 
-        public void saveDialogStartTime(long dialogIntno, string startTime)
+        public FileStreamResult downloadFile(long orderTrnHdrIntno)
         {
-            var dialog = ctx.adaptationDialogs.Find(dialogIntno);
-            dialog.startTimeCode = startTime;
-            ctx.SaveChanges();
-        }
+            var order = ctx.orderTrnHdrs.Find(orderTrnHdrIntno);
+            StringBuilder sb = new StringBuilder();
+            int line = 1;
 
-        public void saveDialogEndTime(long dialogIntno, string endTime)
-        {
-            var dialog = ctx.adaptationDialogs.Find(dialogIntno);
-            dialog.endTimeCode = endTime;
-            ctx.SaveChanges();
-        }
-
-        public long saveCharacterName(long dialogIntno, string newCharacterName)
-        {
-            var dialog = ctx.adaptationDialogs.Find(dialogIntno);
-            var workIntno = dialog.dubbingSheetHdr.orderTrnHdr.agreementWork.workIntno;
-            var sceneNo = dialog.sceneNo;
-            var orderTrnHdrIntno = dialog.dubbingSheetHdr.orderTrnHdrIntno;
-
-            short lastOrderNo = 1;
-            if (ctx.workCharacters.Count(x => x.workIntno == workIntno) == 0)
-                lastOrderNo = 1;
-            else
+            foreach(var scene in order.scenes.OrderBy(x => x.sceneNo))
             {
-                lastOrderNo = ctx.workCharacters.Where(x => x.workIntno == workIntno).Select(x => x.sortOrder).Max();
-                lastOrderNo++;
+                foreach(var dialog in scene.dialogs.OrderBy(x => x.dialogNo))
+                {
+                    foreach(var subtitle in dialog.subtitles.OrderBy(x => x.subtitleNo))
+                    {
+                        sb.AppendFormat("{0}", line);
+                        sb.AppendLine();
+                        sb.AppendFormat("{0},1 --> {1},1", subtitle.startTimeCode, subtitle.endTimeCode);
+                        sb.AppendLine();
+                        sb.AppendFormat("<font size=\"36px\" color=\"white\">{0}</font>", subtitle.scentence);
+                        sb.AppendLine();
+                        line++;
+                    }
+                }
             }
 
-            var workCharacter = ctx.workCharacters.FirstOrDefault(x => x.workIntno == workIntno && (x.characterName.ToUpper() == newCharacterName.ToUpper() || (!string.IsNullOrEmpty(x.othCharacterName) && x.othCharacterName.ToUpper() == newCharacterName.ToUpper())));
-            if(workCharacter == null)
-            {
-                workCharacter = ctx.workCharacters.Create();
-                workCharacter.workIntno = workIntno;
-                workCharacter.sortOrder = lastOrderNo;
-                workCharacter.characterType = "03";
-                workCharacter.characterGender = "01";
-                workCharacter.characterName = newCharacterName;
-                
-                ctx.workCharacters.Add(workCharacter);
-                ctx.SaveChanges();
-            }
+            string fileName =  order.agreementWork.workName + " - " + order.episodeNo + ".srt";
+            UTF8Encoding encoding = new UTF8Encoding();
+            byte[] contentAsBytes = encoding.GetBytes(sb.ToString());
+            var stream = new MemoryStream(contentAsBytes);
 
-            var sheetHdr = ctx.dubbingSheetHdrs.FirstOrDefault(x => x.orderTrnHdrIntno == orderTrnHdrIntno && x.workCharacterIntno == workCharacter.workCharacterIntno);
-            if(sheetHdr == null)
-            {
-                sheetHdr = ctx.dubbingSheetHdrs.Create();
-                sheetHdr.orderTrnHdrIntno = orderTrnHdrIntno;
-                sheetHdr.characterName = newCharacterName;
-                sheetHdr.actorName = "ANONYMOUS";
-                sheetHdr.voiceActorIntno = 0;
-                sheetHdr.workCharacterIntno = workCharacter.workCharacterIntno;
-                ctx.dubbingSheetHdrs.Add(sheetHdr);
-                ctx.SaveChanges();
-            }
-            var sheetDtl = ctx.dubbingSheetDtls.FirstOrDefault(x => x.dubbSheetHdrIntno == sheetHdr.dubbSheetHdrIntno && x.sceneNo == sceneNo);
-            if(sheetDtl == null)
-            {
-                sheetDtl = ctx.dubbingSheetDtls.Create();
-                sheetDtl.dubbSheetHdrIntno = sheetHdr.dubbSheetHdrIntno;
-                sheetDtl.sceneNo = sceneNo;
-                sheetDtl.isTaken = false;
-                sheetDtl.orderTrnHdrIntno = orderTrnHdrIntno;
-                sheetDtl.startTimeCode = "00:00:00";
-                ctx.dubbingSheetDtls.Add(sheetDtl);
-                ctx.SaveChanges();
-            }
-            dialog.dubbSheetHdrIntno = sheetHdr.dubbSheetHdrIntno;
-            ctx.SaveChanges();
 
-            return workCharacter.workCharacterIntno;
+            //FileInfo info = new FileInfo(fileName);
+            //if (!info.Exists)
+            //{
+            //    using (StreamWriter writer = info.CreateText())
+            //    {
+            //        writer.WriteLine(sb.ToString());
+
+            //    }
+            //}
+
+            return File(stream, "text/plain", fileName);
+
         }
 
-        public ActionResult subtitleList(long dialogIntno)
-        {
-            var subtitles = ctx.adaptationSubtitles.Where(x => x.dialogIntno == dialogIntno).OrderBy(x => x.subtitleNo).ToList();
-            return PartialView("_subtitlesList", subtitles);
-        }
 
-        public ActionResult addSubtitle(long dialogIntno)
-        {
-            var dialog = ctx.adaptationDialogs.Find(dialogIntno);
-            short lastNo = 0 ;
-            if (dialog.adaptationSubtitles.Count() > 0)
-            {
-                lastNo = dialog.adaptationSubtitles.Select(x => x.subtitleNo.Value).Max();
-                lastNo++;
-            }
-            else
-                lastNo = 1;
-            var subtitle = ctx.adaptationSubtitles.Create();
-            subtitle.dialogIntno = dialogIntno;
-            subtitle.scentence = "جملة جديدة";
-            subtitle.subtitleNo = lastNo;
-            subtitle.startTime = "00:00:00";
-            subtitle.endTime = "00:00:00";
-            dialog.adaptationSubtitles.Add(subtitle);
-            ctx.SaveChanges();
-
-            return subtitleList(dialogIntno);
-        }
-
-        public ActionResult deleteSubtitle(long subtitleIntno)
-        {
-            var subtitle = ctx.adaptationSubtitles.Find(subtitleIntno);
-            var dialogIntno = subtitle.dialogIntno;
-            var subtitleNo = subtitle.subtitleNo;
-
-            ctx.adaptationSubtitles.Remove(subtitle);
-            var subtitles = ctx.adaptationSubtitles.Where(x => x.dialogIntno == dialogIntno && x.subtitleNo > subtitleNo).OrderBy(x => x.subtitleNo);
-            foreach(var s in subtitles)
-            {
-                s.subtitleNo--;
-            }
-            ctx.SaveChanges();
-            return subtitleList(dialogIntno);
-        }
-    }
+    }    
 }

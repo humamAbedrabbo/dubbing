@@ -1,5 +1,12 @@
 ﻿@using dubbingModel
+@model scene
 
-
-Start Time:
-<input type='text' onkeydown="onSceneStartInputKeyDown();" style="" id="sceneStartTime" class="form-control" data-start="@ViewBag.sceneStart" value="@ViewBag.sceneStart" />
+<div class="panel panel-primary sceneDetailsPanel">
+    <div class="panel-heading">Scene Detaile</div>
+    <div class="panel-body sceneDetailsContainer">
+        Start Time Code:
+        <input type='text' onkeydown="onSceneTimeCodeKeyDown();" style="" id="sceneStartTimeCode" data-sceneIntno="@Model.sceneIntno" class="form-control" value="@Model.startTimeCode" />
+        End Time Code:
+        <input type='text' onkeydown="onSceneTimeCodeKeyDown();" style="" id="sceneEndTimeCode" data-sceneIntno="@Model.sceneIntno" class="form-control" value="@Model.endTimeCode" />
+    </div>
+</div>

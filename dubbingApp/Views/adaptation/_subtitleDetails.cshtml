@@ -1,0 +1,36 @@
+﻿@using dubbingModel
+@model subtitle
+
+<tr data-id="@Model.subtitleIntno">
+    <td style="width: 3em;">
+        <a href="javascript:deleteSubtitle(@Model.subtitleIntno, @Model.dialogIntno);"><span class="glyphicon glyphicon-trash"></span></a>
+    </td>
+    <td style="width: 7em;">
+        <input type='text' style="" data-subtitle="@Model.subtitleIntno" class="form-control startPicker" value="@Model.startTimeCode" />
+        @*<div class="form-group">
+                <div class='input-group date startPicker'>
+                    <input type='text' style="width:10em;" class="form-control" value="@subtitle.startTime" />
+                    <span class="input-group-addon">
+                        <span class="glyphicon glyphicon-time"></span>
+                    </span>
+                </div>
+            </div>*@
+    </td>
+    <td style="width: 7em;">
+        <input type='text' style="" data-subtitle="@Model.subtitleIntno" class="form-control endPicker" value="@Model.endTimeCode" />
+    </td>
+    <td>
+        <div id="subtitleContainer_@Model.subtitleIntno" data-subtitle="@Model.subtitleIntno" data-no="@Model.subtitleNo" class="right">
+            <span class="scentence" onclick="javascript: editSubtitle(@Model.subtitleIntno);">@Model.scentence</span>
+        </div>
+    </td>
+    <td style="white-space: nowrap; width:1%;" class="right" id="characterContainer_@Model.subtitleIntno">
+        <a id="subtitle_@Model.subtitleIntno" data-subtitle="@Model.subtitleIntno" href="javascript:editCharacter(@Model.subtitleIntno);">@Model.dubbingSheetHdr.characterName</a>
+    </td>
+    <td style="width: 3em; text-align:center;">
+        @Model.subtitleNo
+    </td>
+    <td style="width:2em;">
+        <span class="pull-right"><a href="javascript:addSubtitle(@Model.dialogIntno);"><span class="glyphicon glyphicon-plus"></span></a></span>
+    </td>
+</tr>

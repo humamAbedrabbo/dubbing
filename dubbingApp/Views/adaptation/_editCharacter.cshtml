@@ -1,0 +1,7 @@
+﻿@using dubbingModel
+@model subtitle
+
+<input type="text" onkeydown="onCharNameKeyDown()" class="right" id="char_@Model.subtitleIntno" data-id="@Model.subtitleIntno" data-original="@Model.dubbingSheetHdr.characterName" value="@Model.dubbingSheetHdr.characterName" list="list_@Model.subtitleIntno" />
+<datalist id="list_@Model.subtitleIntno">
+   @Html.Action("getCharactersList", new { subtitleIntno = Model.subtitleIntno })
+</datalist>

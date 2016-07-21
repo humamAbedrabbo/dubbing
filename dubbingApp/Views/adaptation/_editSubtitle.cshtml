@@ -1,7 +1,5 @@
 ﻿@using dubbingModel
-@model adaptationSubtitle
+@model subtitle
 
-@Html.Hidden("oldSubtitle_" + Model.subtitleIntno, Model.scentence)
-
-<input style="max-width: 100%; width:100%;" onkeydown="javascript: onSubtitleInputKeyDown();" id="editSubtitle_@Model.subtitleIntno" value="@Model.scentence"  data-subtitle="@Model.subtitleIntno" />
-
+<input style="width:100%; max-width:100%;" onkeydown="onSubtitleInputKeyDown()" id="scentence_@Model.subtitleIntno" data-subtitle="@Model.subtitleIntno" data-original="@Model.scentence" value="@Model.scentence" />
+@Html.Hidden("oldSubtitle_" + Model.subtitleIntno.ToString(), Model.scentence)

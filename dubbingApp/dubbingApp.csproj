@@ -310,6 +310,8 @@
     <Content Include="Content\_bootstrap-datetimepicker.less" />
     <Content Include="Content\bootstrap-datetimepicker-build.less" />
     <None Include="Properties\PublishProfiles\dubbingApp.pubxml" />
+    <None Include="Properties\PublishProfiles\dubbingApp2016 - FTP.pubxml" />
+    <None Include="Properties\PublishProfiles\dubbingApp2016 - Web Deploy.pubxml" />
     <None Include="Properties\PublishProfiles\dubbingApp2016.pubxml" />
     <None Include="Scripts\jquery-2.2.3.intellisense.js" />
     <Content Include="Scripts\dubbing\adaptation.js" />
@@ -477,6 +479,15 @@
     <Content Include="Views\discharging\_castingList.cshtml" />
     <Content Include="Views\discharging\_castingUpdate.cshtml" />
     <Content Include="Views\discharging\_episodesList.cshtml" />
+    <Content Include="Views\orders\_uploadPlanning.cshtml" />
+    <Content Include="Views\adaptation\_charactersList.cshtml" />
+    <Content Include="Views\adaptation\_dialogDetails.cshtml" />
+    <Content Include="Views\adaptation\_editCharacter.cshtml" />
+    <Content Include="Views\adaptation\_editCharacterName.cshtml" />
+    <Content Include="Views\adaptation\_editSubtitle.cshtml" />
+    <Content Include="Views\adaptation\_namesList.cshtml" />
+    <Content Include="Views\adaptation\_sceneDetails.cshtml" />
+    <Content Include="Views\adaptation\_subtitleDetails.cshtml" />
     <Content Include="Views\orders\_scheduleAddNew.cshtml" />
     <Content Include="Views\orders\_adaptationAddNew.cshtml" />
     <Content Include="Views\assembly\_carriersList.cshtml" />
