@@ -377,7 +377,6 @@
         function onScheduleDateChange(e, fdw){
             var days = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
             var d = days[(new Date($('#dubbingDateCtrl').val())).getDay()];
-            alert(d);
             if(d !== fdw) {
                 alert('Dubbing Schedule MUST start on ' + fdw + ', As per the System Settings. Please Modify.')
                 e.preventDefault();
