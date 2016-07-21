@@ -479,7 +479,6 @@
     <Content Include="Views\discharging\_castingList.cshtml" />
     <Content Include="Views\discharging\_castingUpdate.cshtml" />
     <Content Include="Views\discharging\_episodesList.cshtml" />
-    <Content Include="Views\orders\_uploadPlanning.cshtml" />
     <Content Include="Views\adaptation\_charactersList.cshtml" />
     <Content Include="Views\adaptation\_dialogDetails.cshtml" />
     <Content Include="Views\adaptation\_editCharacter.cshtml" />
