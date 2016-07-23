@@ -34,12 +34,10 @@ namespace dubbingApp.Controllers
 
         public ActionResult orderItemsList(long? work, string stage, int? fromEpisode, int? thruEpisode)
         {
-            int fEpisode = fromEpisode.HasValue ? fromEpisode.Value : 1;
-            int tEpisode = thruEpisode.HasValue ? thruEpisode.Value : 100000;
             var x = db.orderTrnHdrs.Include(b => b.workOrder).Include(b => b.agreementWork)
                                     .Where(b => (!work.HasValue || b.workIntno == work) 
-                                            && b.episodeNo >= fEpisode
-                                            && b.episodeNo <= tEpisode 
+                                            && (!fromEpisode.HasValue || b.episodeNo >= fromEpisode)
+                                            && (!thruEpisode.HasValue || b.episodeNo <= thruEpisode )
                                             );
             var model = x;
             DateTime todayDate = DateTime.Today.Date;
