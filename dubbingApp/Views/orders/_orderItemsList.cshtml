@@ -1,5 +1,5 @@
 ﻿@model IEnumerable<dubbingModel.orderTrnHdr>
-@{ 
+@{
     string panelHeaderClass;
     string episode;
 }
@@ -7,7 +7,7 @@
 <div class="container-fluid">
     @foreach (dubbingModel.orderTrnHdr item in Model)
     {
-        if(item.status == "03") { panelHeaderClass = "panel-danger"; }
+        if (item.status == "03") { panelHeaderClass = "panel-danger"; }
         else if (item.priority == "03") { panelHeaderClass = "panel-warning"; }
         else { panelHeaderClass = "panel-default"; }
 
@@ -29,7 +29,7 @@
                         <label><small>@item.agreementWork.workName</small></label>
                     </div>
                     <div class="col-sm-3">
-                        @{ 
+                        @{
                             string issuesColor;
                             if (item.orderChecks.Count() != 0) { issuesColor = "btn-warning"; }
                             else { issuesColor = "btn-default"; }
@@ -66,29 +66,33 @@
                     </thead>
                     <tbody>
                         <tr>
-                            <td class="col-sm-2" style="text-align:center"><small>
-                                @{
-                                    if (item.orderReceivedDate.HasValue)
-                                    {
-                                        if (!item.startAdaptation.HasValue)
+                            <td class="col-sm-2" style="text-align:center">
+                                <small>
+                                    @{
+                                        if (item.orderReceivedDate.HasValue)
                                         {
-                                            <label class="badge alert-success">@item.orderReceivedDate.Value.ToShortDateString()</label>
-                                        }
-                                        else
-                                        {
-                                            @item.orderReceivedDate.Value.ToShortDateString()
+                                            if (!item.startAdaptation.HasValue)
+                                            {
+                                                <label class="badge alert-success">@item.orderReceivedDate.Value.ToShortDateString()</label>
+                                            }
+                                            else
+                                            {
+                                                @item.orderReceivedDate.Value.ToShortDateString()
+                                            }
                                         }
                                     }
-                                }
-                            </small></td>
-                            <td class="col-sm-2" style="text-align:center"><small>
-                                @{ 
-                                    if(item.expectedDeliveryDate.HasValue)
-                                    {
-                                        @item.expectedDeliveryDate.Value.ToShortDateString()
+                                </small>
+                            </td>
+                            <td class="col-sm-2" style="text-align:center">
+                                <small>
+                                    @{
+                                        if (item.expectedDeliveryDate.HasValue)
+                                        {
+                                            @item.expectedDeliveryDate.Value.ToShortDateString()
+                                        }
                                     }
-                                }
-                            </small></td>
+                                </small>
+                            </td>
                             <td class="col-sm-2">
                                 <small>
                                     @{
@@ -106,50 +110,56 @@
                                     }
                                 </small>
                             </td>
-                            <td class="col-sm-2"><small>
-                                @{
-                                    if (item.startDubbing.HasValue && !item.shipmentLowRes.HasValue)
-                                    {
-                                        <label class="badge alert-success">@item.startDubbing.Value.ToShortDateString()</label>
+                            <td class="col-sm-2">
+                                <small>
+                                    @{
+                                        if (item.startDubbing.HasValue && !item.shipmentLowRes.HasValue)
+                                        {
+                                            <label class="badge alert-success">@item.startDubbing.Value.ToShortDateString()</label>
+                                        }
+                                        else if (!item.startDubbing.HasValue && item.plannedDubbing.HasValue)
+                                        {
+                                            @item.plannedDubbing.Value.ToShortDateString()
+                                        }
                                     }
-                                    else if (!item.startDubbing.HasValue && item.plannedDubbing.HasValue)
-                                    {
-                                        @item.plannedDubbing.Value.ToShortDateString()
+                                </small>
+                            </td>
+                            <td class="col-sm-2">
+                                <small>
+                                    @{
+                                        if (item.endDubbing.HasValue && !item.shipmentLowRes.HasValue && item.plannedUpload.HasValue)
+                                        {
+                                            <label class="badge alert-success">@item.plannedUpload.Value.ToShortDateString()</label>
+                                        }
+                                        else if (item.shipmentLowRes.HasValue)
+                                        {
+                                            @item.shipmentLowRes.Value.ToShortDateString()
+                                        }
+                                        else if (!item.endDubbing.HasValue && item.plannedUpload.HasValue)
+                                        {
+                                            @item.plannedUpload.Value.ToShortDateString()
+                                        }
                                     }
-                                }
-                            </small></td>
-                            <td class="col-sm-2"><small>
-                                @{
-                                    if (item.endDubbing.HasValue && !item.shipmentLowRes.HasValue && item.plannedUpload.HasValue)
-                                    {
-                                        <label class="badge alert-success">@item.plannedUpload.Value.ToShortDateString()</label>
+                                </small>
+                            </td>
+                            <td class="col-sm-2">
+                                <small>
+                                    @{
+                                        if (item.shipmentLowRes.HasValue && !item.shipmentFinal.HasValue && item.plannedShipment.HasValue)
+                                        {
+                                            <label class="badge alert-success">@item.plannedShipment.Value.ToShortDateString()</label>
+                                        }
+                                        else if (item.shipmentFinal.HasValue)
+                                        {
+                                            @item.shipmentFinal.Value.ToShortDateString()
+                                        }
+                                        else if (!item.shipmentFinal.HasValue && item.plannedShipment.HasValue)
+                                        {
+                                            @item.plannedShipment.Value.ToShortDateString()
+                                        }
                                     }
-                                    else if (item.shipmentLowRes.HasValue)
-                                    {
-                                        @item.shipmentLowRes.Value.ToShortDateString()
-                                    }
-                                    else if (!item.endDubbing.HasValue && item.plannedUpload.HasValue)
-                                    {
-                                        @item.plannedUpload.Value.ToShortDateString()
-                                    }
-                                }
-                            </small></td>
-                            <td class="col-sm-2"><small>
-                                @{
-                                    if (item.shipmentLowRes.HasValue && !item.shipmentFinal.HasValue && item.plannedShipment.HasValue)
-                                    {
-                                        <label class="badge alert-success">@item.plannedShipment.Value.ToShortDateString()</label>
-                                    }
-                                    else if (item.shipmentFinal.HasValue)
-                                    {
-                                        @item.shipmentFinal.Value.ToShortDateString()
-                                    }
-                                    else if (!item.shipmentFinal.HasValue && item.plannedShipment.HasValue)
-                                    {
-                                        @item.plannedShipment.Value.ToShortDateString()
-                                    }
-                                }    
-                            </small></td>
+                                </small>
+                            </td>
                         </tr>
                     </tbody>
                 </table>

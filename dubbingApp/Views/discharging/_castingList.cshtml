@@ -6,8 +6,13 @@
     <div class="panel panel-default">
         <div class="panel-heading">
             <div class="row">
+                <div class="col-sm-1">
+                    <button class="btn btn-default btn-xs pull-left" onclick="onDischargeClick(@ViewBag.orderItem)" title="Download Discharging Table">
+                        <span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span>
+                    </button>
+                </div>
                 <div class="col-sm-10">
-                    <label>Characters List Participating in @ViewBag.workEpisode</label>
+                    <label>Characters List For @ViewBag.workEpisode</label>
                 </div>
                 @{ 
                     string btnColor = "btn-default";
@@ -16,7 +21,7 @@
                         btnColor = "btn-success";
                     }
                 }
-                <div class="col-sm-2">
+                <div class="col-sm-1">
                     <button class="btn @btnColor btn-xs pull-right" id="calendarBtn" onclick="onGenerateCalendarClick(@ViewBag.orderItem)" title="Generate Calendar">
                         <span class="glyphicon glyphicon-calendar" aria-hidden="true"></span>
                     </button>
@@ -24,13 +29,14 @@
             </div>
         </div>
         <div class="panel-body">
-            <div class="row">
+            <div class="row" style="border-bottom-width:thin; border-bottom-style:solid; border-bottom-color:lightgray">
                 <div class="col-sm-3"><label><small>Character</small></label></div>
-                <div class="col-sm-2"><label><small>Total Scenes</small></label></div>
-                <div class="col-sm-3"><label><small>Actor</small></label></div>
-                <div class="col-sm-3"><label><small>Anonymous</small></label></div>
-                <div class="col-sm-1"><label><small>#</small></label></div>
+                <div class="col-sm-1"><label><small>Total Scenes</small></label></div>
+                <div class="col-sm-3"><label><small>Cast</small></label></div>
+                <div class="col-sm-3"><label><small>Actor Name</small></label></div>
+                <div class="col-sm-1 pull-right"><label><small>#</small></label></div>
             </div>
+            <br />
             @foreach (var item in Model)
             {
                 <div class="row">

@@ -20,7 +20,7 @@
         </small>
     </div>
 
-    <div class="form-group-sm col-sm-2">
+    <div class="form-group-sm col-sm-1">
         <small>
             @Html.DisplayFor(model => model.totalScenes, new { htmlAttributes = new { @class = "form-control-static" } })
         </small>
@@ -38,9 +38,12 @@
         </small>
     </div>
 
-    <div class="form-group-sm col-sm-1">
-        <button type="submit" class="btn btn-default btn-xs" title="Save">
+    <div class="form-group-sm col-sm-2">
+        <button type="submit" class="btn btn-default btn-xs pull-right" title="Save">
             <span class="glyphicon glyphicon-floppy-disk" aria-hidden="true"></span>
+        </button>
+        <button type="button" class="btn btn-default btn-xs pull-right" onclick="onEndorseClick(@Model.dubbSheetHdrIntno)" title="Endorse Dubbing">
+            <span class="glyphicon glyphicon-thumbs-up" aria-hidden="true"></span>
         </button>
     </div>
 }

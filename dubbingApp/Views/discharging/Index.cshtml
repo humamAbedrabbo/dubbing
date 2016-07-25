@@ -7,13 +7,16 @@
 <div class="container-fluid">
     <div class="jumbotron" style="padding:5px">
         <h2>Casting</h2>
-        <p class="lead"><h5>Review and Enhance the System Provided Casting. New or Secondary Characters are Casted Anonymously which Shall Require Providing Actors, and that is prior to Generating Dubbing Calendar.</h5></p>
+        <p class="lead"><h5>Review and Enhance the System Provided Casting. New or Secondary Characters are Casted Anonymously which Shall Require Providing Actors prior to Generating Dubbing Calendar and/or Discharging Table in case of Manual Dubbing.</h5></p>
     </div>
+    
+    <div class="row" id="dischargeTable"></div>
+
     <div class="row">
-        <div class="col-sm-3">
+        <div class="col-sm-3" id="episodesList">
             @Html.Action("episodesList", "discharging")
         </div>
-        <div class="col-sm-9" id="episodesList">
+        <div class="col-sm-9" id="castingList">
             
         </div>
     </div>
@@ -34,7 +37,7 @@
                 type: 'GET',
                 data: { orderItem: oi },
                 success: function (result) {
-                    $('#episodesList').html(result);
+                    $('#castingList').html(result);
                 }
             });
         }
@@ -45,7 +48,7 @@
                 type: 'GET',
                 data: { orderItem: oi },
                 success: function (result) {
-                    $('#episodesList').html(result);
+                    $('#castingList').html(result);
                 }
             });
         }
@@ -65,5 +68,39 @@
             });
         }
 
+        function onEndorseClick(sheetHdr1) {
+            if (confirm("Please Confirm! About to Manually Endorse Dubbing of ALL Scenes for the selected Actor.")) {
+                $.ajax({
+                    url: '@Url.Action("endorseDubbing", "discharging")',
+                    type: 'GET',
+                    data: { sheetHdr: sheetHdr1 },
+                    success: function (result) {
+                        alert(result);
+                    }
+                });
+            }
+        }
+
+        function onDischargeClick(orderItem1) {
+            $.ajax({
+                url: '@Url.Action("exportDischargingTable", "discharging")',
+                type: 'GET',
+                data: { orderItem: orderItem1 },
+                success: function (result) {
+                    $('#dischargeTable').html(result);
+                    $('#castingList').hide();
+                    $('#episodesList').hide();
+                    $('#dischargeTable').show();
+                }
+            });
+        }
+
+        function onCloseClick() {
+            $('#dischargeTable').html(null);
+            $('#dischargeTable').hide();
+            $('#castingList').show();
+            $('#episodesList').show();
+            
+        }
     </script>
 }

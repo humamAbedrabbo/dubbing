@@ -34,10 +34,11 @@ namespace dubbingApp.Controllers
 
         public ActionResult orderItemsList(long? work, string stage, int? fromEpisode, int? thruEpisode)
         {
-            var x = db.orderTrnHdrs.Include(b => b.workOrder).Include(b => b.agreementWork)
-                                    .Where(b => (!work.HasValue || b.workIntno == work) 
+            var x = db.orderTrnHdrs.Include(b => b.agreementWork)
+                                    .Where(b => b.agreementWork.status == "01"
+                                            && (!work.HasValue || b.workIntno == work)
                                             && (!fromEpisode.HasValue || b.episodeNo >= fromEpisode)
-                                            && (!thruEpisode.HasValue || b.episodeNo <= thruEpisode )
+                                            && (!thruEpisode.HasValue || b.episodeNo <= thruEpisode)
                                             );
             var model = x;
             DateTime todayDate = DateTime.Today.Date;
@@ -48,7 +49,7 @@ namespace dubbingApp.Controllers
                     break;
                 case "02": //delayed adaptation
                     model = x.Where(b => b.startAdaptation.HasValue && !b.endAdaptation.HasValue && !b.startDubbing.HasValue
-                            && b.startDischarge.HasValue && b.startDischarge.Value < todayDate  && b.status != "06");
+                            && b.startDischarge.HasValue && b.startDischarge.Value < todayDate && b.status != "06");
                     break;
                 case "03": //delayed dubbing
                     model = x.Where(b => b.startDubbing.HasValue && (!b.endDubbing.HasValue || !b.endMixage.HasValue || !b.endMontage.HasValue)

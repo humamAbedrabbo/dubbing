@@ -93,7 +93,10 @@
         })
 
         function onActorSelectClick(actor1, actorName1) {
-            $('#currentActorHF').val();
+            $('#currentActorHF').val(actor1);
+            $('#dialogueControlHF').val(null);
+            $('#dialoguesList').html(null);
+            refreshStudio(null, null, null, null);
             $.ajax({
                 url: '@Url.Action("scenesList", "dubbing")',
                 type: 'GET',
@@ -133,7 +136,12 @@
 
         function refreshStudio(workName1, episode1, scene1, startTimeCode) {
             $('#currentWork').html(workName1);
-            $('#currentEpisode').html("Episode " + episode1);
+            if (episode1 !== null) {
+                $('#currentEpisode').html("Episode " + episode1);
+            }
+            else {
+                $('#currentEpisode').html(null);
+            }
             
             var timeCode;
             var scene;

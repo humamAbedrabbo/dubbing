@@ -6,6 +6,9 @@ using System.Web;
 using System.Web.Mvc;
 using dubbingModel;
 using dubbingApp.Models;
+using System.Web.UI.WebControls;
+using System.IO;
+using System.Web.UI;
 
 namespace dubbingApp.Controllers
 {
@@ -153,6 +156,46 @@ namespace dubbingApp.Controllers
                 db.SaveChanges();
                 return Content("Calendar Generated / Updated Successfully.", "text/html");
             }
+        }
+
+        public ActionResult endorseDubbing(long sheetHdr)
+        {
+            var model = db.dubbingSheetDtls;
+            var x = db.subtitles.Include(b => b.dialog).Where(b => b.dubbSheetHdrIntno == sheetHdr).Select(b => b.dialog.sceneIntno).Distinct();
+            
+            foreach(var item in x)
+            {
+                var y = db.scenes.Find(item);
+                long orderItem = y.orderTrnHdrIntno;
+                short sceneNo = y.sceneNo;
+                var z = db.dubbingSheetDtls.FirstOrDefault(b => b.dubbSheetHdrIntno == sheetHdr && b.orderTrnHdrIntno == orderItem && b.sceneNo == sceneNo);
+                if (z == null)
+                {
+                    dubbingSheetDtl dtl = new dubbingSheetDtl();
+                    dtl.dubbSheetHdrIntno = sheetHdr;
+                    dtl.orderTrnHdrIntno = orderItem;
+                    dtl.sceneNo = sceneNo;
+                    dtl.isTaken = true;
+                    dtl.takenTimeStamp = DateTime.Now;
+                    model.Add(dtl);
+                }
+                else
+                {
+                    z.isTaken = true;
+                }
+            }
+            db.SaveChanges();
+            return Content("Dubbing Endorsed Successfully.", "text/html");
+        }
+
+        public ActionResult exportDischargingTable(long orderItem)
+        {
+            var model = db.subtitles.Include(b => b.dialog.scene.orderTrnHdr).Include(b => b.dubbingSheetHdr)
+                        .Where(b => b.dialog.scene.orderTrnHdrIntno == orderItem);
+                        
+            var x = db.orderTrnHdrs.Include(b => b.agreementWork).FirstOrDefault(b => b.orderTrnHdrIntno == orderItem);
+            ViewBag.episode = x.agreementWork.workName + " / Episode " + x.episodeNo;
+            return PartialView("_exportDischargingTable", model.ToList());
         }
     }
 }

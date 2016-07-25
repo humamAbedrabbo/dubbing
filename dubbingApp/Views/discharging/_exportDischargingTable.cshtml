@@ -1,0 +1,46 @@
+﻿@model IEnumerable<dubbingModel.subtitle>
+
+<div class="container-fluid">
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <div class="row">
+                <div class="col-sm-10">
+                    <label>Discharging Table: @ViewBag.episode</label>
+                </div>
+                <div class="col-sm-2">
+                    <button class="btn btn-default btn-xs pull-right" onclick="onCloseClick()" title="Close">
+                        <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div class="panel-body">
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th class="col-sm-2"><small>Actor</small></th>
+                        <th class="col-sm-2"><small>Character</small></th>
+                        <th class="col-sm-8"><small>Scenes</small></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach(var actor in Model.Select(b => new { b.dubbingSheetHdr.actorName, b.dubbingSheetHdr.characterName }).Distinct())
+                    {
+                        <tr>
+                            <td class="col-sm-2"><small>@actor.actorName</small></td>
+                            <td class="col-sm-2"><small>@actor.characterName</small></td>
+                            <td class="col-sm-8">
+                                @foreach(var scene in Model.Where(b => b.dubbingSheetHdr.actorName == actor.actorName && b.dubbingSheetHdr.characterName == actor.characterName).Select(b => b.dialog.scene.sceneNo).Distinct().OrderBy(b => b))
+                                {
+                                    <span>
+                                        <label style="width:25px; border:thin; border-style:solid; border-color:gray; text-align:center">@scene</label>
+                                    </span>
+                                }
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

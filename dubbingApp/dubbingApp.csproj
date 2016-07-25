@@ -492,6 +492,7 @@
     <Content Include="Views\assembly\_carriersList.cshtml" />
     <Content Include="Views\assembly\_carriersAddNew.cshtml" />
     <Content Include="Views\assembly\_carriersUpdate.cshtml" />
+    <Content Include="Views\discharging\_exportDischargingTable.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

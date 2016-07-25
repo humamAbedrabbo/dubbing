@@ -7,15 +7,15 @@
         if (str.dubbSheetHdrIntno == sheetHdr)
         {
             <div class="row">
-                <div class="col-sm-4"><strong>@str.dubbingSheetHdr.characterName</strong></div>
-                <div class="col-sm-8">@str.scentence</div>
+                <div class="col-sm-9">@str.scentence</div>
+                <div class="col-sm-3"><strong>@str.dubbingSheetHdr.characterName:</strong></div>
             </div>
         }
         else
         {
-            <div class="row" style="background-color:lightgray">
-                <div class="col-sm-4"><strong>@str.dubbingSheetHdr.characterName</strong></div>
-                <div class="col-sm-8">@str.scentence</div>
+            <div class="row" style="color:lightgray">
+                <div class="col-sm-9">@str.scentence</div>
+                <div class="col-sm-3"><strong>@str.dubbingSheetHdr.characterName:</strong></div>
             </div>
         }
     }

@@ -116,7 +116,10 @@ namespace dubbingApp.Controllers
 
         public ActionResult dialoguesList(long sceneId, long sheetHdr)
         {
-            var model = db.dialogs.Where(b => b.sceneIntno == sceneId).OrderBy(b => b.dialogNo);
+            var model = (from A in db.dialogs
+                         join B in db.subtitles on A.dialogIntno equals B.dialogIntno
+                         where B.dubbSheetHdrIntno == sheetHdr && A.sceneIntno == sceneId
+                         select A).Distinct().OrderBy(b => b.dialogNo);
             ViewBag.sheetHdr = sheetHdr;
             return PartialView("_dialoguesList", model.ToList());
         }
