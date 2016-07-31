@@ -26,36 +26,13 @@
             </p>
         }
     </div>
-    <div class="col-sm-6 container-fluid" style="padding:0px">
-        <div class="row container-fluid" id="epFilters" style="padding:0px; padding-bottom:10px; padding-left:10px">
-            <div class="col-sm-4">
-                <label><small>Episodes</small></label>
-                <span><small><input class="episodeFilter" id="fromEpisode" style="width:30px" /></small>&nbsp;-</span>
-                <span><small><input class="episodeFilter" id="thruEpisode" style="width:30px" /></small></span>
-            </div>
-            <div class="col-sm-2" style="padding:0px">
-                <div class="btn-group">
-                    <button class="btn btn-primary btn-xs" onclick="onFilterClick()" title="All Episodes">All</button>&nbsp;
-                    <button class="btn btn-default btn-xs" onclick="onFilterClick('06')" title="Endorsed Episodes">Archive</button>
-                </div>
-            </div>
-            <div class="col-sm-6" style="padding:0px">
-                <div class="btn-group pull-right">
-                    <button class="btn btn-info btn-xs" onclick="onFilterClick('02')" title="Delayed Adaptation">! Adaptation</button>&nbsp;
-                    <button class="btn btn-warning btn-xs" onclick="onFilterClick('03')" title="Delayed Dubbing">! Dubbing</button>&nbsp;
-                    <button class="btn btn-danger btn-xs" onclick="onFilterClick('04')" title="Delayed Upload">! Upload</button>
-                    <button class="btn btn-danger btn-xs" onclick="onFilterClick('05')" title="Delayed Shipment">! Shipment</button>
-                </div>
-            </div>
-        </div>
-        <div class="row container-fluid" id="oList" style="padding:0px; padding-bottom:10px; padding-left:10px">
-            @Html.Action("orderItemsList", "orders", new { stage = "01" })
-        </div>
+    <div class="col-sm-6 container-fluid" id="oList" style="padding:0px">
+        @Html.Action("orderItemsList", "orders", new { epFilter = "01" })
     </div>
     
     <div class="col-sm-4 container-fluid" style="padding:0px">
-        <div id="tips">
-            @Html.Action("tips", "orders")
+        <div>
+            @Html.Partial("_filters")
         </div>
         <div id="allDetails"></div>
     </div>
@@ -76,7 +53,7 @@
                 $.ajax({
                     url: '@Url.Action("orderItemsList", "orders")',
                     type: 'GET',
-                    data: { work: $('#workIntnoHF').val(), stage: null, fromEpisode: $('#fromEpisode').val(), thruEpisode: $('#thruEpisode').val() },
+                    data: { work: $('#workIntnoHF').val(), epFilter: null, fromEpisode: $('#fromEpisode').val(), thruEpisode: $('#thruEpisode').val() },
                     success: function (result) {
                         $('#oList').html(result);
                     }
@@ -84,17 +61,31 @@
             })
         })
 
-        function onWorkSelectClick(work1, stage1, workLbl) {
+        function onWorkSelectClick(work1, epFilter1, workLbl) {
             $('#fromEpisode').val(null);
             $('#thruEpisode').val(null);
             $('.workLbl').css('background-color', 'white');
             $('#' + workLbl).css('background-color', 'silver');
             $('#workIntnoHF').val(work1);
+            onCloseClick();
 
             $.ajax({
                 url: '@Url.Action("orderItemsList", "orders")',
                 type: 'GET',
-                data: { work: work1, stage: stage1 },
+                data: { work: work1, epFilter: epFilter1 },
+                success: function (result) {
+                    $('#oList').html(result);
+                }
+            })
+        }
+
+        function onFilterClick(filter) {
+            $('#fromEpisode').val(null);
+            $('#thruEpisode').val(null);
+            $.ajax({
+                url: '@Url.Action("orderItemsList", "orders")',
+                type: 'GET',
+                data: { work: $('#workIntnoHF').val(), epFilter: filter },
                 success: function (result) {
                     $('#oList').html(result);
                 }
@@ -104,7 +95,6 @@
         function onCloseClick() {
             $('#allDetails').html(null);
             $('#oiCard').val(null);
-            $('#tips').fadeIn();
         }
         function onActionCloseClick() {
             $('#selectionAction').html(null);
@@ -132,23 +122,10 @@
                 }
             })
         }
-        function onFilterClick(filter) {
-            $('#fromEpisode').val(null);
-            $('#thruEpisode').val(null);
-            $.ajax({
-                url: '@Url.Action("orderItemsList", "orders")',
-                type: 'GET',
-                data: { work: null, stage: filter },
-                success: function (result) {
-                    $('#oList').html(result);
-                }
-            })
-        }
 
         function onOrderAddNewClick() {
             $('#fromEpisode').val(null);
             $('#thruEpisode').val(null);
-            $('#tips').fadeOut();
             $.ajax({
                 url: '@Url.Action("orderAddNew", "orders")',
                 type: 'GET',
@@ -174,7 +151,6 @@
                 type: 'GET',
                 data: { id: oItem },
                 success: function (result) {
-                    $('#tips').fadeOut();
                     $('#allDetails').html(result);
                 }
             })
@@ -240,7 +216,6 @@
                         url: '@Url.Action("orderItemSelectList", "orders")',
                         type: 'GET',
                         success: function (result) {
-                            $('#tips').fadeOut();
                             $('#allDetails').html(result);
                             $('#oiCard').append($('<li/>', { id: oItem, html: x }));
                         }
@@ -298,7 +273,6 @@
                 type: 'GET',
                 data: { id: oItem },
                 success: function (result) {
-                    $('#tips').fadeOut();
                     $('#allDetails').html(result);
                 }
             })
@@ -322,7 +296,6 @@
                 type: 'GET',
                 data: { id: oItem },
                 success: function (result) {
-                    $('#tips').fadeOut();
                     $('#allDetails').html(result);
                 }
             })

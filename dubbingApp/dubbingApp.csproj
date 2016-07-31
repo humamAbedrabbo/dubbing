@@ -406,7 +406,7 @@
     <Content Include="Views\orders\_orderItemDetails.cshtml" />
     <Content Include="Views\orders\_orderItemComplainsList.cshtml" />
     <Content Include="Views\orders\_orderItemComplainAddNew.cshtml" />
-    <Content Include="Views\orders\_tips.cshtml" />
+    <Content Include="Views\orders\_filters.cshtml" />
     <Content Include="Views\calendar\Index.cshtml" />
     <Content Include="Views\calendar\_actorsList.cshtml" />
     <Content Include="Views\dubbing\Index.cshtml" />

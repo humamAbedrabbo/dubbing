@@ -1,0 +1,54 @@
+﻿<div class="container-fluid" style="padding:0px">
+    <div class="panel panel-primary">
+        <div class="panel-heading">
+            <div class="row">
+                <div class="col-sm-9">
+                    <label>Search Episodes ...</label>
+                </div>
+                <div class="col-sm-3">
+                    <button class="btn btn-default btn-xs pull-right" onclick="onFilterClick()" title="All Episodes">Clear</button>&nbsp;
+                </div>
+            </div>
+        </div>
+        <div class="panel-body" style="padding-right:0px">
+            <div class="row">
+                <div class="col-sm-3">
+                    <label><small>Episodes</small></label>
+                </div>
+                <div class="col-sm-6">
+                    <span><small><input class="episodeFilter" id="fromEpisode" style="width:60px" /></small>&nbsp;-</span>
+                    <span><small><input class="episodeFilter" id="thruEpisode" style="width:60px" /></small></span>
+                </div>
+                <div class="col-sm-3">
+                    <button class="btn btn-success btn-xs" onclick="onFilterClick('06')" title="Endorsed Episodes">Archive</button>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-sm-3">
+                    <label><small>Delayed ...</small></label>
+                </div>
+                <div class="col-sm-9">
+                    <div class="btn-group">
+                        <button class="btn btn-info btn-xs" onclick="onFilterClick('02')" title="Find">Adaptation</button>&nbsp;
+                        <button class="btn btn-warning btn-xs" onclick="onFilterClick('03')" title="Find">Dubbing</button>&nbsp;
+                        <button class="btn btn-danger btn-xs" onclick="onFilterClick('04')" title="Find">Upload</button>
+                        <button class="btn btn-warning btn-xs" onclick="onFilterClick('05')" title="Find">Shipment</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-sm-3">
+                    <label><small>Issues ...</small></label>
+                </div>
+                <div class="col-sm-9">
+                    <div class="btn-group">
+                        <button class="btn btn-info btn-xs" onclick="onFilterClick('07')" title="Find">Received Quality</button>&nbsp;
+                        <button class="btn btn-danger btn-xs" onclick="onFilterClick('08')" title="Find">Client Claims</button>&nbsp;
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

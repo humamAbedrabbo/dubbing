@@ -27,12 +27,7 @@ namespace dubbingApp.Controllers
             return View();
         }
 
-        public ActionResult tips()
-        {
-            return PartialView("_tips");
-        }
-
-        public ActionResult orderItemsList(long? work, string stage, int? fromEpisode, int? thruEpisode)
+        public ActionResult orderItemsList(long? work, string epFilter, int? fromEpisode, int? thruEpisode)
         {
             var x = db.orderTrnHdrs.Include(b => b.agreementWork)
                                     .Where(b => b.agreementWork.status == "01"
@@ -42,7 +37,7 @@ namespace dubbingApp.Controllers
                                             );
             var model = x;
             DateTime todayDate = DateTime.Today.Date;
-            switch (stage)
+            switch (epFilter)
             {
                 case "01": //New
                     model = x.Where(b => !b.startAdaptation.HasValue && b.status != "06");
@@ -65,6 +60,17 @@ namespace dubbingApp.Controllers
                     break;
                 case "06": //Archive: endorsed orders
                     model = x.Where(b => b.status == "06");
+                    break;
+                case "07": //episodes with received quality issues
+                    model = (from A in x
+                             join B in db.orderChecks on A.orderTrnHdrIntno equals B.orderTrnHdrIntno
+                             select A);
+                    break;
+                case "08": //episodes having client claims open
+                    model = (from A in x
+                             join B in db.clientClaims on A.orderTrnHdrIntno equals B.orderTrnHdrIntno
+                             where B.status == true
+                             select A);
                     break;
                 default:
                     model = x.Where(b => b.status != "06");
