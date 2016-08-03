@@ -49,13 +49,13 @@ namespace dubbingApp.Controllers
                     model = x.Where(b => string.IsNullOrEmpty(b.accountNo));
                     break;
                 case "04":
-                    model = (from A in x
+                    model = (from A in db.voiceActors
                              join B in db.workActors on A.voiceActorIntno equals B.voiceActorIntno
                              join C in db.agreementWorks on B.workIntno equals C.workIntno
-                             join D in db.workCharges on C.workIntno equals D.workIntno
-                             join E in db.workCharges on A.voiceActorIntno equals E.workPartyIntno
-                             where C.status == "01" && E.workPartyType == "01" && E.status == true
-                             select A).Distinct();
+                             where A.voiceActorIntno != 0 && C.status == "01"
+                                     && !(from O in db.workCharges where O.workPartyType == "01" && O.status == true select O.workPartyIntno).Contains(A.voiceActorIntno)
+                                     && !(from O in db.workCharges where O.workPartyType == "01" && O.status == true select O.workIntno).Contains(C.workIntno)
+                             select A);
                     break;
                 default:
                     break;
@@ -82,12 +82,12 @@ namespace dubbingApp.Controllers
             filtersList = filtersList + ";" + cnt.ToString();
 
             //uncharged
-            cnt = (from A in x
+            cnt = (from A in db.voiceActors
                    join B in db.workActors on A.voiceActorIntno equals B.voiceActorIntno
                    join C in db.agreementWorks on B.workIntno equals C.workIntno
-                   join D in db.workCharges on C.workIntno equals D.workIntno
-                   join E in db.workCharges on A.voiceActorIntno equals E.workPartyIntno
-                   where C.status == "01" && E.workPartyType == "01" && E.status == true
+                   where A.voiceActorIntno != 0 && C.status == "01"
+                           && !(from O in db.workCharges where O.workPartyType == "01" && O.status == true select O.workPartyIntno).Contains(A.voiceActorIntno)
+                           && !(from O in db.workCharges where O.workPartyType == "01" && O.status == true select O.workIntno).Contains(C.workIntno)
                    select A).Distinct().Count();
             filtersList = filtersList + ";" + cnt.ToString();
 

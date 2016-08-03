@@ -43,13 +43,13 @@ namespace dubbingApp.Controllers
                     model = x.Where(b => string.IsNullOrEmpty(b.accountNo));
                     break;
                 case "04":
-                    model = (from A in x
+                    model = (from A in db.employees
                              join B in db.workPersonnels on A.empIntno equals B.empIntno
                              join C in db.agreementWorks on B.workIntno equals C.workIntno
-                             join D in db.workCharges on C.workIntno equals D.workIntno
-                             join E in db.workCharges on A.empIntno equals E.workPartyIntno
-                             where C.status == "01" && E.workPartyType == "02" && E.status == true
-                             select A).Distinct();
+                             where C.status == "01"
+                                    && !(from O in db.workCharges where O.workPartyType == "02" && O.status == true select O.workPartyIntno).Contains(A.empIntno)
+                                    && !(from O in db.workCharges where O.workPartyType == "02" && O.status == true select O.workIntno).Contains(C.workIntno)
+                             select A);
                     break;
                 default:
                     break;
@@ -78,13 +78,13 @@ namespace dubbingApp.Controllers
             filtersList = filtersList + ";" + cnt.ToString();
 
             //uncharged
-            cnt = (from A in x
-                    join B in db.workPersonnels on A.empIntno equals B.empIntno
-                    join C in db.agreementWorks on B.workIntno equals C.workIntno
-                    join D in db.workCharges on C.workIntno equals D.workIntno
-                    join E in db.workCharges on A.empIntno equals E.workPartyIntno
-                    where C.status == "01" && E.workPartyType == "02" && E.status == true
-                    select A).Distinct().Count();
+            cnt = (from A in db.employees
+                   join B in db.workPersonnels on A.empIntno equals B.empIntno
+                   join C in db.agreementWorks on B.workIntno equals C.workIntno
+                   where C.status == "01"
+                        && !(from O in db.workCharges where O.workPartyType == "02" && O.status == true select O.workPartyIntno).Contains(A.empIntno)
+                        && !(from O in db.workCharges where O.workPartyType == "02" && O.status == true select O.workIntno).Contains(C.workIntno)
+                   select A).Distinct().Count();
             filtersList = filtersList + ";" + cnt.ToString();
 
             ViewBag.filtersList = filtersList;
