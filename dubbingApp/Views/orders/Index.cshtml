@@ -31,8 +31,8 @@
     </div>
     
     <div class="col-sm-4 container-fluid" style="padding:0px">
-        <div>
-            @Html.Partial("_filters")
+        <div id="filterSettings">
+            @Html.Action("filterSettings", "orders", new { epFilter = "01" })
         </div>
         <div id="allDetails"></div>
     </div>
@@ -48,18 +48,19 @@
                 $('#w0').css('background-color', 'silver');
                 $('#selectedItemsHF').val(0);
             })
-
-            $('.episodeFilter').change(function () {
-                $.ajax({
-                    url: '@Url.Action("orderItemsList", "orders")',
-                    type: 'GET',
-                    data: { work: $('#workIntnoHF').val(), epFilter: null, fromEpisode: $('#fromEpisode').val(), thruEpisode: $('#thruEpisode').val() },
-                    success: function (result) {
-                        $('#oList').html(result);
-                    }
-                })
-            })
         })
+
+        function onFindEpisodesClick() {
+            $('#allDetails').html(null);
+            $.ajax({
+                url: '@Url.Action("orderItemsList", "orders")',
+                type: 'GET',
+                data: { work: $('#workIntnoHF').val(), epFilter: null, fromEpisode: $('#fromEpisode').val(), thruEpisode: $('#thruEpisode').val() },
+                success: function (result) {
+                    $('#oList').html(result);
+                }
+            })
+        }
 
         function onWorkSelectClick(work1, epFilter1, workLbl) {
             $('#fromEpisode').val(null);
@@ -76,12 +77,21 @@
                 success: function (result) {
                     $('#oList').html(result);
                 }
+            });
+            $.ajax({
+                url: '@Url.Action("filterSettings", "orders")',
+                type: 'GET',
+                data: { work: work1 },
+                success: function (result) {
+                    $('#filterSettings').html(result);
+                }
             })
         }
 
         function onFilterClick(filter) {
             $('#fromEpisode').val(null);
             $('#thruEpisode').val(null);
+            $('#allDetails').html(null);
             $.ajax({
                 url: '@Url.Action("orderItemsList", "orders")',
                 type: 'GET',

@@ -6,49 +6,37 @@
 <div class="container-fluid">
     <div class="jumbotron" style="padding:5px">
         <h2>Actors Master</h2>
-        <p class="lead"><h5>Maintain Voice Actors Records, Define New, Update and Delete Actors.</h5></p>
+        <p class="lead"><h5>Maintain Voice Actors Records, Add New, Update and Delete Actors. In addition, You can maintain Actors Charges Against assigned Works.</h5></p>
+        <p><a href="#" class="btn btn-primary btn-xs" onclick="onActorsAddNewClick()">Add New Actor &raquo;</a></p>
     </div>
     <div class="row">
-        <div class="container-fluid col-sm-9">
-            <div class="panel-default">
+        <div class="container-fluid col-sm-8">
+            <div class="panel panel-default">
                 <div class="panel-heading">
                     <div class="row">
                         @Html.Hidden("status")
-                        <div class="col-sm-11">
-                            <button class="btn btn-success btn-xs" id="active" onclick="onActiveClick(true)" title="Active">
-                                <span class="glyphicon glyphicon-thumbs-up" aria-hidden="true"></span>
+                        <div class="col-sm-12 btn-group-xs pull-right">
+                            @foreach (char alpha in ViewBag.alphaList)
+                            {
+                                <button class="btn btn-default btn-xs alphaBtn" id="@alpha" onclick="onFilterClick('@alpha')">@alpha</button>
+                            }
+                            <button class="btn btn-success btn-xs alphaBtn" id="ALL" onclick="onFilterClick(null)" title="All">
+                                <span class="glyphicon glyphicon-asterisk"></span>
                             </button>
-                            <button class="btn btn-default btn-xs" id="inactive" onclick="onActiveClick(false)" title="Archive">
-                                <span class="glyphicon glyphicon-thumbs-down" aria-hidden="true"></span>
-                            </button>
-                            <label>Voice Actors List</label> &nbsp;
-                        </div>
-                        <div class="col-sm-1">
-                            <button class="btn btn-default btn-xs pull-right" onclick="onActorsAddNewClick()" title="Create New">
-                                <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
-                            </button>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-sm-12">
-                            <div class="btn-group-xs pull-right">
-                                @foreach (char alpha in ViewBag.alphaList)
-                                {
-                                    <button class="btn btn-default btn-xs alphaBtn" id="@alpha" onclick="onFilterClick('@alpha')">@alpha</button>
-                                }
-                                <button class="btn btn-success btn-xs alphaBtn" id="ALL" onclick="onFilterClick(null)" title="All">
-                                    <span class="glyphicon glyphicon-asterisk"></span>
-                                </button>
-                            </div>
                         </div>
                     </div>
                 </div>
                 <div class="panel-body" id="listPartial">
-                    @Html.Action("actorsList", "actors", new { isActive = true })
+                    @Html.Action("actorsList", "actors", new { status = "01" })
                 </div>
             </div>
         </div>
-        <div class="container-fluid col-sm-3" id="detailsPartial"></div>
+        <div class="container-fluid col-sm-4" style="padding-left:0px">
+            <div>
+                @Html.Action("filterSettings")
+            </div>
+            <div id="detailsPartial"></div>
+        </div>
     </div>
 </div>
 
@@ -74,22 +62,14 @@
     @Scripts.Render("~/bundles/jqueryval")
 
     <script>
-        function onActiveClick(status) {
-            $('#status').val(status);
-            if (status === true) {
-                $('#active').removeClass('btn-default').addClass('btn-success');
-                $('#inactive').removeClass('btn-success').addClass('btn-default');
-            }
-            else {
-                $('#inactive').removeClass('btn-default').addClass('btn-success');
-                $('#active').removeClass('btn-success').addClass('btn-default');
-            }
+        function onStatusClick(status1) {
+            $('#status').val(status1);
             $('.alphaBtn').removeClass('btn-success').addClass('btn-default');
             $('#ALL').removeClass('btn-default').addClass('btn-success');
             $.ajax({
                 url: '@Url.Action("actorsList", "actors")',
                 type: 'GET',
-                data: { isActive: status },
+                data: { status: status1 },
                 success: function (result) {
                     $('#listPartial').html(result);
                 }
@@ -105,12 +85,12 @@
                 $('#' + filter).removeClass('btn-default').addClass('btn-success');
             }
             if ($('#status').val() === '') {
-                $('#status').val(true);
+                $('#status').val('01');
             }
             $.ajax({
                 url: '@Url.Action("actorsList", "actors")',
                 type: 'GET',
-                data: { isActive: $('#status').val(), alpha: filter },
+                data: { status: $('#status').val(), alpha: filter },
                 success: function (result) {
                     $('#listPartial').html(result);
                 }
@@ -175,7 +155,7 @@
             $.ajax({
                 url: '@Url.Action("actorsList", "actors")',
                 type: 'GET',
-                data: { isActive: true },
+                data: { status: '01' },
                 success: function (result) {
                     $('#listPartial').html(result);
                 }
@@ -193,7 +173,7 @@
             $.ajax({
                 url: '@Url.Action("actorsList", "actors")',
                 type: 'GET',
-                data: { isActive: true },
+                data: { status: '01' },
                 success: function (result) {
                     $('#listPartial').html(result);
                 }

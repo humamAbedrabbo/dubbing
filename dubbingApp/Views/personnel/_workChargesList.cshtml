@@ -3,58 +3,62 @@
 @{ long work; }
 
 <div class="container-fluid" style="padding:0px">
-    <div class="panel panel-default">
+    <div class="panel-primary">
         <div class="panel-heading">
             <div class="row">
-                <div class="col-sm-8">
-                    <small>Charges List</small>
-                </div>
-                <div class="col-sm-4">
-                    <button class="btn btn-default btn-xs pull-right" onclick="onCloseClick()" title="Close">
-                        <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
-                    </button>
-                    <button class="btn btn-default btn-xs" data-toggle="modal" data-target="#popupForm" onclick="onWorkChargesAddNewClick(@ViewBag.workPartyIntno)" title="New Charge">
+                <div class="col-sm-2">
+                    <button class="btn btn-default btn-xs pull-left" data-toggle="modal" data-target="#popupForm" onclick="onWorkChargesAddNewClick(@ViewBag.workPartyIntno)" title="New Charge">
                         <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
                     </button>
                 </div>
-            </div>
-        </div>
-    </div>
-    <br />
-    @foreach (SelectListItem item in ViewBag.worksList)
-    {
-        work = long.Parse(@item.Value);
-        <div class="panel panel-default">
-            <div class="panel-heading">
-                <div class="row">
-                    <div class="col-sm-12"><label><small>@item.Text</small></label></div>
+                <div class="col-sm-8">
+                    <label><small>Charges List</small></label>
+                </div>
+                <div class="col-sm-2">
+                    <button class="btn btn-default btn-xs pull-right" onclick="onCloseClick()" title="Close">
+                        <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+                    </button>
                 </div>
             </div>
-            <div class="panel-body">
-                <table class="table table-condensed">
-                    <thead>
-                        <tr>
-                            <th class="col-sm-8"><label><small>Rate</small></label></th>
-                            <th class="col-sm-4"><label><small>Since</small></label></th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach (dubbingModel.workCharge chrg in Model.Where(b => b.workIntno == work))
-                        {
-                            <tr>
-                                <td class="col-sm-8">
-                                    <small>
-                                        @chrg.chargeAmount &nbsp;
-                                        @LookupModels.decodeDictionaryItem("currencyCode", @chrg.currencyCode) &nbsp;/&nbsp;
-                                        @LookupModels.decodeDictionaryItem("chargeUom", @chrg.chargeUom)
-                                    </small>
-                                </td>
-                                <td class="col-sm-4"><small>@chrg.fromDate.ToShortDateString()</small></td>
-                            </tr>
-                        }
-                    </tbody>
-                </table>
-            </div>
         </div>
-    }
+
+        <div class="panel-body" style="padding:0px">
+            @foreach (SelectListItem item in ViewBag.worksList)
+            {
+                work = long.Parse(@item.Value);
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <div class="row">
+                            <div class="col-sm-12"><label><small>@item.Text</small></label></div>
+                        </div>
+                    </div>
+                    <div class="panel-body" style="padding-top:0px;padding-bottom:0px">
+                        <table class="table table-condensed">
+                            <thead>
+                                <tr>
+                                    <th class="col-sm-8"><label><small>Rate</small></label></th>
+                                    <th class="col-sm-4"><label><small>Since</small></label></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (dubbingModel.workCharge chrg in Model.Where(b => b.workIntno == work))
+                                {
+                                    <tr>
+                                        <td class="col-sm-8">
+                                            <small>
+                                                @chrg.chargeAmount &nbsp;
+                                                @LookupModels.decodeDictionaryItem("currencyCode", @chrg.currencyCode) &nbsp;/&nbsp;
+                                                @LookupModels.decodeDictionaryItem("chargeUom", @chrg.chargeUom)
+                                            </small>
+                                        </td>
+                                        <td class="col-sm-4"><small>@chrg.fromDate.ToShortDateString()</small></td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
 </div>

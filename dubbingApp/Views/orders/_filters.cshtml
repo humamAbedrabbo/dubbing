@@ -1,4 +1,7 @@
-﻿<div class="container-fluid" style="padding:0px">
+﻿@{ string s = ViewBag.settingsList;
+   string[] settingsList = s.Split(';'); }
+
+<div class="container-fluid" style="padding:0px">
     <div class="panel panel-primary">
         <div class="panel-heading">
             <div class="row">
@@ -16,37 +19,41 @@
                     <label><small>Episodes</small></label>
                 </div>
                 <div class="col-sm-6">
-                    <span><small><input class="episodeFilter" id="fromEpisode" style="width:60px" /></small>&nbsp;-</span>
-                    <span><small><input class="episodeFilter" id="thruEpisode" style="width:60px" /></small></span>
+                    <span><small><input class="episodeFilter" id="fromEpisode" style="width:50px" /></small>&nbsp;-</span>
+                    <span><small><input class="episodeFilter" id="thruEpisode" style="width:50px" /></small></span>&nbsp;
+                    <button class="btn btn-default btn-xs" onclick="onFindEpisodesClick()">Find</button>
                 </div>
                 <div class="col-sm-3">
-                    <button class="btn btn-success btn-xs" onclick="onFilterClick('06')" title="Endorsed Episodes">Archive</button>
+                    <button class="btn btn-default btn-xs" onclick="onFilterClick('06')" title="Endorsed Episodes">Archive</button>
+                </div>
+            </div>
+            <br />
+
+            <div class="row">
+                <div class="col-sm-3">
+                    <label><small>Delays In</small></label>
+                </div>
+                <div class="col-sm-9">
+                    <a href="#" onclick="onFilterClick('02')"><small>Adaptation</small></a>
+                    <span><label class="badge alert-info">@settingsList[0]</label></span>
+                    <a href="#" onclick="onFilterClick('03')"><small>Dubbing</small></a>
+                    <span><label class="badge alert-warning">@settingsList[1]</label></span>
+                    <a href="#" onclick="onFilterClick('04')"><small>Upload</small></a>
+                    <span><label class="badge alert-danger">@settingsList[2]</label></span>
+                    <a href="#" onclick="onFilterClick('05')"><small>Shipment</small></a>
+                    <span><label class="badge alert-warning">@settingsList[3]</label></span>
                 </div>
             </div>
 
             <div class="row">
                 <div class="col-sm-3">
-                    <label><small>Delayed ...</small></label>
+                    <label><small>Issues In</small></label>
                 </div>
                 <div class="col-sm-9">
-                    <div class="btn-group">
-                        <button class="btn btn-info btn-xs" onclick="onFilterClick('02')" title="Find">Adaptation</button>&nbsp;
-                        <button class="btn btn-warning btn-xs" onclick="onFilterClick('03')" title="Find">Dubbing</button>&nbsp;
-                        <button class="btn btn-danger btn-xs" onclick="onFilterClick('04')" title="Find">Upload</button>
-                        <button class="btn btn-warning btn-xs" onclick="onFilterClick('05')" title="Find">Shipment</button>
-                    </div>
-                </div>
-            </div>
-
-            <div class="row">
-                <div class="col-sm-3">
-                    <label><small>Issues ...</small></label>
-                </div>
-                <div class="col-sm-9">
-                    <div class="btn-group">
-                        <button class="btn btn-info btn-xs" onclick="onFilterClick('07')" title="Find">Received Quality</button>&nbsp;
-                        <button class="btn btn-danger btn-xs" onclick="onFilterClick('08')" title="Find">Client Claims</button>&nbsp;
-                    </div>
+                    <a href="#" onclick="onFilterClick('07')"><small>Received Quality</small></a>
+                    <span><label class="badge alert-warning">@settingsList[4]</label></span>
+                    <a href="#" onclick="onFilterClick('08')"><small>Client Claims</small></a>
+                    <span><label class="badge alert-danger">@settingsList[5]</label></span>
                 </div>
             </div>
         </div>

@@ -80,6 +80,65 @@ namespace dubbingApp.Controllers
             return PartialView("_orderItemsList", model.OrderBy(b => new { b.workIntno, b.episodeNo }).ToList());
         }
 
+        // filter settings
+        public ActionResult filterSettings(long? work, string epFilter)
+        {
+            string settingsList = null;
+            var x = db.orderTrnHdrs.Include(b => b.agreementWork)
+                                    .Where(b => b.agreementWork.status == "01"
+                                            && (!work.HasValue || b.workIntno == work)
+                                            && b.status != "06").ToList();
+            int cnt = 0;
+            DateTime todayDate = DateTime.Today.Date;
+
+            if (epFilter == "01") // for new episodes only where all of the counts are zero except received quality
+            {
+                cnt = (from A in x
+                       join B in db.orderChecks on A.orderTrnHdrIntno equals B.orderTrnHdrIntno
+                       where !A.startAdaptation.HasValue
+                       select A).Count();
+                settingsList = "0;0;0;0;" + cnt.ToString() + ";0";
+            }
+            else
+            {
+                // delayed adaptation
+                cnt = x.Where(b => b.startAdaptation.HasValue && !b.endAdaptation.HasValue && !b.startDubbing.HasValue
+                                && b.startDischarge.HasValue && b.startDischarge.Value < todayDate).Count();
+                settingsList = cnt.ToString() + ";";
+
+                // delayed dubbing
+                cnt = x.Where(b => b.startDubbing.HasValue && (!b.endDubbing.HasValue || !b.endMixage.HasValue || !b.endMontage.HasValue)
+                                && b.plannedUpload.HasValue && b.plannedUpload.Value < todayDate).Count();
+                settingsList = settingsList + cnt.ToString() + ";";
+
+                // delayed upload
+                cnt = x.Where(b => b.plannedUpload.HasValue && b.shipmentLowRes.HasValue && !b.shipmentFinal.HasValue
+                                && b.plannedUpload.Value < todayDate).Count();
+                settingsList = settingsList + cnt.ToString() + ";";
+
+                // delayed shipment
+                cnt = x.Where(b => b.plannedShipment.HasValue && b.shipmentLowRes.HasValue && !b.shipmentFinal.HasValue
+                                && b.plannedShipment.Value < todayDate).Count();
+                settingsList = settingsList + cnt.ToString() + ";";
+
+                // received quality issues
+                cnt = (from A in x
+                       join B in db.orderChecks on A.orderTrnHdrIntno equals B.orderTrnHdrIntno
+                       select A).Count();
+                settingsList = settingsList + cnt.ToString() + ";";
+
+                // client claims
+                cnt = (from A in x
+                       join B in db.clientClaims on A.orderTrnHdrIntno equals B.orderTrnHdrIntno
+                       where B.status == true
+                       select A).Count();
+                settingsList = settingsList + cnt.ToString();
+            }
+
+            ViewBag.settingsList = settingsList;
+            return PartialView("_filters");
+        }
+
         // new order
         public ActionResult orderAddNew(long? client)
         {
@@ -293,6 +352,7 @@ namespace dubbingApp.Controllers
                         dtl.orderTrnHdrIntno = id;
                         dtl.empIntno = editor.Value;
                         dtl.activityType = "02";
+                        dtlModel.Add(dtl);
                     }
                     else
                     {
@@ -309,6 +369,7 @@ namespace dubbingApp.Controllers
                         dtl.orderTrnHdrIntno = id;
                         dtl.empIntno = translator.Value;
                         dtl.activityType = "01";
+                        dtlModel.Add(dtl);
                     }
                     else
                     {
@@ -316,6 +377,7 @@ namespace dubbingApp.Controllers
                     }
                 }
             }
+
             db.SaveChanges();
             return Content("Successfully Assigned. ", "text/html");
         }

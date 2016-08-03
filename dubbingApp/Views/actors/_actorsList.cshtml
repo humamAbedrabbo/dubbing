@@ -5,39 +5,20 @@
         <thead>
             <tr>
                 <th class="col-sm-3"><label><small>Name</small></label></th>
-                <th class="col-sm-2"><label><small>Mobile</small></label></th>
-                <th class="col-sm-2"><label><small>LandLine</small></label></th>
-                <th class="col-sm-2"><label><small>email</small></label></th>
+                <th class="col-sm-6"><label><small>Contacts: Mobile / LandLine / email</small></label></th>
                 <th class="col-sm-1"><label><small>Account</small></label></th>
                 <th class="col-sm-2 pull-right"><label><small>#</small></label></th>
             </tr>
         </thead>
         <tbody>
-            @*@{ var chargesList = ViewBag.charges as List<dubbingApp.Models.ViewModels.customPair>; }*@
             @foreach (dubbingModel.voiceActor item in Model)
             {
                 <tr>
                     <td class="col-sm-3" title="@item.othFullName"><small>@item.fullName</small></td>
-                    <td class="col-sm-2"><small>@item.mobileNo</small></td>
-                    <td class="col-sm-2"><small>@item.landLineNo</small></td>
-                    <td class="col-sm-2"><small>@item.email</small></td>
+                    <td class="col-sm-6"><small>@item.mobileNo / @item.landLineNo / @item.email</small></td>
                     <td class="col-sm-1"><small>@item.accountNo</small></td>
                     <td class="col-sm-2">
                         <div class="pull-right">
-                            @*@{
-                                string btnColor = "btn-default";
-                                string workChrg = chargesList.Find(b => b.Key == item.voiceActorIntno).Value;
-                                if (workChrg != "03")
-                                {
-                                    if (workChrg == "02")
-                                    {
-                                        btnColor = "btn-warning";
-                                    }
-                                    <button class="btn @btnColor btn-xs" onclick="onWorkChargesClick(@item.voiceActorIntno)" title="Charges">
-                                        <span class="glyphicon glyphicon-usd" aria-hidden="true"></span>
-                                    </button>
-                                }
-                            }*@
                             <button class="btn btn-default btn-xs" onclick="onWorkChargesClick(@item.voiceActorIntno)" title="Charges">
                                 <span class="glyphicon glyphicon-usd" aria-hidden="true"></span>
                             </button>

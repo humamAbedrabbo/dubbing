@@ -16,7 +16,7 @@
     <div class="form-group-sm">
         <small>@Html.LabelFor(model => model.workIntno, "Work", htmlAttributes: new { @class = "control-label" })</small>
         <div>
-            @Html.DropDownListFor(model => model.workIntno, new SelectList(ViewBag.worksList, "workIntno", "workName"), string.Empty, htmlAttributes: new { @class = "form-control" })
+            @Html.DropDownListFor(model => model.workIntno, ViewBag.worksList as SelectList, string.Empty, htmlAttributes: new { @class = "form-control" })
             @Html.ValidationMessageFor(model => model.workIntno, "", new { @class = "text-danger" })
         </div>
     </div>

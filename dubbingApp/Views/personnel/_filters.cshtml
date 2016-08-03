@@ -1,0 +1,26 @@
+﻿@{ string s = ViewBag.filtersList;
+   string[] filtersList = s.Split(';'); }
+
+<div class="container-fluid" style="padding:0px">
+    <div class="panel panel-primary">
+        <div class="panel-heading">
+            <div class="row">
+                <label>Search Personnel ...</label>
+            </div>
+        </div>
+        <div class="panel-body" style="padding-right:0px">
+            <div class="row">
+                <div class="col-sm-12">
+                    <a href="#" onclick="onStatusClick('01')"><small>Active</small></a>
+                    <span><label class="badge alert-info">@filtersList[0]</label></span>
+                    <a href="#" onclick="onStatusClick('02')"><small>Archive</small></a>
+                    <span><label class="badge">@filtersList[1]</label></span>
+                    <a href="#" onclick="onStatusClick('03')"><small>Incomplete</small></a>
+                    <span><label class="badge alert-warning">@filtersList[2]</label></span>
+                    <a href="#" onclick="onStatusClick('04')"><small>Uncharged</small></a>
+                    <span><label class="badge alert-warning">@filtersList[3]</label></span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

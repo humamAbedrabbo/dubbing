@@ -6,15 +6,22 @@
 <div class="container-fluid">
     <div class="jumbotron" style="padding:5px">
         <h2>Personnel</h2>
-        <p class="lead"><h5>Personnel Allows You to Maintain Records about All Personnel Involved in the Dubbing Process, Studio Supervisors, Sound Technician, the Various Contractors and the Admin Department Employees.</h5></p>
+        <p class="lead"><h5>Personnel Allows You to Maintain Records about All Personnel Involved in the Dubbing Process, Studio Supervisors, Sound Technicians, the Various Contractors and the Admin Department Employees.</h5></p>
     </div>
     <div class="row">
-        <div class="container-fluid col-sm-9" id="listPartial">
-            @Html.Action("personnelList", "personnel", new { isActive = true })
+        <div class="container-fluid col-sm-8" id="listPartial">
+            @Html.Action("personnelList", "personnel", new { status = "01" })
         </div>
-        <div class="container-fluid col-sm-3" id="detailsPartial"></div>
-    </div>
 
+        <div class="container-fluid col-sm-4" style="padding-left:0px">
+            <div>
+                @Html.Action("filterSettings")
+            </div>
+            <div id="detailsPartial">
+
+            </div>
+        </div>
+    </div>
 </div>
 
 <div class="modal fade" id="popupForm" role="dialog">
@@ -39,12 +46,12 @@
     @Scripts.Render("~/bundles/jqueryval")
 
     <script>
-        function onActiveClick(status) {
-            $('#status').val(status);
+        function onStatusClick(status1) {
+            $('#status').val(status1);
             $.ajax({
                 url: '@Url.Action("personnelList", "personnel")',
                 type: 'GET',
-                data: { isActive: status },
+                data: { status: status1 },
                 success: function (result) {
                     $('#listPartial').html(result);
                 }
@@ -109,7 +116,7 @@
             $.ajax({
                 url: '@Url.Action("personnelList", "personnel")',
                 type: 'GET',
-                data: { isActive: true },
+                data: { status: '01' },
                 success: function (result) {
                     $('#listPartial').html(result);
                 }
@@ -128,7 +135,7 @@
             $.ajax({
                 url: '@Url.Action("personnelList", "personnel")',
                 type: 'GET',
-                data: { isActive: true },
+                data: { status: '01' },
                 success: function (result) {
                     $('#listPartial').html(result);
                 }

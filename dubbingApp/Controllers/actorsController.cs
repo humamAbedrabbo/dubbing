@@ -32,37 +32,67 @@ namespace dubbingApp.Controllers
             return View();
         }
 
-        public ActionResult actorsList(bool isActive, string alpha)
+        public ActionResult actorsList(string status, string alpha)
         {
-            var model = db.voiceActors.Where(b => (string.IsNullOrEmpty(alpha) || b.fullName.TrimStart().StartsWith(alpha)) && b.status == isActive && b.voiceActorIntno != 0);
-
-            //var chargesList = new List<ViewModels.customPair>();
-            //ViewModels.customPair kv;
-            //string chargedStatus;
-            //foreach (long actor in model.Select(b => b.voiceActorIntno))
-            //{
-            //    var x = db.workActors.Include(b => b.agreementWork).Where(b => b.voiceActorIntno == actor && b.agreementWork.status == "01" && b.status == true);
-            //    bool isCharged = true;
-            //    foreach (workActor work in x)
-            //    {
-            //        var y = db.workCharges.Where(b => b.workIntno == work.workIntno && b.workPartyIntno == work.voiceActorIntno
-            //                            && b.workPartyType == "01" && b.status == true).ToList();
-            //        if (y.Count() == 0)
-            //            isCharged = false;
-            //    }
-            //    if (x.Count() != 0 && isCharged)
-            //        chargedStatus = "01"; //all charged
-            //    else if (x.Count() != 0 && !isCharged)
-            //        chargedStatus = "02"; //has some uncharged works
-            //    else
-            //        chargedStatus = "03"; //has no work at hand
-            //    kv.Key = actor;
-            //    kv.Value = chargedStatus;
-            //    chargesList.Add(kv);
-            //}
-            //ViewBag.charges = chargesList;
-
+            var x = db.voiceActors.Where(b => (string.IsNullOrEmpty(alpha) || b.fullName.TrimStart().StartsWith(alpha))
+                                    && b.voiceActorIntno != 0);
+            var model = x;
+            switch (status)
+            {
+                case "01":
+                    model = x.Where(b => b.status == true);
+                    break;
+                case "02":
+                    model = x.Where(b => b.status == false);
+                    break;
+                case "03":
+                    model = x.Where(b => string.IsNullOrEmpty(b.accountNo));
+                    break;
+                case "04":
+                    model = (from A in x
+                             join B in db.workActors on A.voiceActorIntno equals B.voiceActorIntno
+                             join C in db.agreementWorks on B.workIntno equals C.workIntno
+                             join D in db.workCharges on C.workIntno equals D.workIntno
+                             join E in db.workCharges on A.voiceActorIntno equals E.workPartyIntno
+                             where C.status == "01" && E.workPartyType == "01" && E.status == true
+                             select A).Distinct();
+                    break;
+                default:
+                    break;
+            }
             return PartialView("_actorsList", model.ToList());
+        }
+
+        public ActionResult filterSettings()
+        {
+            string filtersList = null;
+            int cnt = 0;
+            var x = db.voiceActors.Where(b => b.voiceActorIntno != 0);
+
+            //active
+            cnt = x.Where(b => b.status == true).Count();
+            filtersList = cnt.ToString();
+
+            //inactive
+            cnt = x.Where(b => b.status == false).Count();
+            filtersList = filtersList + ";" + cnt.ToString();
+
+            //incomplete definition
+            cnt = x.Where(b => string.IsNullOrEmpty(b.accountNo)).Count();
+            filtersList = filtersList + ";" + cnt.ToString();
+
+            //uncharged
+            cnt = (from A in x
+                   join B in db.workActors on A.voiceActorIntno equals B.voiceActorIntno
+                   join C in db.agreementWorks on B.workIntno equals C.workIntno
+                   join D in db.workCharges on C.workIntno equals D.workIntno
+                   join E in db.workCharges on A.voiceActorIntno equals E.workPartyIntno
+                   where C.status == "01" && E.workPartyType == "01" && E.status == true
+                   select A).Distinct().Count();
+            filtersList = filtersList + ";" + cnt.ToString();
+
+            ViewBag.filtersList = filtersList;
+            return PartialView("_filters");
         }
 
         public ActionResult actorsAddNew()
@@ -127,7 +157,7 @@ namespace dubbingApp.Controllers
             var model = db.voiceActors.Find(id);
             model.status = false;
             db.SaveChanges();
-            return RedirectToAction("actorsList", new { isActive = true });
+            return RedirectToAction("actorsList", new { status = "01" });
         }
 
         // work charges for actors
@@ -145,7 +175,10 @@ namespace dubbingApp.Controllers
         public ActionResult workChargesAddNew(long id)
         {
             ViewBag.workPartyIntno = id;
-            ViewBag.worksList = db.agreementWorks.Where(b => b.status == "01").ToList();
+            var x = db.workActors.Include(b => b.agreementWork)
+                    .Where(b => b.voiceActorIntno == id && b.agreementWork.status == "01").OrderBy(b => new { b.workIntno, b.fromDate })
+                    .Select(b => new { b.workIntno, b.agreementWork.workName });
+            ViewBag.worksList = new SelectList(x, "workIntno", "workName");
             ViewBag.chargeUomList = LookupModels.getDictionary("chargeUom");
             ViewBag.currenciesList = LookupModels.getDictionary("currencyCode");
             return PartialView("_workChargesAddNew");

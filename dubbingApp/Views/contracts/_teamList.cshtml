@@ -2,47 +2,55 @@
 @using dubbingApp.Models;
 
 <div class="container-fluid" style="padding:0px">
-    <div class="panel panel-default">
+    <div class="panel panel-primary">
         <div class="panel-heading">
             <div class="row">
-                <div class="col-sm-2">
-                    <button class="btn btn-default btn-xs pull-left" onclick="onPersonnelAddNewClick(@ViewBag.workIntno)" title="Add New">
-                        <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
-                    </button>
-                </div>
                 <div class="col-sm-8">
-                    <label>Personnel</label>
+                    <label>Personnel:</label>
                 </div>
-                <div class="col-sm-2">
+                <div class="col-sm-4">
                     <button class="btn btn-default btn-xs pull-right" onclick="onCloseClick()" title="Close">
                         <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+                    </button>
+                    <button class="btn btn-default btn-xs pull-right" onclick="onPersonnelAddNewClick(@ViewBag.workIntno)" title="Add New">
+                        <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
                     </button>
                 </div>
             </div>
         </div>
-        <div class="panel-body">
-            @foreach (dubbingModel.workPersonnel item in Model)
+        <div class="panel-body" style="padding:0px">
+            @foreach (string title in Model.Select(b => b.titleType).Distinct())
             {
                 <div class="panel panel-default">
                     <div class="panel-heading">
                         <div class="row">
-                            <label class="col-sm-10">@LookupModels.decodeDictionaryItem("titleType", item.titleType)</label>
-                            <div class="col-sm-2">
-                                <button class="btn btn-default btn-xs" onclick="onPersonnelDeleteClick(@item.workPersonnelIntno)" title="Remove">
-                                    <span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
-                                </button>
-                            </div>
+                            <label class="col-sm-12">@LookupModels.decodeDictionaryItem("titleType", title)</label>
                         </div>
                     </div>
-                    <div class="panel-body">
-                        <div class="row">
-                            <div class="col-sm-6">
-                                <small>@item.employee.fullName</small>
-                            </div>
-                            <div class="col-sm-6">
-                                <small>Since: @item.fromDate.ToShortDateString()</small>
-                            </div>
-                        </div>
+                    <div class="panel-body" style="padding:0px">
+                        <table class="table-hover">
+                            <thead>
+                                <tr>
+                                    <th class="col-sm-6"><small>Name</small></th>
+                                    <th class="col-sm-4"><small>Since</small></th>
+                                    <th class="col-sm-2"><small>#</small></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var item in Model.Where(b => b.titleType == title))
+                                {
+                                    <tr>
+                                        <td class="col-sm-6"><small>@item.employee.fullName</small></td>
+                                        <td class="col-sm-4"><small>@item.fromDate.ToShortDateString()</small></td>
+                                        <td class="col-sm-2">
+                                            <button class="btn btn-default btn-xs" onclick="onPersonnelDeleteClick(@item.workPersonnelIntno)" title="Remove">
+                                                <span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
                     </div>
                 </div>
             }

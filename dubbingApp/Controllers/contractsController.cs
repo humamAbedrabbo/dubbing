@@ -289,7 +289,7 @@ namespace dubbingApp.Controllers
         // personnel
         public ActionResult teamList(long id)
         {
-            var model = db.workPersonnels.Where(b => b.workIntno == id && b.status == true);
+            var model = db.workPersonnels.Where(b => b.workIntno == id && b.status == true).OrderBy(b => b.titleType);
             ViewBag.workIntno = id;
             return PartialView("_teamList", model.ToList());
         }
