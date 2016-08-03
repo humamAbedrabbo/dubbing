@@ -30,7 +30,8 @@ namespace dubbingApp.Controllers
                 else
                 {
                     var userWorks = ctx.workPersonnels.Where(x => x.empIntno == employee.empIntno && x.status == true && (x.titleType == "04" || x.titleType == "05" || x.titleType == "06")).Select(x => x.workIntno).ToList() ;
-                    model = model.Where(x => userWorks.Contains(x.agreementWork.workIntno)).ToList();
+                    var userOrders = ctx.orderTrnDtls.Include(x => x.orderTrnHdr).Where(x => x.empIntno == employee.empIntno && userWorks.Contains(x.orderTrnHdr.workIntno) && (x.activityType == "01" || x.activityType == "02")).Select(x => x.orderTrnHdrIntno).ToList() ;
+                    model = model.Where(x => userOrders.Contains(x.orderTrnHdrIntno)).ToList();
                 }
                 
             }
