@@ -6,36 +6,41 @@
 <div class="container-fluid">
     <div class="jumbotron" style="padding:5px">
         <div class="row">
-            <div class="col-sm-11">
-                <h2>Casting</h2>
+            <div class="col-sm-4">
+                <h2>Characters &amp; Casting</h2>
+                <p><a href="#" class="btn btn-primary btn-xs" onclick="onCharacterAddNewClick('@ViewBag.workIntno')">Add New Character &raquo;</a></p>
             </div>
-            <div class="col-sm-1">
-                <a class="btn btn-default btn-xs" href="@ViewBag.returnUrl" role="button" title="Back">
+            <div class="col-sm-4">
+                <label style="padding-top:30px">@ViewBag.workName</label>
+            </div>
+            <div class="col-sm-4" style="padding-top:30px">
+                <a class="btn btn-default btn-xs pull-right" href="@ViewBag.returnUrl" role="button" title="Back">
                     <span class="glyphicon glyphicon-home" aria-hidden="true"></span>
                 </a>
             </div>
         </div>
-        <p class="lead"><h5>Define Main Characters of the Work. Early Casting at this stage saves a lot of efforts at later stages.</h5></p>
-        <label><a href="#" onclick="onCharacterAddNewClick('@ViewBag.workIntno')">Add Character ...</a></label>
     </div>
     
-    <div class="row">
-        <div class="col-sm-8">
+    <div class="row" style="padding-bottom:10px">
+        <div class="col-sm-4">
             <label>Characters Displayed in Order</label>
-            <div class="btn-group pull-right" style="padding-bottom:10px">
+        </div>
+        <div class="col-sm-4" style="padding:0px">
+            <div class="btn-group pull-right">
                 <button class="btn btn-default btn-xs" onclick="onFilterClick(@ViewBag.workIntno)">All</button>&nbsp;
-                <button class="btn btn-danger btn-xs" onclick="onFilterClick(@ViewBag.workIntno, '01')">Heros</button>&nbsp;
-                <button class="btn btn-success btn-xs" onclick="onFilterClick(@ViewBag.workIntno, '02')">Main</button>&nbsp;
-                <button class="btn btn-info btn-xs" onclick="onFilterClick(@ViewBag.workIntno, '03')">Secondary</button>
+                <button class="btn btn-primary btn-xs" onclick="onFilterClick(@ViewBag.workIntno, '01')">Heros</button>&nbsp;
+                <button class="btn btn-info btn-xs" onclick="onFilterClick(@ViewBag.workIntno, '02')">Main</button>&nbsp;
+                <button class="btn btn-default btn-xs" onclick="onFilterClick(@ViewBag.workIntno, '03')">Secondary</button>
+                <button class="btn btn-warning btn-xs" onclick="onFilterClick(@ViewBag.workIntno, '04')">New</button>
             </div>
-            <br /><br />
-            <div id="cList">
-                @Html.Action("charactersList", new { id = ViewBag.workIntno })
-            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-8" id="cList">
+            @Html.Action("charactersList", new { id = ViewBag.workIntno })
         </div>
 
         <div class="col-sm-4">
-            <br /><br />
             <div id="allDetails"></div>
             <div id="aDetails"></div>
         </div>

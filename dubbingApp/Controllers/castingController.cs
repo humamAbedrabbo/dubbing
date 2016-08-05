@@ -23,6 +23,7 @@ namespace dubbingApp.Controllers
         public ActionResult Index(long work)
         {
             ViewBag.workIntno = work;
+            ViewBag.workName = db.agreementWorks.Find(work).workName;
             ViewBag.returnUrl = Request.UrlReferrer.ToString();
             return View();
         }
@@ -30,9 +31,21 @@ namespace dubbingApp.Controllers
         // characters
         public ActionResult charactersList(long id, string characterType)
         {
-            var model = db.workCharacters.Include(b => b.agreementWork)
-                        .Where(b => b.workIntno == id && (string.IsNullOrEmpty(characterType) || b.characterType == characterType)).OrderBy(b => b.sortOrder);
-            return PartialView("_charactersList", model.ToList());
+            var x = db.workCharacters.Where(b => b.workIntno == id);
+            var model = x;
+            
+            if (characterType == "04") // newly defined - uncasted
+            {
+                model = (from A in db.workCharacters
+                         where A.workIntno == id
+                                && !(from B in db.workActors where B.status == true select B.workCharacterIntno).Contains(A.workCharacterIntno)
+                         select A);
+            }
+            else // filter as per character type, if null then all types
+            {
+                model = x.Where(b => (string.IsNullOrEmpty(characterType) || b.characterType == characterType));
+            }
+            return PartialView("_charactersList", model.Include(b => b.agreementWork).OrderBy(b => b.sortOrder).ToList());
         }
 
         public ActionResult characterAddNew(long id)

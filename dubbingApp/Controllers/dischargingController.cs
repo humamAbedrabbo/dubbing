@@ -79,7 +79,7 @@ namespace dubbingApp.Controllers
             ViewBag.orderItem = orderItem;
             ViewBag.workEpisode = db.agreementWorks.Find(workId).workName + " / Episode: " + orderHdr.episodeNo;
             
-            return PartialView("_castingList", model);
+            return PartialView("_castingList", model.OrderBy(b => b.voiceActorIntno));
         }
 
         [ValidateAntiForgeryToken]
@@ -100,6 +100,24 @@ namespace dubbingApp.Controllers
             }
             else
                 return Content("Failed to Update! Please Correct All Errors.", "text/html");
+        }
+
+        public ActionResult refreshCast(long orderItem)
+        {
+            var model = db.dubbingSheetHdrs;
+            var x = (from A in db.dubbingSheetHdrs
+                     join B in db.workActors on A.workCharacterIntno equals B.workCharacterIntno
+                     where A.orderTrnHdrIntno == orderItem && A.voiceActorIntno == 0
+                     select new { A.dubbSheetHdrIntno, B.voiceActorIntno });
+            foreach (var item in x)
+            {
+                var modelItem = model.Find(item.dubbSheetHdrIntno);
+                modelItem.voiceActorIntno = item.voiceActorIntno;
+            }
+            db.SaveChanges();
+
+            long oi = orderItem;
+            return RedirectToAction("castingList", new { orderItem = oi });
         }
 
         public ActionResult generateCalendar(long orderItem)

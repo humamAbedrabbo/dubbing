@@ -53,6 +53,18 @@
             });
         }
 
+        function onRefreshCastClick(oi) {
+            $.ajax({
+                url: '@Url.Action("refreshCast", "discharging")',
+                type: 'GET',
+                data: { orderItem: oi },
+                success: function (result) {
+                    $('#castingList').html(result);
+                    alert("Anonymous Cast Was Updated Successfully with the latest Contracted Actors List.")
+                }
+            });
+        }
+
         function onGenerateCalendarClick(oi) {
             $.ajax({
                 url: '@Url.Action("generateCalendar", "discharging")',
@@ -100,7 +112,7 @@
             $('#dischargeTable').hide();
             $('#castingList').show();
             $('#episodesList').show();
-            
+
         }
     </script>
 }
