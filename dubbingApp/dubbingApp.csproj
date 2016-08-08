@@ -187,6 +187,7 @@
     <Compile Include="Controllers\clientContactsController.cs" />
     <Compile Include="Controllers\contractsController.cs" />
     <Compile Include="Controllers\dischargingController.cs" />
+    <Compile Include="Controllers\dubbDomainsController.cs" />
     <Compile Include="Controllers\dubbingController.cs" />
     <Compile Include="Controllers\dubbingMonitorController.cs" />
     <Compile Include="Controllers\dubbingRouterController.cs" />
@@ -309,9 +310,7 @@
     <Content Include="Content\bootstrap\alerts.less" />
     <Content Include="Content\_bootstrap-datetimepicker.less" />
     <Content Include="Content\bootstrap-datetimepicker-build.less" />
-    <None Include="Properties\PublishProfiles\dubbingApp.pubxml" />
-    <None Include="Properties\PublishProfiles\dubbingApp2016 - FTP.pubxml" />
-    <None Include="Properties\PublishProfiles\dubbingApp2016 - Web Deploy.pubxml" />
+    <None Include="Properties\PublishProfiles\dubbingApp2016.pubxml" />
     <None Include="Scripts\jquery-2.2.3.intellisense.js" />
     <Content Include="Scripts\dubbing\adaptation.js" />
     <Content Include="Scripts\jquery-2.2.3.js" />
@@ -494,6 +493,12 @@
     <Content Include="Views\discharging\_exportDischargingTable.cshtml" />
     <Content Include="Views\personnel\_filters.cshtml" />
     <Content Include="Views\actors\_filters.cshtml" />
+    <Content Include="Views\dubbDomains\Create.cshtml" />
+    <Content Include="Views\dubbDomains\Delete.cshtml" />
+    <Content Include="Views\dubbDomains\Details.cshtml" />
+    <Content Include="Views\dubbDomains\Edit.cshtml" />
+    <Content Include="Views\dubbDomains\Index.cshtml" />
+    <Content Include="Views\dubbDomains\domainsList.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

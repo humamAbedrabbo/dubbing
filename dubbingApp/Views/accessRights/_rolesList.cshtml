@@ -4,7 +4,7 @@
     @foreach (var role in Model)
     {
         <p>
-            <a href="#" class="roleLbl" id="@role.Id" onclick="onRoleClick('@role.Id')"><strong>@role.Name</strong></a>
+            <a href="#" class="roleLbl" id="@role.Id" onclick="onRoleClick('@role.Id', true)"><strong>@role.Name</strong></a>
         </p>
     }
 </div>
@@ -12,5 +12,5 @@
 <strong>-----</strong>
 <br />
 <p>
-    <a href="#" class="roleLbl" id="no-role" onclick="onRoleClick('no-role')"><strong>Users Not Assigned</strong></a>
+    <a href="#" class="roleLbl" id="no-role" onclick="onRoleClick('no-role', true)"><strong>Users Not Assigned</strong></a>
 </p>

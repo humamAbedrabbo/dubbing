@@ -1,0 +1,91 @@
+﻿@model dubbingModel.dubbDomain
+
+@{
+    ViewBag.Title = "Details";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Details</h2>
+
+<div>
+    <h4>dubbDomain</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.domainName)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.domainName)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.domainCode)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.domainCode)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.domainValue)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.domainValue)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.userMessage)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.userMessage)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.valueUsage)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.valueUsage)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.langCode)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.langCode)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.sortOrder)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.sortOrder)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.minAccessLevel)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.minAccessLevel)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.status)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.status)
+        </dd>
+
+    </dl>
+</div>
+<p>
+    @Html.ActionLink("Edit", "Edit", new { id = Model.domainIntno }) |
+    @Html.ActionLink("Back to List", "Index")
+</p>

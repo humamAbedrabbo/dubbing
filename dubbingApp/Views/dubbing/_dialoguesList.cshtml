@@ -10,7 +10,7 @@
             <div class="panel-heading">
                 <div class="row">
                     <div class="col-sm-2">
-                        <button class="btn btn-default btn-xs pull-left btnAction" onclick="onActionClick('@panelId')" title="Start">
+                        <button class="btn btn-default btn-xs pull-left startTaken" onclick="onStartTakenClick('@panelId')" title="Start">
                             <span class="glyphicon glyphicon-triangle-right" aria-hidden="true"></span>
                         </button>
                     </div>
@@ -30,7 +30,7 @@
             <div class="panel-footer">
                 <div class="row">
                     <div class="col-sm-2">
-                        <button class="btn btn-default btn-xs pull-left" onclick="onTakenClick('@panelId', @dialog.dialogIntno)" title="Taken">
+                        <button class="btn btn-default btn-xs pull-left endTaken" onclick="onEndTakenClick('@panelId', @dialog.dialogIntno, @ViewBag.sheetHdr)" title="Taken">
                             <span class="glyphicon glyphicon-stop" aria-hidden="true"></span>
                         </button>
                     </div>

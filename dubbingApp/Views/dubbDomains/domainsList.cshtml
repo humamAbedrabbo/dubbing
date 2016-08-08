@@ -1,0 +1,62 @@
+﻿@model IEnumerable<dubbingModel.dubbDomain>
+
+<table class="table">
+    <tr>
+        <td>
+            <small>Domain Name</small>
+        </td>
+        <th>
+            <small>Code</small>
+        </th>
+        <th>
+            <small>Value</small>
+        </th>
+        <th>
+            <small>Usage</small>
+        </th>
+        <th>
+            <small>langCode</small>
+        </th>
+        <th>
+            <small>Sort Order</small>
+        </th>
+        <th>
+            <small>Active?</small>
+        </th>
+        <th></th>
+    </tr>
+
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                <small>@Html.DisplayFor(modelItem => item.domainName)</small>
+            </td>
+            <td>
+                <small>@Html.DisplayFor(modelItem => item.domainCode)</small>
+            </td>
+            <td>
+                <small>@Html.DisplayFor(modelItem => item.domainValue)</small>
+            </td>
+            <td>
+                <small>@Html.DisplayFor(modelItem => item.valueUsage)</small>
+            </td>
+            <td>
+                <small>@Html.DisplayFor(modelItem => item.langCode)</small>
+            </td>
+            <td>
+                <small>@Html.DisplayFor(modelItem => item.sortOrder)</small>
+            </td>
+            <td>
+                <small>@Html.DisplayFor(modelItem => item.status)</small>
+            </td>
+            <td>
+                <small>
+                    @Html.ActionLink("Edit", "Edit", new { id = item.domainIntno }) |
+                    @Html.ActionLink("Details", "Details", new { id = item.domainIntno }) |
+                    @Html.ActionLink("Delete", "Delete", new { id = item.domainIntno })
+                </small>
+            </td>
+        </tr>
+    }
+</table>

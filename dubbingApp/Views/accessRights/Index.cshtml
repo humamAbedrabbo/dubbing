@@ -22,10 +22,12 @@
     @Scripts.Render("~/bundles/jqueryval")
 
     <script>
-        function onRoleClick(role1) {
+        function onRoleClick(role1, clr) {
             $('.roleLbl').removeClass('badge');
             $('#' + role1).addClass('badge');
-            $('#userDetails').html(null);
+            if (clr === true) {
+                $('#userDetails').html(null);
+            }
 
             if (role1 === 'no-role') {
                 role2 = null;
@@ -85,7 +87,7 @@
         }
 
         function onSubmitClick(e) {
-            if(!confirm('Please Confirm! About to make Permenant Update / Delete.'))
+            if(!confirm('Please Confirm! About to make Changes to User.'))
             {
                 e.preventDefault();
             }
@@ -94,9 +96,8 @@
         function onCloseClick() {
             $('#userDetails').html(null);
         }
-        function onSuccess(ajaxContext) {
-            $('#formResult').html('Successfully Modified.');
-            $('#usersInRoleList').html(ajaxContext);
+        function onSuccess(role) {
+            onRoleClick(role, false);
         }
     </script>
 }

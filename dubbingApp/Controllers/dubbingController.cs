@@ -103,11 +103,12 @@ namespace dubbingApp.Controllers
                 scn.episodeNo = item.episodeNo;
                 scn.sceneNo = item.sceneNo;
                 scn.startTimeCode = item.startTimeCode;
-                var z = db.dubbingSheetDtls.FirstOrDefault(b => b.dubbSheetHdrIntno == scn.dubbSheetHdrIntno && b.sceneNo == scn.sceneNo);
-                if (z == null)
-                    scn.isTaken = false;
-                else
+                var z = db.subtitles.Include(b => b.dialog).Where(b => b.dubbSheetHdrIntno == item.dubbSheetHdrIntno
+                                    && b.dialog.sceneIntno == item.sceneIntno && b.dialog.isTaken == false);
+                if (z.Count() == 0)
                     scn.isTaken = true;
+                else
+                    scn.isTaken = false;
                 scnList.Add(scn);
             }
             
@@ -139,7 +140,7 @@ namespace dubbingApp.Controllers
                     where A.dubbSheetHdrIntno == sheetHdr && !B.isTaken
                     select new { C.sceneIntno, C.sceneNo, C.startTimeCode }).Distinct();
             studioUpdateResponse result = new studioUpdateResponse();
-            if (x != null)
+            if (x.Count() != 0)
             {
                 var z = x.OrderBy(b => b.sceneNo).First();
                 result.sceneNo = z.sceneNo;
@@ -149,12 +150,11 @@ namespace dubbingApp.Controllers
             return Json(result, JsonRequestBehavior.AllowGet);
         }
 
-        public ActionResult dialogueTaken(long id, long studioIntno)
+        public ActionResult dialogueTaken(long id, long studioIntno, long sheetHdr)
         {
-            var dlg = db.dialogs.FirstOrDefault(b => b.dialogIntno == id);
+            var dlg = db.dialogs.Include(b => b.scene).FirstOrDefault(b => b.dialogIntno == id);
             short sceneNo = dlg.scene.sceneNo;
             long sceneId = dlg.sceneIntno;
-            long sheetHdr = db.subtitles.FirstOrDefault(b => b.dialogIntno == id).dubbSheetHdrIntno;
             var dlgList = db.dialogs.Where(b => b.sceneIntno == sceneId && b.isTaken == false);
 
             long orderItem = dlg.scene.orderTrnHdrIntno;
@@ -163,6 +163,11 @@ namespace dubbingApp.Controllers
             studioUpdateResponse result = new studioUpdateResponse();
             result.workName = orderHdr.agreementWork.workName;
             result.episodeNo = orderHdr.episodeNo;
+            var scn = db.subtitles.Include(b => b.dialog)
+                            .Where(b => b.dubbSheetHdrIntno == sheetHdr && b.dialog.sceneIntno == sceneId && b.dialog.isTaken == false)
+                            .Select(b => b.dialog.sceneIntno).Distinct();
+            if (scn.Count() == 1)
+                result.sceneIntno = sceneId;
 
             var model = db.dubbingSheetDtls;
             if (dlgList.Count() == 1)
@@ -180,27 +185,6 @@ namespace dubbingApp.Controllers
                 dtl.takenTimeStamp = DateTime.Now;
                 model.Add(dtl);
                 db.SaveChanges();
-
-                //get next scene if any
-                var y = db.scenes.FirstOrDefault(b => b.orderTrnHdrIntno == orderItem && b.sceneNo > sceneNo);
-                if (y != null)
-                {
-                    result.sceneNo = y.sceneNo;
-                    result.startTimeCode = y.startTimeCode;
-                    result.sceneIntno = y.sceneIntno;
-                }
-                else
-                {
-                    result.sceneNo = null;
-                    result.startTimeCode = null;
-                    result.sceneIntno = sceneId;
-                }
-            }
-            else
-            {
-                result.sceneNo = sceneNo;
-                result.startTimeCode = dlg.scene.startTimeCode;
-                result.sceneIntno = sceneId;
             }
             dlg.isTaken = true;
             db.SaveChanges();

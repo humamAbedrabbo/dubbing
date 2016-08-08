@@ -1,0 +1,38 @@
+﻿@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Index</h2>
+
+<p>
+    @Html.ActionLink("Create New", "Create")
+</p>
+
+<p>
+    <small>
+        @Html.DropDownList("Name", new SelectList(ViewBag.domainsList, "domainName"), "Filter Domain ...", htmlAttributes: new { id = "domainFilter", onChange = "onFilterChange()" })
+    </small>
+</p>
+
+<div id="index">
+    @Html.Action("domainsList")    
+</div>
+
+@section Scripts
+{
+    @Scripts.Render("~/bundles/jqueryval")
+
+    <script>
+        function onFilterChange() {
+            $.ajax({
+                url: '@Url.Action("domainsList", "dubbDomains")',
+                type: 'GET',
+                data: { domainName: $('#domainFilter').val() },
+                success: function (result) {
+                    $('#index').html(result);
+                }
+            });
+        }
+    </script>
+}

@@ -1,0 +1,97 @@
+﻿@model dubbingModel.dubbDomain
+
+@{
+    ViewBag.Title = "Delete";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Delete</h2>
+
+<h3>Are you sure you want to delete this?</h3>
+<div>
+    <h4>dubbDomain</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.domainName)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.domainName)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.domainCode)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.domainCode)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.domainValue)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.domainValue)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.userMessage)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.userMessage)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.valueUsage)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.valueUsage)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.langCode)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.langCode)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.sortOrder)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.sortOrder)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.minAccessLevel)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.minAccessLevel)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.status)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.status)
+        </dd>
+
+    </dl>
+
+    @using (Html.BeginForm()) {
+        @Html.AntiForgeryToken()
+
+        <div class="form-actions no-color">
+            <input type="submit" value="Delete" class="btn btn-default" /> |
+            @Html.ActionLink("Back to List", "Index")
+        </div>
+    }
+</div>

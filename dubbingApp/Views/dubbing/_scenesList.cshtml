@@ -25,7 +25,7 @@
                             string sceneId = scene.sceneIntno.ToString();
                             if (scene.isTaken) { sceneColor = "btn-success"; }
                             else { sceneColor = "btn-default"; }
-                            <button class="btn @sceneColor btn-xs" id="@sceneId" style="width:30px" title="Scene">@scene.sceneNo</button>
+                            <button class="btn @sceneColor btn-xs" id="@sceneId" onclick="onSceneClick(@scene.sceneIntno, @episode.dubbSheetHdrIntno)" style="width:30px" title="Scene">@scene.sceneNo</button>
                         }
                     </div>
                 </div>

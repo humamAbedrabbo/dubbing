@@ -19,7 +19,8 @@
                                                         new AjaxOptions()
                                                         {
                                                             HttpMethod = "POST",
-                                                            OnSuccess = "onSuccess"
+                                                            UpdateTargetId = "formResult",
+                                                            OnSuccess = "onSuccess('" + ViewBag.roleId + "')"
                                                         }
                                                         ))
             {
@@ -59,8 +60,9 @@
                 <div class="form-group-sm">
                     <button name="submitBtn" value="01" type="submit" onclick="onSubmitClick(event)" class="btn btn-default btn-sm">Update User</button>
                     <button name="submitBtn" value="02" type="submit" onclick="onSubmitClick(event)" class="btn btn-default btn-sm">Delete User</button>
+                    <button name="submitBtn" value="03" type="submit" onclick="onSubmitClick(event)" class="btn btn-default btn-sm">Reset Password</button>
                 </div>
-                <label class="alert-success" id="formResult"></label>
+                <small><label class="alert-success" id="formResult"></label></small>
             }
         </div>
     </div>

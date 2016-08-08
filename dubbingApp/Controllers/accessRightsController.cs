@@ -158,12 +158,16 @@ namespace dubbingApp.Controllers
                         UserManager.Delete(usr);
                         context.SaveChanges();
                         break;
+                    case "03":
+                        UserManager.RemovePassword(usr.Id);
+                        UserManager.AddPassword(usr.Id, usr.UserName.Split('@')[0] + "@123");
+                        break;
                 }
             }
-            if (string.IsNullOrEmpty(roleId))
-                return RedirectToAction("usersNoRoleList");
+            if (submitBtn == "03")
+                return Content("User Password Successfully Reset To: " + usr.UserName.Split('@')[0] + "@123", "text/html");
             else
-                return RedirectToAction("usersInRoleList", new { role = roleId });
+                return Content("User Successfully Updated/Deleted", "text/html");
         }
         
     }
