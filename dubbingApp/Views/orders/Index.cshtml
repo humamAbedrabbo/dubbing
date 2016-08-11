@@ -38,6 +38,17 @@
     </div>
 </div>
 
+<div class="modal fade" tabindex="-1" id="popupForm" role="dialog">
+    <div class="modal-dialog modal-sm" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-title">Processing</div>
+            </div>
+            <div class="modal-body">Please Wait ...</div>
+        </div>
+    </div>
+</div>
+
 @section Scripts
 {
     @Scripts.Render("~/bundles/jqueryval")
@@ -50,14 +61,14 @@
             });
         })
 
-        //global ajax callback event handler
-        //$(document).ajaxStart(function() {
-        //    alert('Processing! Please wait...');
-        //})
-        //$(document).ajaxComplete(function() {
-        //    alert('Processing Completed.');
-        //})
-        
+        //global ajax callback events handlers
+        $(document).ajaxStart(function() {
+            $('#popupForm').modal('show');
+        })
+        $(document).ajaxComplete(function() {
+            $('#popupForm').delay(5000).modal('hide');
+        })
+
         function onFindEpisodesClick() {
             $('#allDetails').html(null);
             $.ajax({
