@@ -47,9 +47,17 @@
             $(window).on('load', function () {
                 $('#w0').css('background-color', 'silver');
                 $('#selectedItemsHF').val(0);
-            })
+            });
         })
 
+        //global ajax callback event handler
+        //$(document).ajaxStart(function() {
+        //    alert('Processing! Please wait...');
+        //})
+        //$(document).ajaxComplete(function() {
+        //    alert('Processing Completed.');
+        //})
+        
         function onFindEpisodesClick() {
             $('#allDetails').html(null);
             $.ajax({

@@ -269,16 +269,27 @@ namespace dubbingApp.Controllers
 
         public ActionResult contractStatusChange(long? client, long? agreement, long work, string newStatus)
         {
-            var model = db.agreementWorks;
-            try
+            if (newStatus == "03") //endorse contract(work)
             {
-                var modelItem = model.FirstOrDefault(b => b.workIntno == work);
-                modelItem.status = newStatus;
-                db.SaveChanges();
+                //call stored procedure to clean unecessary details
+                string resp = null;
+                db.archiveEndorsedWork(work, resp);
+                if (!string.IsNullOrEmpty(resp))
+                    return Content("Failed! Unable to Endorse Work(Contract). Please try later.", "text/html");
             }
-            catch (Exception e)
+            else
             {
-                return Content("Failed! Please Correct All Data. " + e.Message, "text/html");
+                var model = db.agreementWorks;
+                try
+                {
+                    var modelItem = model.FirstOrDefault(b => b.workIntno == work);
+                    modelItem.status = newStatus;
+                    db.SaveChanges();
+                }
+                catch (Exception e)
+                {
+                    return Content("Failed! Please Correct All Data. " + e.Message, "text/html");
+                }
             }
 
             long? client1 = client;

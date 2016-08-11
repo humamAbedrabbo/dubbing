@@ -14,7 +14,7 @@
     [totalMinutes]     INT            NOT NULL,
     CONSTRAINT [PK_dubbingAppointments] PRIMARY KEY CLUSTERED ([dubbAppointIntno] ASC),
     CONSTRAINT [FK_dubbingAppointments_agreementWorks] FOREIGN KEY ([workIntno]) REFERENCES [dbo].[agreementWorks] ([workIntno]),
-    CONSTRAINT [FK_dubbingAppointments_studios] FOREIGN KEY ([studioIntno]) REFERENCES [dbo].[studios] ([studioIntno]),
+    CONSTRAINT [FK_dubbingAppointments_studios] FOREIGN KEY ([studioIntno]) REFERENCES [dbo].[studios] ([studioIntno]) ON DELETE CASCADE,
     CONSTRAINT [FK_dubbingAppointments_voiceActors] FOREIGN KEY ([voiceActorIntno]) REFERENCES [dbo].[voiceActors] ([voiceActorIntno])
 );
 

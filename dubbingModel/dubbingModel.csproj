@@ -51,12 +51,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="adaptationDialog.cs">
-      <DependentUpon>dubbingDataModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="adaptationSubtitle.cs">
-      <DependentUpon>dubbingDataModel.tt</DependentUpon>
-    </Compile>
     <Compile Include="agreement.cs">
       <DependentUpon>dubbingDataModel.tt</DependentUpon>
     </Compile>

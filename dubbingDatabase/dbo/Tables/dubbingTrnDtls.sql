@@ -6,7 +6,7 @@
     [episodeNo]        INT    NOT NULL,
     CONSTRAINT [PK_dubbingTrnDtls] PRIMARY KEY CLUSTERED ([dubbTrnDtlIntno] ASC),
     CONSTRAINT [FK_dubbingTrnDtls_agreementWorks] FOREIGN KEY ([workIntno]) REFERENCES [dbo].[agreementWorks] ([workIntno]),
-    CONSTRAINT [FK_dubbingTrnDtls_dubbingTrnHdrs] FOREIGN KEY ([dubbTrnHdrIntno]) REFERENCES [dbo].[dubbingTrnHdrs] ([dubbTrnHdrIntno]),
+    CONSTRAINT [FK_dubbingTrnDtls_dubbingTrnHdrs] FOREIGN KEY ([dubbTrnHdrIntno]) REFERENCES [dbo].[dubbingTrnHdrs] ([dubbTrnHdrIntno]) ON DELETE CASCADE,
     CONSTRAINT [FK_dubbingTrnDtls_orderTrnHdrs] FOREIGN KEY ([orderTrnHdrIntno]) REFERENCES [dbo].[orderTrnHdrs] ([orderTrnHdrIntno])
 );
 

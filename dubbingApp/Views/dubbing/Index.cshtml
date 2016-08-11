@@ -120,7 +120,7 @@
                         $.ajax({
                             url: '@Url.Action("dialoguesList", "dubbing")',
                             type: 'GET',
-                            data: { sceneId: result.sceneIntno, sheetHdr: sheetHdr1 },
+                            data: { sceneId: result.sceneIntno, sheetHdr: sheetHdr1, isReadOnly: false },
                             success: function (result) {
                                 $('#dialoguesList').html(result);
                                 $('.startTaken').show();
@@ -137,7 +137,7 @@
             $.ajax({
                 url: '@Url.Action("dialoguesList", "dubbing")',
                 type: 'GET',
-                data: { sceneId: id1, sheetHdr: sheetHdr1 },
+                data: { sceneId: id1, sheetHdr: sheetHdr1, isReadOnly: true },
                 success: function (result) {
                     $('#dialoguesList').html(result);
                     $('.startTaken').hide();
@@ -162,10 +162,22 @@
                     success: function (result) {
                         $('#dialogueControlHF').val('0');
                         $('#' + dlg).remove();
-                        if (result.sceneIntno !== null) {
+                        if (result.sceneNo !== null) {
                             $('#' + result.sceneIntno).removeClass("btn-default").addClass("btn-success");
+                            onEpisodeClick(result.workName, result.episodeNo, sheetHdr1);
                         }
-                        onEpisodeClick(result.workName, result.episodeNo, sheetHdr1);
+                        else {
+                            $.ajax({
+                                url: '@Url.Action("dialoguesList", "dubbing")',
+                                type: 'GET',
+                                data: { sceneId: result.sceneIntno, sheetHdr: sheetHdr1, isReadOnly: false },
+                                success: function (result) {
+                                    $('#dialoguesList').html(result);
+                                    $('.startTaken').show();
+                                    $('.endTaken').show();
+                                }
+                            })
+                        }
                     }
                 })
             }

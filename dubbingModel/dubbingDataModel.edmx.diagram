@@ -89,10 +89,6 @@
         <AssociationConnector Association="DUBBDBModel.FK_paymentDetails_payments" />
         <AssociationConnector Association="DUBBDBModel.FK_payments_voiceActors" />
         <EntityTypeShape EntityType="DUBBDBModel.paymentTemp" Width="1.5" PointX="3.25" PointY="6.625" />
-        <EntityTypeShape EntityType="DUBBDBModel.adaptationDialog" Width="1.5" PointX="24" PointY="44" />
-        <EntityTypeShape EntityType="DUBBDBModel.adaptationSubtitle" Width="1.5" PointX="26.25" PointY="44.125" />
-        <AssociationConnector Association="DUBBDBModel.FK_adaptationDialogs_To_dubbingSheetDtls" />
-        <AssociationConnector Association="DUBBDBModel.FK_adaptationSubtitles_To_adaptationDialogs" />
         <EntityTypeShape EntityType="DUBBDBModel.dialog" Width="1.5" PointX="21" PointY="21.25" />
         <EntityTypeShape EntityType="DUBBDBModel.scene" Width="1.5" PointX="18.75" PointY="21.25" />
         <EntityTypeShape EntityType="DUBBDBModel.subtitle" Width="1.5" PointX="24.25" PointY="39.625" />

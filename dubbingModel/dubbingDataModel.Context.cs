@@ -12,6 +12,8 @@ namespace dubbingModel
     using System;
     using System.Data.Entity;
     using System.Data.Entity.Infrastructure;
+    using System.Data.Entity.Core.Objects;
+    using System.Linq;
     
     public partial class DUBBDBEntities : DbContext
     {
@@ -57,10 +59,21 @@ namespace dubbingModel
         public virtual DbSet<paymentDetail> paymentDetails { get; set; }
         public virtual DbSet<payment> payments { get; set; }
         public virtual DbSet<paymentTemp> paymentTemps { get; set; }
-        public virtual DbSet<adaptationDialog> adaptationDialogs { get; set; }
-        public virtual DbSet<adaptationSubtitle> adaptationSubtitles { get; set; }
         public virtual DbSet<dialog> dialogs { get; set; }
         public virtual DbSet<scene> scenes { get; set; }
         public virtual DbSet<subtitle> subtitles { get; set; }
+    
+        public virtual int archiveEndorsedWork(Nullable<long> workIntno, string respMsg)
+        {
+            var workIntnoParameter = workIntno.HasValue ?
+                new ObjectParameter("workIntno", workIntno) :
+                new ObjectParameter("workIntno", typeof(long));
+    
+            var respMsgParameter = respMsg != null ?
+                new ObjectParameter("respMsg", respMsg) :
+                new ObjectParameter("respMsg", typeof(string));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("archiveEndorsedWork", workIntnoParameter, respMsgParameter);
+        }
     }
 }

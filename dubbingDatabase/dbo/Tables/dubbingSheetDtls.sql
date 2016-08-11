@@ -10,7 +10,7 @@
     [assistant]         BIGINT        NULL,
     [takenTimeStamp]    DATETIME      NULL,
     CONSTRAINT [PK_dubbingSheetDtls] PRIMARY KEY CLUSTERED ([dubbSheetDtlIntno] ASC),
-    CONSTRAINT [FK_dubbingSheetDtls_dubbingSheetHdrs] FOREIGN KEY ([dubbSheetHdrIntno]) REFERENCES [dbo].[dubbingSheetHdrs] ([dubbSheetHdrIntno]),
+    CONSTRAINT [FK_dubbingSheetDtls_dubbingSheetHdrs] FOREIGN KEY ([dubbSheetHdrIntno]) REFERENCES [dbo].[dubbingSheetHdrs] ([dubbSheetHdrIntno]) ON DELETE CASCADE,
     CONSTRAINT [FK_dubbingSheetDtls_employees] FOREIGN KEY ([supervisor]) REFERENCES [dbo].[employees] ([empIntno]),
     CONSTRAINT [FK_dubbingSheetDtls_employees1] FOREIGN KEY ([soundTechnician]) REFERENCES [dbo].[employees] ([empIntno]),
     CONSTRAINT [FK_dubbingSheetDtls_employees2] FOREIGN KEY ([assistant]) REFERENCES [dbo].[employees] ([empIntno]),

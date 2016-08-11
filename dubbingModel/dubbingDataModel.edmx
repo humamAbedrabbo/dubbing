@@ -5,29 +5,6 @@
     <!-- SSDL content -->
     <edmx:StorageModels>
     <Schema Namespace="DUBBDBModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2008" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
-        <EntityType Name="adaptationDialogs">
-          <Key>
-            <PropertyRef Name="dialogIntno" />
-          </Key>
-          <Property Name="dialogIntno" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
-          <Property Name="dubbSheetHdrIntno" Type="bigint" Nullable="false" />
-          <Property Name="sceneNo" Type="smallint" Nullable="false" />
-          <Property Name="dialogNo" Type="smallint" />
-          <Property Name="startTimeCode" Type="nvarchar" MaxLength="20" />
-          <Property Name="endTimeCode" Type="nvarchar" MaxLength="20" />
-          <Property Name="isTaken" Type="bit" Nullable="false" />
-        </EntityType>
-        <EntityType Name="adaptationSubtitles">
-          <Key>
-            <PropertyRef Name="subtitleIntno" />
-          </Key>
-          <Property Name="subtitleIntno" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
-          <Property Name="dialogIntno" Type="bigint" Nullable="false" />
-          <Property Name="subtitleNo" Type="smallint" />
-          <Property Name="scentence" Type="nvarchar" MaxLength="500" />
-          <Property Name="startTime" Type="nvarchar" MaxLength="20" />
-          <Property Name="endTime" Type="nvarchar" MaxLength="20" />
-        </EntityType>
         <EntityType Name="agreements">
           <Key>
             <PropertyRef Name="agreementIntno" />
@@ -509,34 +486,6 @@
           <Property Name="thruDate" Type="date" />
           <Property Name="status" Type="bit" Nullable="false" />
         </EntityType>
-        <Association Name="FK_adaptationDialogs_To_dubbingSheetDtls">
-          <End Role="dubbingSheetHdrs" Type="Self.dubbingSheetHdrs" Multiplicity="1">
-            <OnDelete Action="Cascade" />
-          </End>
-          <End Role="adaptationDialogs" Type="Self.adaptationDialogs" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="dubbingSheetHdrs">
-              <PropertyRef Name="dubbSheetHdrIntno" />
-            </Principal>
-            <Dependent Role="adaptationDialogs">
-              <PropertyRef Name="dubbSheetHdrIntno" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK_adaptationSubtitles_To_adaptationDialogs">
-          <End Role="adaptationDialogs" Type="Self.adaptationDialogs" Multiplicity="1">
-            <OnDelete Action="Cascade" />
-          </End>
-          <End Role="adaptationSubtitles" Type="Self.adaptationSubtitles" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="adaptationDialogs">
-              <PropertyRef Name="dialogIntno" />
-            </Principal>
-            <Dependent Role="adaptationSubtitles">
-              <PropertyRef Name="dialogIntno" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
         <Association Name="FK_agreements_agreements">
           <End Role="agreements" Type="Self.agreements" Multiplicity="0..1" />
           <End Role="agreements1" Type="Self.agreements" Multiplicity="*" />
@@ -660,7 +609,9 @@
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_dubbingAppointments_studios">
-          <End Role="studios" Type="Self.studios" Multiplicity="1" />
+          <End Role="studios" Type="Self.studios" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
           <End Role="dubbingAppointments" Type="Self.dubbingAppointments" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="studios">
@@ -684,7 +635,9 @@
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_dubbingSheetDtls_dubbingSheetHdrs">
-          <End Role="dubbingSheetHdrs" Type="Self.dubbingSheetHdrs" Multiplicity="1" />
+          <End Role="dubbingSheetHdrs" Type="Self.dubbingSheetHdrs" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
           <End Role="dubbingSheetDtls" Type="Self.dubbingSheetDtls" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="dubbingSheetHdrs">
@@ -792,7 +745,9 @@
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_dubbingTrnDtls_dubbingTrnHdrs">
-          <End Role="dubbingTrnHdrs" Type="Self.dubbingTrnHdrs" Multiplicity="1" />
+          <End Role="dubbingTrnHdrs" Type="Self.dubbingTrnHdrs" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
           <End Role="dubbingTrnDtls" Type="Self.dubbingTrnDtls" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="dubbingTrnHdrs">
@@ -1032,7 +987,9 @@
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_studioEpisodes_studios">
-          <End Role="studios" Type="Self.studios" Multiplicity="1" />
+          <End Role="studios" Type="Self.studios" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
           <End Role="studioEpisodes" Type="Self.studioEpisodes" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="studios">
@@ -1056,7 +1013,9 @@
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_studios_dubbingTrnHdrs">
-          <End Role="dubbingTrnHdrs" Type="Self.dubbingTrnHdrs" Multiplicity="1" />
+          <End Role="dubbingTrnHdrs" Type="Self.dubbingTrnHdrs" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
           <End Role="studios" Type="Self.studios" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="dubbingTrnHdrs">
@@ -1213,9 +1172,11 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Function Name="archiveEndorsedWork" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="workIntno" Type="bigint" Mode="In" />
+          <Parameter Name="respMsg" Type="nvarchar" Mode="In" />
+        </Function>
         <EntityContainer Name="DUBBDBModelStoreContainer">
-          <EntitySet Name="adaptationDialogs" EntityType="Self.adaptationDialogs" Schema="dbo" store:Type="Tables" />
-          <EntitySet Name="adaptationSubtitles" EntityType="Self.adaptationSubtitles" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="agreements" EntityType="Self.agreements" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="agreementSpecs" EntityType="Self.agreementSpecs" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="agreementTerms" EntityType="Self.agreementTerms" Schema="dbo" store:Type="Tables" />
@@ -1251,14 +1212,6 @@
           <EntitySet Name="workCharges" EntityType="Self.workCharges" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="workOrders" EntityType="Self.workOrders" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="workPersonnels" EntityType="Self.workPersonnels" Schema="dbo" store:Type="Tables" />
-          <AssociationSet Name="FK_adaptationDialogs_To_dubbingSheetDtls" Association="Self.FK_adaptationDialogs_To_dubbingSheetDtls">
-            <End Role="dubbingSheetHdrs" EntitySet="dubbingSheetHdrs" />
-            <End Role="adaptationDialogs" EntitySet="adaptationDialogs" />
-          </AssociationSet>
-          <AssociationSet Name="FK_adaptationSubtitles_To_adaptationDialogs" Association="Self.FK_adaptationSubtitles_To_adaptationDialogs">
-            <End Role="adaptationDialogs" EntitySet="adaptationDialogs" />
-            <End Role="adaptationSubtitles" EntitySet="adaptationSubtitles" />
-          </AssociationSet>
           <AssociationSet Name="FK_agreements_agreements" Association="Self.FK_agreements_agreements">
             <End Role="agreements" EntitySet="agreements" />
             <End Role="agreements1" EntitySet="agreements" />
@@ -1729,16 +1682,6 @@
             <End Role="payment" EntitySet="payments" />
           </AssociationSet>
           <EntitySet Name="paymentTemps" EntityType="DUBBDBModel.paymentTemp" />
-          <EntitySet Name="adaptationDialogs" EntityType="DUBBDBModel.adaptationDialog" />
-          <EntitySet Name="adaptationSubtitles" EntityType="DUBBDBModel.adaptationSubtitle" />
-          <AssociationSet Name="FK_adaptationDialogs_To_dubbingSheetDtls" Association="DUBBDBModel.FK_adaptationDialogs_To_dubbingSheetDtls">
-            <End Role="dubbingSheetHdr" EntitySet="dubbingSheetHdrs" />
-            <End Role="adaptationDialog" EntitySet="adaptationDialogs" />
-          </AssociationSet>
-          <AssociationSet Name="FK_adaptationSubtitles_To_adaptationDialogs" Association="DUBBDBModel.FK_adaptationSubtitles_To_adaptationDialogs">
-            <End Role="adaptationDialog" EntitySet="adaptationDialogs" />
-            <End Role="adaptationSubtitle" EntitySet="adaptationSubtitles" />
-          </AssociationSet>
           <EntitySet Name="dialogs" EntityType="DUBBDBModel.dialog" />
           <EntitySet Name="scenes" EntityType="DUBBDBModel.scene" />
           <EntitySet Name="subtitles" EntityType="DUBBDBModel.subtitle" />
@@ -1758,6 +1701,10 @@
             <End Role="dubbingSheetHdr" EntitySet="dubbingSheetHdrs" />
             <End Role="subtitle" EntitySet="subtitles" />
           </AssociationSet>
+          <FunctionImport Name="archiveEndorsedWork">
+            <Parameter Name="workIntno" Mode="In" Type="Int64" />
+            <Parameter Name="respMsg" Mode="In" Type="String" />
+          </FunctionImport>
           </EntityContainer>
         <EntityType Name="agreement">
           <Key>
@@ -1926,7 +1873,6 @@
           <NavigationProperty Name="orderTrnHdr" Relationship="DUBBDBModel.FK_dubbingSheetHdrs_orderTrnHdrs" FromRole="dubbingSheetHdr" ToRole="orderTrnHdr" />
           <NavigationProperty Name="voiceActor" Relationship="DUBBDBModel.FK_dubbingSheetHdrs_voiceActors" FromRole="dubbingSheetHdr" ToRole="voiceActor" />
           <NavigationProperty Name="workCharacter" Relationship="DUBBDBModel.FK_dubbingSheetHdrs_workCharacters" FromRole="dubbingSheetHdr" ToRole="workCharacter" />
-          <NavigationProperty Name="adaptationDialogs" Relationship="DUBBDBModel.FK_adaptationDialogs_To_dubbingSheetDtls" FromRole="dubbingSheetHdr" ToRole="adaptationDialog" />
           <NavigationProperty Name="subtitles" Relationship="DUBBDBModel.FK_subtitles_To_dubbingSheetHdrs" FromRole="dubbingSheetHdr" ToRole="subtitle" />
         </EntityType>
         <EntityType Name="dubbingTrnHdr">
@@ -2937,60 +2883,6 @@
           <Property Name="totalUnits" Type="Int32" Nullable="false" />
           <Property Name="refPaymentIntno" Type="Int64" />
         </EntityType>
-        <EntityType Name="adaptationDialog">
-          <Key>
-            <PropertyRef Name="dialogIntno" />
-          </Key>
-          <Property Name="dialogIntno" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="dubbSheetHdrIntno" Type="Int64" Nullable="false" />
-          <Property Name="sceneNo" Type="Int16" Nullable="false" />
-          <Property Name="dialogNo" Type="Int16" />
-          <Property Name="startTimeCode" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
-          <Property Name="endTimeCode" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
-          <Property Name="isTaken" Type="Boolean" Nullable="false" />
-          <NavigationProperty Name="dubbingSheetHdr" Relationship="DUBBDBModel.FK_adaptationDialogs_To_dubbingSheetDtls" FromRole="adaptationDialog" ToRole="dubbingSheetHdr" />
-          <NavigationProperty Name="adaptationSubtitles" Relationship="DUBBDBModel.FK_adaptationSubtitles_To_adaptationDialogs" FromRole="adaptationDialog" ToRole="adaptationSubtitle" />
-        </EntityType>
-        <EntityType Name="adaptationSubtitle">
-          <Key>
-            <PropertyRef Name="subtitleIntno" />
-          </Key>
-          <Property Name="subtitleIntno" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="dialogIntno" Type="Int64" Nullable="false" />
-          <Property Name="subtitleNo" Type="Int16" />
-          <Property Name="scentence" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
-          <Property Name="startTime" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
-          <Property Name="endTime" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
-          <NavigationProperty Name="adaptationDialog" Relationship="DUBBDBModel.FK_adaptationSubtitles_To_adaptationDialogs" FromRole="adaptationSubtitle" ToRole="adaptationDialog" />
-        </EntityType>
-        <Association Name="FK_adaptationDialogs_To_dubbingSheetDtls">
-          <End Type="DUBBDBModel.dubbingSheetHdr" Role="dubbingSheetHdr" Multiplicity="1">
-            <OnDelete Action="Cascade" />
-          </End>
-          <End Type="DUBBDBModel.adaptationDialog" Role="adaptationDialog" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="dubbingSheetHdr">
-              <PropertyRef Name="dubbSheetHdrIntno" />
-            </Principal>
-            <Dependent Role="adaptationDialog">
-              <PropertyRef Name="dubbSheetHdrIntno" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK_adaptationSubtitles_To_adaptationDialogs">
-          <End Type="DUBBDBModel.adaptationDialog" Role="adaptationDialog" Multiplicity="1">
-            <OnDelete Action="Cascade" />
-          </End>
-          <End Type="DUBBDBModel.adaptationSubtitle" Role="adaptationSubtitle" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="adaptationDialog">
-              <PropertyRef Name="dialogIntno" />
-            </Principal>
-            <Dependent Role="adaptationSubtitle">
-              <PropertyRef Name="dialogIntno" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
         <EntityType Name="dialog">
           <Key>
             <PropertyRef Name="dialogIntno" />
@@ -3568,31 +3460,6 @@
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
-          <EntitySetMapping Name="adaptationDialogs">
-            <EntityTypeMapping TypeName="DUBBDBModel.adaptationDialog">
-              <MappingFragment StoreEntitySet="adaptationDialogs">
-                <ScalarProperty Name="isTaken" ColumnName="isTaken" />
-                <ScalarProperty Name="endTimeCode" ColumnName="endTimeCode" />
-                <ScalarProperty Name="startTimeCode" ColumnName="startTimeCode" />
-                <ScalarProperty Name="dialogNo" ColumnName="dialogNo" />
-                <ScalarProperty Name="sceneNo" ColumnName="sceneNo" />
-                <ScalarProperty Name="dubbSheetHdrIntno" ColumnName="dubbSheetHdrIntno" />
-                <ScalarProperty Name="dialogIntno" ColumnName="dialogIntno" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="adaptationSubtitles">
-            <EntityTypeMapping TypeName="DUBBDBModel.adaptationSubtitle">
-              <MappingFragment StoreEntitySet="adaptationSubtitles">
-                <ScalarProperty Name="endTime" ColumnName="endTime" />
-                <ScalarProperty Name="startTime" ColumnName="startTime" />
-                <ScalarProperty Name="scentence" ColumnName="scentence" />
-                <ScalarProperty Name="subtitleNo" ColumnName="subtitleNo" />
-                <ScalarProperty Name="dialogIntno" ColumnName="dialogIntno" />
-                <ScalarProperty Name="subtitleIntno" ColumnName="subtitleIntno" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
           <EntitySetMapping Name="dialogs">
             <EntityTypeMapping TypeName="DUBBDBModel.dialog">
               <MappingFragment StoreEntitySet="dialogs">
@@ -3630,6 +3497,7 @@
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
+          <FunctionImportMapping FunctionImportName="archiveEndorsedWork" FunctionName="DUBBDBModel.Store.archiveEndorsedWork" />
         </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>
