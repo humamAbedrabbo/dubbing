@@ -26,6 +26,10 @@ namespace dubbingApp
                 name: "dubbingMonitor",
                 url: "dubbingMonitor/Index"
             );
+            routes.MapRoute(
+                name: "executives",
+                url: "executiveSummary/Index"
+            );
         }
     }
 }

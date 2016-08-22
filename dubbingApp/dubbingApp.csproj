@@ -191,6 +191,7 @@
     <Compile Include="Controllers\dubbingController.cs" />
     <Compile Include="Controllers\dubbingMonitorController.cs" />
     <Compile Include="Controllers\dubbingRouterController.cs" />
+    <Compile Include="Controllers\executiveSummaryController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\ManageController.cs" />
     <Compile Include="Controllers\ordersController.cs" />
@@ -499,6 +500,10 @@
     <Content Include="Views\dubbDomains\Edit.cshtml" />
     <Content Include="Views\dubbDomains\Index.cshtml" />
     <Content Include="Views\dubbDomains\domainsList.cshtml" />
+    <Content Include="Views\Home\_activitiesSummary.cshtml" />
+    <Content Include="Views\executiveSummary\Index.cshtml" />
+    <Content Include="Views\executiveSummary\_worksLog.cshtml" />
+    <Content Include="Views\executiveSummary\_ordersLog.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

@@ -1,0 +1,65 @@
+﻿@model IEnumerable<dubbingModel.logWork>
+
+<div class="container-fluid" style="padding:0px">
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <div class="row">
+                <div class="col-sm-12">
+                    <label><small>New Contracted Works</small></label>
+                </div>
+            </div>
+        </div>
+        <div class="panel-body">
+            <table class="table table-hover table-condensed">
+                <thead>
+                    <tr>
+                        <th class="col-sm-1"><small>Month</small></th>
+                        <th class="col-sm-7"><small>Work</small></th>
+                        <th class="col-sm-3"><small>Client</small></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var w1 in Model.Where(b => !b.endorsedDate.HasValue).OrderByDescending(b => b.contractedDate))
+                    {
+                        <tr>
+                            <td class="col-sm-1"><small>@w1.contractedMonth/@w1.contractedYear</small></td>
+                            <td class="col-sm-7"><small>@w1.workName / @w1.workType / @w1.workNationality</small></td>
+                            <td class="col-sm-3"><small>@w1.clientName</small></td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <div class="row">
+                <div class="col-sm-12">
+                    <label><small>Endorsed Works</small></label>
+                </div>
+            </div>
+        </div>
+        <div class="panel-body">
+            <table class="table table-hover table-condensed">
+                <thead>
+                    <tr>
+                        <th class="col-sm-1"><small>Month</small></th>
+                        <th class="col-sm-7"><small>Work</small></th>
+                        <th class="col-sm-3"><small>Client</small></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var w2 in Model.Where(b => b.endorsedDate.HasValue).OrderByDescending(b => b.endorsedDate))
+                    {
+                        <tr>
+                            <td class="col-sm-1"><small>@w2.endorsedMonth/@w2.endorsedYear</small></td>
+                            <td class="col-sm-7"><small>@w2.workName / @w2.workType / @w2.workNationality</small></td>
+                            <td class="col-sm-3"><small>@w2.clientName</small></td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

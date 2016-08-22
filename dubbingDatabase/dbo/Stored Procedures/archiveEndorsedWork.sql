@@ -33,9 +33,15 @@ BEGIN
 			delete from dubbingSheetHdrs where orderTrnHdrIntno in
 					(select orderTrnHdrIntno from orderTrnHdrs where workIntno = @workIntno);
 			
-			-- finaly endorse the work(contract) by changing its status to "03"
+			-- endorse the work(contract) by changing its status to "03"
 			update agreementWorks
 			set status = '03'
+			where workIntno = @workIntno;
+			
+			-- finally log work endorsement
+			update logWorks
+			set endorsedDate = GETDATE(), endorsedYear = YEAR(GETDATE()), endorsedMonth = MONTH(GETDATE()),
+				lastUpdate = GETDATE(), updatedBy = @respMsg
 			where workIntno = @workIntno;
 					
 			set @respMsg = null;

@@ -70,6 +70,50 @@ namespace dubbingApp.Controllers
             return RedirectToAction("schedulesList");
         }
 
+        public ActionResult schedulesEndorse(long schedule)
+        {
+            var model = db.dubbingTrnHdrs;
+            var logModel = db.logOrders;
+            var modelItem = model.Find(schedule);
+            modelItem.status = false;
+
+            // insert dubbed episodes log
+            var x = db.dubbingTrnDtls.Where(b => b.dubbTrnHdrIntno == schedule).ToList();
+            var y = x.Select(b => b.workIntno).Distinct().ToList();
+            
+            int currYear = modelItem.thruDate.Year;
+            int currMonth = modelItem.thruDate.Month;
+
+            foreach(var work in y)
+            {
+                long workIntno = work;
+                var lg = logModel.FirstOrDefault(b => b.workIntno == workIntno && b.logYear == currYear && b.logMonth == currMonth);
+                if (lg == null)
+                {
+                    var z = db.agreementWorks.Include(b => b.agreement.client).FirstOrDefault(b => b.workIntno == workIntno);
+                    logOrder lo = new logOrder();
+                    lo.logYear = currYear;
+                    lo.logMonth = currMonth;
+                    lo.clientIntno = z.agreement.clientIntno;
+                    lo.clientName = string.IsNullOrEmpty(z.agreement.client.clientShortName) ? z.agreement.client.clientName : z.agreement.client.clientShortName;
+                    lo.workIntno = workIntno;
+                    lo.workName = z.workName;
+                    lo.workType = LookupModels.decodeDictionaryItem("workType", z.workType);
+                    lo.totalEpisodesDubbed = x.Where(b => b.workIntno == workIntno).Count();
+                    lo.lastEpisodeDubbed = x.Where(b => b.workIntno == workIntno).Max(b => b.episodeNo);
+                    lo.lastUpdate = DateTime.Today;
+                    logModel.Add(lo);
+                }
+                else
+                {
+                    lg.totalEpisodesDubbed += x.Where(b => b.workIntno == workIntno).Count();
+                    lg.lastEpisodeDubbed = x.Where(b => b.workIntno == workIntno).Max(b => b.episodeNo);
+                }
+            }
+            db.SaveChanges();
+            return RedirectToAction("schedulesList");
+        }
+
         public ActionResult scheduleDetails(long sch)
         {
             var hdr = db.dubbingTrnHdrs.Find(sch);

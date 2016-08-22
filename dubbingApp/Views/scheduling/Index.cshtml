@@ -137,6 +137,21 @@
                 });
             }
         }
+        function onSchedulesEndorseClick(schedule1) {
+            if (confirm("Please Confirm! About to Endorse the Selected Schedule.")) {
+                $.ajax({
+                    url: '@Url.Action("schedulesEndorse", "scheduling")',
+                    type: 'GET',
+                    data: { schedule: schedule1 },
+                    success: function (result) {
+                        $('#schList').html(result);
+                        $('#epList').html(null);
+                        $('#stdList').html(null);
+                        $('#details').html(null);
+                    }
+                });
+            }
+        }
 
         //works and episodes
         function onEpisodesAddNewClick(work1, schedule1) {

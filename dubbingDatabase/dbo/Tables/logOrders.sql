@@ -1,0 +1,27 @@
+﻿CREATE TABLE [dbo].[logOrders]
+(
+	[logIntno] [bigint] IDENTITY(1,1) NOT NULL,
+	[logYear] [int] NOT NULL,
+	[logMonth] [int] NOT NULL,
+	[clientIntno] [bigint] NOT NULL,
+	[clientName] [nvarchar](50) NOT NULL,
+	[workIntno] [bigint] NOT NULL,
+	[workName] [nvarchar](50) NOT NULL,
+	[workType] [nvarchar](50) NOT NULL,
+	[totalEpisodesReceived] [int] NOT NULL DEFAULT 0,
+	[totalEpisodesDubbed] [int] NOT NULL DEFAULT 0,
+	[totalEpisodesUploaded] [int] NOT NULL DEFAULT 0,
+	[totalEpisodesShipped] [int] NOT NULL DEFAULT 0,
+	[totalScenesDubbed] [int] NOT NULL DEFAULT 0,
+	[lastEpisodeReceived] [int] NULL,
+	[lastEpisodeDubbed] [int] NULL,
+	[lastEpisodeUploaded] [int] NULL,
+	[lastEpisodeShipped] [int] NULL,
+	[totalDubbingCharges] [int] NOT NULL DEFAULT 0,
+	[totalTranslationCharges] [int] NOT NULL DEFAULT 0,
+	[totalAdaptationCharges] [int] NOT NULL DEFAULT 0,
+	[totalMeCharges] [int] NOT NULL DEFAULT 0,
+	[totalOtherCharges] [int] NOT NULL DEFAULT 0,
+	[lastUpdate] [datetime] NOT NULL,
+ CONSTRAINT [PK_workSums] PRIMARY KEY CLUSTERED ([logIntno] ASC)
+);

@@ -158,6 +158,7 @@ namespace dubbingApp.Controllers
         public ActionResult orderAddNew(workOrder item)
         {
             var model = db.workOrders;
+            var logModel = db.logOrders;
             var orderItemsModel = db.orderTrnHdrs;
             if (ModelState.IsValid)
             {
@@ -169,7 +170,7 @@ namespace dubbingApp.Controllers
                     item.updatedBy = LookupModels.getUser();
                     item.status = "01";
 
-                    var x = db.agreementWorks.Where(b => b.workIntno == item.workIntno).SingleOrDefault();
+                    var x = db.agreementWorks.Include(b => b.agreement.client).Where(b => b.workIntno == item.workIntno).SingleOrDefault();
 
                     if (x.firstEpisodeShowDate.HasValue)
                     {
@@ -180,6 +181,30 @@ namespace dubbingApp.Controllers
                         item.expectedDeliveryDate = x.firstEpisodeShowDate.Value.AddDays(nbrDays).Date;
                     }
                     model.Add(item);
+
+                    // log the newly received order
+                    var lg = db.logOrders.FirstOrDefault(b => b.logYear == item.receivedDate.Year && b.logMonth == item.receivedDate.Month && b.workIntno == item.workIntno);
+                    if (lg == null)
+                    {
+                        logOrder lo = new logOrder();
+                        lo.logYear = item.receivedDate.Year;
+                        lo.logMonth = item.receivedDate.Month;
+                        lo.clientIntno = x.agreement.clientIntno;
+                        lo.clientName = string.IsNullOrEmpty(x.agreement.client.clientShortName) ? x.agreement.client.clientName : x.agreement.client.clientShortName; 
+                        lo.workIntno = item.workIntno;
+                        lo.workName = x.workName;
+                        lo.workType = LookupModels.decodeDictionaryItem("workType", x.workType);
+                        lo.totalEpisodesReceived = item.thruEpisode - item.fromEpisode + 1;
+                        lo.lastEpisodeReceived = item.thruEpisode;
+                        lo.lastUpdate = DateTime.Today;
+                        logModel.Add(lo);
+                    }
+                    else
+                    {
+                        lg.totalEpisodesReceived += item.thruEpisode - item.fromEpisode + 1;
+                        lg.lastEpisodeReceived = item.thruEpisode;
+                        lg.lastUpdate = DateTime.Today;
+                    }
 
                     // because it is about new received episodes, then insert order items
                     for (int i = item.fromEpisode; i <= item.thruEpisode; i++)

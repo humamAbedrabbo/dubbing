@@ -195,12 +195,30 @@ namespace dubbingApp.Controllers
         public ActionResult contractAddNew(agreementWork item)
         {
             var model = db.agreementWorks;
+            var logModel = db.logWorks;
             if (ModelState.IsValid)
             {
                 try
                 {
                     item.status = "01";
                     model.Add(item);
+                    db.SaveChanges();
+
+                    //insert new work in works log
+                    logWork lw = new logWork();
+                    var x = db.agreements.Include(b => b.client).FirstOrDefault(b => b.agreementIntno == item.agreementIntno);
+                    lw.clientIntno = x.clientIntno;
+                    lw.clientName = string.IsNullOrEmpty(x.client.clientShortName) ? x.client.clientName : x.client.clientShortName;
+                    lw.workIntno = item.workIntno;
+                    lw.workName = item.workName;
+                    lw.workType = LookupModels.decodeDictionaryItem("workType", item.workType);
+                    lw.workNationality = LookupModels.decodeDictionaryItem("workNationality", item.workNationality);
+                    lw.contractedDate = DateTime.Today.Date;
+                    lw.contractedYear = DateTime.Today.Year;
+                    lw.contractedMonth = DateTime.Today.Month;
+                    lw.lastUpdate = DateTime.Today;
+                    lw.updatedBy = User.Identity.Name;
+                    logModel.Add(lw);
                     db.SaveChanges();
                 }
                 catch(Exception e)
@@ -254,14 +272,26 @@ namespace dubbingApp.Controllers
         {
             List<string> historyList = new List<string>();
             var x = db.orderTrnHdrs.Where(b => b.workIntno == id);
-            historyList.Add("Total Received|" + x.Count());
-            historyList.Add("Last Received|" + x.Max(b => b.orderReceivedDate.Value).ToShortDateString());
-            historyList.Add("Total Rejected|" + x.Where(b => b.status == "03").Count());
-            int u = x.Where(b => b.shipmentLowRes.HasValue && !b.shipmentFinal.HasValue).Count();
-            historyList.Add("Total Uploaded|" + u);
-            if (u != 0)
-                historyList.Add("Last Uploaded|" + x.Where(b => b.shipmentLowRes.HasValue && !b.shipmentFinal.HasValue).Max(b => b.shipmentLowRes.Value).ToShortDateString());
-            historyList.Add("Total Shipped|" + x.Where(b => b.shipmentFinal.HasValue).Count());
+            if (x.Count() != 0)
+            {
+                historyList.Add("Total Received|" + x.Count());
+                historyList.Add("Last Received|" + x.Max(b => b.orderReceivedDate.Value).ToShortDateString());
+                historyList.Add("Total Rejected|" + x.Where(b => b.status == "03").Count());
+                int u = x.Where(b => b.shipmentLowRes.HasValue && !b.shipmentFinal.HasValue).Count();
+                historyList.Add("Total Uploaded|" + u);
+                if (u != 0)
+                    historyList.Add("Last Uploaded|" + x.Where(b => b.shipmentLowRes.HasValue && !b.shipmentFinal.HasValue).Max(b => b.shipmentLowRes.Value).ToShortDateString());
+                historyList.Add("Total Shipped|" + x.Where(b => b.shipmentFinal.HasValue).Count());
+            }
+            else
+            {
+                historyList.Add("Total Received|0");
+                historyList.Add("Last Received|-");
+                historyList.Add("Total Rejected|0");
+                historyList.Add("Total Uploaded|0");
+                historyList.Add("Last Uploaded|-");
+                historyList.Add("Total Shipped|0");
+            }
 
             ViewBag.workIntno = id;
             return PartialView("_ContractHistory", historyList);
@@ -273,7 +303,7 @@ namespace dubbingApp.Controllers
             {
                 //call stored procedure to clean unecessary details
                 string resp = null;
-                db.archiveEndorsedWork(work, resp);
+                db.archiveEndorsedWork(work, User.Identity.Name);
                 if (!string.IsNullOrEmpty(resp))
                     return Content("Failed! Unable to Endorse Work(Contract). Please try later.", "text/html");
             }

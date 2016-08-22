@@ -26,5 +26,22 @@ namespace dubbingApp.Controllers
 
             return View();
         }
+
+        public ActionResult activitiesSummary()
+        {
+            return PartialView("_activitiesSummary");
+        }
+
+        [Authorize(Roles = "ADMIN, GENERAL_MANAGER")]
+        public ActionResult executives()
+        {
+            //if (User.IsInRole("ADMIN") || User.IsInRole("GENERAL_MANAGER"))
+            //{
+            //    return RedirectToRoutePermanent("executives");
+            //}
+            //else
+            //    return new HttpStatusCodeResult(500, "Access Denied! User Has NO Privileges. Please Contact Administration.");
+            return RedirectToRoutePermanent("executives");
+        }
     }
 }
