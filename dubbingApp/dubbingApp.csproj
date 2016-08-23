@@ -218,6 +218,7 @@
     <Content Include="Content\bootstrap.css" />
     <Content Include="Content\bootstrap.min.css" />
     <Content Include="Content\fonts\glyphicons-halflings-regular.svg" />
+    <Content Include="Content\Images\ajax-loader.gif" />
     <Content Include="Content\Images\Fardous.png" />
     <Content Include="favicon.ico" />
     <Content Include="Global.asax" />
@@ -314,6 +315,7 @@
     <None Include="Properties\PublishProfiles\dubbingApp2016.pubxml" />
     <None Include="Scripts\jquery-2.2.3.intellisense.js" />
     <Content Include="Scripts\dubbing\adaptation.js" />
+    <Content Include="Scripts\dubbing\busySpinner.js" />
     <Content Include="Scripts\jquery-2.2.3.js" />
     <Content Include="Scripts\jquery-2.2.3.min.js" />
     <Content Include="Scripts\jquery-2.2.3.min.map" />

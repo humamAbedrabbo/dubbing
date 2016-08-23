@@ -72,6 +72,15 @@ namespace dubbingApp.Controllers
                              where B.status == true
                              select A);
                     break;
+                case "09": //active episodes in pipeline
+                    model = x.Where(b => b.status == "04");
+                    break;
+                case "10": //endorsed episodes in pipeline
+                    model = x.Where(b => b.status == "06");
+                    break;
+                case "11": // all episodes in work(s)
+                    model = x;
+                    break;
                 default:
                     model = x.Where(b => b.status != "06");
                     break;
@@ -84,10 +93,12 @@ namespace dubbingApp.Controllers
         public ActionResult filterSettings(long? work, string epFilter)
         {
             string settingsList = null;
-            var x = db.orderTrnHdrs.Include(b => b.agreementWork)
+            var model = db.orderTrnHdrs.Include(b => b.agreementWork)
                                     .Where(b => b.agreementWork.status == "01"
-                                            && (!work.HasValue || b.workIntno == work)
-                                            && b.status != "06").ToList();
+                                            && (!work.HasValue || b.workIntno == work));
+            var x = model.Where(b => b.status != "06").ToList();
+            var y = model.ToList();
+
             int cnt = 0;
             DateTime todayDate = DateTime.Today.Date;
 
@@ -97,7 +108,7 @@ namespace dubbingApp.Controllers
                        join B in db.orderChecks on A.orderTrnHdrIntno equals B.orderTrnHdrIntno
                        where !A.startAdaptation.HasValue
                        select A).Count();
-                settingsList = "0;0;0;0;" + cnt.ToString() + ";0";
+                settingsList = "0;0;0;0;" + cnt.ToString() + ";0;" + x.Count().ToString() + ";0;" + y.Count().ToString();
             }
             else
             {
@@ -132,6 +143,18 @@ namespace dubbingApp.Controllers
                        join B in db.clientClaims on A.orderTrnHdrIntno equals B.orderTrnHdrIntno
                        where B.status == true
                        select A).Count();
+                settingsList = settingsList + cnt.ToString() + ";";
+
+                // active episodes in pipeline
+                cnt = y.Where(b => b.status == "04").Count();
+                settingsList = settingsList + cnt.ToString() + ";";
+
+                // endorsed episodes in pipeline
+                cnt = y.Where(b => b.status == "06").Count();
+                settingsList = settingsList + cnt.ToString() + ";";
+
+                // all episodes in work(s)
+                cnt = y.Count();
                 settingsList = settingsList + cnt.ToString();
             }
 
@@ -405,6 +428,87 @@ namespace dubbingApp.Controllers
 
             db.SaveChanges();
             return Content("Successfully Assigned. ", "text/html");
+        }
+
+        public ActionResult episodesEndorse(string oiList, long? work)
+        {
+            var model = db.orderTrnHdrs;
+            var logModel = db.logOrders;
+            string[] oiList1 = oiList.Split(';');
+            List<orderTrnHdr> orderHdrList = new List<orderTrnHdr>();
+            foreach(var item in oiList1)
+            {
+                long id = long.Parse(item);
+                var modelItem = model.Find(id);
+                modelItem.status = "06";
+                orderHdrList.Add(modelItem);
+            }
+
+            // log endorsed episodes
+            int currYear = DateTime.Today.Year;
+            int currMonth = DateTime.Today.Month;
+            foreach(long wk in orderHdrList.Select(b => b.workIntno).Distinct())
+            {
+                var lg = db.logOrders.FirstOrDefault(b => b.logYear == currYear && b.logMonth == currMonth && b.workIntno == wk);
+                if (lg == null)
+                {
+                    var w = db.agreementWorks.Include(b => b.agreement.client).FirstOrDefault(b => b.workIntno == wk);
+                    logOrder lo = new logOrder();
+                    lo.logYear = currYear;
+                    lo.logMonth = currMonth;
+                    lo.clientIntno = w.agreement.clientIntno;
+                    lo.clientName = string.IsNullOrEmpty(w.agreement.client.clientShortName) ? w.agreement.client.clientName : w.agreement.client.clientShortName;
+                    lo.workIntno = wk;
+                    lo.workName = w.workName;
+                    lo.workType = LookupModels.decodeDictionaryItem("workType", w.workType);
+                    var h1 = orderHdrList.Where(b => b.workIntno == wk && !b.endDubbing.HasValue);
+                    if (h1 != null)
+                    {
+                        lo.totalEpisodesDubbed = h1.Count();
+                        lo.lastEpisodeDubbed = h1.Max(b => b.episodeNo);
+                    }
+                    var h2 = orderHdrList.Where(b => b.workIntno == wk && !b.shipmentLowRes.HasValue);
+                    if (h2 != null)
+                    {
+                        lo.totalEpisodesUploaded = h2.Count();
+                        lo.lastEpisodeUploaded = h2.Max(b => b.episodeNo);
+                    }
+                    var h3 = orderHdrList.Where(b => b.workIntno == wk && !b.shipmentFinal.HasValue);
+                    if (h3 != null)
+                    {
+                        lo.totalEpisodesShipped = h3.Count();
+                        lo.lastEpisodeShipped = h3.Max(b => b.episodeNo);
+                    }
+                    lo.lastUpdate = DateTime.Today;
+                    logModel.Add(lo);
+                }
+                else
+                {
+                    var h1 = orderHdrList.Where(b => b.workIntno == wk && !b.endDubbing.HasValue);
+                    if (h1 != null)
+                    {
+                        lg.totalEpisodesDubbed += h1.Count();
+                        lg.lastEpisodeDubbed = h1.Max(b => b.episodeNo);
+                    }
+                    var h2 = orderHdrList.Where(b => b.workIntno == wk && !b.shipmentLowRes.HasValue);
+                    if (h2 != null)
+                    {
+                        lg.totalEpisodesUploaded += h2.Count();
+                        lg.lastEpisodeUploaded = h2.Max(b => b.episodeNo);
+                    }
+                    var h3 = orderHdrList.Where(b => b.workIntno == wk && !b.shipmentFinal.HasValue);
+                    if (h3 != null)
+                    {
+                        lg.totalEpisodesShipped += h3.Count();
+                        lg.lastEpisodeShipped = h3.Max(b => b.episodeNo);
+                    }
+                    lg.lastUpdate = DateTime.Today;
+                }
+            }
+            
+            db.SaveChanges();
+            long? work1 = work; 
+            return RedirectToAction("orderItemsList", new { work = work1 });
         }
 
         // order item details
