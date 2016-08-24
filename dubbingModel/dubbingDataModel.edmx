@@ -218,6 +218,75 @@
           <Property Name="status" Type="bit" Nullable="false" />
           <Property Name="accountNo" Type="nvarchar" MaxLength="50" />
         </EntityType>
+        <EntityType Name="logActors">
+          <Key>
+            <PropertyRef Name="logIntno" />
+          </Key>
+          <Property Name="logIntno" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="logYear" Type="int" Nullable="false" />
+          <Property Name="logMonth" Type="int" Nullable="false" />
+          <Property Name="clientIntno" Type="bigint" Nullable="false" />
+          <Property Name="clientName" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="workIntno" Type="bigint" Nullable="false" />
+          <Property Name="workName" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="workType" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="totalMainActors" Type="int" Nullable="false" />
+          <Property Name="totalMainActorsCharges" Type="int" Nullable="false" />
+          <Property Name="highestMainActorCharges" Type="int" Nullable="false" />
+          <Property Name="lowestMainActorCharges" Type="int" Nullable="false" />
+          <Property Name="totalOtherActors" Type="int" Nullable="false" />
+          <Property Name="totalOtherActorsCharges" Type="int" Nullable="false" />
+          <Property Name="avgOtherActorCharges" Type="int" Nullable="false" />
+          <Property Name="lastUpdate" Type="int" Nullable="false" />
+        </EntityType>
+        <EntityType Name="logOrders">
+          <Key>
+            <PropertyRef Name="logIntno" />
+          </Key>
+          <Property Name="logIntno" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="logYear" Type="int" Nullable="false" />
+          <Property Name="logMonth" Type="int" Nullable="false" />
+          <Property Name="clientIntno" Type="bigint" Nullable="false" />
+          <Property Name="clientName" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="workIntno" Type="bigint" Nullable="false" />
+          <Property Name="workName" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="workType" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="totalEpisodesReceived" Type="int" Nullable="false" />
+          <Property Name="totalEpisodesDubbed" Type="int" Nullable="false" />
+          <Property Name="totalEpisodesUploaded" Type="int" Nullable="false" />
+          <Property Name="totalEpisodesShipped" Type="int" Nullable="false" />
+          <Property Name="totalScenesDubbed" Type="int" Nullable="false" />
+          <Property Name="lastEpisodeReceived" Type="int" />
+          <Property Name="lastEpisodeDubbed" Type="int" />
+          <Property Name="lastEpisodeUploaded" Type="int" />
+          <Property Name="lastEpisodeShipped" Type="int" />
+          <Property Name="totalDubbingCharges" Type="int" Nullable="false" />
+          <Property Name="totalTranslationCharges" Type="int" Nullable="false" />
+          <Property Name="totalAdaptationCharges" Type="int" Nullable="false" />
+          <Property Name="totalMeCharges" Type="int" Nullable="false" />
+          <Property Name="totalOtherCharges" Type="int" Nullable="false" />
+          <Property Name="lastUpdate" Type="datetime" Nullable="false" />
+        </EntityType>
+        <EntityType Name="logWorks">
+          <Key>
+            <PropertyRef Name="logIntno" />
+          </Key>
+          <Property Name="logIntno" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="clientIntno" Type="bigint" Nullable="false" />
+          <Property Name="clientName" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="workIntno" Type="bigint" Nullable="false" />
+          <Property Name="workName" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="workType" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="workNationality" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="contractedDate" Type="date" />
+          <Property Name="contractedYear" Type="int" />
+          <Property Name="contractedMonth" Type="int" />
+          <Property Name="endorsedDate" Type="date" />
+          <Property Name="endorsedYear" Type="int" />
+          <Property Name="endorsedMonth" Type="int" />
+          <Property Name="lastUpdate" Type="datetime" Nullable="false" />
+          <Property Name="updatedBy" Type="nvarchar" MaxLength="50" Nullable="false" />
+        </EntityType>
         <EntityType Name="orderBatchTrnHdrs">
           <Key>
             <PropertyRef Name="orderBatchTrnIntno" />
@@ -1193,6 +1262,9 @@
           <EntitySet Name="dubbingTrnDtls" EntityType="Self.dubbingTrnDtls" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="dubbingTrnHdrs" EntityType="Self.dubbingTrnHdrs" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="employees" EntityType="Self.employees" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="logActors" EntityType="Self.logActors" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="logOrders" EntityType="Self.logOrders" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="logWorks" EntityType="Self.logWorks" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="orderBatchTrnHdrs" EntityType="Self.orderBatchTrnHdrs" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="orderChecks" EntityType="Self.orderChecks" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="orderTrnDtls" EntityType="Self.orderTrnDtls" Schema="dbo" store:Type="Tables" />
@@ -1705,6 +1777,9 @@
             <Parameter Name="workIntno" Mode="In" Type="Int64" />
             <Parameter Name="respMsg" Mode="In" Type="String" />
           </FunctionImport>
+          <EntitySet Name="logWorks" EntityType="DUBBDBModel.logWork" />
+          <EntitySet Name="logActors" EntityType="DUBBDBModel.logActor" />
+          <EntitySet Name="logOrders" EntityType="DUBBDBModel.logOrder" />
           </EntityContainer>
         <EntityType Name="agreement">
           <Key>
@@ -2975,6 +3050,75 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <EntityType Name="logWork">
+          <Key>
+            <PropertyRef Name="logIntno" />
+          </Key>
+          <Property Name="logIntno" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="clientIntno" Type="Int64" Nullable="false" />
+          <Property Name="clientName" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="workIntno" Type="Int64" Nullable="false" />
+          <Property Name="workName" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="workType" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="workNationality" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="contractedDate" Type="DateTime" Precision="0" />
+          <Property Name="contractedYear" Type="Int32" />
+          <Property Name="contractedMonth" Type="Int32" />
+          <Property Name="endorsedDate" Type="DateTime" Precision="0" />
+          <Property Name="endorsedYear" Type="Int32" />
+          <Property Name="endorsedMonth" Type="Int32" />
+          <Property Name="lastUpdate" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="updatedBy" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+        </EntityType>
+        <EntityType Name="logActor">
+          <Key>
+            <PropertyRef Name="logIntno" />
+          </Key>
+          <Property Name="logIntno" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="logYear" Type="Int32" Nullable="false" />
+          <Property Name="logMonth" Type="Int32" Nullable="false" />
+          <Property Name="clientIntno" Type="Int64" Nullable="false" />
+          <Property Name="clientName" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="workIntno" Type="Int64" Nullable="false" />
+          <Property Name="workName" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="workType" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="totalMainActors" Type="Int32" Nullable="false" />
+          <Property Name="totalMainActorsCharges" Type="Int32" Nullable="false" />
+          <Property Name="highestMainActorCharges" Type="Int32" Nullable="false" />
+          <Property Name="lowestMainActorCharges" Type="Int32" Nullable="false" />
+          <Property Name="totalOtherActors" Type="Int32" Nullable="false" />
+          <Property Name="totalOtherActorsCharges" Type="Int32" Nullable="false" />
+          <Property Name="avgOtherActorCharges" Type="Int32" Nullable="false" />
+          <Property Name="lastUpdate" Type="Int32" Nullable="false" />
+        </EntityType>
+        <EntityType Name="logOrder">
+          <Key>
+            <PropertyRef Name="logIntno" />
+          </Key>
+          <Property Name="logIntno" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="logYear" Type="Int32" Nullable="false" />
+          <Property Name="logMonth" Type="Int32" Nullable="false" />
+          <Property Name="clientIntno" Type="Int64" Nullable="false" />
+          <Property Name="clientName" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="workIntno" Type="Int64" Nullable="false" />
+          <Property Name="workName" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="workType" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="totalEpisodesReceived" Type="Int32" Nullable="false" />
+          <Property Name="totalEpisodesDubbed" Type="Int32" Nullable="false" />
+          <Property Name="totalEpisodesUploaded" Type="Int32" Nullable="false" />
+          <Property Name="totalEpisodesShipped" Type="Int32" Nullable="false" />
+          <Property Name="totalScenesDubbed" Type="Int32" Nullable="false" />
+          <Property Name="lastEpisodeReceived" Type="Int32" />
+          <Property Name="lastEpisodeDubbed" Type="Int32" />
+          <Property Name="lastEpisodeUploaded" Type="Int32" />
+          <Property Name="lastEpisodeShipped" Type="Int32" />
+          <Property Name="totalDubbingCharges" Type="Int32" Nullable="false" />
+          <Property Name="totalTranslationCharges" Type="Int32" Nullable="false" />
+          <Property Name="totalAdaptationCharges" Type="Int32" Nullable="false" />
+          <Property Name="totalMeCharges" Type="Int32" Nullable="false" />
+          <Property Name="totalOtherCharges" Type="Int32" Nullable="false" />
+          <Property Name="lastUpdate" Type="DateTime" Nullable="false" Precision="3" />
+        </EntityType>
         </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -3498,6 +3642,78 @@
             </EntityTypeMapping>
           </EntitySetMapping>
           <FunctionImportMapping FunctionImportName="archiveEndorsedWork" FunctionName="DUBBDBModel.Store.archiveEndorsedWork" />
+          <EntitySetMapping Name="logWorks">
+            <EntityTypeMapping TypeName="DUBBDBModel.logWork">
+              <MappingFragment StoreEntitySet="logWorks">
+                <ScalarProperty Name="updatedBy" ColumnName="updatedBy" />
+                <ScalarProperty Name="lastUpdate" ColumnName="lastUpdate" />
+                <ScalarProperty Name="endorsedMonth" ColumnName="endorsedMonth" />
+                <ScalarProperty Name="endorsedYear" ColumnName="endorsedYear" />
+                <ScalarProperty Name="endorsedDate" ColumnName="endorsedDate" />
+                <ScalarProperty Name="contractedMonth" ColumnName="contractedMonth" />
+                <ScalarProperty Name="contractedYear" ColumnName="contractedYear" />
+                <ScalarProperty Name="contractedDate" ColumnName="contractedDate" />
+                <ScalarProperty Name="workNationality" ColumnName="workNationality" />
+                <ScalarProperty Name="workType" ColumnName="workType" />
+                <ScalarProperty Name="workName" ColumnName="workName" />
+                <ScalarProperty Name="workIntno" ColumnName="workIntno" />
+                <ScalarProperty Name="clientName" ColumnName="clientName" />
+                <ScalarProperty Name="clientIntno" ColumnName="clientIntno" />
+                <ScalarProperty Name="logIntno" ColumnName="logIntno" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="logActors">
+            <EntityTypeMapping TypeName="DUBBDBModel.logActor">
+              <MappingFragment StoreEntitySet="logActors">
+                <ScalarProperty Name="lastUpdate" ColumnName="lastUpdate" />
+                <ScalarProperty Name="avgOtherActorCharges" ColumnName="avgOtherActorCharges" />
+                <ScalarProperty Name="totalOtherActorsCharges" ColumnName="totalOtherActorsCharges" />
+                <ScalarProperty Name="totalOtherActors" ColumnName="totalOtherActors" />
+                <ScalarProperty Name="lowestMainActorCharges" ColumnName="lowestMainActorCharges" />
+                <ScalarProperty Name="highestMainActorCharges" ColumnName="highestMainActorCharges" />
+                <ScalarProperty Name="totalMainActorsCharges" ColumnName="totalMainActorsCharges" />
+                <ScalarProperty Name="totalMainActors" ColumnName="totalMainActors" />
+                <ScalarProperty Name="workType" ColumnName="workType" />
+                <ScalarProperty Name="workName" ColumnName="workName" />
+                <ScalarProperty Name="workIntno" ColumnName="workIntno" />
+                <ScalarProperty Name="clientName" ColumnName="clientName" />
+                <ScalarProperty Name="clientIntno" ColumnName="clientIntno" />
+                <ScalarProperty Name="logMonth" ColumnName="logMonth" />
+                <ScalarProperty Name="logYear" ColumnName="logYear" />
+                <ScalarProperty Name="logIntno" ColumnName="logIntno" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="logOrders">
+            <EntityTypeMapping TypeName="DUBBDBModel.logOrder">
+              <MappingFragment StoreEntitySet="logOrders">
+                <ScalarProperty Name="lastUpdate" ColumnName="lastUpdate" />
+                <ScalarProperty Name="totalOtherCharges" ColumnName="totalOtherCharges" />
+                <ScalarProperty Name="totalMeCharges" ColumnName="totalMeCharges" />
+                <ScalarProperty Name="totalAdaptationCharges" ColumnName="totalAdaptationCharges" />
+                <ScalarProperty Name="totalTranslationCharges" ColumnName="totalTranslationCharges" />
+                <ScalarProperty Name="totalDubbingCharges" ColumnName="totalDubbingCharges" />
+                <ScalarProperty Name="lastEpisodeShipped" ColumnName="lastEpisodeShipped" />
+                <ScalarProperty Name="lastEpisodeUploaded" ColumnName="lastEpisodeUploaded" />
+                <ScalarProperty Name="lastEpisodeDubbed" ColumnName="lastEpisodeDubbed" />
+                <ScalarProperty Name="lastEpisodeReceived" ColumnName="lastEpisodeReceived" />
+                <ScalarProperty Name="totalScenesDubbed" ColumnName="totalScenesDubbed" />
+                <ScalarProperty Name="totalEpisodesShipped" ColumnName="totalEpisodesShipped" />
+                <ScalarProperty Name="totalEpisodesUploaded" ColumnName="totalEpisodesUploaded" />
+                <ScalarProperty Name="totalEpisodesDubbed" ColumnName="totalEpisodesDubbed" />
+                <ScalarProperty Name="totalEpisodesReceived" ColumnName="totalEpisodesReceived" />
+                <ScalarProperty Name="workType" ColumnName="workType" />
+                <ScalarProperty Name="workName" ColumnName="workName" />
+                <ScalarProperty Name="workIntno" ColumnName="workIntno" />
+                <ScalarProperty Name="clientName" ColumnName="clientName" />
+                <ScalarProperty Name="clientIntno" ColumnName="clientIntno" />
+                <ScalarProperty Name="logMonth" ColumnName="logMonth" />
+                <ScalarProperty Name="logYear" ColumnName="logYear" />
+                <ScalarProperty Name="logIntno" ColumnName="logIntno" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
         </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>

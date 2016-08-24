@@ -18,12 +18,8 @@
         </p>
         <p><a class="btn btn-info" href="~/orders/Index">Orders Center &raquo;</a></p>
     </div>
-    <div class="col-md-4">
-        <h2>Schedule Dubbing</h2>
-        <p>Increase Your Resources utilization by efficiently allocating Studios and Teams to perform ready Episodes, and that without overloading.</p>
-        <p><a class="btn btn-warning" href="~/scheduling/Index">Schedular &raquo;</a></p>
-        <p>Calendar allows You set appointments with Actors, avoiding gaps in Studio timing and improving punctuality.</p>
-        <p><a class="btn btn-default" href="~/calendar/Index">Calendar &raquo;</a></p>
+    <div class="col-sm-4">
+        @Html.Partial("_activitiesSummary")
     </div>
     <div class="col-md-4">
         <h2>Perform Dubbing</h2>
@@ -31,6 +27,7 @@
         <p><a class="btn btn-success" href="~/dubbingRouter/Index">Studios &raquo;</a></p>
     </div>
 </div>
+
 <div class="row">
     <div class="col-md-4">
         <h2>Perform Adaptation</h2>
@@ -39,10 +36,28 @@
         <p>On Adaptation Finalization, Review &amp; Complete the Casting by linking Actors to New or Secondary Characters.</p>
         <p><a class="btn btn-default" href="~/discharging/Index">Casting &raquo;</a></p>
     </div>
-    <div class="col-sm-4"></div>
+    <div class="col-md-4">
+        <h2>Schedule Dubbing</h2>
+        <p>Increase Your Resources utilization by efficiently allocating Studios and Teams to perform ready Episodes, and that without overloading.</p>
+        <p><a class="btn btn-warning" href="~/scheduling/Index">Schedular &raquo;</a></p>
+        <p>Calendar allows You set appointments with Actors, avoiding gaps in Studio timing and improving punctuality.</p>
+        <p><a class="btn btn-default" href="~/calendar/Index">Calendar &raquo;</a></p>
+    </div>
     <div class="col-md-4">
         <h2>Handle Assemblies &amp; Delivery</h2>
         <p>Assembly is where both Mixage and Montage prepare the final product by adding ME, recorded dubbing tracks and uploading a low resolution version for Client review and approval. This module allows for capturing Client Station feedback, address raised issues, and re-assemble for final Shipment.</p>
         <p><a class="btn btn-primary" href="~/assembly/Index">Assembly Center &raquo;</a></p>
     </div>
 </div>
+
+@section Scripts
+{
+    @Scripts.Render("~/bundles/jqueryval")
+
+    <script>
+        function onSummaryClick() {
+            window.location.href = "/Home/executives";
+        }
+    </script>
+    
+}

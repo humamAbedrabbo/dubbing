@@ -5,7 +5,7 @@
 }
 
 <div class="container-fluid">
-    <div class="jumbotron" style="padding:5px">
+    <div class="jumbotron hidden-print" style="padding:5px">
         <h2>Casting</h2>
         <p class="lead"><h5>Review and Enhance the System Provided Casting. New or Secondary Characters are Casted Anonymously which Shall Require Providing Actors prior to Generating Dubbing Calendar and/or Discharging Table in case of Manual Dubbing.</h5></p>
     </div>
@@ -26,8 +26,17 @@
 @section Scripts
 {
     @Scripts.Render("~/bundles/jqueryval")
+    <script src="~/Scripts/dubbing/busySpinner.js"></script>
 
     <script>
+        //global ajax callback events handlers
+        // to exclude specific ajax call write: "global: false," in the begining of ajax function
+        $(document).ajaxStart(function () {
+            ajaxIndicatorStart('loading data.. please wait..');
+        }).ajaxComplete(function () {
+            ajaxIndicatorStop();
+        });
+
         function onEpisodeSelectClick(oi) {
             $('.episodeLbl').removeClass('badge');
             $('#' + oi).addClass('badge');

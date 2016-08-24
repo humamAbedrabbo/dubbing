@@ -114,6 +114,15 @@
     <Compile Include="employee.cs">
       <DependentUpon>dubbingDataModel.tt</DependentUpon>
     </Compile>
+    <Compile Include="logActor.cs">
+      <DependentUpon>dubbingDataModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="logOrder.cs">
+      <DependentUpon>dubbingDataModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="logWork.cs">
+      <DependentUpon>dubbingDataModel.tt</DependentUpon>
+    </Compile>
     <Compile Include="orderBatchTrnHdr.cs">
       <DependentUpon>dubbingDataModel.tt</DependentUpon>
     </Compile>

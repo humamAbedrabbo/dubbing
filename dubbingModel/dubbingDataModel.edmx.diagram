@@ -96,6 +96,9 @@
         <AssociationConnector Association="DUBBDBModel.FK_subtitles_To_dialogs" />
         <AssociationConnector Association="DUBBDBModel.FK_scenes_To_orderTrnHdrs" />
         <AssociationConnector Association="DUBBDBModel.FK_subtitles_To_dubbingSheetHdrs" />
+        <EntityTypeShape EntityType="DUBBDBModel.logWork" Width="1.5" PointX="0.75" PointY="7.75" />
+        <EntityTypeShape EntityType="DUBBDBModel.logActor" Width="1.5" PointX="5.375" PointY="4.75" />
+        <EntityTypeShape EntityType="DUBBDBModel.logOrder" Width="1.5" PointX="7.375" PointY="0.75" />
         </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

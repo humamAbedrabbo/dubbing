@@ -1,0 +1,28 @@
+﻿
+@{
+    ViewBag.Title = "Dashboards";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container-fluid" style="padding:0px">
+    <div class="jumbotron" style="padding:5px">
+        <h2>Welcome To Executive Dashboards</h2>
+        <p class="lead"><h5>Get Up-To-Date Information and Statistics about Major Dubbing Activities reported on Monthly basis and accumlated for a revolving Year span.</h5></p>
+    </div>
+
+    <div class="row">
+        <div class="col-sm-5">
+            @Html.Action("worksLog")
+        </div>
+        <div class="col-sm-7">
+
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-sm-12">
+            @Html.Action("ordersLog")
+        </div>
+    </div>
+</div>
+

@@ -1,0 +1,57 @@
+﻿@model IEnumerable<dubbingModel.logOrder>
+
+<div class="container-fluid" style="padding:0px">
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <div class="row">
+                <div class="col-sm-12">
+                    <label>Orders</label>
+                </div>
+            </div>
+        </div>
+        <div class="panel-body" style="padding:0px">
+            <table class="table table-hover table-bordered">
+                <thead>
+                    <tr>
+                        <th colspan="2" scope="colgroup"></th>
+                        <th colspan="4" scope="colgroup"><small>Total Episodes (Last Episode)</small></th>
+                        <th colspan="4" scope="colgroup"><small>Total Charges</small></th>
+                        <th colspan="1" scope="colgroup"><small></small></th>
+                    </tr>
+                    <tr>
+                        <th scope="col"><small>Month</small></th>
+                        <th scope="col"><small>Work</small></th>
+                        <th scope="col"><small>Received</small></th>
+                        <th scope="col"><small>Dubbed</small></th>
+                        <th scope="col"><small>Uploaded</small></th>
+                        <th scope="col"><small>Shipped</small></th>
+                        <th scope="col"><small>Translation</small></th>
+                        <th scope="col"><small>Adaptation</small></th>
+                        <th scope="col"><small>Actors</small></th>
+                        <th scope="col"><small>M &amp; E</small></th>
+                        <th scope="col"><small>Grand Total</small></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var ol in Model)
+                    {
+                        int totalCharges = ol.totalDubbingCharges + ol.totalTranslationCharges + ol.totalAdaptationCharges + ol.totalMeCharges + ol.totalOtherCharges;
+                        <tr>
+                            <th scope="row"><small>@ol.logMonth/@ol.logYear</small></th>
+                            <td class="col-sm-2"><small>@ol.workName</small></td>
+                            <td class="col-sm-1"><small>@ol.totalEpisodesReceived (@ol.lastEpisodeReceived)</small></td>
+                            <td class="col-sm-1"><small>@ol.totalEpisodesDubbed (@ol.lastEpisodeDubbed)</small></td>
+                            <td class="col-sm-1"><small>@ol.totalEpisodesUploaded (@ol.lastEpisodeUploaded)</small></td>
+                            <td class="col-sm-1"><small>@ol.totalEpisodesShipped (@ol.lastEpisodeShipped)</small></td>
+                            <td class="col-sm-1"><small>@ol.totalTranslationCharges</small></td>
+                            <td class="col-sm-1"><small>@ol.totalAdaptationCharges</small></td>
+                            <td class="col-sm-1"><small>@ol.totalDubbingCharges</small></td>
+                            <td class="col-sm-1"><small>@ol.totalMeCharges</small></td>
+                            <td class="col-sm-1"><small>@totalCharges</small></td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

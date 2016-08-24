@@ -72,11 +72,15 @@ namespace dubbingApp.Controllers
         public ActionResult endorseSelectedEpisodes(long? work, string episodes, string activity)
         {
             var model = db.orderTrnHdrs;
+            var logModel = db.logOrders;
             string[] episodesList = episodes.Split(';');
+            List<orderTrnHdr> oiList = new List<orderTrnHdr>();
+
             foreach (string ep in episodesList)
             {
                 long orderItem = long.Parse(ep);
                 var modelItem = model.Find(orderItem);
+                oiList.Add(modelItem);
                 switch (activity)
                 {
                     case "01": // endorse mixage
@@ -89,6 +93,36 @@ namespace dubbingApp.Controllers
                     case "03": // endorse upload
                         modelItem.shipmentLowRes = DateTime.Today.Date;
                         break;
+                }
+            }
+            if (activity == "03") //insert upload endorsement log
+            {
+                int currYear = DateTime.Today.Year;
+                int currMonth = DateTime.Today.Month;
+                foreach (long wk in oiList.Select(b => b.workIntno).Distinct())
+                {
+                    var lg = logModel.FirstOrDefault(b => b.workIntno == wk && b.logYear == currYear && b.logMonth == currMonth);
+                    if (lg == null)
+                    {
+                        var z = db.agreementWorks.Include(b => b.agreement.client).FirstOrDefault(b => b.workIntno == wk);
+                        logOrder lo = new logOrder();
+                        lo.logYear = currYear;
+                        lo.logMonth = currMonth;
+                        lo.clientIntno = z.agreement.clientIntno;
+                        lo.clientName = string.IsNullOrEmpty(z.agreement.client.clientShortName) ? z.agreement.client.clientName : z.agreement.client.clientShortName;
+                        lo.workIntno = wk;
+                        lo.workName = z.workName;
+                        lo.workType = LookupModels.decodeDictionaryItem("workType", z.workType);
+                        lo.totalEpisodesUploaded = oiList.Where(b => b.workIntno == wk).Count();
+                        lo.lastEpisodeDubbed = oiList.Where(b => b.workIntno == wk).Max(b => b.episodeNo);
+                        lo.lastUpdate = DateTime.Today;
+                        logModel.Add(lo);
+                    }
+                    else
+                    {
+                        lg.totalEpisodesUploaded += oiList.Where(b => b.workIntno == wk).Count();
+                        lg.lastEpisodeUploaded = oiList.Where(b => b.workIntno == wk).Max(b => b.episodeNo);
+                    }
                 }
             }
             db.SaveChanges();
@@ -186,9 +220,44 @@ namespace dubbingApp.Controllers
                     {
                         db.shipments.Find(item.shipmentIntno).status = false;
                         var x = db.shipmentDetails.Where(b => b.shipmentIntno == item.shipmentIntno).Select(b => b.orderTrnHdrIntno).Distinct();
+
+                        var logModel = db.logOrders;
+                        List<orderTrnHdr> oiList = new List<orderTrnHdr>();
+
                         foreach (long x1 in x)
                         {
-                            db.orderTrnHdrs.Find(x1).shipmentFinal = DateTime.Today.Date;
+                            var oi = db.orderTrnHdrs.Find(x1);
+                            oi.shipmentFinal = DateTime.Today.Date;
+                            oiList.Add(oi);
+                        }
+
+                        //insert shipment endorsement log
+                        int currYear = DateTime.Today.Year;
+                        int currMonth = DateTime.Today.Month;
+                        foreach (long wk in oiList.Select(b => b.workIntno).Distinct())
+                        {
+                            var lg = logModel.FirstOrDefault(b => b.workIntno == wk && b.logYear == currYear && b.logMonth == currMonth);
+                            if (lg == null)
+                            {
+                                var z = db.agreementWorks.Include(b => b.agreement.client).FirstOrDefault(b => b.workIntno == wk);
+                                logOrder lo = new logOrder();
+                                lo.logYear = currYear;
+                                lo.logMonth = currMonth;
+                                lo.clientIntno = z.agreement.clientIntno;
+                                lo.clientName = string.IsNullOrEmpty(z.agreement.client.clientShortName) ? z.agreement.client.clientName : z.agreement.client.clientShortName;
+                                lo.workIntno = wk;
+                                lo.workName = z.workName;
+                                lo.workType = LookupModels.decodeDictionaryItem("workType", z.workType);
+                                lo.totalEpisodesShipped = oiList.Where(b => b.workIntno == wk).Count();
+                                lo.lastEpisodeShipped = oiList.Where(b => b.workIntno == wk).Max(b => b.episodeNo);
+                                lo.lastUpdate = DateTime.Today;
+                                logModel.Add(lo);
+                            }
+                            else
+                            {
+                                lg.totalEpisodesShipped += oiList.Where(b => b.workIntno == wk).Count();
+                                lg.lastEpisodeShipped = oiList.Where(b => b.workIntno == wk).Max(b => b.episodeNo);
+                            }
                         }
                         db.SaveChanges();
                     }

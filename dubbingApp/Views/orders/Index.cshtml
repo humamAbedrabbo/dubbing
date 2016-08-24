@@ -26,6 +26,7 @@
             </p>
         }
     </div>
+    
     <div class="col-sm-6 container-fluid" id="oList" style="padding:0px">
         @Html.Action("orderItemsList", "orders", new { epFilter = "01" })
     </div>
@@ -38,20 +39,10 @@
     </div>
 </div>
 
-<div class="modal fade" tabindex="-1" id="popupForm" role="dialog">
-    <div class="modal-dialog modal-sm" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <div class="modal-title">Processing</div>
-            </div>
-            <div class="modal-body">Please Wait ...</div>
-        </div>
-    </div>
-</div>
-
 @section Scripts
 {
     @Scripts.Render("~/bundles/jqueryval")
+    <script src="~/Scripts/dubbing/busySpinner.js"></script>
 
     <script>
         $(document).ready(function () {
@@ -62,12 +53,12 @@
         })
 
         //global ajax callback events handlers
+        // to exclude specific ajax call write: "global: false," in the begining of ajax function
         $(document).ajaxStart(function() {
-            $('#popupForm').modal('show');
-        })
-        $(document).ajaxComplete(function() {
-            $('#popupForm').delay(5000).modal('hide');
-        })
+            ajaxIndicatorStart('loading data.. please wait..');
+        }).ajaxComplete(function() {
+            ajaxIndicatorStop();
+        });
 
         function onFindEpisodesClick() {
             $('#allDetails').html(null);
@@ -273,6 +264,7 @@
             });
         }
 
+        // actions on episodes selection card
         function onScheduleClick() {
             onListSubmitClick();
             $.ajax({
@@ -294,6 +286,28 @@
                     $('#selectionAction').html(result);
                 }
             })
+        }
+        function onEpisodesEndorseClick() {
+            if (confirm('Please Confirm! About to Endorse the Selected Items in the List.')) {
+                onListSubmitClick();
+                $.ajax({
+                    url: '@Url.Action("episodesEndorse", "orders")',
+                    type: 'GET',
+                    data: { oiList: $('#oiListHF').val(), work: $('#workIntnoHF').val() },
+                    success: function (result) {
+                        $('#allDetails').html(null);
+                        $('#oList').html(result);
+                        $.ajax({
+                            url: '@Url.Action("filterSettings", "orders")',
+                            type: 'GET',
+                            data: { work: $('#workIntnoHF').val(), epFilter: '09' },
+                            success: function (result) {
+                                $('#filterSettings').html(result);
+                            }
+                        })
+                    }
+                })
+            }
         }
 
         function onOrderItemDetailsClick(oItem) {
