@@ -1,65 +1,101 @@
 ﻿@model IEnumerable<dubbingModel.logWork>
 
 <div class="container-fluid" style="padding:0px">
-    <div class="panel panel-default">
-        <div class="panel-heading">
-            <div class="row">
-                <div class="col-sm-12">
-                    <label><small>New Contracted Works</small></label>
+    <div class="panel-group" id="collapse" role="tablist" aria-multiselectable="true">
+        <div class="panel panel-default">
+            <div class="panel-heading" role="tab" id="collapse-heading-one">
+                <h4 class="panel-title">
+                    <a role="button" data-toggle="collapse" data-parent="#collapse" href="#collapse-one" aria-expanded="true" aria-controls="collapse-one">
+                        <small><label>Active Dubbing Works</label></small>
+                    </a>
+                </h4>
+            </div>
+            <div id="collapse-one" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="collapse-heading-one">
+                <div class="panel-body">
+                    <table class="table table-hover table-condensed">
+                        <thead>
+                            <tr>
+                                <th class="col-sm-2"><small>Month</small></th>
+                                <th class="col-sm-10"><small>Works</small></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var w0 in ViewBag.activeWorksList)
+                            {
+                                string[] lst = w0.Split(';');
+                                <tr>
+                                    <td class="col-sm-2"><small>@lst[0]</small></td>
+                                    <td class="col-sm-10"><small>@lst[1]</small></td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </div>
-        <div class="panel-body">
-            <table class="table table-hover table-condensed">
-                <thead>
-                    <tr>
-                        <th class="col-sm-1"><small>Month</small></th>
-                        <th class="col-sm-7"><small>Work</small></th>
-                        <th class="col-sm-3"><small>Client</small></th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach (var w1 in Model.Where(b => !b.endorsedDate.HasValue).OrderByDescending(b => b.contractedDate))
-                    {
-                        <tr>
-                            <td class="col-sm-1"><small>@w1.contractedMonth/@w1.contractedYear</small></td>
-                            <td class="col-sm-7"><small>@w1.workName / @w1.workType / @w1.workNationality</small></td>
-                            <td class="col-sm-3"><small>@w1.clientName</small></td>
-                        </tr>
-                    }
-                </tbody>
-            </table>
-        </div>
-    </div>
-
-    <div class="panel panel-default">
-        <div class="panel-heading">
-            <div class="row">
-                <div class="col-sm-12">
-                    <label><small>Endorsed Works</small></label>
+        <div class="panel panel-default">
+            <div class="panel-heading" role="tab" id="collapse-heading-two">
+                <h4 class="panel-title">
+                    <a class="collapsed" role="button" data-toggle="collapse" data-parent="#collapse" href="#collapse-two" aria-expanded="false" aria-controls="collapse-two">
+                        <small><label>New Contracted Works</label></small>
+                    </a>
+                </h4>
+            </div>
+            <div id="collapse-two" class="panel-collapse collapse" role="tabpanel" aria-labelledby="collapse-heading-two">
+                <div class="panel-body">
+                    <table class="table table-hover table-condensed">
+                        <thead>
+                            <tr>
+                                <th class="col-sm-2"><small>Month</small></th>
+                                <th class="col-sm-8"><small>Work</small></th>
+                                <th class="col-sm-2"><small>Client</small></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var w1 in Model.Where(b => !b.endorsedDate.HasValue).OrderByDescending(b => b.contractedDate))
+                            {
+                                <tr>
+                                    <td class="col-sm-2"><small>@w1.contractedMonth/@w1.contractedYear</small></td>
+                                    <td class="col-sm-8"><small>@w1.workName / @w1.workType / @w1.workNationality</small></td>
+                                    <td class="col-sm-2"><small>@w1.clientName</small></td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </div>
-        <div class="panel-body">
-            <table class="table table-hover table-condensed">
-                <thead>
-                    <tr>
-                        <th class="col-sm-1"><small>Month</small></th>
-                        <th class="col-sm-7"><small>Work</small></th>
-                        <th class="col-sm-3"><small>Client</small></th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach (var w2 in Model.Where(b => b.endorsedDate.HasValue).OrderByDescending(b => b.endorsedDate))
-                    {
-                        <tr>
-                            <td class="col-sm-1"><small>@w2.endorsedMonth/@w2.endorsedYear</small></td>
-                            <td class="col-sm-7"><small>@w2.workName / @w2.workType / @w2.workNationality</small></td>
-                            <td class="col-sm-3"><small>@w2.clientName</small></td>
-                        </tr>
-                    }
-                </tbody>
-            </table>
+        <div class="panel panel-default">
+            <div class="panel-heading" role="tab" id="collapse-heading-three">
+                <h4 class="panel-title">
+                    <a class="collapsed" role="button" data-toggle="collapse" data-parent="#collapse" href="#collapse-three" aria-expanded="false" aria-controls="collapse-three">
+                        <small><label>Endorsed Works</label></small>
+                    </a>
+                </h4>
+            </div>
+            <div id="collapse-three" class="panel-collapse collapse" role="tabpanel" aria-labelledby="collapse-heading-three">
+                <div class="panel-body">
+                    <table class="table table-hover table-condensed">
+                        <thead>
+                            <tr>
+                                <th class="col-sm-2"><small>Month</small></th>
+                                <th class="col-sm-8"><small>Work</small></th>
+                                <th class="col-sm-2"><small>Client</small></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var w2 in Model.Where(b => b.endorsedDate.HasValue).OrderByDescending(b => b.endorsedDate))
+                            {
+                                <tr>
+                                    <td class="col-sm-2"><small>@w2.endorsedMonth/@w2.endorsedYear</small></td>
+                                    <td class="col-sm-8"><small>@w2.workName / @w2.workType / @w2.workNationality</small></td>
+                                    <td class="col-sm-2"><small>@w2.clientName</small></td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
         </div>
     </div>
 </div>

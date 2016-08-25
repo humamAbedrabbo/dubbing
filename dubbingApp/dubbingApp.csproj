@@ -506,6 +506,7 @@
     <Content Include="Views\executiveSummary\Index.cshtml" />
     <Content Include="Views\executiveSummary\_worksLog.cshtml" />
     <Content Include="Views\executiveSummary\_ordersLog.cshtml" />
+    <Content Include="Views\executiveSummary\_filters.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

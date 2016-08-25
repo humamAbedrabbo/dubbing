@@ -1,0 +1,58 @@
+﻿<div class="container-fluid" style="padding:0px">
+    <div class="panel-primary">
+        <div class="panel-heading" style="padding:0px">
+            <div class="row">
+                <div class="col-sm-12 btn-group-xs">
+                    <button type="button" class="btn btn-primary" onclick="onFilterClick()" title="Filter">
+                        <span class="glyphicon glyphicon-filter" aria-hidden="true"></span>
+                    </button>
+                    <button type="button" class="btn btn-primary" onclick="onCancelFilterClick()" title="Clear">
+                        <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div class="panel-body" style="padding:0px">
+            @using (Ajax.BeginForm("applyFilters", "executiveSummary",
+                                    new AjaxOptions()
+                                    {
+                                        HttpMethod = "POST",
+                                        OnSuccess = "onSuccess"
+                                    },
+                                    new { @class = "form-horizontal" }
+                                    ))
+            {
+                @Html.AntiForgeryToken()
+                @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+                <div class="form-group-sm">
+                    <small><label for="filterYear" class="control-label">Year</label></small>
+                    <div class="col-xs-12" style="padding:0px">
+                        <input type="text" class="form-control" id="filterYear" value='@ViewBag.currYear' placeholder='@ViewBag.currYear'>
+                    </div>
+                </div>
+
+                <div class="form-group-sm">
+                    <small><label for="filterMonth" class="control-label">Month</label></small>
+                    <div class="col-xs-12" style="padding:0px">
+                        <input type="text" class="form-control" id="filterMonth">
+                    </div>
+                </div>
+
+                <div class="form-group-sm">
+                    <small><label for="client" class="control-label">Client</label></small>
+                    <div class="col-sm-12" style="padding:0px">
+                        @Html.DropDownList("client", ViewBag.clientsList as SelectList, "Select ...", new { @class = "col-sm-12" })
+                    </div>
+                </div>
+
+                <div class="form-group-sm">
+                    <small><label for="work" class="control-label">Work</label></small>
+                    <div class="col-sm-12" style="padding:0px">
+                        @Html.DropDownList("work", ViewBag.worksList as SelectList, "Select ...", new { @class = "col-sm-12" })
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>
