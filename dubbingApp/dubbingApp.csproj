@@ -314,8 +314,11 @@
     <Content Include="Content\bootstrap-datetimepicker-build.less" />
     <None Include="Properties\PublishProfiles\dubbingApp2016.pubxml" />
     <None Include="Scripts\jquery-2.2.3.intellisense.js" />
+    <Content Include="Scripts\Chart.js" />
+    <Content Include="Scripts\Chart.min.js" />
     <Content Include="Scripts\dubbing\adaptation.js" />
     <Content Include="Scripts\dubbing\busySpinner.js" />
+    <Content Include="Scripts\dubbing\dubbingCharts.js" />
     <Content Include="Scripts\jquery-2.2.3.js" />
     <Content Include="Scripts\jquery-2.2.3.min.js" />
     <Content Include="Scripts\jquery-2.2.3.min.map" />
@@ -507,6 +510,7 @@
     <Content Include="Views\executiveSummary\_worksLog.cshtml" />
     <Content Include="Views\executiveSummary\_ordersLog.cshtml" />
     <Content Include="Views\executiveSummary\_filters.cshtml" />
+    <Content Include="Views\executiveSummary\_ordersChart.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

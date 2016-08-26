@@ -19,6 +19,15 @@ namespace dubbingApp.Controllers
             base.Dispose(disposing);
         }
 
+        public class orderItem
+        {
+            public string oiMonth { get; set; }
+            public int totalReceived { get; set; }
+            public int totalDubbed { get; set; }
+            public int totalUploaded { get; set; }
+            public int totalShipped { get; set; }
+        }
+
         // GET: executiveSummary
         public ActionResult Index()
         {
@@ -118,6 +127,74 @@ namespace dubbingApp.Controllers
             }
             
             return PartialView("_ordersLog", model.ToList());
+        }
+
+        public JsonResult ordersChartData(int? filterYear, long? clientIntno, long? workIntno)
+        {
+            int currYear = filterYear.HasValue ? filterYear.Value : DateTime.Today.Year;
+            int currMonth = DateTime.Today.Month;
+            List<string> monthString = new List<string>() { "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"};
+            List<orderItem> chartData = new List<orderItem>();
+            int tr = 0; int td = 0; int tu = 0; int ts = 0;
+
+            var x1 = db.logOrders.Where(b => b.logYear == currYear - 1 && b.logMonth >= currMonth && b.logMonth <= 12
+                                        && (!clientIntno.HasValue || b.clientIntno == clientIntno)
+                                        && (!workIntno.HasValue || b.workIntno == workIntno)).ToList();
+            for (int i = currMonth; i <= 12; i++)
+            {
+                orderItem oi = new orderItem();
+                oi.oiMonth = monthString[i - 1];
+                var y = x1.Where(b => b.logMonth == i);
+                if (y.Count() != 0)
+                {
+                    tr += y.Select(b => b.totalEpisodesReceived).Sum();
+                    td += y.Select(b => b.totalEpisodesDubbed).Sum();
+                    tu += y.Select(b => b.totalEpisodesUploaded).Sum();
+                    ts += y.Select(b => b.totalEpisodesShipped).Sum();
+                    oi.totalReceived = tr;
+                    oi.totalDubbed = td;
+                    oi.totalUploaded = tu;
+                    oi.totalShipped = ts;
+                }
+                else
+                {
+                    oi.totalReceived = tr;
+                    oi.totalDubbed = td;
+                    oi.totalUploaded = tu;
+                    oi.totalShipped = ts;
+                }
+                chartData.Add(oi);
+            }
+
+            var x2 = db.logOrders.Where(b => b.logYear == currYear && b.logMonth >= 1 && b.logMonth <= currMonth
+                                        && (!clientIntno.HasValue || b.clientIntno == clientIntno)
+                                        && (!workIntno.HasValue || b.workIntno == workIntno)).ToList();
+            for (int i = 1; i <= currMonth; i++)
+            {
+                orderItem oi = new orderItem();
+                oi.oiMonth = monthString[i - 1];
+                var y = x2.Where(b => b.logMonth == i);
+                if (y.Count() != 0)
+                {
+                    tr += y.Select(b => b.totalEpisodesReceived).Sum();
+                    td += y.Select(b => b.totalEpisodesDubbed).Sum();
+                    tu += y.Select(b => b.totalEpisodesUploaded).Sum();
+                    ts += y.Select(b => b.totalEpisodesShipped).Sum();
+                    oi.totalReceived = tr;
+                    oi.totalDubbed = td;
+                    oi.totalUploaded = tu;
+                    oi.totalShipped = ts;
+                }
+                else
+                {
+                    oi.totalReceived = tr;
+                    oi.totalDubbed = td;
+                    oi.totalUploaded = tu;
+                    oi.totalShipped = ts;
+                }
+                chartData.Add(oi);
+            }
+            return Json(chartData);
         }
     }
 }

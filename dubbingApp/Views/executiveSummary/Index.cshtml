@@ -15,7 +15,7 @@
             @Html.Action("filters")
         </div>
         <div class="col-sm-6">
-
+            <canvas id="ordersChart" width="400" height="180"></canvas>
         </div>
         <div class="col-sm-4" id="worksLog">
             @Html.Action("worksLog")
@@ -34,6 +34,8 @@
 {
     @Scripts.Render("~/bundles/jqueryval")
     <script src="~/Scripts/dubbing/busySpinner.js"></script>
+    <script src="~/Scripts/dubbing/dubbingCharts.js"></script>
+    <script src="~/Scripts/Chart.js"></script>
 
     <script>
         //global ajax callback events handlers
@@ -61,14 +63,35 @@
                     }
                 });
                 return false;
-            })
+            });
+            $.ajax({
+                url: '@Url.Action("ordersChartData", "executiveSummary")',
+                type: 'POST',
+                dataType: 'json',
+                data: { filterYear: null, clientIntno: null, workIntno: null },
+                success: function (result) {
+                    var xLables = new Array();
+                    var totalReceived = new Array();
+                    var totalDubbed = new Array();
+                    var totalUploaded = new Array();
+                    var totalShipped = new Array();
+                    $.each(result, function (i, item) {
+                        xLables[i] = item.oiMonth;
+                        totalReceived[i] = item.totalReceived;
+                        totalDubbed[i] = item.totalDubbed;
+                        totalUploaded[i] = item.totalUploaded;
+                        totalShipped[i] = item.totalShipped;
+                    });
+                    $('#ordersChart').html(setOrdersChart(xLables, totalReceived, totalDubbed, totalUploaded, totalShipped));
+                }
+            });
         })
 
-        function onFilterClick() {
+        function filtered(filterYear1, filterMonth1, client1, work1) {
             $.ajax({
                 url: '@Url.Action("worksLog", "executiveSummary")',
                 type: 'GET',
-                data: { filterYear: $('#filterYear').val(), filterMonth: $('#filterMonth').val(), clientIntno: $('#client').val(), workIntno: $('#work').val() },
+                data: { filterYear: filterYear1, filterMonth: filterMonth1, clientIntno: client1, workIntno: work1 },
                 success: function (result) {
                     $('#worksLog').html(result)
                 }
@@ -76,34 +99,43 @@
             $.ajax({
                 url: '@Url.Action("ordersLog", "executiveSummary")',
                 type: 'GET',
-                data: { filterYear: $('#filterYear').val(), filterMonth: $('#filterMonth').val(), clientIntno: $('#client').val(), workIntno: $('#work').val() },
+                data: { filterYear: filterYear1, filterMonth: filterMonth1, clientIntno: client1, workIntno: work1 },
                 success: function (result) {
                     $('#ordersLog').html(result)
                 }
             });
+            $.ajax({
+                url: '@Url.Action("ordersChartData", "executiveSummary")',
+                type: 'POST',
+                dataType: 'json',
+                data: { filterYear: filterYear1, clientIntno: client1, workIntno: work1 },
+                success: function (result) {
+                    var xLables = new Array();
+                    var totalReceived = new Array();
+                    var totalDubbed = new Array();
+                    var totalUploaded = new Array();
+                    var totalShipped = new Array();
+                    $.each(result, function (i, item) {
+                        xLables[i] = item.oiMonth;
+                        totalReceived[i] = item.totalReceived;
+                        totalDubbed[i] = item.totalDubbed;
+                        totalUploaded[i] = item.totalUploaded;
+                        totalShipped[i] = item.totalShipped;
+                    });
+                    $('#ordersChart').html(setOrdersChart(xLables, totalReceived, totalDubbed, totalUploaded, totalShipped));
+                }
+            });
+        }
+        function onFilterClick() {
+            filtered($('#filterYear').val(), $('#filterMonth').val(), $('#client').val(), $('#work').val());
         }
 
         function onCancelFilterClick() {
             $("#filterYear").empty();
-            $("#filterMonth").empty();
+            $("#filterMonth").val(null);
             $("#client").val(null);
             $("#work").empty().append('<option value="">Select ...</option>');;
-            $.ajax({
-                url: '@Url.Action("worksLog", "executiveSummary")',
-                type: 'GET',
-                data: { filterYear: null, filterMonth: null, clientIntno: null, workIntno: null },
-                success: function (result) {
-                    $('#worksLog').html(result)
-                }
-            });
-            $.ajax({
-                url: '@Url.Action("ordersLog", "executiveSummary")',
-                type: 'GET',
-                data: { filterYear: null, filterMonth: null, clientIntno: null, workIntno: null },
-                success: function (result) {
-                    $('#ordersLog').html(result)
-                }
-            });
+            filtered(null, null, null, null);
         }
     </script>
 }
