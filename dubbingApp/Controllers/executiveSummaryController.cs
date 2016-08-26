@@ -83,17 +83,9 @@ namespace dubbingApp.Controllers
 
             // active works to be extracted from ordersLog
             List<string> activeWorksList = new List<string>();
-            foreach(var item in model1.Select(b => new { b.logYear, b.logMonth }).Distinct())
+            foreach (var item in model1.Select(b => new { b.logYear, b.logMonth }).Distinct())
             {
-                //string works = null;
-                //foreach(var wk in model1.Where(b => b.logYear == item.logYear && b.logMonth == item.logMonth))
-                //{
-                //    if (string.IsNullOrEmpty(works))
-                //        works = wk.workName;
-                //    else
-                //        works = works + "*" + wk.workName;
-                //}
-                activeWorksList.Add(item.logMonth + "/" + item.logYear + ";" + model1.Where(b => b.logYear == item.logYear && b.logMonth == item.logMonth).Count());
+                activeWorksList.Add(item.logMonth + "/" + item.logYear + ";" + x1.Where(b => b.logYear == item.logYear && b.logMonth == item.logMonth).Select(b => b.workIntno).Count());
             }
             ViewBag.activeWorksList = activeWorksList;
             return PartialView("_worksLog", model.ToList());
