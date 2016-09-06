@@ -18,7 +18,7 @@
         <p class="lead"><h5>An Agreement is the Legal Document which binds All Contracted Works like Series, Documentaries, Movies or Any Other Dubbing Work. An Agreement Encompasses Technical Specs and Terms &amp; Conditions for the Contracted Dubbing Works.</h5></p>
     </div>
 
-    <div class="col-sm-8" id="aList">
+    <div class="col-sm-8" id="aList" style="padding:0px">
         <div id="tList">
             @Html.Action("termsList", new { id = ViewBag.agreementIntno })
         </div>
@@ -45,6 +45,10 @@
             ajaxIndicatorStop();
         });
 
+        function onCloseClick() {
+            $('#aDetails').html(null);
+        }
+
         function onSpecsAddNewClick(agr, tp) {
             $.ajax({
                 url: '@Url.Action("specsAddNew", "agreements")',
@@ -67,8 +71,7 @@
                 })
             }
         }
-        function onSpecsDismissClick(agr) {
-            $('#aDetails').html(null);
+        function onSpecsSuccess(agr) {
             $.ajax({
                 url: '@Url.Action("specsList", "agreements")',
                 data: { id: agr },
@@ -101,8 +104,7 @@
                 })
             }
         }
-        function onTermsDismissClick(agr) {
-            $('#aDetails').html(null);
+        function onTermsSuccess(agr) {
             $.ajax({
                 url: '@Url.Action("termsList", "agreements")',
                 data: { id: agr },

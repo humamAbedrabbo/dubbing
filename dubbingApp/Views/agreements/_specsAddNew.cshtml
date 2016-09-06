@@ -1,41 +1,54 @@
 ﻿@model dubbingModel.agreementSpec
 
 <div class="container-fluid">
-    @using (Ajax.BeginForm("specsAddNew", "agreements", new { id = ViewBag.agreementIntno, sType = ViewBag.specsType },
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <div class="row">
+                <div class="col-sm-10">
+                    <label>Add New Specification</label>
+                </div>
+                <div class="col-sm-2">
+                    <button class="btn btn-default btn-xs pull-right" onclick="onCloseClick()" title="Close">
+                        <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div class="panel-body">
+            @using (Ajax.BeginForm("specsAddNew", "agreements", new { id = ViewBag.agreementIntno, sType = ViewBag.specsType },
                                                 new AjaxOptions()
                                                 {
                                                     HttpMethod = "POST",
-                                                    UpdateTargetId = "result"
+                                                    UpdateTargetId = "result",
+                                                    OnSuccess = "onSpecsSuccess(" + ViewBag.agreementIntno + ")"
                                                 },
                                                 new { @class = "form-horizontal" }
                                                 ))
-    {
-        @Html.AntiForgeryToken()
-        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
-        
-        <div class="form-group">
-            @Html.LabelFor(model => model.specsSubtype, "Specification", htmlAttributes: new { @class = "control-label col-sm-4" })
-            <div class="col-sm-8">
-                @Html.DropDownListFor(model => model.specsSubtype, new SelectList(ViewBag.specsSubtypesList, "key", "value"), string.Empty, htmlAttributes: new { @class = "form-control" })
-                @Html.ValidationMessageFor(model => model.specsSubtype, "", new { @class = "text-danger" })
-            </div>
-        </div>
+            {
+                @Html.AntiForgeryToken()
+                @Html.ValidationSummary(true, "", new { @class = "text-danger" })
 
-        <div class="form-group">
-            @Html.LabelFor(model => model.specsValue, "Requirement", htmlAttributes: new { @class = "control-label col-sm-4" })
-            <div class="col-sm-8">
-                @Html.EditorFor(model => model.specsValue, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.specsValue, "", new { @class = "text-danger" })
-            </div>
+                <div class="form-group-sm">
+                    <small>@Html.LabelFor(model => model.specsSubtype, "Specification", htmlAttributes: new { @class = "control-label" })</small>
+                    <div>
+                        @Html.DropDownListFor(model => model.specsSubtype, new SelectList(ViewBag.specsSubtypesList, "key", "value"), string.Empty, htmlAttributes: new { @class = "form-control" })
+                        @Html.ValidationMessageFor(model => model.specsSubtype, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+                <div class="form-group-sm">
+                    <small>@Html.LabelFor(model => model.specsValue, "Requirement", htmlAttributes: new { @class = "control-label" })</small>
+                    <div>
+                        @Html.EditorFor(model => model.specsValue, new { htmlAttributes = new { @class = "form-control" } })
+                        @Html.ValidationMessageFor(model => model.specsValue, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+                <div class="form-group-sm">
+                    <button type="submit" class="btn btn-default btn-sm">Submit</button>
+                    <small><label class="alert-success" id="result"></label></small>
+                </div>
+            }
         </div>
-        
-        <div class="form-group">
-            <div class="col-sm-offset-4 col-sm-8">
-                <button type="submit" class="btn btn-default btn-sm">Submit</button>
-                &nbsp;
-                <a class="btn btn-default btn-sm" onclick="onSpecsDismissClick(@ViewBag.agreementIntno)" role="button">Dismiss</a>
-                <label class="alert-success" id="result"></label>
-            </div>
-        </div>
-    }
+    </div>
 </div>

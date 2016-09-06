@@ -13,7 +13,7 @@
         panelHeaderClass = "panel-default";
     }
     <div class="panel @panelHeaderClass">
-        <div class="panel-heading">
+        <div class="panel-heading" style="padding:5px">
             <div class="row">
                 <div class="col-sm-2">
                     <label class="badge label-info">@LookupModels.decodeDictionaryItem("workType", item.workType)</label>
@@ -21,46 +21,45 @@
                 <div class="col-sm-7">
                     <label>@Html.DisplayFor(model => item.workName)</label>
                 </div>
-                <div class="col-sm-3">
-                    <div class="pull-right">
-                        <button class="btn btn-default btn-xs" onclick="onContractUpdateClick(@item.workIntno)" title="Modify">
-                            <span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
-                        </button>
-                        <button class="btn btn-primary btn-xs" onclick="onStudioClick(@item.workIntno)" title="Personnel">
-                            <span class="glyphicon glyphicon-user" aria-hidden="true"></span>
-                        </button>
-                        <button class="btn btn-info btn-xs" onclick="onCastingClick(@item.workIntno)" title="Characters and Actors">
-                            <span class="glyphicon glyphicon-facetime-video" aria-hidden="true"></span>
-                        </button>
-                    </div>
+                <div class="col-sm-3 btn-group-xs">
+                    <button class="btn btn-default btn-xs" onclick="onContractUpdateClick(@item.workIntno)" title="Modify">
+                        <span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
+                    </button>
+                    <button class="btn btn-default btn-xs" data-toggle="modal" data-target="#popupForm" onclick="onWorkClientContactClick(@item.workIntno)" title="Client Contact">
+                        <span class="glyphicon glyphicon-phone-alt" aria-hidden="true"></span>
+                    </button>
+                    <button class="btn btn-primary btn-xs" onclick="onStudioClick(@item.workIntno)" title="Personnel">
+                        <span class="glyphicon glyphicon-user" aria-hidden="true"></span>
+                    </button>
+                    <button class="btn btn-info btn-xs" onclick="onCastingClick(@item.workIntno)" title="Characters and Actors">
+                        <span class="glyphicon glyphicon-facetime-video" aria-hidden="true"></span>
+                    </button>
                 </div>
             </div>
         </div>
         <div class="panel-body">
             <div class="row">
-                <div class="col-sm-12">
+                <div class="col-sm-8">
                     <label><small>Arabic Name:</small></label>&nbsp;&nbsp;
                     <label><small>@item.othWorkName</small></label>
-                    <div class="pull-right">
-                        <button class="btn btn-success btn-sm" onclick="onHistoryClick(@item.workIntno)" style="text-align:center" title="Last Shipped. Click for History.">
-                            <span style="font-weight:bold">
-                                @{
-                                    if (item.orderTrnHdrs.Where(b => b.shipmentFinal.HasValue).Count() != 0)
-                                    {
-                                        @item.orderTrnHdrs.Where(b => b.shipmentFinal.HasValue).Select(b => new { b.episodeNo }).Max(b => b.episodeNo)
-                                    }
-                                    else
-                                    {
-                                        int sh = 0;
-                                        @sh
-                                    }
+                </div>
+                <div class="col-sm-4 pull-right">
+                    <label><small>Last Shipped:</small></label>&nbsp;&nbsp;
+                    <label>
+                        <small>
+                            @{
+                                if (item.orderTrnHdrs.Where(b => b.shipmentFinal.HasValue).Count() != 0)
+                                {
+                                    @item.orderTrnHdrs.Where(b => b.shipmentFinal.HasValue).Select(b => new { b.episodeNo }).Max(b => b.episodeNo)
                                 }
-                            </span>
-                        </button>
-                    </div>
-
-
-
+                                else
+                                {
+                                    int sh = 0;
+                                    @sh
+                                }
+                            }
+                        </small>
+                    </label>
                 </div>
             </div>
             <div class="row">

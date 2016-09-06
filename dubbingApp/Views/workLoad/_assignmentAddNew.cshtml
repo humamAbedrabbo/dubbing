@@ -1,0 +1,105 @@
+﻿@model dubbingApp.Controllers.workLoadController
+
+<div class="container-fluid" style="padding:0px">
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <div class="row">
+                <div class="col-sm-10">
+                    <label>New Assignment</label>
+                </div>
+                <div class="col-sm-2">
+                    <button class="btn btn-default btn-xs" onclick="onCloseClick()" title="Close">
+                        <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div class="panel-body">
+            @using (Ajax.BeginForm("assignmentAddNew", "workLoad",
+                            new AjaxOptions()
+                            {
+                                HttpMethod = "POST",
+                                OnSuccess = "onSuccess",
+                                UpdateTargetId = "formResult"
+                            },
+                            new { @class = "form-horizontal"}))
+            {
+                @Html.AntiForgeryToken()
+                
+                <div class="form-group-sm">
+                    <label class="control-label">Task</label>
+                    <div>
+                        @Html.DropDownList("taskType", ViewBag.activityTypesList as SelectList, "Select Type ...", htmlAttributes: new { @class = "form-control", @id = "activitiesCombo", onchange = "onActivitiesComboChanged()", autofocus = true })
+                    </div>
+                </div>
+
+                <div class="form-group-sm">
+                    <label class="control-label">Work</label>
+                    <div>
+                        @Html.DropDownList("workIntno", ViewBag.worksList as SelectList, "Select Work ...", htmlAttributes: new { @class = "form-control" })
+                    </div>
+                </div>
+
+                <div class="form-group-sm">
+                    <label class="control-label">From Episode</label>
+                    <div>
+                        <input type="text" name="fromEpisode" class="form-control" id="ep1" onchange="onEpisodeChange()" />
+                    </div>
+                </div>
+
+                <div class="form-group-sm">
+                    <label class="control-label">Through Episode</label>
+                    <div>
+                        <input type="text" name="thruEpisode" class="form-control" id="ep2" onchange="onEpisodeChange()" />
+                    </div>
+                </div>
+
+                <div id="isPartialEpisode" class="hidden">
+                    <br />
+                    <button type="button" class="btn btn-sm btn-default" data-toggle="collapse" data-target="#collapse1" aria-expanded="false" aria-controls="collapse">
+                        <small>Partial Episode Assignment ...</small>
+                    </button>
+                    <div id="collapse1" class="collapse">
+                        <div class="form-group-sm">
+                            <label class="control-label">Start Time Code</label>
+                            <div>
+                                <input type="time" step="1" class="form-control" name="startTimeCode" />
+                            </div>
+                        </div>
+
+                        <div class="form-group-sm">
+                            <label class="control-label">End Time Code</label>
+                            <div>
+                                <input type="time" step="1" class="form-control" name="thruTimeCode" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-group-sm">
+                    <label class="control-label">Assign To</label>
+                    <div>
+                        @Html.DropDownList("empIntno", ViewBag.resourcesList as SelectList, "Select Resouce ...", htmlAttributes: new { @class = "form-control", @id = "resourcesCombo" })
+                    </div>
+                </div>
+
+                <div class="form-group-sm">
+                    <label class="control-label">Due Date</label>
+                    <div>
+                        <input type="date" class="form-control" name="forDueDate" />
+                    </div>
+                </div>
+                
+                <div class="form-group-sm">
+                    <div>
+                        <button type="submit" class="btn btn-default">Submit</button>
+                    </div>
+                </div>
+
+                <span>
+                    <small><label class="alert-success" id="formResult"></label></small>
+                </span>
+            }
+        </div>
+    </div>
+</div>

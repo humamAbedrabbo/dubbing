@@ -1,0 +1,106 @@
+﻿
+@{
+    ViewBag.Title = "Work Load";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container-fluid">
+    <div class="jumbotron" style="padding:5px">
+        <h2>Assignments Work Load</h2>
+        <p class="lead"><h5>Manage and Balance Translation and Adaptation tasks assignments.</h5></p>
+        <label><a href="#" onclick="onAssignmentAddNewClick()">Assign New Task ...</a></label>
+    </div>
+    
+    <div class="col-sm-8" id="assignmentsList" style="padding:0px">
+        @Html.Action("assignmentsList")
+    </div>
+
+    <div class="col-sm-4" id="allDetails"></div>
+</div>
+
+@section Scripts
+{
+    @Scripts.Render("~/bundles/jqueryval")
+    <script src="~/Scripts/dubbing/busySpinner.js"></script>
+
+    <script>
+        //global ajax callback events handlers
+        // to exclude specific ajax call write: "global: false," in the begining of ajax function
+        $(document).ajaxStart(function() {
+            ajaxIndicatorStart('loading data.. please wait..');
+        }).ajaxComplete(function() {
+            ajaxIndicatorStop();
+        });
+
+        function onEpisodeChange() {
+            if ($('#ep1').val() === $('#ep2').val()) {
+                $('#isPartialEpisode').removeClass('hidden');
+            }
+            else {
+                $('#isPartialEpisode').removeClass('hidden').addClass('hidden');
+            }
+        }
+
+        function onActivitiesComboChanged() {
+            $("#resourcesCombo").empty();
+            $("#resourcesCombo").append('<option value="">Select Resource ...</option>');
+            $.ajax({
+                url: '@Url.Action("activityTypeChanged", "workLoad")',
+                type: 'POST',
+                data: { activityType: $('#activitiesCombo').val() },
+                dataType: 'json',
+                success: function (resources) {
+                    $.each(resources, function (i, item) {
+                        $("#resourcesCombo").append('<option value="' + item.Value + '">' +
+                        item.Text + '</option>');
+                    });
+                }
+            })
+        }
+
+        function onCloseClick() {
+            $('#allDetails').html(null);
+        }
+        function onSuccess() {
+            $.ajax({
+                url: '@Url.Action("assignmentsList", "workLoad")',
+                type: 'GET',
+                success: function (result) {
+                    $('#assignmentsList').html(result);
+                }
+            })
+        }
+
+        function onAssignmentAddNewClick() {
+            $.ajax({
+                url: '@Url.Action("assignmentAddNew", "workLoad")',
+                type: 'GET',
+                success: function (result) {
+                    $('#allDetails').html(result);
+                }
+            })
+        }
+        function onAssignEditClick(id1) {
+            $.ajax({
+                url: '@Url.Action("assignmentUpdate", "workLoad")',
+                type: 'GET',
+                data: { id: id1 },
+                success: function (result) {
+                    $('#allDetails').html(result);
+                }
+            })
+        }
+        function onAssignDeleteClick(id1) {
+            if (confirm("Please Confirm! About to Permenantly Delete Assignment.")) {
+                $.ajax({
+                    url: '@Url.Action("assignmentDelete", "workLoad")',
+                    type: 'GET',
+                    data: { id: id1 },
+                    success: function (result) {
+                        $('#assignmentsList').html(result);
+                    }
+                })
+            }
+        }
+    </script>
+}

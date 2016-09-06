@@ -3,71 +3,62 @@
 
 <div class="container-fluid" style="padding:0px">
     <div class="panel panel-primary">
-        <div class="panel-heading">
+        <div class="panel-heading" style="padding:5px">
             <div class="row">
-                <div class="col-sm-9">
-                    <label>Search Episodes ...</label>
-                </div>
-                <div class="col-sm-3">
-                    <button class="btn btn-default btn-xs pull-right" onclick="onFilterClick()" title="All Episodes">Clear</button>&nbsp;
+                <div class="col-sm-12">
+                    <small><label>Episodes ...</label></small>
                 </div>
             </div>
         </div>
-        <div class="panel-body" style="padding-right:0px">
+        <div class="panel-body">
             <div class="row">
-                <div class="col-sm-3">
-                    <label><small>Episodes</small></label>
+                <div class="col-sm-4"><small><label>From</label></small></div>
+                <div class="col-sm-4">
+                    <small><input class="episodeFilter" id="fromEpisode" style="width:50px" /></small>
                 </div>
-                <div class="col-sm-6">
-                    <span><small><input class="episodeFilter" id="fromEpisode" style="width:50px" /></small>&nbsp;-</span>
-                    <span><small><input class="episodeFilter" id="thruEpisode" style="width:50px" /></small></span>&nbsp;
-                    <button class="btn btn-default btn-xs" onclick="onFindEpisodesClick()">Find</button>
-                </div>
-                <div class="col-sm-3">
-                    <button class="btn btn-default btn-xs" onclick="onFilterClick('06')" title="Endorsed Episodes">Archive</button>
-                </div>
-            </div>
-            <br />
-
-            <div class="row">
-                <div class="col-sm-3">
-                    <label><small>Pipeline</small></label>
-                </div>
-                <div class="col-sm-9">
-                    <a href="#" onclick="onFilterClick('09')"><small>Active</small></a>
-                    <span><label class="badge alert-info">@settingsList[6]</label></span>
-                    <a href="#" onclick="onFilterClick('10')"><small>Endorsed</small></a>
-                    <span><label class="badge alert-success">@settingsList[7]</label></span>
-                    <a href="#" onclick="onFilterClick('11')"><small>All</small></a>
-                    <span><label class="badge alert-info">@settingsList[8]</label></span>
+                <div class="col-sm-4">
+                    <button class="btn btn-default btn-xs" tabindex="-1" onclick="onFindEpisodesClick()" style="width:40px">Find</button>
                 </div>
             </div>
 
             <div class="row">
-                <div class="col-sm-3">
-                    <label><small>Delays In</small></label>
+                <div class="col-sm-4"><small><label>Through</label></small></div>
+                <div class="col-sm-4">
+                    <small><input class="episodeFilter" id="thruEpisode" style="width:50px" /></small>
                 </div>
-                <div class="col-sm-9">
-                    <a href="#" onclick="onFilterClick('02')"><small>Adaptation</small></a>
-                    <span><label class="badge alert-info">@settingsList[0]</label></span>
-                    <a href="#" onclick="onFilterClick('03')"><small>Dubbing</small></a>
-                    <span><label class="badge alert-warning">@settingsList[1]</label></span>
-                    <a href="#" onclick="onFilterClick('04')"><small>Upload</small></a>
-                    <span><label class="badge alert-danger">@settingsList[2]</label></span>
-                    <a href="#" onclick="onFilterClick('05')"><small>Shipment</small></a>
-                    <span><label class="badge alert-warning">@settingsList[3]</label></span>
+                <div class="col-sm-4">
+                    <button class="btn btn-default btn-xs" tabindex="-1" onclick="onFilterClick()" style="width:40px">Clear</button>
                 </div>
             </div>
+        </div>
+    </div>
 
+    <div class="panel panel-info">
+        <div class="panel-heading" style="padding:5px">
             <div class="row">
-                <div class="col-sm-3">
-                    <label><small>Issues In</small></label>
+                <div class="col-sm-12">
+                    <small><label>Open Issues ...</label></small>
                 </div>
-                <div class="col-sm-9">
+            </div>
+        </div>
+        <div class="panel-body">
+            <div class="row">
+                <div class="col-sm-12">
                     <a href="#" onclick="onFilterClick('07')"><small>Received Quality</small></a>
-                    <span><label class="badge alert-warning">@settingsList[4]</label></span>
+                    <span><label class="badge alert-danger">@settingsList[0]</label></span>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-sm-12">
                     <a href="#" onclick="onFilterClick('08')"><small>Client Claims</small></a>
-                    <span><label class="badge alert-danger">@settingsList[5]</label></span>
+                    <span><label class="badge alert-danger">@settingsList[1]</label></span>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-sm-12">
+                    <a href="#" onclick="onFilterClick()" title="All Episodes"><small>None</small></a>
                 </div>
             </div>
         </div>

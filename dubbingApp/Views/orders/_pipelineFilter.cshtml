@@ -1,0 +1,40 @@
+﻿@{ string s = ViewBag.settingsList;
+    string[] settingsList = s.Split(';'); }
+
+<div class="container-fluid">
+    <div class="panel panel-primary">
+        <div class="panel-body">
+            <div class="row" style="padding-left:10px;padding-right:10px">
+                <a href="#" class="pipelineFilterItem" id="pf01" onclick="onFilterClick('01')"><small>New</small></a>
+                <span><label class="badge alert-info">@settingsList[0]</label></span> &nbsp;
+
+                <a href="#" class="pipelineFilterItem" id="pf08" onclick="onFilterClick('08')"><small>Rejected</small></a>
+                <span><label class="badge alert-danger">@settingsList[8]</label></span> &nbsp;
+
+                <a href="#" class="pipelineFilterItem" id="pf09" onclick="onFilterClick('09')"><small>Unscheduled</small></a>
+                <span><label class="badge alert-danger">@settingsList[9]</label></span> &nbsp;
+
+                <a href="#" class="pipelineFilterItem" id="pf02" onclick="onFilterClick('02')"><small>Translation</small></a>
+                <span><label class="badge alert-info">@settingsList[1]</label></span> &nbsp;
+
+                <a href="#" class="pipelineFilterItem" id="pf03" onclick="onFilterClick('03')"><small>Adaptation</small></a>
+                <span><label class="badge alert-info">@settingsList[2]</label></span> &nbsp;
+
+                <a href="#" class="pipelineFilterItem" id="pf04" onclick="onFilterClick('04')"><small>Dubbing</small></a>
+                <span><label class="badge alert-info">@settingsList[3]</label></span> &nbsp;
+
+                <a href="#" class="pipelineFilterItem" id="pf05" onclick="onFilterClick('05')"><small>Mixage &amp; Montage</small></a>
+                <span><label class="badge alert-info">@settingsList[4]</label></span> &nbsp;
+
+                <a href="#" class="pipelineFilterItem" id="pf06" onclick="onFilterClick('06')"><small>Upload</small></a>
+                <span><label class="badge alert-info">@settingsList[5]</label></span> &nbsp;
+
+                <a href="#" class="pipelineFilterItem" id="pf07" onclick="onFilterClick('07')"><small>Archive</small></a>
+                <span><label class="badge alert-success">@settingsList[6]</label></span> &nbsp;
+
+                <a href="#" class="pipelineFilterItem" id="pf11" onclick="onFilterClick('11')"><small>All</small></a>
+                <span><label class="badge alert-info">@settingsList[7]</label></span>
+            </div>
+        </div>
+    </div>
+</div>

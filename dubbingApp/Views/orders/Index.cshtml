@@ -4,38 +4,54 @@
 }
 
 <div class="container-fluid">
-    <div class="jumbotron" style="padding:5px">
-        <h2>Dubbing Orders Management</h2>
-        <p class="lead"><h5>Register New Client Orders and Capture initial Quality Check Results. Plan Order Episodes for Dubbing, Upload &amp; Shipment. Register Client Feedback on Uploaded Episodes and Track Corrective Actions.</h5></p>
-        <label><a href="#" onclick="onOrderAddNewClick()">Register New Order ...</a></label>
-    </div>
-    <div class="col-sm-2 container-fluid" style="padding:0px">
-        @Html.Hidden("workIntnoHF")
-        <p>
-            <a href="#" class="workLbl" id="w0" onclick="onWorkSelectClick(null, '01', 'w0')"><small>New ...</small></a>
-        </p>
-        <p>
-            <a href="#" class="workLbl" id="all" onclick="onWorkSelectClick(null, null, 'all')"><small>All Works</small></a>
-        </p>
-        
-        @foreach (SelectListItem item in ViewBag.worksList)
-        {
-            string work = "w" + @item.Value.ToString();
-            <p>
-                <a href="#" class="workLbl" id="@work" onclick="onWorkSelectClick(@item.Value, null, '@work')"><small>@item.Text</small></a>
-            </p>
-        }
-    </div>
-    
-    <div class="col-sm-6 container-fluid" id="oList" style="padding:0px">
-        @Html.Action("orderItemsList", "orders", new { epFilter = "01" })
-    </div>
-    
-    <div class="col-sm-4 container-fluid" style="padding:0px">
-        <div id="filterSettings">
-            @Html.Action("filterSettings", "orders", new { epFilter = "01" })
+    <div class="row">
+        <div class="col-sm-12 jumbotron" style="padding:5px">
+            <h2>Dubbing Orders Management</h2>
+            <p class="lead"><h5>Register New Client Orders and Capture initial Quality Check Results. Plan Order Episodes for Dubbing, Upload &amp; Shipment. Register Client Feedback on Uploaded Episodes and Track Corrective Actions.</h5></p>
+            <label><a href="#" onclick="onOrderAddNewClick()">Register New Order ...</a></label>
         </div>
-        <div id="allDetails"></div>
+    </div>
+    
+    <div class="row">
+        <div class="col-sm-2">
+            @Html.Hidden("workIntnoHF")
+            <div class="row">
+                <p>
+                    <a href="#" class="workLbl" id="all" onclick="onWorkSelectClick(null, null, 'all')"><small>All Works</small></a>
+                </p>
+
+                @foreach (SelectListItem item in ViewBag.worksList)
+                {
+                    string work = "w" + @item.Value.ToString();
+                    <p>
+                        <a href="#" class="workLbl" id="@work" onclick="onWorkSelectClick(@item.Value, null, '@work')"><small>@item.Text</small></a>
+                    </p>
+                }
+            </div>
+            <br />
+            
+            <div class="row">
+                <div class="col-sm-12" id="filterSettings" style="padding:0px">
+                    @Html.Action("filterSettings", "orders")
+                </div>
+            </div>
+        </div>
+
+        <div class="col-sm-6 container-fluid" style="padding:0px">
+            <div id="pipelineFilterSettings">
+                @Html.Action("pipelineFilterSettings")
+            </div>
+            <div id="oList">
+                @Html.Action("orderItemsList", "orders", new { epFilter = "01" })
+            </div>
+        </div>
+
+        <div class="col-sm-4 container-fluid" style="padding:0px">
+            <div id="ordersHistory">
+                @Html.Action("ordersHistory")
+            </div>
+            <div id="allDetails"></div>
+        </div>
     </div>
 </div>
 
@@ -47,8 +63,8 @@
     <script>
         $(document).ready(function () {
             $(window).on('load', function () {
-                $('#w0').css('background-color', 'silver');
-                $('#selectedItemsHF').val(0);
+                $('#all').css('background-color', 'silver');
+                $('#pf01').css('background-color', 'silver');
             });
         })
 
@@ -65,7 +81,18 @@
             $.ajax({
                 url: '@Url.Action("orderItemsList", "orders")',
                 type: 'GET',
-                data: { work: $('#workIntnoHF').val(), epFilter: null, fromEpisode: $('#fromEpisode').val(), thruEpisode: $('#thruEpisode').val() },
+                data: { work: $('#workIntnoHF').val(), epFilter: '11', fromEpisode: $('#fromEpisode').val(), thruEpisode: $('#thruEpisode').val() },
+                success: function (result) {
+                    $('#oList').html(result);
+                }
+            })
+        }
+        function onOrderEpisodesClick(work1, fromEpisode1, thruEpisode1) {
+            $('#allDetails').html(null);
+            $.ajax({
+                url: '@Url.Action("orderItemsList", "orders")',
+                type: 'GET',
+                data: { work: work1, epFilter: '11', fromEpisode: fromEpisode1, thruEpisode: thruEpisode1 },
                 success: function (result) {
                     $('#oList').html(result);
                 }
@@ -95,13 +122,33 @@
                 success: function (result) {
                     $('#filterSettings').html(result);
                 }
-            })
+            });
+            $.ajax({
+                url: '@Url.Action("pipelineFilterSettings", "orders")',
+                type: 'GET',
+                data: { work: work1 },
+                success: function (result) {
+                    $('#pipelineFilterSettings').html(result);
+                    $('.pipelineFilterItem').css('background-color', 'white');
+                    $('#pf01').css('background-color', 'silver');
+                }
+            });
+            $.ajax({
+                url: '@Url.Action("ordersHistory", "orders")',
+                type: 'GET',
+                data: { work: work1 },
+                success: function (result) {
+                    $('#ordersHistory').html(result);
+                }
+            });
         }
 
         function onFilterClick(filter) {
             $('#fromEpisode').val(null);
             $('#thruEpisode').val(null);
             $('#allDetails').html(null);
+            $('.pipelineFilterItem').css('background-color', 'white');
+            $('#pf' + filter).css('background-color', 'silver');
             $.ajax({
                 url: '@Url.Action("orderItemsList", "orders")',
                 type: 'GET',
@@ -115,15 +162,15 @@
         function onCloseClick() {
             $('#allDetails').html(null);
             $('#oiCard').val(null);
-        }
-        function onActionCloseClick() {
-            $('#selectionAction').html(null);
+            $('#ordersHistory').show();
         }
         function onIssueCloseClick() {
             $('#qualityDetails').html(null);
+            $('#ordersHistory').show();
         }
         function onComplainCloseClick() {
             $('#complainDetails').html(null);
+            $('#ordersHistory').show();
         }
 
         function onClientComboChanged() {
@@ -146,6 +193,7 @@
         function onOrderAddNewClick() {
             $('#fromEpisode').val(null);
             $('#thruEpisode').val(null);
+            $('#ordersHistory').hide();
             $.ajax({
                 url: '@Url.Action("orderAddNew", "orders")',
                 type: 'GET',
@@ -164,6 +212,45 @@
                 }
             })
         }
+        function onNewOrderSuccess() {
+            $.ajax({
+                url: '@Url.Action("orderItemsList", "orders")',
+                type: 'GET',
+                data: { work: $('#workIntnoHF').val() },
+                success: function (result) {
+                    $('#oList').html(result);
+                }
+            });
+            $.ajax({
+                url: '@Url.Action("ordersHistory", "orders")',
+                type: 'GET',
+                data: { work: null },
+                success: function (result) {
+                    $('#ordersHistory').html(result);
+                }
+            });
+        }
+
+        function onOrderEndorseClick(ord) {
+            if (confirm("Please Confirm! About to Permanently Endorse the Selected Order and its Episodes.")) {
+                $.ajax({
+                    url: '@Url.Action("endorseOrder", "orders")',
+                    type: 'GET',
+                    data: { order: ord },
+                    success: function (result) {
+                        $('#ordersHistory').html(result);
+                        $.ajax({
+                            url: '@Url.Action("orderItemsList", "orders")',
+                            type: 'GET',
+                            data: { work: $('#workIntnoHF').val() },
+                            success: function (result) {
+                                $('#oList').html(result);
+                            }
+                        });
+                    }
+                });
+            }
+        }
 
         function onOrderItemIssueClick(oItem) {
             $.ajax({
@@ -171,6 +258,7 @@
                 type: 'GET',
                 data: { id: oItem },
                 success: function (result) {
+                    $('#ordersHistory').hide();
                     $('#allDetails').html(result);
                 }
             })
@@ -211,6 +299,7 @@
                 type: 'GET',
                 data: { id: oItem },
                 success: function (result) {
+                    $('#ordersHistory').hide();
                     $('#allDetails').html(result);
                 }
             })
@@ -229,82 +318,13 @@
                 alert('Rejected Episode CANNOT be Selected for Planning Activities.');
             }
             else {
-                var x = '<small>' + ep + '</small>' + '<button class="btn btn-default btn-xs pull-right" onclick="' + "onSelectedItemRemoveClick('" + oItem + "')" + '" title="Remove">'
-                            + '<span class="glyphicon glyphicon-trash pull-right" aria-hidden="true"></span></button>';
-                if (!$('#oiCard').length) {
-                    $.ajax({
-                        url: '@Url.Action("orderItemSelectList", "orders")',
-                        type: 'GET',
-                        success: function (result) {
-                            $('#allDetails').html(result);
-                            $('#oiCard').append($('<li/>', { id: oItem, html: x }));
-                        }
-                    })
-                }
-                else {
-                    if (!$('#oiCard li[id=' + oItem + ']').length) {
-                        $('#oiCard').append($('<li/>', { id: oItem, html: x }));
-                    }
-                }
-            }
-        }
-        function onSelectedItemRemoveClick(oItem) {
-            $('#oiCard li[id=' + oItem + ']').remove();
-        }
-        function onListSubmitClick() {
-            $('#oiListHF').val(null);
-            $('#oiCard li').each(function (index) {
-                if ($('#oiListHF').val() === "") {
-                    $('#oiListHF').val($(this).attr('id'));
-                }
-                else {
-                    var x = $('#oiListHF').val() + ';' + $(this).attr('id');
-                    $('#oiListHF').val(x);
-                }
-            });
-        }
-
-        // actions on episodes selection card
-        function onScheduleClick() {
-            onListSubmitClick();
-            $.ajax({
-                url: '@Url.Action("scheduleAddNew", "orders")',
-                type: 'GET',
-                data: { oiList: $('#oiListHF').val() },
-                success: function (result) {
-                    $('#selectionAction').html(result);
-                }
-            })
-        }
-        function onAdaptationClick() {
-            onListSubmitClick();
-            $.ajax({
-                url: '@Url.Action("adaptationAddNew", "orders")',
-                type: 'GET',
-                data: { oiList: $('#oiListHF').val() },
-                success: function (result) {
-                    $('#selectionAction').html(result);
-                }
-            })
-        }
-        function onEpisodesEndorseClick() {
-            if (confirm('Please Confirm! About to Endorse the Selected Items in the List.')) {
-                onListSubmitClick();
                 $.ajax({
-                    url: '@Url.Action("episodesEndorse", "orders")',
+                    url: '@Url.Action("scheduleAddNew", "orders")',
                     type: 'GET',
-                    data: { oiList: $('#oiListHF').val(), work: $('#workIntnoHF').val() },
+                    data: { orderItem: oItem, episodeNo: ep },
                     success: function (result) {
-                        $('#allDetails').html(null);
-                        $('#oList').html(result);
-                        $.ajax({
-                            url: '@Url.Action("filterSettings", "orders")',
-                            type: 'GET',
-                            data: { work: $('#workIntnoHF').val(), epFilter: '09' },
-                            success: function (result) {
-                                $('#filterSettings').html(result);
-                            }
-                        })
+                        $('#ordersHistory').hide();
+                        $('#allDetails').html(result);
                     }
                 })
             }
@@ -316,6 +336,7 @@
                 type: 'GET',
                 data: { id: oItem },
                 success: function (result) {
+                    $('#ordersHistory').hide();
                     $('#allDetails').html(result);
                 }
             })
@@ -327,6 +348,7 @@
                     type: 'GET',
                     data: { id: oItem, op: op1 },
                     success: function (result) {
+                        $('#ordersHistory').hide();
                         $('#allDetails').html(result);
                     }
                 })
@@ -339,6 +361,7 @@
                 type: 'GET',
                 data: { id: oItem },
                 success: function (result) {
+                    $('#ordersHistory').hide();
                     $('#allDetails').html(result);
                 }
             })
@@ -390,15 +413,11 @@
             })
         }
 
-        function onScheduleDateChange(e, fdw){
+        function onScheduleDateChange(fdw){
             var days = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
             var d = days[(new Date($('#dubbingDateCtrl').val())).getDay()];
             if(d !== fdw) {
                 alert('Dubbing Schedule MUST start on ' + fdw + ', As per the System Settings. Please Modify.')
-                e.preventDefault();
-            }
-            else {
-                onListSubmitClick();
             }
         }
     </script>

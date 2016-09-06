@@ -1,0 +1,39 @@
+﻿@model IEnumerable<dubbingModel.workOrder>
+
+<div class="container-fluid" style="padding:0px">
+    <div class="panel panel-default">
+        <div class="panel-heading" style="padding:5px">
+            <div class="row">
+                <div class="col-sm-12">
+                    <small><label>Orders History</label></small>
+                </div>
+            </div>
+        </div>
+        <div class="panel-body" style="padding:5px">
+            <table class="table table-hover table-condensed">
+                <thead>
+                    <tr>
+                        <th class="col-sm-2"><small>Received</small></th>
+                        <th class="col-sm-8"><small>Work</small></th>
+                        <th class="col-sm-2"><small>Episodes</small></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var ord in Model)
+                    {
+                        string rowColor;
+                        string rowHint;
+                        if (ord.status == "03") { rowColor = "active"; rowHint = "Active"; }
+                        else if (ord.status == "05") { rowColor = "success"; rowHint = "Endorsed"; }
+                        else { rowColor = "warning"; rowHint = "Canceled"; }
+                        <tr class=@rowColor title=@rowHint>
+                            <td class="col-sm-2"><small>@ord.receivedDate.ToShortDateString()</small></td>
+                            <td class="col-sm-8"><small><a href="#" onclick="onWorkHistoryClick(@ord.workIntno)">@ord.agreementWork.workName</a></small></td>
+                            <td class="col-sm-2"><small>@ord.fromEpisode - @ord.thruEpisode</small></td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

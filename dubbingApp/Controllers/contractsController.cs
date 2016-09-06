@@ -26,6 +26,11 @@ namespace dubbingApp.Controllers
 
         public ActionResult Index()
         {
+            return View();
+        }
+
+        public ActionResult filters()
+        {
             var x = db.clients.Where(b => b.status == "01")
                     .Select(b => new { b.clientIntno, b.clientName });
             ViewBag.clientsList = new SelectList(x, "clientIntno", "clientName");
@@ -34,7 +39,17 @@ namespace dubbingApp.Controllers
                     .Select(b => new { b.agreementIntno, b.agreementName });
             ViewBag.agreementsList = new SelectList(y, "agreementIntno", "agreementName");
 
-            return View();
+            SelectList workStatusList = new SelectList(new List<SelectListItem> {
+                new SelectListItem { Selected = true, Text = "Active Works", Value = "01" },
+                new SelectListItem { Selected = false, Text = "Suspended Works", Value = "02" },
+                new SelectListItem { Selected = false, Text = "Archived Works", Value = "03" },
+                new SelectListItem { Selected = false, Text = "Canceled Works", Value = "04" }
+            }, "Value", "Text");
+            ViewBag.workStatusList = workStatusList;
+
+            SelectList workTypesList = new SelectList(LookupModels.getDictionary("workType"), "key", "value");
+            ViewBag.workTypesList = workTypesList;
+            return PartialView("_filters");
         }
 
         public ActionResult clientContactsList(long? client)
@@ -171,10 +186,13 @@ namespace dubbingApp.Controllers
         }
 
         // contracts
-        public ActionResult contractsList(long? client, long? agreement, string status)
+        public ActionResult contractsList(long? client, long? agreement, string status, string workType)
         {
             var model = db.agreementWorks.Include(b => b.agreement)
-                        .Where(b => (!client.HasValue || b.agreement.clientIntno == client) && (!agreement.HasValue || b.agreementIntno == agreement) && b.status == status);
+                        .Where(b => (!client.HasValue || b.agreement.clientIntno == client) 
+                        && (!agreement.HasValue || b.agreementIntno == agreement) 
+                        && (string.IsNullOrEmpty(workType) || b.workType == workType)
+                        && b.status == status);
             return PartialView("_contractsList", model.ToList());
         }
 
@@ -267,36 +285,7 @@ namespace dubbingApp.Controllers
                 return Content("Failed! Please Enter All Data.", "text/html");
             return Content("Successfully Updated.", "text/html");
         }
-
-        public ActionResult contractHistory(long id)
-        {
-            List<string> historyList = new List<string>();
-            var x = db.orderTrnHdrs.Where(b => b.workIntno == id);
-            if (x.Count() != 0)
-            {
-                historyList.Add("Total Received|" + x.Count());
-                historyList.Add("Last Received|" + x.Max(b => b.orderReceivedDate.Value).ToShortDateString());
-                historyList.Add("Total Rejected|" + x.Where(b => b.status == "03").Count());
-                int u = x.Where(b => b.shipmentLowRes.HasValue && !b.shipmentFinal.HasValue).Count();
-                historyList.Add("Total Uploaded|" + u);
-                if (u != 0)
-                    historyList.Add("Last Uploaded|" + x.Where(b => b.shipmentLowRes.HasValue && !b.shipmentFinal.HasValue).Max(b => b.shipmentLowRes.Value).ToShortDateString());
-                historyList.Add("Total Shipped|" + x.Where(b => b.shipmentFinal.HasValue).Count());
-            }
-            else
-            {
-                historyList.Add("Total Received|0");
-                historyList.Add("Last Received|-");
-                historyList.Add("Total Rejected|0");
-                historyList.Add("Total Uploaded|0");
-                historyList.Add("Last Uploaded|-");
-                historyList.Add("Total Shipped|0");
-            }
-
-            ViewBag.workIntno = id;
-            return PartialView("_ContractHistory", historyList);
-        }
-
+        
         public ActionResult contractStatusChange(long? client, long? agreement, long work, string newStatus)
         {
             if (newStatus == "03") //endorse contract(work)
@@ -326,6 +315,16 @@ namespace dubbingApp.Controllers
             long? agreement1 = agreement;
             return RedirectToAction("contractsList", new { client = client1, agreement = agreement1, status = "01" });
         }
+
+        // work contact
+        public ActionResult workContact(long work)
+        {
+            var x = db.agreementWorks.Find(work);
+            var model = db.contacts.Find(x.contactIntno);
+            model.salutation = LookupModels.decodeDictionaryItem("salutation", model.salutation);
+            return PartialView("_workContact", model);
+        }
+
 
         // personnel
         public ActionResult teamList(long id)
@@ -406,5 +405,50 @@ namespace dubbingApp.Controllers
             var model1 = db.workPersonnels.Where(b => b.workIntno == work && b.status == true);
             return PartialView("_teamList", model1.ToList());
         }
+
+        // orders
+        public ActionResult ordersHistory(long? client, long? work, string workStatus)
+        {
+            var z = db.workOrders.Include(b => b.agreementWork).Where(b => (!client.HasValue || b.clientIntno == client)
+                                        && (string.IsNullOrEmpty(workStatus) || b.agreementWork.status == workStatus));
+            var model = z;
+            if (!work.HasValue)
+            {
+                return PartialView("_ordersHistory", model.OrderByDescending(b => b.receivedDate).ToList());
+            }
+            else
+            {
+                List<string> historyList = new List<string>();
+                var x = db.orderTrnHdrs.Where(b => b.workIntno == work.Value);
+                if (x.Count() != 0)
+                {
+                    historyList.Add("Total Received|" + x.Count());
+                    historyList.Add("Last Received|" + x.Max(b => b.orderReceivedDate.Value).ToShortDateString());
+                    historyList.Add("Total Rejected|" + x.Where(b => b.status == "03").Count());
+                    int u = x.Where(b => b.shipmentLowRes.HasValue && !b.shipmentFinal.HasValue).Count();
+                    historyList.Add("Total Uploaded|" + u);
+                    if (u != 0)
+                        historyList.Add("Last Uploaded|" + x.Where(b => b.shipmentLowRes.HasValue && !b.shipmentFinal.HasValue).Max(b => b.shipmentLowRes.Value).ToShortDateString());
+                    historyList.Add("Total Shipped|" + x.Where(b => b.shipmentFinal.HasValue).Count());
+                }
+                else
+                {
+                    historyList.Add("Total Received|0");
+                    historyList.Add("Last Received|-");
+                    historyList.Add("Total Rejected|0");
+                    historyList.Add("Total Uploaded|0");
+                    historyList.Add("Last Uploaded|-");
+                    historyList.Add("Total Shipped|0");
+                }
+
+                ViewBag.historyList = historyList;
+                ViewBag.workIntno = work.Value;
+                ViewBag.contractStatus = LookupModels.decodeDictionaryItem("workStatus", db.agreementWorks.Find(work.Value).status);
+                model = z.Where(b => b.workIntno == work.Value).OrderByDescending(b => b.receivedDate);
+                return PartialView("_ContractHistory", model.ToList());
+            }
+            
+        }
+
     }
 }

@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
+using System.Data.Entity;
 using System.Linq;
 using System.Web;
-using System.Data.Entity;
 using System.Web.Mvc;
 using dubbingModel;
 using dubbingApp.Models;
@@ -36,53 +37,40 @@ namespace dubbingApp.Controllers
                                             && (!thruEpisode.HasValue || b.episodeNo <= thruEpisode)
                                             );
             var model = x;
-            DateTime todayDate = DateTime.Today.Date;
             switch (epFilter)
             {
                 case "01": //New
                     model = x.Where(b => !b.startAdaptation.HasValue && b.status != "06");
                     break;
-                case "02": //delayed adaptation
-                    model = x.Where(b => b.startAdaptation.HasValue && !b.endAdaptation.HasValue && !b.startDubbing.HasValue
-                            && b.startDischarge.HasValue && b.startDischarge.Value < todayDate && b.status != "06");
+                case "02": //translation
+                    model = x.Where(b => b.startTranslation.HasValue && !b.endTranslation.HasValue && b.status != "06");
                     break;
-                case "03": //delayed dubbing
-                    model = x.Where(b => b.startDubbing.HasValue && (!b.endDubbing.HasValue || !b.endMixage.HasValue || !b.endMontage.HasValue)
-                            && b.plannedUpload.HasValue && b.plannedUpload.Value < todayDate && b.status != "06");
+                case "03": //adaptation
+                    model = x.Where(b => b.startAdaptation.HasValue && !b.endAdaptation.HasValue && b.status != "06");
                     break;
-                case "04": //delayed upload
-                    model = x.Where(b => b.plannedUpload.HasValue && b.shipmentLowRes.HasValue && !b.shipmentFinal.HasValue
-                            && b.plannedUpload.Value < todayDate && b.status != "06");
+                case "04": //dubbing
+                    model = x.Where(b => b.startDubbing.HasValue && !b.endDubbing.HasValue && b.status != "06");
                     break;
-                case "05": //delayed shipment
-                    model = x.Where(b => b.plannedShipment.HasValue && b.shipmentLowRes.HasValue && !b.shipmentFinal.HasValue
-                            && b.plannedShipment.Value < todayDate && b.status != "06");
+                case "05": //mixage & montage
+                    model = x.Where(b => (b.startMixage.HasValue && !b.endMixage.HasValue) || (b.startMontage.HasValue && !b.endMontage.HasValue) && b.status != "06");
                     break;
-                case "06": //Archive: endorsed orders
-                    model = x.Where(b => b.status == "06");
+                case "06": //upload
+                    model = x.Where(b => b.shipmentLowRes.HasValue && !b.shipmentFinal.HasValue && b.status != "06");
                     break;
-                case "07": //episodes with received quality issues
-                    model = (from A in x
-                             join B in db.orderChecks on A.orderTrnHdrIntno equals B.orderTrnHdrIntno
-                             select A);
+                case "07": //endorsed - archive
+                    model = x.Where(b => b.shipmentFinal.HasValue || b.status == "06");
                     break;
-                case "08": //episodes having client claims open
-                    model = (from A in x
-                             join B in db.clientClaims on A.orderTrnHdrIntno equals B.orderTrnHdrIntno
-                             where B.status == true
-                             select A);
+                case "08": //rejected
+                    model = x.Where(b => b.status == "03");
                     break;
-                case "09": //active episodes in pipeline
-                    model = x.Where(b => b.status == "04");
-                    break;
-                case "10": //endorsed episodes in pipeline
-                    model = x.Where(b => b.status == "06");
+                case "09": //unscheduled
+                    model = x.Where(b => !b.plannedUpload.HasValue && (!b.shipmentLowRes.HasValue || !b.shipmentFinal.HasValue) && b.status != "06");
                     break;
                 case "11": // all episodes in work(s)
                     model = x;
                     break;
                 default:
-                    model = x.Where(b => b.status != "06");
+                    model = x.Where(b => b.status == "03" || b.status == "04");
                     break;
             }
 
@@ -90,79 +78,88 @@ namespace dubbingApp.Controllers
         }
 
         // filter settings
-        public ActionResult filterSettings(long? work, string epFilter)
+        public ActionResult filterSettings(long? work)
         {
-            string settingsList = null;
-            var model = db.orderTrnHdrs.Include(b => b.agreementWork)
-                                    .Where(b => b.agreementWork.status == "01"
-                                            && (!work.HasValue || b.workIntno == work));
-            var x = model.Where(b => b.status != "06").ToList();
-            var y = model.ToList();
+            string settingsList;
+            int cnt;
+            var x = db.orderTrnHdrs.Include(b => b.agreementWork)
+                                        .Where(b => b.agreementWork.status == "01"
+                                        && (!work.HasValue || b.workIntno == work)
+                                        && b.status != "06").ToList();
+            
+            // received quality issues
+            cnt = (from A in x
+                   join B in db.orderChecks on A.orderTrnHdrIntno equals B.orderTrnHdrIntno
+                   where B.isAccepted == false
+                   select A.orderTrnHdrIntno).Distinct().Count();
+            settingsList = cnt.ToString() + ";";
 
-            int cnt = 0;
-            DateTime todayDate = DateTime.Today.Date;
-
-            if (epFilter == "01") // for new episodes only where all of the counts are zero except received quality
-            {
-                cnt = (from A in x
-                       join B in db.orderChecks on A.orderTrnHdrIntno equals B.orderTrnHdrIntno
-                       where !A.startAdaptation.HasValue
-                       select A).Count();
-                settingsList = "0;0;0;0;" + cnt.ToString() + ";0;" + x.Count().ToString() + ";0;" + y.Count().ToString();
-            }
-            else
-            {
-                // delayed adaptation
-                cnt = x.Where(b => b.startAdaptation.HasValue && !b.endAdaptation.HasValue && !b.startDubbing.HasValue
-                                && b.startDischarge.HasValue && b.startDischarge.Value < todayDate).Count();
-                settingsList = cnt.ToString() + ";";
-
-                // delayed dubbing
-                cnt = x.Where(b => b.startDubbing.HasValue && (!b.endDubbing.HasValue || !b.endMixage.HasValue || !b.endMontage.HasValue)
-                                && b.plannedUpload.HasValue && b.plannedUpload.Value < todayDate).Count();
-                settingsList = settingsList + cnt.ToString() + ";";
-
-                // delayed upload
-                cnt = x.Where(b => b.plannedUpload.HasValue && b.shipmentLowRes.HasValue && !b.shipmentFinal.HasValue
-                                && b.plannedUpload.Value < todayDate).Count();
-                settingsList = settingsList + cnt.ToString() + ";";
-
-                // delayed shipment
-                cnt = x.Where(b => b.plannedShipment.HasValue && b.shipmentLowRes.HasValue && !b.shipmentFinal.HasValue
-                                && b.plannedShipment.Value < todayDate).Count();
-                settingsList = settingsList + cnt.ToString() + ";";
-
-                // received quality issues
-                cnt = (from A in x
-                       join B in db.orderChecks on A.orderTrnHdrIntno equals B.orderTrnHdrIntno
-                       select A).Count();
-                settingsList = settingsList + cnt.ToString() + ";";
-
-                // client claims
-                cnt = (from A in x
-                       join B in db.clientClaims on A.orderTrnHdrIntno equals B.orderTrnHdrIntno
-                       where B.status == true
-                       select A).Count();
-                settingsList = settingsList + cnt.ToString() + ";";
-
-                // active episodes in pipeline
-                cnt = y.Where(b => b.status == "04").Count();
-                settingsList = settingsList + cnt.ToString() + ";";
-
-                // endorsed episodes in pipeline
-                cnt = y.Where(b => b.status == "06").Count();
-                settingsList = settingsList + cnt.ToString() + ";";
-
-                // all episodes in work(s)
-                cnt = y.Count();
-                settingsList = settingsList + cnt.ToString();
-            }
+            // client claims
+            cnt = (from A in x
+                   join B in db.clientClaims on A.orderTrnHdrIntno equals B.orderTrnHdrIntno
+                   where B.status == true
+                   select A.orderTrnHdrIntno).Distinct().Count();
+            settingsList = settingsList + cnt.ToString();
 
             ViewBag.settingsList = settingsList;
             return PartialView("_filters");
         }
 
-        // new order
+        public ActionResult pipelineFilterSettings(long? work)
+        {
+            string settingsList = null;
+            int cnt = 0;
+            var model = db.orderTrnHdrs.Include(b => b.agreementWork)
+                                        .Where(b => b.agreementWork.status == "01"
+                                        && (!work.HasValue || b.workIntno == work));
+            var x = model.Where(b => b.status != "06").ToList();
+            var y = model.ToList();
+
+            // new
+            cnt = x.Where(b => !b.startAdaptation.HasValue).Count();
+            settingsList = cnt.ToString() + ";";
+            
+            // translation
+            cnt = x.Where(b => b.startTranslation.HasValue && !b.endTranslation.HasValue).Count();
+            settingsList = settingsList + cnt.ToString() + ";";
+
+            // adaptation
+            cnt = x.Where(b => b.startAdaptation.HasValue && !b.endAdaptation.HasValue).Count();
+            settingsList = settingsList + cnt.ToString() + ";";
+
+            // dubbing
+            cnt = x.Where(b => b.startDubbing.HasValue && !b.endDubbing.HasValue).Count();
+            settingsList = settingsList + cnt.ToString() + ";";
+
+            // mixage & montage
+            cnt = x.Where(b => (b.startMixage.HasValue && !b.endMixage.HasValue) || (b.startMontage.HasValue && !b.endMontage.HasValue)).Count();
+            settingsList = settingsList + cnt.ToString() + ";";
+
+            // upload
+            cnt = x.Where(b => b.shipmentLowRes.HasValue && !b.shipmentFinal.HasValue).Count();
+            settingsList = settingsList + cnt.ToString() + ";";
+
+            // endorsed - archive
+            cnt = y.Where(b => b.shipmentFinal.HasValue || b.status == "06").Count();
+            settingsList = settingsList + cnt.ToString() + ";";
+
+            // all episodes in work(s)
+            cnt = y.Count();
+            settingsList = settingsList + cnt.ToString() + ";";
+
+            // rejected
+            cnt = y.Where(b => b.status == "03").Count();
+            settingsList = settingsList + cnt.ToString() + ";";
+
+            // unscheduled
+            cnt = x.Where(b => !b.plannedUpload.HasValue && (!b.shipmentLowRes.HasValue || !b.shipmentFinal.HasValue)).Count();
+            settingsList = settingsList + cnt.ToString();
+
+            ViewBag.settingsList = settingsList;
+            return PartialView("_pipelineFilter");
+        }
+
+        // orders
         public ActionResult orderAddNew(long? client)
         {
             ViewBag.clientsList = new SelectList(db.clients.Where(b => (!client.HasValue || b.clientIntno == client) && b.status == "01"), "clientIntno", "clientName");
@@ -191,9 +188,9 @@ namespace dubbingApp.Controllers
                     item.priority = "02";
                     item.lastUpdated = DateTime.Now;
                     item.updatedBy = LookupModels.getUser();
-                    item.status = "01";
+                    item.status = "03";
 
-                    var x = db.agreementWorks.Include(b => b.agreement.client).Where(b => b.workIntno == item.workIntno).SingleOrDefault();
+                    var x = db.agreementWorks.Include(b => b.agreement.client).SingleOrDefault(b => b.workIntno == item.workIntno);
 
                     if (x.firstEpisodeShowDate.HasValue)
                     {
@@ -253,6 +250,100 @@ namespace dubbingApp.Controllers
             else
                 return Content("Failed to Create! Please Correct All Errors. ", "text/html");
             return Content("Successfully Created. ", "text/html");
+        }
+
+        public ActionResult endorseOrder(long order)
+        {
+            var model = db.workOrders.Find(order);
+            model.status = "05";
+            var orderItemModel = db.orderTrnHdrs.Where(b => b.orderIntno == order && b.status == "04").ToList();
+            foreach (var x in orderItemModel)
+            {
+                x.status = "06";
+            }
+            db.SaveChanges();
+            return RedirectToAction("ordersHistory", new { work = model.workIntno });
+        }
+
+        public ActionResult ordersHistory(long? work)
+        {
+            if (!work.HasValue)
+            {
+                var model = (from A in db.workOrders
+                             join B in db.orderTrnHdrs on A.orderIntno equals B.orderIntno
+                             join C in db.agreementWorks on A.workIntno equals C.workIntno
+                             where !B.startAdaptation.HasValue && A.status == "03" && C.status == "01"
+                             select A).Distinct().Include(b => b.agreementWork);
+                return PartialView("_ordersHistory", model.OrderByDescending(b => b.receivedDate).ToList());
+            }
+            else
+            {
+                List<string> historyList = new List<string>();
+                var x = db.orderTrnHdrs.Where(b => b.workIntno == work.Value);
+                if (x.Count() != 0)
+                {
+                    historyList.Add("Total Received|" + x.Count());
+                    historyList.Add("Last Received|" + x.Max(b => b.orderReceivedDate.Value).ToShortDateString());
+                    historyList.Add("Total Rejected|" + x.Where(b => b.status == "03").Count());
+                    int u = x.Where(b => b.shipmentLowRes.HasValue && !b.shipmentFinal.HasValue).Count();
+                    historyList.Add("Total Uploaded|" + u);
+                    if (u != 0)
+                        historyList.Add("Last Uploaded|" + x.Where(b => b.shipmentLowRes.HasValue && !b.shipmentFinal.HasValue).Max(b => b.shipmentLowRes.Value).ToShortDateString());
+                    historyList.Add("Total Shipped|" + x.Where(b => b.shipmentFinal.HasValue).Count());
+                }
+                else
+                {
+                    historyList.Add("Total Received|0");
+                    historyList.Add("Last Received|-");
+                    historyList.Add("Total Rejected|0");
+                    historyList.Add("Total Uploaded|0");
+                    historyList.Add("Last Uploaded|-");
+                    historyList.Add("Total Shipped|0");
+                }
+
+                ViewBag.historyList = historyList;
+                ViewBag.workIntno = work.Value;
+                var model1 = db.workOrders.Include(b => b.agreementWork)
+                            .Where(b => b.workIntno == work.Value).OrderByDescending(b => b.receivedDate);
+                return PartialView("_ContractHistory", model1.ToList());
+            }
+        }
+
+        // plan upload, dubbing and shipment
+        public ActionResult scheduleAddNew(long orderItem, int episodeNo)
+        {
+            ViewBag.workName = db.orderTrnHdrs.Include(b => b.agreementWork).FirstOrDefault(b => b.orderTrnHdrIntno == orderItem).agreementWork.workName;
+            ViewBag.orderItem = orderItem;
+            ViewBag.episodeNo = episodeNo;
+            return PartialView("_scheduleAddNew");
+        }
+
+        [ValidateAntiForgeryToken]
+        [HttpPost, ValidateInput(false)]
+        public ActionResult scheduleAddNew(long orderItem, int fromEpisode, int thruEpisode, DateTime? dubbingDate, DateTime? uploadDate, DateTime? shipmentDate)
+        {
+            if (dubbingDate.HasValue || uploadDate.HasValue || shipmentDate.HasValue)
+            {
+                var model = db.orderTrnHdrs;
+                long work = model.Find(orderItem).workIntno;
+                var oiList = model.Where(b => b.workIntno == work && b.episodeNo >= fromEpisode && b.episodeNo <= thruEpisode)
+                            .Select(b => b.orderTrnHdrIntno).ToList();
+                foreach (long item in oiList)
+                {
+                    var modelItem = model.Find(item);
+
+                    if (dubbingDate.HasValue)
+                        modelItem.plannedDubbing = dubbingDate;
+                    if (uploadDate.HasValue)
+                        modelItem.plannedUpload = uploadDate;
+                    if (shipmentDate.HasValue)
+                        modelItem.plannedShipment = shipmentDate;
+                }
+                db.SaveChanges();
+                return Content("Successfully Scheduled. ", "text/html");
+            }
+            else
+                return Content("Failed! At Least one scheduling date must be given. ", "text/html");
         }
 
         // order quality check
@@ -318,197 +409,6 @@ namespace dubbingApp.Controllers
             var model1 = db.orderChecks.Where(b => b.orderTrnHdrIntno == orderTrnHdrIntno);
             ViewBag.orderItem = orderTrnHdrIntno;
             return PartialView("_orderItemIssuesList", model1.ToList());
-        }
-
-        // planning dubbing, upload and shipment
-        public ActionResult orderItemSelectList()
-        {
-            return PartialView("_orderItemSelectList");
-        }
-
-        public ActionResult scheduleAddNew(string oiList)
-        {
-            ViewBag.fdw = LookupModels.decodeDictionaryItem("settings", "fdw");
-            ViewBag.oiList = oiList;
-            return PartialView("_scheduleAddNew");
-        }
-        
-        [ValidateAntiForgeryToken]
-        [HttpPost, ValidateInput(false)]
-        public ActionResult scheduleAddNew(string oiList, DateTime? dubbingDate, DateTime? uploadDate, DateTime? shipmentDate)
-        {
-            var model = db.orderTrnHdrs;
-            string[] oiList1 = oiList.Split(';');
-            bool changes = false;
-            foreach(string item in oiList1)
-            {
-                var modelItem = model.Find(long.Parse(item));
-                if (dubbingDate.HasValue || uploadDate.HasValue || shipmentDate.HasValue)
-                    changes = true;
-                
-                if (dubbingDate.HasValue)
-                    modelItem.plannedDubbing = dubbingDate;
-                if (uploadDate.HasValue)
-                    modelItem.plannedUpload = uploadDate;
-                if (shipmentDate.HasValue)
-                    modelItem.plannedShipment = shipmentDate;
-            }
-            if (changes)
-                db.SaveChanges();
-            return Content("Successfully Scheduled. ", "text/html");
-        }
-
-        // adaptation assignment
-        public ActionResult adaptationAddNew(long? work, string oiList)
-        {
-            ViewBag.adaptorsList = new SelectList(db.workPersonnels.Include(b => b.employee)
-                                .Where(b => (!work.HasValue || b.workIntno == work) && (b.titleType == "04" || b.titleType == "06") && b.status == true)
-                                .Select(b => new { b.employee.empIntno, b.employee.fullName }), "empIntno", "fullName");
-            ViewBag.translatorsList = new SelectList(db.workPersonnels.Include(b => b.employee)
-                                .Where(b => (!work.HasValue || b.workIntno == work) && (b.titleType == "04" || b.titleType == "05") && b.status == true)
-                                .Select(b => new { b.employee.empIntno, b.employee.fullName }), "empIntno", "fullName");
-            ViewBag.oiList = oiList;
-            return PartialView("_adaptationAddNew");
-        }
-
-        [ValidateAntiForgeryToken]
-        [HttpPost, ValidateInput(false)]
-        public ActionResult adaptationAddNew(string oiList, long? editor, long? translator, DateTime? startTranslation, DateTime? endTranslation, DateTime? startAdaptation, DateTime? endAdaptation)
-        {
-            var model = db.orderTrnHdrs;
-            var dtlModel = db.orderTrnDtls;
-            string[] oiList1 = oiList.Split(';');
-            foreach (string item in oiList1)
-            {
-                long id = long.Parse(item);
-                var modelItem = model.Find(id);
-                if (startTranslation.HasValue)
-                    modelItem.startTranslation = startTranslation;
-                if (endTranslation.HasValue)
-                    modelItem.endTranslation = endTranslation;
-                if (startAdaptation.HasValue)
-                    modelItem.startAdaptation = startAdaptation;
-                if (endAdaptation.HasValue)
-                    modelItem.startDischarge = endAdaptation;
-
-                if(editor.HasValue)
-                {
-                    var x1 = dtlModel.FirstOrDefault(b => b.orderTrnHdrIntno == id && b.activityType == "02");
-                    if (x1 == null)
-                    {
-                        orderTrnDtl dtl = new orderTrnDtl();
-                        dtl.orderTrnHdrIntno = id;
-                        dtl.empIntno = editor.Value;
-                        dtl.activityType = "02";
-                        dtlModel.Add(dtl);
-                    }
-                    else
-                    {
-                        x1.empIntno = editor.Value;
-                    }
-                }
-
-                if (translator.HasValue)
-                {
-                    var x2 = dtlModel.FirstOrDefault(b => b.orderTrnHdrIntno == id && b.activityType == "01");
-                    if (x2 == null)
-                    {
-                        orderTrnDtl dtl = new orderTrnDtl();
-                        dtl.orderTrnHdrIntno = id;
-                        dtl.empIntno = translator.Value;
-                        dtl.activityType = "01";
-                        dtlModel.Add(dtl);
-                    }
-                    else
-                    {
-                        x2.empIntno = translator.Value;
-                    }
-                }
-            }
-
-            db.SaveChanges();
-            return Content("Successfully Assigned. ", "text/html");
-        }
-
-        public ActionResult episodesEndorse(string oiList, long? work)
-        {
-            var model = db.orderTrnHdrs;
-            var logModel = db.logOrders;
-            string[] oiList1 = oiList.Split(';');
-            List<orderTrnHdr> orderHdrList = new List<orderTrnHdr>();
-            foreach(var item in oiList1)
-            {
-                long id = long.Parse(item);
-                var modelItem = model.Find(id);
-                modelItem.status = "06";
-                orderHdrList.Add(modelItem);
-            }
-
-            // log endorsed episodes
-            int currYear = DateTime.Today.Year;
-            int currMonth = DateTime.Today.Month;
-            foreach(long wk in orderHdrList.Select(b => b.workIntno).Distinct())
-            {
-                var lg = db.logOrders.FirstOrDefault(b => b.logYear == currYear && b.logMonth == currMonth && b.workIntno == wk);
-                if (lg == null)
-                {
-                    var w = db.agreementWorks.Include(b => b.agreement.client).FirstOrDefault(b => b.workIntno == wk);
-                    logOrder lo = new logOrder();
-                    lo.logYear = currYear;
-                    lo.logMonth = currMonth;
-                    lo.clientIntno = w.agreement.clientIntno;
-                    lo.clientName = string.IsNullOrEmpty(w.agreement.client.clientShortName) ? w.agreement.client.clientName : w.agreement.client.clientShortName;
-                    lo.workIntno = wk;
-                    lo.workName = w.workName;
-                    lo.workType = LookupModels.decodeDictionaryItem("workType", w.workType);
-                    var h1 = orderHdrList.Where(b => b.workIntno == wk && !b.endDubbing.HasValue);
-                    if (h1 != null)
-                    {
-                        lo.totalEpisodesDubbed = h1.Count();
-                        lo.lastEpisodeDubbed = h1.Max(b => b.episodeNo);
-                    }
-                    var h2 = orderHdrList.Where(b => b.workIntno == wk && !b.shipmentLowRes.HasValue);
-                    if (h2 != null)
-                    {
-                        lo.totalEpisodesUploaded = h2.Count();
-                        lo.lastEpisodeUploaded = h2.Max(b => b.episodeNo);
-                    }
-                    var h3 = orderHdrList.Where(b => b.workIntno == wk && !b.shipmentFinal.HasValue);
-                    if (h3 != null)
-                    {
-                        lo.totalEpisodesShipped = h3.Count();
-                        lo.lastEpisodeShipped = h3.Max(b => b.episodeNo);
-                    }
-                    lo.lastUpdate = DateTime.Today;
-                    logModel.Add(lo);
-                }
-                else
-                {
-                    var h1 = orderHdrList.Where(b => b.workIntno == wk && !b.endDubbing.HasValue);
-                    if (h1 != null)
-                    {
-                        lg.totalEpisodesDubbed += h1.Count();
-                        lg.lastEpisodeDubbed = h1.Max(b => b.episodeNo);
-                    }
-                    var h2 = orderHdrList.Where(b => b.workIntno == wk && !b.shipmentLowRes.HasValue);
-                    if (h2 != null)
-                    {
-                        lg.totalEpisodesUploaded += h2.Count();
-                        lg.lastEpisodeUploaded = h2.Max(b => b.episodeNo);
-                    }
-                    var h3 = orderHdrList.Where(b => b.workIntno == wk && !b.shipmentFinal.HasValue);
-                    if (h3 != null)
-                    {
-                        lg.totalEpisodesShipped += h3.Count();
-                        lg.lastEpisodeShipped = h3.Max(b => b.episodeNo);
-                    }
-                    lg.lastUpdate = DateTime.Today;
-                }
-            }
-            
-            db.SaveChanges();
-            long? work1 = work; 
-            return RedirectToAction("orderItemsList", new { work = work1 });
         }
 
         // order item details

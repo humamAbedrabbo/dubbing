@@ -6,66 +6,38 @@
 <div class="container-fluid">
     <div class="jumbotron" style="padding:5px">
         <h2>Dubbing Contracts</h2>
-        <p class="lead"><h5>Define and Manage Clients, Agreements and Contracts.</h5></p>
+        <p class="lead"><h5>Define and Manage Clients, Agreements and Contracts. Allocate personnel and main work characters at the very early stage when studying the newly contracted work. Get details about each contracted work status and received orders.</h5></p>
         <label><a href="#" onclick="onContractAddNewClick()">Add New Contract ...</a></label>
     </div>
 
     <div class="row">
-        <div class="col-sm-2">
-            <label class="badge alert-info">Clients:</label>
-            <div>
-                @Html.DropDownList("clientsList", ViewBag.clientsList as SelectList, "Select Client ...", new { @style = "width:170px" })
-            </div>
-            <div>
-                <a href="#" onclick="onClientUpdateClick()"><small>Edit Client</small></a>
-            </div>
-            <div>
-                <a href="#" onclick="onClientContactsClick()"><small>Client Contacts ...</small></a>
-            </div>
-            <br />
-
-            <label class="badge alert-info">Agreements:</label>
-            <div>
-                @Html.DropDownList("agreementsList", ViewBag.agreementsList as SelectList, "Select Agreement ...", new { @style = "width:170px" })
-            </div>
-            <div>
-                <a href="#" onclick="onAgreementUpdateClick()"><small>Edit Agreement</small></a>
-            </div>
-            <div>
-                <a href="#" onclick="onAgreementsClick()"><small>Agreement Details ...</small></a>
-            </div>
-            <br /><br />
-
-            <label class="badge alert-info">Add ...</label>
-            <div>
-                <a href="#" onclick="onClientAddNewClick()">New Client</a>
-            </div>
-            <div>
-                <a href="#" onclick="onAgreementAddNewClick()">New Agreement</a>
-            </div>
-            <br /><br />
-
-            <label class="badge alert-info">Contracts ...</label>
-            <div>
-                <a href="#" onclick="onContractStatusClick('01')">Active</a>
-            </div>
-            <div>
-                <a href="#" onclick="onContractStatusClick('02')">Suspended</a>
-            </div>
-            <div>
-                <a href="#" onclick="onContractStatusClick('04')">Canceled</a>
-            </div>
-            <div>
-                <a href="#" onclick="onContractStatusClick('03')">Archived</a>
-            </div>
+        <div class="col-sm-2" style="padding-right:0px">
+            @Html.Action("filters")
         </div>
         
         <div class="col-sm-6" id="cList">
             @Html.Action("contractsList", "contracts", new { status = "01" })
         </div>
         <div class="col-sm-4" style="padding-left:0px">
+            <div id="ordersHistory">
+                @Html.Action("ordersHistory", new { workStatus = "01" })
+            </div>
             <div id="allDetails"></div>
             <div id="pDetails"></div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="popupForm" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" id="modalClose" data-dismiss="modal">&times;</button>
+                <div class="modal-title" id="popupFormHeader">Client Contact</div>
+            </div>
+            <div class="modal-body" id="popupFormBody">
+                
+            </div>
         </div>
     </div>
 </div>
@@ -93,6 +65,7 @@
                     client: client1,
                     agreement: agreement1,
                     html: $("#cList").html(),
+                    ord: $("#ordersHistory").html(),
                     dtl: $("#allDetails").html()
                 };
                 sessionStorage.setItem("contracts_html", JSON.stringify(data));
@@ -109,6 +82,7 @@
                 var data = document.restoreData();
                 if (data) {
                     $("#cList").html(data.html);
+                    $("#ordersHistory").html(data.ord);
                     $("#allDetails").html(data.dtl);
                     $('#clientsList').prop('selected', false).filter(function () {
                         return $(this).val(data.client);
@@ -122,6 +96,8 @@
 
             $('#clientsList').change(function ()
             {
+                $('#workStatus').val('01');
+                $('#workType').val(null);
                 $("#agreementsList").empty();
                 $("#agreementsList").append('<option value="">Select Agreement ...</option>');
                 $.ajax({
@@ -145,11 +121,11 @@
                         });
 
                         $.ajax({
-                            url: '@Url.Action("clientContactsList", "contracts")',
+                            url: '@Url.Action("ordersHistory", "contracts")',
                             type: 'GET',
                             data: { client: $('#clientsList').val() },
                             success: function (result) {
-                                $('#allDetails').html(result);
+                                $('#ordersHistory').html(result);
                             }
                         });
                     }
@@ -158,27 +134,19 @@
             })
 
             $('#agreementsList').change(function () {
-                if ($('#clientsList').val() === "") {
-                    $.ajax({
-                        url: '@Url.Action("agreementChanged", "contracts")',
-                        type: 'POST',
-                        data: { id: $('#agreementsList').val() },
-                        dataType: 'json',
-                        success: function (client1) {
-                            $('#clientsList').prop('selected', false).filter(function () {
-                                return $(this).val(client1);
-                            }).prop('selected', true);
-                            $.ajax({
-                                url: '@Url.Action("clientContactsList", "contracts")',
-                                type: 'GET',
-                                data: { client: client1 },
-                                success: function (result) {
-                                    $('#allDetails').html(result);
-                                }
-                            });
-                        }
-                    });
-                }
+                $('#workStatus').val('01');
+                $('#workType').val(null);
+                $.ajax({
+                    url: '@Url.Action("agreementChanged", "contracts")',
+                    type: 'POST',
+                    data: { id: $('#agreementsList').val() },
+                    dataType: 'json',
+                    success: function (client1) {
+                        $('#clientsList').prop('selected', false).filter(function () {
+                            return $(this).val(client1);
+                        }).prop('selected', true);
+                    }
+                });
                 $.ajax({
                     url: '@Url.Action("contractsList", "contracts")',
                     type: 'GET',
@@ -191,18 +159,9 @@
         })
 
         function onCloseClick() {
-            var x = $('#clientsList').val(); 
-            if (x != "") {
-                $.ajax({
-                    url: '@Url.Action("clientContactsList", "contracts")',
-                    type: 'GET',
-                    data: { client: x },
-                    success: function (result) {
-                        $('#allDetails').html(result);
-                    }
-                });
-            };
             $('#allDetails').html(null);
+            $('#pDetails').html(null);
+            $('#ordersHistory').show();
         }
 
         function onNavigateAway() {
@@ -210,6 +169,7 @@
         }
 
         function onClientAddNewClick() {
+            $('#ordersHistory').hide();
             $.ajax({
                 url: '@Url.Action("clientAddNew", "contracts")',
                 type: 'GET',
@@ -225,6 +185,7 @@
                 return false;
             }
             else {
+                $('#ordersHistory').hide();
                 $.ajax({
                     url: '@Url.Action("clientUpdate", "contracts")',
                     type: 'GET',
@@ -246,8 +207,19 @@
                 window.location.href = "/clientContacts/Index?client=" + c;
             }
         }
+        function onWorkClientContactClick(work1) {
+            $.ajax({
+                url: '@Url.Action("workContact", "contracts")',
+                type: 'GET',
+                data: { work: work1 },
+                success: function (contact) {
+                    $('#popupFormBody').html(contact);
+                }
+            })
+        }
 
         function onAgreementAddNewClick() {
+            $('#ordersHistory').hide();
             $.ajax({
                 url: '@Url.Action("agreementAddNew", "contracts")',
                 type: 'GET',
@@ -263,6 +235,7 @@
                 return false;
             }
             else {
+                $('#ordersHistory').hide();
                 $.ajax({
                     url: '@Url.Action("agreementUpdate", "contracts")',
                     type: 'GET',
@@ -292,6 +265,7 @@
                 return false;
             }
             else {
+                $('#ordersHistory').hide();
                 $.ajax({
                     url: '@Url.Action("contractAddNew", "contracts")',
                     type: 'GET',
@@ -303,6 +277,7 @@
             }
         }
         function onContractUpdateClick(contract) {
+            $('#ordersHistory').hide();
             $.ajax({
                 url: '@Url.Action("contractUpdate", "contracts")',
                 type: 'GET',
@@ -327,6 +302,7 @@
         }
 
         function onStudioClick(work) {
+            $('#ordersHistory').hide();
             $.ajax({
                 url: '@Url.Action("teamList", "contracts")',
                 type: 'GET',
@@ -337,6 +313,7 @@
             })
         }
         function onPersonnelAddNewClick(work) {
+            $('#ordersHistory').hide();
             $.ajax({
                 url: '@Url.Action("teamAddNew", "contracts")',
                 type: 'GET',
@@ -426,23 +403,23 @@
             window.location.href = "/casting/Index?work=" + work;
         }
 
-        function onHistoryClick(work) {
+        function onWorkHistoryClick(work1) {
+            $('#ordersHistory').hide();
             $.ajax({
-                url: '@Url.Action("contractHistory", "contracts")',
+                url: '@Url.Action("ordersHistory", "contracts")',
                 type: 'GET',
-                data: { id: work },
+                data: { work: work1 },
                 success: function (result) {
                     $('#allDetails').html(result);
                 }
             })
         }
 
-        function onContractStatusClick(status1) {
-            $('#allDetails').html(null);
+        function onContractFilterChange() {
             $.ajax({
                 url: '@Url.Action("contractsList", "contracts")',
                 type: 'GET',
-                data: { client: $('#clientsList').val(), agreement: $('#agreementsList').val(), status: status1 },
+                data: { client: $('#clientsList').val(), agreement: $('#agreementsList').val(), status: $('#workStatus').val(), workType: $('#workType').val() },
                 success: function (result) {
                     $('#cList').html(result);
                 }

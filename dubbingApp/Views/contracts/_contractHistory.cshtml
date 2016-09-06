@@ -1,13 +1,22 @@
-﻿@model IEnumerable<string>
+﻿@model IEnumerable<dubbingModel.workOrder>
 
 <div class="container-fluid" style="padding:0px">
     <div class="panel panel-default">
         <div class="panel-heading">
-            <label>Contract History</label>
+            <div class="row">
+                <div class="col-sm-11">
+                    <label>@Model.First().agreementWork.workName</label> &nbsp; <span class="badge">@ViewBag.contractStatus</span>
+                </div>
+                <div class="col-sm-1">
+                    <button class="btn btn-default btn-xs pull-right" onclick="onCloseClick()" title="Close">
+                        <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+                    </button>
+                </div>
+            </div>
         </div>
         <div class="panel-body">
             <table>
-                @foreach (string item in Model)
+                @foreach (string item in ViewBag.historyList)
                 {
                     <tr>
                         <td class="col-sm-6">
@@ -27,6 +36,33 @@
                     <button class="btn btn-default btn-xs" onclick="onContractChangeStatusClick(@ViewBag.workIntno, '01')">Activate</button>
                 </div>
             </div>
+        </div>
+
+        <div class="panel-footer">
+            <table class="table table-hover table-condensed">
+                <thead>
+                    <tr>
+                        <th class="col-sm-2"><small>Received</small></th>
+                        <th class="col-sm-2"><small>Order No.</small></th>
+                        <th class="col-sm-2"><small>Episodes</small></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var ord in Model)
+                    {
+                        string rowColor;
+                        string rowHint;
+                        if (ord.status == "03") { rowColor = "active"; rowHint = "Active"; }
+                        else if (ord.status == "05") { rowColor = "success"; rowHint = "Endorsed"; }
+                        else { rowColor = "warning"; rowHint = "Canceled"; }
+                        <tr class=@rowColor title=@rowHint>
+                            <td class="col-sm-2"><small>@ord.receivedDate.ToShortDateString()</small></td>
+                            <td class="col-sm-2"><small>@ord.orderIntno</small></td>
+                            <td class="col-sm-2"><small>@ord.fromEpisode - @ord.thruEpisode</small></td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
         </div>
     </div>
 </div>

@@ -1,0 +1,78 @@
+﻿<div class="container-fluid" style="padding:0px">
+    <div class="container-fluid" style="padding:0px">
+        <div class="panel panel-success">
+            <div class="panel-heading" style="padding:5px">
+                <div class="row">
+                    <div class="col-sm-12">
+                        <label><small>Contracts</small></label>
+                    </div>
+                </div>
+            </div>
+            <div class="panel-body" style="padding-left:5px; padding-right:5px">
+                <small>Work Repository</small>
+                <div>
+                    <small>@Html.DropDownList("workStatus", ViewBag.workStatusList as SelectList, new { @onChange = "onContractFilterChange()", @style = "width:160px;height:20px" })</small>
+                </div>
+                <br />
+                <small>Work Category</small>
+                <div>
+                    <small>@Html.DropDownList("workType", ViewBag.workTypesList as SelectList, "Select ...", new { @onChange = "onContractFilterChange()", @style = "width:160px;height:20px" })</small>
+                </div>
+                <br />
+            </div>
+        </div>
+    </div>
+
+    <div class="panel panel-primary">
+        <div class="panel-heading" style="padding:5px">
+            <div class="row">
+                <div class="col-sm-12">
+                    <label><small>Clients</small></label>
+                </div>
+            </div>
+        </div>
+        <div class="panel-body" style="padding-left:5px; padding-right:5px">
+            <div class="dropdown">
+                <small>@Html.DropDownList("clientsList", ViewBag.clientsList as SelectList, "Select Client ...", new { @style = "width:160px;height:20px" })</small>
+            </div>
+            <br />
+            <div>
+                <a href="#" onclick="onClientAddNewClick()"><small>New Client</small></a>
+            </div>
+            <div>
+                <a href="#" onclick="onClientUpdateClick()"><small>Edit Client</small></a>
+            </div>
+            <div>
+                <a href="#" onclick="onClientContactsClick()"><small>Client Contacts ...</small></a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container-fluid" style="padding:0px">
+    <div class="panel panel-info">
+        <div class="panel-heading" style="padding:5px">
+            <div class="row">
+                <div class="col-sm-12">
+                    <label><small>Agreements</small></label>
+                </div>
+            </div>
+        </div>
+        <div class="panel-body" style="padding-left:5px; padding-right:5px">
+            <div>
+                <small>@Html.DropDownList("agreementsList", ViewBag.agreementsList as SelectList, "Select Agreement ...", new { @style = "width:160px;height:20px" })</small>
+            </div>
+            <br />
+            <div>
+                <a href="#" onclick="onAgreementAddNewClick()"><small>New Agreement</small></a>
+            </div>
+            <div>
+                <a href="#" onclick="onAgreementUpdateClick()"><small>Edit Agreement</small></a>
+            </div>
+            <div>
+                <a href="#" onclick="onAgreementsClick()"><small>Agreement Details ...</small></a>
+            </div>
+        </div>
+    </div>
+</div>
+

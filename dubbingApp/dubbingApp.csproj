@@ -198,6 +198,7 @@
     <Compile Include="Controllers\paymentController.cs" />
     <Compile Include="Controllers\personnelController.cs" />
     <Compile Include="Controllers\schedulingController.cs" />
+    <Compile Include="Controllers\workLoadController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
@@ -406,7 +407,6 @@
     <Content Include="Views\orders\_orderAddNew.cshtml" />
     <Content Include="Views\orders\_orderItemIssuesList.cshtml" />
     <Content Include="Views\orders\_orderItemIssueAddNew.cshtml" />
-    <Content Include="Views\orders\_orderItemSelectList.cshtml" />
     <Content Include="Views\orders\_orderItemDetails.cshtml" />
     <Content Include="Views\orders\_orderItemComplainsList.cshtml" />
     <Content Include="Views\orders\_orderItemComplainAddNew.cshtml" />
@@ -491,7 +491,6 @@
     <Content Include="Views\adaptation\_namesList.cshtml" />
     <Content Include="Views\adaptation\_sceneDetails.cshtml" />
     <Content Include="Views\adaptation\_subtitleDetails.cshtml" />
-    <Content Include="Views\orders\_scheduleAddNew.cshtml" />
     <Content Include="Views\orders\_adaptationAddNew.cshtml" />
     <Content Include="Views\assembly\_carriersList.cshtml" />
     <Content Include="Views\assembly\_carriersAddNew.cshtml" />
@@ -511,6 +510,17 @@
     <Content Include="Views\executiveSummary\_ordersLog.cshtml" />
     <Content Include="Views\executiveSummary\_filters.cshtml" />
     <Content Include="Views\executiveSummary\_ordersChart.cshtml" />
+    <Content Include="Views\workLoad\Index.cshtml" />
+    <Content Include="Views\workLoad\_assignmentsList.cshtml" />
+    <Content Include="Views\workLoad\_assignmentAddNew.cshtml" />
+    <Content Include="Views\contracts\_workContact.cshtml" />
+    <Content Include="Views\contracts\_ordersHistory.cshtml" />
+    <Content Include="Views\contracts\_filters.cshtml" />
+    <Content Include="Views\orders\_ordersHistory.cshtml" />
+    <Content Include="Views\orders\_contractHistory.cshtml" />
+    <Content Include="Views\orders\_pipelineFilter.cshtml" />
+    <Content Include="Views\orders\_scheduleAddNew.cshtml" />
+    <Content Include="Views\workLoad\_assignmentUpdate.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

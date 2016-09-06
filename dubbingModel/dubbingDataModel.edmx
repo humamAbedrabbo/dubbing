@@ -320,13 +320,17 @@
           </Key>
           <Property Name="orderTrnDtlIntno" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="orderTrnHdrIntno" Type="bigint" Nullable="false" />
-          <Property Name="trnDate" Type="date" />
           <Property Name="activityType" Type="nvarchar" MaxLength="50" Nullable="false" />
           <Property Name="empIntno" Type="bigint" Nullable="false" />
           <Property Name="providedService" Type="nvarchar(max)" />
           <Property Name="totalMinutes" Type="int" />
           <Property Name="timeRating" Type="nvarchar" MaxLength="50" />
           <Property Name="qualityRating" Type="nvarchar" MaxLength="50" />
+          <Property Name="fromTimeCode" Type="nvarchar" MaxLength="50" />
+          <Property Name="thruTimeCode" Type="nvarchar" MaxLength="50" />
+          <Property Name="status" Type="bit" Nullable="false" />
+          <Property Name="assignedDate" Type="date" />
+          <Property Name="forDueDate" Type="date" />
         </EntityType>
         <EntityType Name="orderTrnHdrs">
           <Key>
@@ -2030,8 +2034,12 @@
           <Property Name="timeRating" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
           <Property Name="qualityRating" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
           <NavigationProperty Name="orderTrnHdr" Relationship="DUBBDBModel.FK_orderTrnDtls_orderTrnHdrs" FromRole="orderTrnDtl" ToRole="orderTrnHdr" />
-          <Property Name="trnDate" Type="DateTime" Precision="0" />
           <NavigationProperty Name="employee" Relationship="DUBBDBModel.FK_orderTrnDtls_employees" FromRole="orderTrnDtl" ToRole="employee" />
+          <Property Name="fromTimeCode" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="thruTimeCode" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="status" Type="Boolean" Nullable="false" />
+          <Property Name="assignedDate" Type="DateTime" Precision="0" />
+          <Property Name="forDueDate" Type="DateTime" Precision="0" />
         </EntityType>
         <EntityType Name="orderTrnHdr">
           <Key>
@@ -3327,7 +3335,11 @@
           <EntitySetMapping Name="orderTrnDtls">
             <EntityTypeMapping TypeName="DUBBDBModel.orderTrnDtl">
               <MappingFragment StoreEntitySet="orderTrnDtls">
-                <ScalarProperty Name="trnDate" ColumnName="trnDate" />
+                <ScalarProperty Name="forDueDate" ColumnName="forDueDate" />
+                <ScalarProperty Name="assignedDate" ColumnName="assignedDate" />
+                <ScalarProperty Name="status" ColumnName="status" />
+                <ScalarProperty Name="thruTimeCode" ColumnName="thruTimeCode" />
+                <ScalarProperty Name="fromTimeCode" ColumnName="fromTimeCode" />
                 <ScalarProperty Name="qualityRating" ColumnName="qualityRating" />
                 <ScalarProperty Name="timeRating" ColumnName="timeRating" />
                 <ScalarProperty Name="totalMinutes" ColumnName="totalMinutes" />
