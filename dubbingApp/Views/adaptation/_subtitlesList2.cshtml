@@ -31,7 +31,7 @@
             <span class="direct-chat-timestamp @ViewBag.time_pull">@subtitle.StartTime - @subtitle.EndTime</span>
         </div>
         <img class="direct-chat-img" src="~/Content/Images/user.svg" alt="Character">
-        <div class="direct-chat-text">
+        <div class="direct-chat-text subtitle" data-id="@subtitle.Id" data-from="@subtitle.Start" data-to="@subtitle.End">
             @subtitle.Text
         </div>
     </div>

@@ -84,9 +84,9 @@
             <input class="form-control text-right" type="text" id="subtitle_text" name="subtitle_text" value="" placeholder="جملة جديدة" style="width: 100%; max-width: 100%; margin-top: 5px;" />
             <br />
             <div class="form-inline">
-
+                <a class="btn btn-primary" href="javascript:loadSubtitles();">Load Subtitles</a>
                 <a class="btn btn-primary" href="javascript:testSubtitle();">Test</a>
-                <a class="btn btn-primary" href="javascript:submitSubtitle();">Submit</a>
+                <a class="btn btn-success" href="javascript:submitSubtitle();">Submit</a>
             </div>
             @Html.Hidden("orderTrnHdrIntno", Model.OrderTrnHdrIntno)
             @Html.Hidden("scene_min", Model.SceneMin)
@@ -132,6 +132,7 @@
     
     <script src="~/Scripts/ion.rangeSlider.js"></script>
     <script src="~/Scripts/jquery-ui-1.12.0.js"></script>
+    
 
     <script>
         function secondsToString(seconds) {
@@ -139,6 +140,23 @@
             var m = Math.floor((seconds - (3600 * h)) / 60);
             var s = Math.floor((seconds - (3600 * h) - (60 * m)));
             return h + ':' + m + ':' + s;
+        }
+        function loadSubtitles() {
+                        
+            var track = video.textTracks[0];
+            while(track.cues.length > 0)
+            {
+                var item = track.cues[0];
+                track.removeCue(item);
+            }
+            $(".subtitle").each(function (index, elem) {
+                var from = $(elem).data("from");
+                var to = $(elem).data("to");
+                var text = $(elem).text().trim();
+                var cue = new VTTCue(from, to, text);
+               
+                track.addCue(cue);
+            });
         }
         function subtitlesList2() {
             var fromSecond = $("#slider_from2").val();
@@ -156,6 +174,36 @@
                 success: function (result) {
                     $("#subtitlesContainer").empty();
                     $("#subtitlesContainer").html(result);
+                    $(".subtitle").each(function (index, elem) {
+                        $(elem).click(function () {
+                            var from = $(this).data("from");
+                            var to = $(this).data("to");
+                            var dur = to - from;
+                            var sceneMin = $("#scene_min").val();
+                            var sceneMax = $("#scene_max").val();
+
+                            var from1 = from - (dur * 2);
+                            if (from1 < sceneMin)
+                                from1 = sceneMin;
+
+                            var to1 = to + (dur * 2);
+                            if (to1 > sceneMax)
+                                to1 = sceneMax;
+
+                            var slider = $("#vid_slider").data("ionRangeSlider");
+                            slider.update({
+                                from: from1,
+                                to: to1
+                            });
+                            var slider2 = $("#vid_slider2").data("ionRangeSlider");
+                            slider2.update({
+                                from: from,
+                                to: to
+                            });
+                            video.currentTime = from;
+                        });
+                        
+                    });
                 }
             });
         }
@@ -177,7 +225,7 @@
                 url: url,
                 data: { orderTrnHdrIntno: orderTrnHdrIntno, name: characterName, from: from, to: to, text: text, newScene: newScene, newDlg: newDlg  },
                 success: function (result) {
-                    alert('DONE');
+                    subtitlesList2();
                 }
             });
         }
@@ -215,7 +263,7 @@
         function testSubtitle() {
             var text = $("#subtitle_text").val();
             var track = video.textTracks[0];
-            $(track.cues).empty();
+            
 
             var from = $("#slider_from2").val();
             var to = $("#slider_to2").val();
@@ -269,12 +317,12 @@
             $("div.container").css('width', '100%');
             localFileVideoPlayer();
             video.onloadedmetadata = function () {
-                var track = this.addTextTrack("captions", "English", "en");
+                var track = this.addTextTrack("subtitles", "Arabic", "ar");
                 track.mode = "showing";
-                track.addCue(new VTTCue(5, 10.5, "This blade has a dark past."));
-                var track1 = this.addTextTrack("captions", "Arabic", "ar");
+                //track.addCue(new VTTCue(5, 10.5, "This blade has a dark past."));
+                //var track1 = this.addTextTrack("captions", "Arabic", "ar");
                 
-                track1.addCue(new VTTCue(5, 10.5, "أهلا وسهلا <u>بكم</u> في القصر"));
+                //track1.addCue(new VTTCue(5, 10.5, "أهلا وسهلا <u>بكم</u> في القصر"));
 
                 var dur = Math.floor(video.duration);
                 var sceneMin = $("#scene_min").val();
