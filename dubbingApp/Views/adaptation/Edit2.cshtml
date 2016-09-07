@@ -1,0 +1,333 @@
+﻿@using dubbingModel
+@using dubbingApp.Models
+@model AdaptationViewModel
+
+@{
+    ViewBag.Title = "Edit";
+}
+
+<link href="~/Content/themes/base/jquery-ui.css" rel="stylesheet" />
+<link href="~/Content/ion/css/normalize.css" rel="stylesheet" />
+<link href="~/Content/ion/css/ion.rangeSlider.css" rel="stylesheet" />
+<link href="~/Content/ion/css/ion.rangeSlider.skinNice.css" rel="stylesheet" />
+
+<style>
+    ::cue(.yellow) {
+        color: yellow;
+        font: bold;
+        /*<c.customstyle>custom classname</c>*/
+    }
+    ::cue(.red) {
+        color: red;
+        font: bold;
+        /*<c.customstyle>custom classname</c>*/
+    }
+    ::cue(.blue) {
+        color: blue;
+        font: bold;
+        /*<c.customstyle>custom classname</c>*/
+    }
+    ::cue(.green) {
+        color: green;
+        font: bold;
+        /*<c.customstyle>custom classname</c>*/
+    }
+</style>
+
+<div class="row">
+    <div class="col-md-4">
+        @*EMPTY!*@
+    </div>
+    <div class="col-md-4">
+        <h2 class="text-center">@Model.Title</h2>
+    </div>
+    <div class="col-md-4">
+        @*EMPTY!*@
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-4">
+        @*SUBTITLES*@
+        <div class="box box-warning direct-chat direct-chat-warning" style="max-height: 100%; height:auto;">
+            <div class="box-header with-border">
+                <h3 class="box-title">Subtitles</h3>
+            </div>
+            <div class="box-body">
+                <div class="direct-chat-messages">
+                    @{
+                        ViewBag._IsLeft = true;
+                        ViewBag.msg_dir = "";
+                        ViewBag.char_pull = "pull-left";
+                        ViewBag.time_pull = "pull-right";
+
+                    }
+                    @foreach (var subtitle in Model.Subtitles)
+                    {
+                        if (ViewBag._IsLeft)
+                        {
+                            ViewBag.msg_dir = "";
+                            ViewBag.char_pull = "pull-left";
+                            ViewBag.time_pull = "pull-right";
+                            ViewBag._IsLeft = false;
+                        }
+                        else
+                        {
+                            ViewBag.msg_dir = "right";
+                            ViewBag.char_pull = "pull-right";
+                            ViewBag.time_pull = "pull-left";
+                            ViewBag._IsLeft = true;
+                        }
+                        <div class="direct-chat-msg @ViewBag.msg_dir">
+                            <div class="direct-chat-info clearfix">
+                                <span class="direct-chat-name @ViewBag.char_pull">@subtitle.CharacterName</span>
+                                <span class="direct-chat-timestamp @ViewBag.time_pull">@subtitle.StartTime - @subtitle.EndTime</span>
+                            </div>
+                            <img class="direct-chat-img" src="~/Content/Images/user.svg" alt="Character">
+                            <div class="direct-chat-text">
+                                @subtitle.Text
+                            </div>
+                        </div>
+
+                    }
+
+                </div>
+            </div>
+            <div class="box-footer">
+            </div>
+        </div>
+
+    </div>
+    <div class="col-md-4 text-center">
+
+        <div id="video-container">
+            <video id="video" style="background-color: black !important; width:100%;" controls></video> 
+        </div>
+        <!-- Video Controls -->
+        <div id="video-controls">
+            <input type="text" id="vid_slider" name="vid_slider" value="" style="width: 100%; max-width:100%;" />
+            <input type="text" id="vid_slider2" name="vid_slider2" value="" style="width: 100%; max-width:100%; margin-top: 5px;" />
+            
+            <div id="focused_names" class="form-inline" style="margin-top: 5px; margin-bottom: 5px;">                
+                <input id="characterName" name="characterName" type="text" class="form-control" placeholder="Character" />
+            </div>
+            
+            <input class="form-control text-right" type="text" id="subtitle_text" name="subtitle_text" value="" placeholder="جملة جديدة" style="width: 100%; max-width: 100%; margin-top: 5px;" />
+            <br />
+            <div class="form-inline">
+                <a class="btn btn-primary" href="javascript:testSubtitle();">Test</a>
+                <a class="btn btn-primary" href="javascript:alert('submit');">Submit</a>
+            </div>
+            @Html.Hidden("scene_min", Model.SceneMin)
+            @Html.Hidden("scene_max", Model.SceneMax)
+            @Html.Hidden("scene_min_no", Model.SceneMinNo)
+            @Html.Hidden("scene_max_no", Model.SceneMaxNo)
+            @Html.Hidden("slider_from")
+            @Html.Hidden("slider_to")
+            @Html.Hidden("slider_from2")
+            @Html.Hidden("slider_to2")
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div id="message"></div>
+        <input id="vidFile" type="file" accept="video/*" />
+        <br />
+        <label for="currentScene">Current Scene</label>
+        <div class="input-group">
+            <input type="text" id="current_scene_no" value="@Model.SceneMinNo" class="form-control" aria-label="...">
+            <div class="input-group-btn">
+                <a class="btn btn-default" href="javascript:prevScene();"><span class="glyphicon glyphicon-triangle-left"></span></a>
+                <a class="btn btn-default" href="#"><span class="glyphicon glyphicon-plus"></span></a>
+                <a class="btn btn-default" href="javascript:nextScene();"><span class="glyphicon glyphicon-triangle-right"></span></a>
+            </div>
+        </div>
+        <br />
+        <label for="currentDialog">Current Dialog</label>
+        <div class="input-group">
+            <input type="text" id="current_dlg_no" value="1" class="form-control" aria-label="...">
+            <div class="input-group-btn">
+                <a class="btn btn-default" href="javascript:prevDlg();"><span class="glyphicon glyphicon-triangle-left"></span></a>
+                <a class="btn btn-default" href="#"><span class="glyphicon glyphicon-plus"></span></a>
+                <a class="btn btn-default" href="javascript:nextDlg();"><span class="glyphicon glyphicon-triangle-right"></span></a>
+            </div>
+        </div>
+        <br />
+    </div>
+</div>
+
+
+@section Scripts
+{
+    
+    <script src="~/Scripts/ion.rangeSlider.js"></script>
+    <script src="~/Scripts/jquery-ui-1.12.0.js"></script>
+
+    <script>
+        function nextScene() {
+            var currentScene = parseInt($("#current_scene_no").val());
+            var maxScene = parseInt($("#scene_max_no").val());
+            if(currentScene < maxScene)
+            {
+                currentScene += 1;
+                $("#current_scene_no").val(currentScene);
+            }
+
+        }
+        function prevScene() {
+            var currentScene = parseInt($("#current_scene_no").val());
+            var minScene = parseInt($("#scene_min_no").val());
+            if (currentScene > minScene) {
+                currentScene -= 1;
+                $("#current_scene_no").val(currentScene);
+            }
+
+        }
+        function nextDlg() {
+            var currentDlg = parseInt($("#current_dlg_no").val());
+
+            currentDlg += 1;
+            $("#current_dlg_no").val(currentDlg);
+        }
+        function prevDlg() {
+            var currentDlg = parseInt($("#current_dlg_no").val());
+            if(currentDlg > 0)
+                currentDlg -= 1;
+            $("#current_dlg_no").val(currentDlg);
+        }
+        function testSubtitle() {
+            var text = $("#subtitle_text").val();
+            var track = video.textTracks[0];
+            $(track.cues).empty();
+
+            var from = $("#slider_from2").val();
+            var to = $("#slider_to2").val();
+            var cue = new VTTCue(from, to, text);
+            track.addCue(cue);
+            video.currentTime = from;
+        }
+        function secondsToString(seconds) {
+            var h = Math.floor(seconds / 3600);
+            var m = Math.floor((seconds - (3600 * h)) / 60);
+            var s = Math.floor((seconds - (3600 * h) - (60 * m)));
+            return h + ':' + m + ':' + s;
+        }
+        function localFileVideoPlayer() {
+            'use strict'
+            var URL = window.URL || window.webkitURL
+            var displayMessage = function (message, isError) {
+                $("#message").val(message);
+            }
+            var playSelectedFile = function (event) {
+
+                var file = this.files[0]
+                var type = file.type
+                //var videoNode = $("#vid");
+                var canPlay = video.canPlayType(type)
+                if (canPlay === '') canPlay = 'no'
+                var message = 'Can play type "' + type + '": ' + canPlay
+                var isError = canPlay === 'no'
+                displayMessage(message, isError)
+
+                if (isError) {
+                    return
+                }
+
+                var fileURL = URL.createObjectURL(file)
+                video.src = fileURL
+            }
+            $("#vidFile").change(playSelectedFile);
+
+        }
+        function activateCharacterNames() {
+            var availableNames = [];
+            @foreach (var d in Model.Characters.Select(x => x.Name))
+            {
+                @:availableNames.push("@d");
+            }
+            $("#characterName").autocomplete({
+                source: availableNames
+            });
+        }
+        $(function ()
+        {
+
+
+            $("div.container").css('width', '100%');
+            localFileVideoPlayer();
+            video.onloadedmetadata = function () {
+                var track = this.addTextTrack("captions", "English", "en");
+                track.mode = "showing";
+                track.addCue(new VTTCue(5, 10.5, "This blade has a dark past."));
+                var track1 = this.addTextTrack("captions", "Arabic", "ar");
+                
+                track1.addCue(new VTTCue(5, 10.5, "أهلا وسهلا <u>بكم</u> في القصر"));
+
+                var dur = Math.floor(video.duration);
+                var sceneMin = $("#scene_min").val();
+                var sceneMax = $("#scene_max").val();
+
+                secondsToString(dur);
+                $("#slider_from").val(0);
+                $("#slider_to").val(60);
+                $("#vid_slider2").ionRangeSlider({
+                    type: "double",
+                    grid: true,
+                    min: 0,
+                    max: dur,
+                    from: sceneMin,
+                    to: sceneMax,
+                    grid_num: 5,
+                    keyboard: true,
+                    drag_interval: true,
+                    prettify: function (num) {
+                        return secondsToString(num);
+                    },
+                    onChange: function (data) {
+                        if (data.from != $("#slider_from2").val())
+                            video.currentTime = data.from;
+                        else if (data.to != $("#slider_to2").val())
+                            video.currentTime = data.to;
+                        $("#slider_from2").val(data.from);
+                        $("#slider_to2").val(data.to);
+                    }
+                });
+                $("#vid_slider").ionRangeSlider({
+                    type: "double",
+                    grid: true,
+                    min: 0,
+                    max: dur,
+                    from_min: sceneMin,
+                    from_max: sceneMax,
+                    from_shadow: true,
+                    to_min: sceneMin,
+                    to_max: sceneMax,
+                    to_shadow: true,
+                    from: sceneMin,
+                    to: sceneMax,
+                    grid_num: 5,
+                    keyboard: true,
+                    keyboard_step: 100 / dur,
+                    drag_interval: true,
+                    prettify: function (num) {
+                        return secondsToString(num);
+                    },
+                    onChange: function (data) {
+                        if (data.from != $("#slider_from").val())
+                            video.currentTime = data.from;
+                        else if (data.to != $("#slider_to").val())
+                            video.currentTime = $("#slider_to").val();
+                        $("#slider_from").val(data.from);
+                        $("#slider_to").val(data.to);
+                        var slider2 = $("#vid_slider2").data("ionRangeSlider");
+                        slider2.update({
+                            min: data.from,
+                            max: data.to,
+                            from: data.from,
+                            to: data.to
+                        });
+                    }
+                });
+            };
+            activateCharacterNames();
+        });
+    </script>
+}
