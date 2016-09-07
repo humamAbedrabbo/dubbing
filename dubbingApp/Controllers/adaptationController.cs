@@ -1,4 +1,5 @@
-﻿using dubbingModel;
+﻿using dubbingApp.Models;
+using dubbingModel;
 using System;
 using System.Collections.Generic;
 using System.Data.Entity;
@@ -58,7 +59,14 @@ namespace dubbingApp.Controllers
             return View(model);
         }
 
-       public ActionResult sceneList(long orderTrnHdrIntno)
+        public ActionResult Edit2(long? id)
+        {
+            // var model = ctx.orderTrnHdrs.Include(x => x.agreementWork).First(x => x.orderTrnHdrIntno == id);
+            var model = new AdaptationViewModel();
+            return View("Edit2", model);
+        }
+
+        public ActionResult sceneList(long orderTrnHdrIntno)
         {
             var order = ctx.orderTrnHdrs.Include(x => x.agreementWork).First(x => x.orderTrnHdrIntno == orderTrnHdrIntno);
             var model = order.scenes.OrderBy(x => x.sceneNo).ToList();

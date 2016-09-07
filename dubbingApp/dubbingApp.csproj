@@ -203,6 +203,7 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Models\AccountViewModels.cs" />
+    <Compile Include="Models\AdaptationViewModel.cs" />
     <Compile Include="Models\IdentityModels.cs" />
     <Compile Include="Models\LookupModels.cs" />
     <Compile Include="Models\ManageViewModels.cs" />
@@ -221,6 +222,7 @@
     <Content Include="Content\fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Content\Images\ajax-loader.gif" />
     <Content Include="Content\Images\Fardous.png" />
+    <Content Include="Content\Images\user.svg" />
     <Content Include="Content\ion\css\ion.rangeSlider.css" />
     <Content Include="Content\ion\css\ion.rangeSlider.skinFlat.css" />
     <Content Include="Content\ion\css\ion.rangeSlider.skinHTML5.css" />
@@ -576,6 +578,7 @@
     <Content Include="Views\orders\_pipelineFilter.cshtml" />
     <Content Include="Views\orders\_scheduleAddNew.cshtml" />
     <Content Include="Views\workLoad\_assignmentUpdate.cshtml" />
+    <Content Include="Views\adaptation\Edit2.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
