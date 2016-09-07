@@ -29,7 +29,7 @@
             <td>@item.orderTrnHdr.agreementWork.workName</td>
             <td>@item.orderTrnHdr.episodeNo</td>
             <td>@item.employee.fullName</td>
-            <td>@item.orderTrnHdr.startAdaptation.Value.ToShortDateString()</td>
+            <td>@item.assignedDate.Value??.ToShortDateString()</td>
             <td>@item.fromTimeCode</td>
             <td>@item.thruTimeCode</td>
             <td><a class="btn btn-primary" href='@Url.Action("Edit2", "adaptation", new { id = item.orderTrnHdrIntno, fromTime = item.fromTimeCode, toTime = item.thruTimeCode})'>Edit</a></td>
