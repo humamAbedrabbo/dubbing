@@ -42,12 +42,16 @@ namespace dubbingApp.Controllers
             
         }
 
-        public ActionResult CompleteAdaptation(long id)
+        public ActionResult CompleteAdaptation(long orderTrnDtlIntno)
         {
-            var order = ctx.orderTrnHdrs.Find(id);
-            if(order.startAdaptation.HasValue && !order.endAdaptation.HasValue)
+            var order = ctx.orderTrnDtls.Find(orderTrnDtlIntno);
+            order.status = true;
+            ctx.SaveChanges();
+            var assignments = order.orderTrnHdr.orderTrnDtls.Where(x =>x.activityType == order.activityType && x.status == false);
+
+            if (assignments.Count() == 0 && !order.orderTrnHdr.endAdaptation.HasValue)
             {
-                order.endAdaptation = DateTime.Now;
+                order.orderTrnHdr.endAdaptation = DateTime.Now;
                 ctx.SaveChanges();
             }
             return RedirectToAction("Index");
