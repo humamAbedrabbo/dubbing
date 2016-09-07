@@ -16,16 +16,17 @@
         </div>
         <div class="panel-body">
             @using (Ajax.BeginForm("assignmentUpdate", "workLoad",
+                new { dtlIntno = ViewBag.dtlIntno, _workIntno = ViewBag.workIntno, _workName = ViewBag.workName },
                 new AjaxOptions()
                 {
                     HttpMethod = "POST",
-                    OnSuccess = "onSuccess",
-                    UpdateTargetId = "formResult"
+                    OnSuccess = "onUpdateSuccess",
+                    UpdateTargetId = "resourceAssignmentsList"
                 },
                 new { @class = "form-horizontal" }))
             {
                 @Html.AntiForgeryToken()
-                <input type="hidden" name="orderTrnDtlIntno" />
+                
                 <p>
                     <small><label>Work: </label>@ViewBag.workName</small>
                     <span><small><label> / Episode: </label>@ViewBag.episodeNo</small></span>
@@ -78,7 +79,7 @@
                 </div>
 
                 <span>
-                    <small><label class="alert-success" id="formResult"></label></small>
+                    <small><label class="alert-success" id="updateFormResult"></label></small>
                 </span>
             }
         </div>

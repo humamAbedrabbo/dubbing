@@ -2,7 +2,7 @@
 
 <div class="panel-group" id="collapse" role="tablist" aria-multiselectable="true">
     <div class="panel panel-default">
-        <div class="panel-heading" role="tab" id="collapse-heading-one">
+        <div class="panel-heading" role="tab" id="collapse-heading-one" onclick="onActivityClick('02', 'collapse-one')">
             <h4 class="panel-title">
                 <a role="button" data-toggle="collapse" data-parent="#collapse" href="#collapse-one" aria-expanded="true" aria-controls="collapse-one">
                     <small><label>Translation &amp; Adaptation</label></small>
@@ -14,39 +14,26 @@
                 <table class="table table-hover table-condensed">
                     <thead>
                         <tr>
-                            <th class="col-sm-3"><small>Editor</small></th>
-                            <th class="col-sm-5"><small>Work</small></th>
-                            <th class="col-sm-1"><small>Episode</small></th>
-                            <th class="col-sm-1"><small>Assigned</small></th>
-                            <th class="col-sm-1"><small>Due</small></th>
-                            <th class="col-sm-1"><small>#</small></th>
+                            <th class="col-sm-4"><small>Editor</small></th>
+                            <th class="col-sm-7"><small>Work</small></th>
+                            <th class="col-sm-1"><small>Cnt</small></th>
                         </tr>
                     </thead>
                     <tbody>
                         @foreach (var emp in Model.Where(b => b.employee.empType == "02").Select(b => new { b.empIntno, b.employee.fullName }).Distinct())
                         {
-                            var x = Model.Where(b => b.employee.empType == "02" && b.empIntno == emp.empIntno);
+                            var x = Model.Where(b => b.empIntno == emp.empIntno).Select(b => new { b.empIntno, b.employee.fullName, b.orderTrnHdr.workIntno, b.orderTrnHdr.agreementWork.workName }).Distinct();
                             int cnt = x.Count() + 1;
                             <tr>
-                                <td rowspan="@cnt" class="col-sm-3"><small>@emp.fullName</small></td>
+                                <td rowspan="@cnt" class="col-sm-4"><small>@emp.fullName</small></td>
                             </tr>
-                            foreach (var task in x)
+                            cnt = cnt - 1;
+                            foreach (var work in x)
                             {
-                                string assigned = @task.assignedDate.HasValue ? @task.assignedDate.Value.ToString("dd/MM") : null;
-                                string due = @task.forDueDate.HasValue ? @task.forDueDate.Value.ToString("dd/MM") : null;
+                                var y = Model.Where(b => b.empIntno == emp.empIntno && b.orderTrnHdr.workIntno == work.workIntno).ToList();
                                 <tr>
-                                    <td class="col-sm-5"><small>@task.orderTrnHdr.agreementWork.workName</small></td>
-                                    <td class="col-sm-1"><small>@task.orderTrnHdr.episodeNo</small></td>
-                                    <td class="col-sm-1"><small>@assigned</small></td>
-                                    <td class="col-sm-1"><small>@due</small></td>
-                                    <td class="col-sm-1">
-                                        <button class="btn btn-default btn-xs pull-right" onclick="onAssignDeleteClick(@task.orderTrnDtlIntno)" title="Delete">
-                                            <span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
-                                        </button>
-                                        <button class="btn btn-default btn-xs pull-right" onclick="onAssignEditClick(@task.orderTrnDtlIntno)" title="Edit">
-                                            <span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
-                                        </button>
-                                    </td>
+                                    <td class="col-sm-7"><small><a href="#" onclick="onTaskSelectClick(@work.empIntno, '@work.fullName', @work.workIntno, '@work.workName')">@work.workName</a></small></td>
+                                    <td class="col-sm-1"><small>@y.Count()</small></td>
                                 </tr>
                             }
                         }
@@ -57,7 +44,7 @@
     </div>
 
     <div class="panel panel-default">
-        <div class="panel-heading" role="tab" id="collapse-heading-two">
+        <div class="panel-heading" role="tab" id="collapse-heading-two" onclick="onActivityClick('01', 'collapse-two')">
             <h4 class="panel-title">
                 <a class="collapsed" role="button" data-toggle="collapse" data-parent="#collapse" href="#collapse-two" aria-expanded="false" aria-controls="collapse-two">
                     <small><label>Translation</label></small>
@@ -69,39 +56,26 @@
                 <table class="table table-hover table-condensed">
                     <thead>
                         <tr>
-                            <th class="col-sm-3"><small>Translator</small></th>
-                            <th class="col-sm-5"><small>Work</small></th>
-                            <th class="col-sm-1"><small>Episode</small></th>
-                            <th class="col-sm-1"><small>Assigned</small></th>
-                            <th class="col-sm-1"><small>Due</small></th>
-                            <th class="col-sm-1"><small>#</small></th>
+                            <th class="col-sm-4"><small>Translator</small></th>
+                            <th class="col-sm-7"><small>Work</small></th>
+                            <th class="col-sm-1"><small>Cnt</small></th>
                         </tr>
                     </thead>
                     <tbody>
                         @foreach (var emp in Model.Where(b => b.employee.empType == "03").Select(b => new { b.empIntno, b.employee.fullName }).Distinct())
                         {
-                            var x = Model.Where(b => b.employee.empType == "03" && b.empIntno == emp.empIntno);
+                            var x = Model.Where(b => b.empIntno == emp.empIntno).Select(b => new { b.empIntno, b.employee.fullName, b.orderTrnHdr.workIntno, b.orderTrnHdr.agreementWork.workName }).Distinct();
                             int cnt = x.Count() + 1;
                             <tr>
-                                <td rowspan="@cnt" class="col-sm-3"><small>@emp.fullName</small></td>
+                                <td rowspan="@cnt" class="col-sm-4"><small>@emp.fullName</small></td>
                             </tr>
-                            foreach (var task in x)
+                            cnt = cnt - 1;
+                            foreach (var work in x)
                             {
-                                string assigned = @task.assignedDate.HasValue ? @task.assignedDate.Value.ToString("dd/MM") : null;
-                                string due = @task.forDueDate.HasValue ? @task.forDueDate.Value.ToString("dd/MM") : null;
+                                var y = Model.Where(b => b.empIntno == emp.empIntno && b.orderTrnHdr.workIntno == work.workIntno).ToList();
                                 <tr>
-                                    <td class="col-sm-5"><small>@task.orderTrnHdr.agreementWork.workName</small></td>
-                                    <td class="col-sm-1"><small>@task.orderTrnHdr.episodeNo</small></td>
-                                    <td class="col-sm-1"><small>@assigned</small></td>
-                                    <td class="col-sm-1"><small>@due</small></td>
-                                    <td class="col-sm-1">
-                                        <button class="btn btn-default btn-xs pull-right" onclick="onAssignDeleteClick(@task.orderTrnDtlIntno)" title="Delete">
-                                            <span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
-                                        </button>
-                                        <button class="btn btn-default btn-xs pull-right" onclick="onAssignEditClick(@task.orderTrnDtlIntno)" title="Edit">
-                                            <span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
-                                        </button>
-                                    </td>
+                                    <td class="col-sm-7"><small><a href="#" onclick="onTaskSelectClick(@work.empIntno, '@work.fullName', @work.workIntno, '@work.workName')">@work.workName</a></small></td>
+                                    <td class="col-sm-1"><small>@y.Count()</small></td>
                                 </tr>
                             }
                         }
@@ -112,7 +86,7 @@
     </div>
 
     <div class="panel panel-default">
-        <div class="panel-heading" role="tab" id="collapse-heading-three">
+        <div class="panel-heading" role="tab" id="collapse-heading-three" onclick="onActivityClick('02', 'collapse-three')">
             <h4 class="panel-title">
                 <a class="collapsed" role="button" data-toggle="collapse" data-parent="#collapse" href="#collapse-three" aria-expanded="false" aria-controls="collapse-three">
                     <small><label>Adaptation</label></small>
@@ -124,39 +98,26 @@
                 <table class="table table-hover table-condensed">
                     <thead>
                         <tr>
-                            <th class="col-sm-3"><small>Editor</small></th>
-                            <th class="col-sm-5"><small>Work</small></th>
-                            <th class="col-sm-1"><small>Episode</small></th>
-                            <th class="col-sm-1"><small>Assigned</small></th>
-                            <th class="col-sm-1"><small>Due</small></th>
-                            <th class="col-sm-1"><small>#</small></th>
+                            <th class="col-sm-4"><small>Editor</small></th>
+                            <th class="col-sm-7"><small>Work</small></th>
+                            <th class="col-sm-1"><small>Cnt</small></th>
                         </tr>
                     </thead>
                     <tbody>
                         @foreach (var emp in Model.Where(b => b.employee.empType == "04").Select(b => new { b.empIntno, b.employee.fullName }).Distinct())
                         {
-                            var x = Model.Where(b => b.employee.empType == "04" && b.empIntno == emp.empIntno);
+                            var x = Model.Where(b => b.empIntno == emp.empIntno).Select(b => new { b.empIntno, b.employee.fullName, b.orderTrnHdr.workIntno, b.orderTrnHdr.agreementWork.workName }).Distinct();
                             int cnt = x.Count() + 1;
                             <tr>
-                                <td rowspan="@cnt" class="col-sm-3"><small>@emp.fullName</small></td>
+                                <td rowspan="@cnt" class="col-sm-4"><small>@emp.fullName</small></td>
                             </tr>
-                            foreach (var task in x)
+                            cnt = cnt - 1;
+                            foreach (var work in x)
                             {
-                                string assigned = @task.assignedDate.HasValue ? @task.assignedDate.Value.ToString("dd/MM") : null;
-                                string due = @task.forDueDate.HasValue ? @task.forDueDate.Value.ToString("dd/MM") : null;
+                                int y = Model.Where(b => b.empIntno == emp.empIntno && b.orderTrnHdr.workIntno == work.workIntno).Count();
                                 <tr>
-                                    <td class="col-sm-5"><small>@task.orderTrnHdr.agreementWork.workName</small></td>
-                                    <td class="col-sm-1"><small>@task.orderTrnHdr.episodeNo</small></td>
-                                    <td class="col-sm-1"><small>@assigned</small></td>
-                                    <td class="col-sm-1"><small>@due</small></td>
-                                    <td class="col-sm-1">
-                                        <button class="btn btn-default btn-xs pull-right" onclick="onAssignDeleteClick(@task.orderTrnDtlIntno)" title="Delete">
-                                            <span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
-                                        </button>
-                                        <button class="btn btn-default btn-xs pull-right" onclick="onAssignEditClick(@task.orderTrnDtlIntno)" title="Edit">
-                                            <span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
-                                        </button>
-                                    </td>
+                                    <td class="col-sm-7"><small><a href="#" onclick="onTaskSelectClick(@work.empIntno, '@work.fullName', @work.workIntno, '@work.workName')">@work.workName</a></small></td>
+                                    <td class="col-sm-1"><small>@y</small></td>
                                 </tr>
                             }
                         }
@@ -167,7 +128,7 @@
     </div>
 
     <div class="panel panel-default">
-        <div class="panel-heading" role="tab" id="collapse-heading-three">
+        <div class="panel-heading" role="tab" id="collapse-heading-four" onclick="onActivityClick('04', 'collapse-four')">
             <h4 class="panel-title">
                 <a class="collapsed" role="button" data-toggle="collapse" data-parent="#collapse" href="#collapse-four" aria-expanded="false" aria-controls="collapse-four">
                     <small><label>Dubbing</label></small>
@@ -179,39 +140,26 @@
                 <table class="table table-hover table-condensed">
                     <thead>
                         <tr>
-                            <th class="col-sm-3"><small>Supervisor</small></th>
-                            <th class="col-sm-5"><small>Work</small></th>
-                            <th class="col-sm-1"><small>Episode</small></th>
-                            <th class="col-sm-1"><small>Assigned</small></th>
-                            <th class="col-sm-1"><small>Due</small></th>
-                            <th class="col-sm-1"><small>#</small></th>
+                            <th class="col-sm-4"><small>Supervisor</small></th>
+                            <th class="col-sm-7"><small>Work</small></th>
+                            <th class="col-sm-1"><small>Cnt</small></th>
                         </tr>
                     </thead>
                     <tbody>
                         @foreach (var emp in Model.Where(b => b.employee.empType == "01").Select(b => new { b.empIntno, b.employee.fullName }).Distinct())
                         {
-                            var x = Model.Where(b => b.employee.empType == "01" && b.empIntno == emp.empIntno);
+                            var x = Model.Where(b => b.empIntno == emp.empIntno).Select(b => new { b.empIntno, b.employee.fullName, b.orderTrnHdr.workIntno, b.orderTrnHdr.agreementWork.workName }).Distinct();
                             int cnt = x.Count() + 1;
                             <tr>
-                                <td rowspan="@cnt" class="col-sm-3"><small>@emp.fullName</small></td>
+                                <td rowspan="@cnt" class="col-sm-4"><small>@emp.fullName</small></td>
                             </tr>
-                            foreach (var task in x)
+                            cnt = cnt - 1;
+                            foreach (var work in x)
                             {
-                                string assigned = @task.assignedDate.HasValue ? @task.assignedDate.Value.ToString("dd/MM") : null;
-                                string due = @task.forDueDate.HasValue ? @task.forDueDate.Value.ToString("dd/MM") : null;
+                                int y = Model.Where(b => b.empIntno == emp.empIntno && b.orderTrnHdr.workIntno == work.workIntno).Count();
                                 <tr>
-                                    <td class="col-sm-5"><small>@task.orderTrnHdr.agreementWork.workName</small></td>
-                                    <td class="col-sm-1"><small>@task.orderTrnHdr.episodeNo</small></td>
-                                    <td class="col-sm-1"><small>@assigned</small></td>
-                                    <td class="col-sm-1"><small>@due</small></td>
-                                    <td class="col-sm-1">
-                                        <button class="btn btn-default btn-xs pull-right" onclick="onAssignDeleteClick(@task.orderTrnDtlIntno)" title="Delete">
-                                            <span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
-                                        </button>
-                                        <button class="btn btn-default btn-xs pull-right" onclick="onAssignEditClick(@task.orderTrnDtlIntno)" title="Edit">
-                                            <span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
-                                        </button>
-                                    </td>
+                                    <td class="col-sm-7"><small><a href="#" onclick="onTaskSelectClick(@work.empIntno, '@work.fullName', @work.workIntno, '@work.workName')">@work.workName</a></small></td>
+                                    <td class="col-sm-1"><small>@y</small></td>
                                 </tr>
                             }
                         }
@@ -221,4 +169,3 @@
         </div>
     </div>
 </div>
-

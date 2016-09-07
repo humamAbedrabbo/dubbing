@@ -1,0 +1,37 @@
+﻿@model IEnumerable<string>
+
+<div class="container-fluid" style="padding-left:5px;padding-right:5px">
+    <div class="panel panel-info">
+        <div class="panel-heading">
+            <div class="row">
+                <div class="col-sm-12">
+                    <small><label>Waiting ...</label></small>
+                </div>
+            </div>
+        </div>
+        <div class="panel-body" style="padding-left:5px;padding-right:5px">
+            <table class="table table-hover">
+                <tbody>
+                    @foreach (string x in Model)
+                    {
+                        string[] rec = x.Split('|');
+                        if (rec[1] == "xxx")
+                        {
+                            <tr>
+                                <td class="col-sm-8"><small><label class="badge bg-info">@rec[0]</label></small></td>
+                                <td class="col-sm-4"></td>
+                            </tr>
+                        }
+                        else
+                        {
+                            <tr>
+                                <td class="col-sm-8"><small><label>@rec[0]</label></small></td>
+                                <td class="col-sm-4"><small>@rec[1]</small></td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

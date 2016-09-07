@@ -1,0 +1,58 @@
+﻿@model IEnumerable<dubbingModel.orderTrnDtl>
+
+<div class="container-fluid" style="padding-left:5px;padding-right:5px">
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <div class="row">
+                <div class="col-sm-10">
+                    <small><label class="badge">@ViewBag.empName</label> &nbsp; <label>@ViewBag.workName</label></small>
+                </div>
+                <div class="col-sm-2">
+                    <button class="btn btn-default btn-xs" onclick="onResourceCloseClick()" title="Close">
+                        <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div class="panel-body" style="padding-left:5px;padding-right:5px">
+            <table class="table table-hover table-condensed">
+                <thead>
+                    <tr>
+                        <th class="col-sm-3"><small>Episode</small></th>
+                        <th class="col-sm-3"><small>Assigned</small></th>
+                        <th class="col-sm-3"><small>Due</small></th>
+                        <th class="col-sm-3 pull-right"><small>#</small></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @{ 
+                        foreach (var task in Model)
+                        {
+                            string assigned = task.assignedDate.HasValue ? task.assignedDate.Value.ToString("dd/MM") : null;
+                            string due = task.forDueDate.HasValue ? task.forDueDate.Value.ToString("dd/MM") : null;
+                            string trColor = "color:black";
+                            DateTime today = DateTime.Now.Date;
+                            if (task.forDueDate.HasValue && today > task.forDueDate.Value && task.status == false)
+                            {
+                                trColor = "color:orangered";
+                            }
+                            <tr style=@trColor>
+                                <td class="col-sm-3"><small>@task.orderTrnHdr.episodeNo</small></td>
+                                <td class="col-sm-3"><small>@assigned</small></td>
+                                <td class="col-sm-3"><small>@due</small></td>
+                                <td class="col-sm-3">
+                                    <button class="btn btn-default btn-xs pull-right" onclick="onAssignDeleteClick(@task.orderTrnDtlIntno)" title="Delete">
+                                        <span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
+                                    </button>
+                                    <button class="btn btn-default btn-xs pull-right" onclick="onAssignEditClick(@task.orderTrnDtlIntno)" title="Edit">
+                                        <span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
+                                    </button>
+                                </td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
