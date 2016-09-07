@@ -521,6 +521,8 @@
     <Content Include="Views\orders\_pipelineFilter.cshtml" />
     <Content Include="Views\orders\_scheduleAddNew.cshtml" />
     <Content Include="Views\workLoad\_assignmentUpdate.cshtml" />
+    <Content Include="Views\workLoad\_resourceAssignmentsList.cshtml" />
+    <Content Include="Views\workLoad\_waitingList.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

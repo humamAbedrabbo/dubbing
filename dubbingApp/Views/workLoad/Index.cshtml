@@ -10,12 +10,20 @@
         <p class="lead"><h5>Manage and Balance Translation and Adaptation tasks assignments.</h5></p>
         <label><a href="#" onclick="onAssignmentAddNewClick()">Assign New Task ...</a></label>
     </div>
-    
-    <div class="col-sm-8" id="assignmentsList" style="padding:0px">
+    <input type="hidden" id="activePanelHF" />
+
+    <div class="col-sm-5" id="assignmentsList" style="padding:0px">
         @Html.Action("assignmentsList")
     </div>
 
-    <div class="col-sm-4" id="allDetails"></div>
+    <div class="col-sm-4" style="padding:0px">
+        <div id="resourceAssignmentsList"></div>
+        <div id="waitingList">
+            @Html.Action("waitingList")
+        </div>
+    </div>
+
+    <div class="col-sm-3" id="allDetails" style="padding:0px"></div>
 </div>
 
 @section Scripts
@@ -61,14 +69,26 @@
         function onCloseClick() {
             $('#allDetails').html(null);
         }
+        function onResourceCloseClick() {
+            $('#resourceAssignmentsList').html(null);
+        }
         function onSuccess() {
             $.ajax({
                 url: '@Url.Action("assignmentsList", "workLoad")',
                 type: 'GET',
                 success: function (result) {
                     $('#assignmentsList').html(result);
+                    $('#collapse-one').removeClass('in');
+                    $('#collapse-one').addClass('collapse');
+                    var p = $('#activePanelHF').val();
+                    $('#' + p).addClass('in');
+                    $('#' + p).removeClass('collapse');
                 }
             })
+        }
+        function onUpdateSuccess() {
+            onSuccess();
+            $('#updateFormResult').html('Successfully Updated.');
         }
 
         function onAssignmentAddNewClick() {
@@ -101,6 +121,31 @@
                     }
                 })
             }
+        }
+
+        function onTaskSelectClick(empIntno1, empName1, workIntno1, workName1) {
+            $.ajax({
+                url: '@Url.Action("resourceAssignmentsList", "workLoad")',
+                type: 'GET',
+                data: { empIntno: empIntno1, empName: empName1, workIntno: workIntno1, workName: workName1 },
+                success: function (result) {
+                    $('#resourceAssignmentsList').html(result);
+                }
+            })
+        }
+
+        function onActivityClick(act, panelId) {
+            $('#resourceAssignmentsList').html(null);
+            $('#allDetails').html(null);
+            $.ajax({
+                url: '@Url.Action("waitingList", "workLoad")',
+                type: 'GET',
+                data: { activityType: act },
+                success: function (result) {
+                    $('#waitingList').html(result);
+                }
+            });
+            $('#activePanelHF').val(panelId);
         }
     </script>
 }

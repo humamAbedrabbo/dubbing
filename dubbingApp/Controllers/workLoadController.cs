@@ -45,6 +45,15 @@ namespace dubbingApp.Controllers
             return PartialView("_assignmentsList", model.ToList());
         }
 
+        public ActionResult resourceAssignmentsList(long empIntno, string empName, long workIntno, string workName)
+        {
+            var model = db.orderTrnDtls.Include(b => b.orderTrnHdr.agreementWork)
+                        .Where(b => b.orderTrnHdr.workIntno == workIntno && b.empIntno == empIntno);
+            ViewBag.workName = workName;
+            ViewBag.empName = empName;
+            return PartialView("_resourceAssignmentsList", model.ToList());
+        }
+
         public ActionResult assignmentAddNew()
         {
             SelectList x = new SelectList(LookupModels.getDictionary("activityType"), "key", "value");
@@ -164,19 +173,24 @@ namespace dubbingApp.Controllers
                 y = x.Where(b => b.empType == "01");
 
             ViewBag.workName = oi.agreementWork.workName;
+            ViewBag.workIntno = oi.workIntno;
             ViewBag.episodeNo = oi.episodeNo;
             ViewBag.resourcesList = new SelectList(y, "empIntno", "fullName");
+            ViewBag.dtlIntno = id;
             return PartialView("_assignmentUpdate", model);
         }
 
         [ValidateAntiForgeryToken]
         [HttpPost, ValidateInput(false)]
-        public ActionResult assignmentUpdate(orderTrnDtl item)
+        public ActionResult assignmentUpdate(orderTrnDtl item, long dtlIntno, long _workIntno, string _workName)
         {
-            var model = db.orderTrnDtls.Find(item.orderTrnDtlIntno);
+            var model = db.orderTrnDtls.Include(b => b.employee).FirstOrDefault(b => b.orderTrnDtlIntno == dtlIntno);
+            long empIntno1 = model.empIntno;
+            string empName1 = model.employee.fullName;
             UpdateModel(model);
             db.SaveChanges();
-            return Content("Task Successfully Assigned.", "text/html");
+
+            return RedirectToAction("resourceAssignmentsList", new { empIntno = empIntno1, empName = empName1, workIntno = _workIntno, workName = _workName });
         }
 
         public ActionResult assignmentDelete(long id)
@@ -186,6 +200,79 @@ namespace dubbingApp.Controllers
             model.Remove(modelItem);
             db.SaveChanges();
             return RedirectToAction("assignmentsList");
+        }
+        
+        public ActionResult waitingList(string activityType)
+        {
+            var x = db.orderTrnHdrs.Include(b => b.agreementWork).Where(b => b.status == "04" && b.agreementWork.status == "01");
+            var model = x;
+
+            List<string> wList = new List<string>();
+            string epMin;
+            string epMax;
+            string activityType1;
+
+            //translation
+            if (activityType == "01" || string.IsNullOrEmpty(activityType))
+            {
+                activityType1 = string.IsNullOrEmpty(activityType) ? "01" : activityType;
+                var y1 = db.orderTrnDtls.Where(d => d.activityType == activityType1 && d.status == false)
+                        .Select(d => d.orderTrnHdrIntno).ToList();
+                model = x.Where(b => !b.startTranslation.HasValue && !y1.Contains(b.orderTrnHdrIntno));
+                var model1 = model.Select(b => new { b.workIntno, b.agreementWork.workName }).Distinct();
+                if (model1 != null)
+                {
+                    wList.Add("Translation|xxx");
+                    foreach (var w in model1)
+                    {
+                        epMin = model.Where(b => b.workIntno == w.workIntno).Select(b => b.episodeNo).Min().ToString();
+                        epMax = model.Where(b => b.workIntno == w.workIntno).Select(b => b.episodeNo).Max().ToString();
+                        wList.Add(w.workName + "|" + epMin + " - " + epMax);
+                    }
+                }
+            }
+
+            //adaptation
+            if (activityType == "02" || string.IsNullOrEmpty(activityType))
+            {
+                activityType1 = string.IsNullOrEmpty(activityType) ? "02" : activityType;
+                var y2 = db.orderTrnDtls.Where(d => d.activityType == activityType1 && d.status == false)
+                        .Select(d => d.orderTrnHdrIntno).ToList();
+                model = x.Where(b => !b.startAdaptation.HasValue && !y2.Contains(b.orderTrnHdrIntno));
+                var model2 = model.Select(b => new { b.workIntno, b.agreementWork.workName }).Distinct();
+                if (model2 != null)
+                {
+                    wList.Add("Adaptation|xxx");
+                    foreach (var w in model2)
+                    {
+                        epMin = model.Where(b => b.workIntno == w.workIntno).Select(b => b.episodeNo).Min().ToString();
+                        epMax = model.Where(b => b.workIntno == w.workIntno).Select(b => b.episodeNo).Max().ToString();
+                        wList.Add(w.workName + "|" + epMin + " - " + epMax);
+                    }
+                }
+            }
+
+            //studio supervision
+            if (activityType == "04" || string.IsNullOrEmpty(activityType))
+            {
+                activityType1 = string.IsNullOrEmpty(activityType) ? "04" : activityType;
+                var y3 = db.orderTrnDtls.Where(d => d.activityType == activityType1 && d.status == false)
+                        .Select(d => d.orderTrnHdrIntno).ToList();
+                model = x.Where(b => !b.startDubbing.HasValue && !y3.Contains(b.orderTrnHdrIntno));
+                var model3 = model.Select(b => new { b.workIntno, b.agreementWork.workName }).Distinct();
+                if (model3 != null)
+                {
+                    wList.Add("Supervision|xxx");
+                    foreach (var w in model3)
+                    {
+                        epMin = model.Where(b => b.workIntno == w.workIntno).Select(b => b.episodeNo).Min().ToString();
+                        epMax = model.Where(b => b.workIntno == w.workIntno).Select(b => b.episodeNo).Max().ToString();
+                        wList.Add(w.workName + "|" + epMin + " - " + epMax);
+                    }
+                }
+            }
+            
+            return PartialView("_waitingList", wList);
         }
     }
 }
