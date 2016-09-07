@@ -7,6 +7,7 @@ namespace dubbingApp.Models
 {
     public class AdaptationViewModel
     {
+        public long OrderTrnHdrIntno { get; set; }
         public string Title { get; set; }
         public int SceneMin { get; set; }
         public int SceneMax { get; set; }
@@ -33,8 +34,8 @@ namespace dubbingApp.Models
     {
         public long Id { get; set; }
         public int No { get; set; }
-        public int Start { get; set; }
-        public int End { get; set; }
+        public long Start { get; set; }
+        public long End { get; set; }
         public string StartTime { get; set; }
         public string EndTime { get; set; }
         public string Text { get; set; }

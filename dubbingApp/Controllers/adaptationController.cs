@@ -70,20 +70,31 @@ namespace dubbingApp.Controllers
             var model = new AdaptationViewModel();
 
             // setup model
+            model.OrderTrnHdrIntno = hdr.orderTrnHdrIntno;
             model.Title = string.Format("{0}/{1}", hdr.agreementWork.workName, hdr.episodeNo);
             model.SceneMin = TimeConverter.StringToSeconds(fromTime);
             model.SceneMax = TimeConverter.StringToSeconds(toTime);
             model.SceneMinNo = 1;
             model.SceneMaxNo = 1000;
 
+            RefreshSubtitles(hdr, model);
+            RefreshCharacters(hdr, model);
+
+            return View("Edit2", model);
+        }
+
+        private void RefreshSubtitles(orderTrnHdr order, AdaptationViewModel model)
+        {
             var subtitles = ctx.subtitles.Include(x => x.dialog)
                 .Include(x => x.dialog.scene)
                 .Include(x => x.dubbingSheetHdr)
                 .Include(x => x.dubbingSheetHdr.workCharacter)
-                .Where(x => x.dialog.scene.orderTrnHdrIntno == id).ToList()
+                .Where(x => x.dialog.scene.orderTrnHdrIntno == order.orderTrnHdrIntno).ToList()
                 .OrderBy(x => TimeConverter.StringToSeconds(x.startTimeCode));
-            
-            foreach(var s in subtitles)
+
+            model.Subtitles.Clear();
+
+            foreach (var s in subtitles)
             {
                 model.Subtitles.Add(new ASubtitle()
                 {
@@ -94,29 +105,191 @@ namespace dubbingApp.Controllers
                     DlgNo = s.dialog.dialogNo,
                     No = s.subtitleNo,
                     StartTime = s.startTimeCode,
-                    Start = TimeConverter.StringToSeconds(s.startTimeCode),
+                    Start = s.startSecond,
                     EndTime = s.endTimeCode,
-                    End = TimeConverter.StringToSeconds(s.endTimeCode),
+                    End = s.endSecond,
                     Text = s.scentence,
                     CharacterId = s.dubbingSheetHdr.workCharacterIntno,
                     CharacterName = s.dubbingSheetHdr.characterName
                 });
             }
+        }
 
-            var wchars = ctx.workCharacters.Where(x => x.workIntno == hdr.agreementWork.workIntno).ToList();
-            foreach(var w in wchars)
+        private void RefreshCharacters(orderTrnHdr order, AdaptationViewModel model)
+        {
+            
+            var list = order.agreementWork.workCharacters.Select(x => x.characterName).ToList();
+            var list2 = ctx.dubbingSheetHdrs.Where(x => x.orderTrnHdrIntno == order.orderTrnHdrIntno).Select(x => x.characterName).ToList();
+            list.AddRange(list2);
+            HashSet<string> names = new HashSet<string>();
+            foreach (var s in list)
+                names.Add(s);
+
+            model.Characters.Clear();
+
+            foreach (var w in names)
             {
                 model.Characters.Add(new ACharacter()
                 {
-                    Id = w.workIntno,
-                    Name = w.characterName,
-                    Gender = (w.characterGender == "01") ? "M" : "F",
-                    Type = w.characterType
+                    Name = w
                 });
             }
-
-            return View("Edit2", model);
         }
+
+        public ActionResult SubtitlesList2(long orderTrnHdrIntno, int? from, int? to)
+        {
+            var hdr = ctx.orderTrnHdrs.Include(x => x.agreementWork).First(x => x.orderTrnHdrIntno == orderTrnHdrIntno);
+            var model = new AdaptationViewModel();
+
+            // setup model
+            model.OrderTrnHdrIntno = hdr.orderTrnHdrIntno;
+           
+
+            RefreshSubtitles(hdr, model);
+            return PartialView("_subtitlesList2", model);
+        }
+
+        
+        public void SubmitSubtitle(long orderTrnHdrIntno, string name, string from, string to, string text, bool newScene = true, bool newDlg = true)
+        {
+            var hdr = ctx.orderTrnHdrs.Find(orderTrnHdrIntno);
+            // Find or add character
+            var character = hdr.agreementWork.workCharacters.FirstOrDefault(x => x.characterName.ToUpper() == name.ToUpper());
+
+            // Find or add dubbSheetHdr related to character
+            var sheetHdr = hdr.dubbingSheetHdrs.FirstOrDefault(x => x.characterName.ToUpper() == name.ToUpper());
+            if(sheetHdr == null)
+            {
+                sheetHdr = ctx.dubbingSheetHdrs.Create();
+                sheetHdr.orderTrnHdrIntno = orderTrnHdrIntno;
+                sheetHdr.characterName = name;
+                sheetHdr.voiceActorIntno = 0;
+                sheetHdr.actorName = "ANONYMOUS";
+                if (character != null)
+                {
+                    sheetHdr.workCharacterIntno = character.workCharacterIntno;
+                    var workActor = character.workActors.FirstOrDefault(x => x.status == true);
+                    if (workActor != null)
+                    {
+                        sheetHdr.voiceActorIntno = workActor.voiceActorIntno;
+                        sheetHdr.actorName = workActor.voiceActor.fullName;
+                    }
+                }
+
+                ctx.dubbingSheetHdrs.Add(sheetHdr);
+                ctx.SaveChanges();
+            }
+
+            // Handle scene and dialog IDs
+            long sceneId = 0;
+            long dlgId = 0;
+            if(newScene)
+            {
+                var scene = ctx.scenes.Create();
+                scene.orderTrnHdrIntno = hdr.orderTrnHdrIntno;
+                scene.sceneNo = 1;
+                scene.startTimeCode = from;
+                scene.endTimeCode = to;
+                scene.startSecond = TimeConverter.StringToSeconds(from);
+                scene.endSecond = TimeConverter.StringToSeconds(to);
+                scene.isTaken = false;
+                
+                ctx.scenes.Add(scene);
+                ctx.SaveChanges();
+                sceneId = scene.sceneIntno;
+
+                var dlg = ctx.dialogs.Create();
+                dlg.sceneIntno = sceneId;
+                dlg.dialogNo = 1;
+                dlg.isTaken = false;
+                dlg.startTimeCode = from;
+                dlg.endTimeCode = to;
+                dlg.startSecond = TimeConverter.StringToSeconds(from);
+                dlg.endSecond = TimeConverter.StringToSeconds(to);
+                ctx.dialogs.Add(dlg);
+                ctx.SaveChanges();
+                dlgId = dlg.dialogIntno;
+            }
+            else
+            {
+                var scene = hdr.scenes.Where(x => x.startSecond <= TimeConverter.StringToSeconds(from)).OrderBy(x => x.startSecond).LastOrDefault();
+                if(scene == null)
+                {
+                    // add new scene because the wanted is not exist
+                    scene = ctx.scenes.Create();
+                    scene.orderTrnHdrIntno = hdr.orderTrnHdrIntno;
+                    scene.sceneNo = 1;
+                    scene.startTimeCode = from;
+                    scene.endTimeCode = to;
+                    scene.startSecond = TimeConverter.StringToSeconds(from);
+                    scene.endSecond = TimeConverter.StringToSeconds(to);
+                    scene.isTaken = false;
+
+                    ctx.scenes.Add(scene);
+                    ctx.SaveChanges();                    
+                }
+                else
+                {
+                    // Update scene end time
+                    if(scene.endSecond < TimeConverter.StringToSeconds(to))
+                    {
+                        scene.endSecond = TimeConverter.StringToSeconds(to);
+                        scene.endTimeCode = to;
+                        ctx.SaveChanges();    
+                    }
+                }
+                sceneId = scene.sceneIntno;
+                dialog dlg = null;
+                if(!newDlg)
+                {
+                    dlg = scene.dialogs.Where(x => x.startSecond <= TimeConverter.StringToSeconds(from)).OrderBy(x => x.startSecond).LastOrDefault();                    
+                    if(dlg != null)
+                    {
+                        if(dlg.endSecond < TimeConverter.StringToSeconds(to))
+                        {
+                            dlg.endSecond = TimeConverter.StringToSeconds(to);
+                            dlg.endTimeCode = to;
+                            ctx.SaveChanges();
+                        }
+                    }
+                }
+                if(dlg == null)
+                {
+                    dlg = ctx.dialogs.Create();
+                    dlg.sceneIntno = sceneId;
+                    dlg.dialogNo = 1;
+                    dlg.isTaken = false;
+                    dlg.startTimeCode = from;
+                    dlg.endTimeCode = to;
+                    dlg.startSecond = TimeConverter.StringToSeconds(from);
+                    dlg.endSecond = TimeConverter.StringToSeconds(to);
+                    ctx.dialogs.Add(dlg);
+                    ctx.SaveChanges();
+                }
+                dlgId = dlg.dialogIntno;
+            }
+
+            // Add subtitle
+            var subtitle = ctx.subtitles.Create();
+            subtitle.dialogIntno = dlgId;
+            subtitle.dubbSheetHdrIntno = sheetHdr.dubbSheetHdrIntno;
+            subtitle.startTimeCode = from;
+            subtitle.endTimeCode = to;
+            subtitle.subtitleNo = 0;
+            subtitle.startSecond = TimeConverter.StringToSeconds(from);
+            subtitle.endSecond = TimeConverter.StringToSeconds(to);
+            subtitle.scentence = text;
+
+            ctx.subtitles.Add(subtitle);
+            ctx.SaveChanges();
+        }
+
+
+        /***********************************************************************************************************
+        *
+        * OLD CODE FOR Edit1
+        *             
+       /************************************************************************************************************/
 
         public ActionResult sceneList(long orderTrnHdrIntno)
         {

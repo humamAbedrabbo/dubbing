@@ -48,47 +48,13 @@
 <div class="row">
     <div class="col-md-4">
         @*SUBTITLES*@
-        <div class="box box-warning direct-chat direct-chat-warning" style="max-height: 100%; height:auto;">
+        <div class="box box-warning direct-chat direct-chat-warning" style="height:600px;">
             <div class="box-header with-border">
                 <h3 class="box-title">Subtitles</h3>
             </div>
-            <div class="box-body">
-                <div class="direct-chat-messages">
-                    @{
-                        ViewBag._IsLeft = true;
-                        ViewBag.msg_dir = "";
-                        ViewBag.char_pull = "pull-left";
-                        ViewBag.time_pull = "pull-right";
-
-                    }
-                    @foreach (var subtitle in Model.Subtitles)
-                    {
-                        if (ViewBag._IsLeft)
-                        {
-                            ViewBag.msg_dir = "";
-                            ViewBag.char_pull = "pull-left";
-                            ViewBag.time_pull = "pull-right";
-                            ViewBag._IsLeft = false;
-                        }
-                        else
-                        {
-                            ViewBag.msg_dir = "right";
-                            ViewBag.char_pull = "pull-right";
-                            ViewBag.time_pull = "pull-left";
-                            ViewBag._IsLeft = true;
-                        }
-                        <div class="direct-chat-msg @ViewBag.msg_dir">
-                            <div class="direct-chat-info clearfix">
-                                <span class="direct-chat-name @ViewBag.char_pull">@subtitle.CharacterName</span>
-                                <span class="direct-chat-timestamp @ViewBag.time_pull">@subtitle.StartTime - @subtitle.EndTime</span>
-                            </div>
-                            <img class="direct-chat-img" src="~/Content/Images/user.svg" alt="Character">
-                            <div class="direct-chat-text">
-                                @subtitle.Text
-                            </div>
-                        </div>
-
-                    }
+            <div class="box-body"  style="height:600px;">
+                <div id="subtitlesContainer" class="direct-chat-messages"  style="height:600px;">
+                    
 
                 </div>
             </div>
@@ -109,14 +75,20 @@
             
             <div id="focused_names" class="form-inline" style="margin-top: 5px; margin-bottom: 5px;">                
                 <input id="characterName" name="characterName" type="text" class="form-control" placeholder="Character" />
+                <input type="checkbox" id="chk_new_scene" checked />
+                <label for="chk_new_scene">New Scene</label>
+                <input type="checkbox" id="chk_new_dlg" checked />
+                <label for="chk_new_scene">New Dialog</label>
             </div>
             
             <input class="form-control text-right" type="text" id="subtitle_text" name="subtitle_text" value="" placeholder="جملة جديدة" style="width: 100%; max-width: 100%; margin-top: 5px;" />
             <br />
             <div class="form-inline">
+
                 <a class="btn btn-primary" href="javascript:testSubtitle();">Test</a>
-                <a class="btn btn-primary" href="javascript:alert('submit');">Submit</a>
+                <a class="btn btn-primary" href="javascript:submitSubtitle();">Submit</a>
             </div>
+            @Html.Hidden("orderTrnHdrIntno", Model.OrderTrnHdrIntno)
             @Html.Hidden("scene_min", Model.SceneMin)
             @Html.Hidden("scene_max", Model.SceneMax)
             @Html.Hidden("scene_min_no", Model.SceneMinNo)
@@ -162,6 +134,53 @@
     <script src="~/Scripts/jquery-ui-1.12.0.js"></script>
 
     <script>
+        function secondsToString(seconds) {
+            var h = Math.floor(seconds / 3600);
+            var m = Math.floor((seconds - (3600 * h)) / 60);
+            var s = Math.floor((seconds - (3600 * h) - (60 * m)));
+            return h + ':' + m + ':' + s;
+        }
+        function subtitlesList2() {
+            var fromSecond = $("#slider_from2").val();
+            var toSecond = $("#slider_to2").val();
+            var from = secondsToString(fromSecond);
+            var to = secondsToString(toSecond);
+            var orderTrnHdrIntno = $("#orderTrnHdrIntno").val();
+
+            var url = "/adaptation/SubtitlesList2";
+            $.ajax({
+                contentType: 'application/json',
+                method: 'GET',
+                url: url,
+                data: { orderTrnHdrIntno: orderTrnHdrIntno, from: fromSecond, to: toSecond },
+                success: function (result) {
+                    $("#subtitlesContainer").empty();
+                    $("#subtitlesContainer").html(result);
+                }
+            });
+        }
+        function submitSubtitle() {
+            var fromSecond = $("#slider_from2").val();
+            var toSecond = $("#slider_to2").val();
+            var from = secondsToString(fromSecond);
+            var to = secondsToString(toSecond);
+            var characterName = $("#characterName").val();
+            var newScene = $("#chk_new_scene").is(":checked");
+            var newDlg = $("#chk_new_dlg").is(":checked");;
+            var orderTrnHdrIntno = $("#orderTrnHdrIntno").val();
+            var text = $("#subtitle_text").val();
+
+            var url = "/adaptation/SubmitSubtitle";
+            $.ajax({
+                contentType: 'application/json',
+                method: 'GET',
+                url: url,
+                data: { orderTrnHdrIntno: orderTrnHdrIntno, name: characterName, from: from, to: to, text: text, newScene: newScene, newDlg: newDlg  },
+                success: function (result) {
+                    alert('DONE');
+                }
+            });
+        }
         function nextScene() {
             var currentScene = parseInt($("#current_scene_no").val());
             var maxScene = parseInt($("#scene_max_no").val());
@@ -204,12 +223,7 @@
             track.addCue(cue);
             video.currentTime = from;
         }
-        function secondsToString(seconds) {
-            var h = Math.floor(seconds / 3600);
-            var m = Math.floor((seconds - (3600 * h)) / 60);
-            var s = Math.floor((seconds - (3600 * h) - (60 * m)));
-            return h + ':' + m + ':' + s;
-        }
+
         function localFileVideoPlayer() {
             'use strict'
             var URL = window.URL || window.webkitURL
@@ -329,6 +343,7 @@
                 });
             };
             activateCharacterNames();
+            subtitlesList2();
         });
     </script>
 }

@@ -6,5 +6,7 @@
     [startTimeCode] NVARCHAR(20) NULL, 
     [endTimeCode] NVARCHAR(20) NULL, 
     [isTaken] BIT NOT NULL DEFAULT 0
-    CONSTRAINT [FK_dialogs_To_scenes] FOREIGN KEY ([sceneIntno]) REFERENCES [scenes]([sceneIntno]) on delete cascade,
+    CONSTRAINT [FK_dialogs_To_scenes] FOREIGN KEY ([sceneIntno]) REFERENCES [scenes]([sceneIntno]) on delete cascade, 
+    [startSecond] BIGINT NOT NULL DEFAULT 0, 
+    [endSecond] BIGINT NOT NULL DEFAULT 0,
 )

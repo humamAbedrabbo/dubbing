@@ -123,6 +123,8 @@
           <Property Name="startTimeCode" Type="nvarchar" MaxLength="20" />
           <Property Name="endTimeCode" Type="nvarchar" MaxLength="20" />
           <Property Name="isTaken" Type="bit" Nullable="false" />
+          <Property Name="startSecond" Type="bigint" Nullable="false" />
+          <Property Name="endSecond" Type="bigint" Nullable="false" />
         </EntityType>
         <EntityType Name="dubbDomain">
           <Key>
@@ -328,9 +330,9 @@
           <Property Name="qualityRating" Type="nvarchar" MaxLength="50" />
           <Property Name="fromTimeCode" Type="nvarchar" MaxLength="50" />
           <Property Name="thruTimeCode" Type="nvarchar" MaxLength="50" />
-          <Property Name="status" Type="bit" Nullable="false" />
           <Property Name="assignedDate" Type="date" />
           <Property Name="forDueDate" Type="date" />
+          <Property Name="status" Type="bit" Nullable="false" />
         </EntityType>
         <EntityType Name="orderTrnHdrs">
           <Key>
@@ -418,6 +420,8 @@
           <Property Name="startTimeCode" Type="nvarchar" MaxLength="20" />
           <Property Name="endTimeCode" Type="nvarchar" MaxLength="20" />
           <Property Name="isTaken" Type="bit" Nullable="false" />
+          <Property Name="startSecond" Type="bigint" Nullable="false" />
+          <Property Name="endSecond" Type="bigint" Nullable="false" />
         </EntityType>
         <EntityType Name="shipmentDetails">
           <Key>
@@ -471,6 +475,8 @@
           <Property Name="scentence" Type="nvarchar" MaxLength="500" Nullable="false" />
           <Property Name="startTimeCode" Type="nvarchar" MaxLength="20" />
           <Property Name="endTimeCode" Type="nvarchar" MaxLength="20" />
+          <Property Name="startSecond" Type="bigint" Nullable="false" />
+          <Property Name="endSecond" Type="bigint" Nullable="false" />
         </EntityType>
         <EntityType Name="voiceActors">
           <Key>
@@ -1758,6 +1764,13 @@
             <End Role="payment" EntitySet="payments" />
           </AssociationSet>
           <EntitySet Name="paymentTemps" EntityType="DUBBDBModel.paymentTemp" />
+          <FunctionImport Name="archiveEndorsedWork">
+            <Parameter Name="workIntno" Mode="In" Type="Int64" />
+            <Parameter Name="respMsg" Mode="In" Type="String" />
+          </FunctionImport>
+          <EntitySet Name="logWorks" EntityType="DUBBDBModel.logWork" />
+          <EntitySet Name="logActors" EntityType="DUBBDBModel.logActor" />
+          <EntitySet Name="logOrders" EntityType="DUBBDBModel.logOrder" />
           <EntitySet Name="dialogs" EntityType="DUBBDBModel.dialog" />
           <EntitySet Name="scenes" EntityType="DUBBDBModel.scene" />
           <EntitySet Name="subtitles" EntityType="DUBBDBModel.subtitle" />
@@ -1769,21 +1782,14 @@
             <End Role="dialog" EntitySet="dialogs" />
             <End Role="subtitle" EntitySet="subtitles" />
           </AssociationSet>
-          <AssociationSet Name="FK_scenes_To_orderTrnHdrs" Association="DUBBDBModel.FK_scenes_To_orderTrnHdrs">
-            <End Role="orderTrnHdr" EntitySet="orderTrnHdrs" />
-            <End Role="scene" EntitySet="scenes" />
-          </AssociationSet>
           <AssociationSet Name="FK_subtitles_To_dubbingSheetHdrs" Association="DUBBDBModel.FK_subtitles_To_dubbingSheetHdrs">
             <End Role="dubbingSheetHdr" EntitySet="dubbingSheetHdrs" />
             <End Role="subtitle" EntitySet="subtitles" />
           </AssociationSet>
-          <FunctionImport Name="archiveEndorsedWork">
-            <Parameter Name="workIntno" Mode="In" Type="Int64" />
-            <Parameter Name="respMsg" Mode="In" Type="String" />
-          </FunctionImport>
-          <EntitySet Name="logWorks" EntityType="DUBBDBModel.logWork" />
-          <EntitySet Name="logActors" EntityType="DUBBDBModel.logActor" />
-          <EntitySet Name="logOrders" EntityType="DUBBDBModel.logOrder" />
+          <AssociationSet Name="FK_scenes_To_orderTrnHdrs" Association="DUBBDBModel.FK_scenes_To_orderTrnHdrs">
+            <End Role="orderTrnHdr" EntitySet="orderTrnHdrs" />
+            <End Role="scene" EntitySet="scenes" />
+          </AssociationSet>
           </EntityContainer>
         <EntityType Name="agreement">
           <Key>
@@ -2966,98 +2972,6 @@
           <Property Name="totalUnits" Type="Int32" Nullable="false" />
           <Property Name="refPaymentIntno" Type="Int64" />
         </EntityType>
-        <EntityType Name="dialog">
-          <Key>
-            <PropertyRef Name="dialogIntno" />
-          </Key>
-          <Property Name="dialogIntno" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="sceneIntno" Type="Int64" Nullable="false" />
-          <Property Name="dialogNo" Type="Int16" Nullable="false" />
-          <Property Name="startTimeCode" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
-          <Property Name="endTimeCode" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
-          <Property Name="isTaken" Type="Boolean" Nullable="false" />
-          <NavigationProperty Name="scene" Relationship="DUBBDBModel.FK_dialogs_To_scenes" FromRole="dialog" ToRole="scene" />
-          <NavigationProperty Name="subtitles" Relationship="DUBBDBModel.FK_subtitles_To_dialogs" FromRole="dialog" ToRole="subtitle" />
-        </EntityType>
-        <EntityType Name="scene">
-          <Key>
-            <PropertyRef Name="sceneIntno" />
-          </Key>
-          <Property Name="sceneIntno" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="orderTrnHdrIntno" Type="Int64" Nullable="false" />
-          <Property Name="sceneNo" Type="Int16" Nullable="false" />
-          <Property Name="startTimeCode" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
-          <Property Name="endTimeCode" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
-          <Property Name="isTaken" Type="Boolean" Nullable="false" />
-          <NavigationProperty Name="dialogs" Relationship="DUBBDBModel.FK_dialogs_To_scenes" FromRole="scene" ToRole="dialog" />
-          <NavigationProperty Name="orderTrnHdr" Relationship="DUBBDBModel.FK_scenes_To_orderTrnHdrs" FromRole="scene" ToRole="orderTrnHdr" />
-        </EntityType>
-        <EntityType Name="subtitle">
-          <Key>
-            <PropertyRef Name="subtitleIntno" />
-          </Key>
-          <Property Name="subtitleIntno" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="dialogIntno" Type="Int64" Nullable="false" />
-          <Property Name="subtitleNo" Type="Int16" Nullable="false" />
-          <Property Name="scentence" Type="String" Nullable="false" MaxLength="500" FixedLength="false" Unicode="true" />
-          <Property Name="startTimeCode" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
-          <Property Name="endTimeCode" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
-          <NavigationProperty Name="dialog" Relationship="DUBBDBModel.FK_subtitles_To_dialogs" FromRole="subtitle" ToRole="dialog" />
-          <Property Name="dubbSheetHdrIntno" Type="Int64" Nullable="false" />
-          <NavigationProperty Name="dubbingSheetHdr" Relationship="DUBBDBModel.FK_subtitles_To_dubbingSheetHdrs" FromRole="subtitle" ToRole="dubbingSheetHdr" />
-        </EntityType>
-        <Association Name="FK_dialogs_To_scenes">
-          <End Type="DUBBDBModel.scene" Role="scene" Multiplicity="1">
-            <OnDelete Action="Cascade" />
-          </End>
-          <End Type="DUBBDBModel.dialog" Role="dialog" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="scene">
-              <PropertyRef Name="sceneIntno" />
-            </Principal>
-            <Dependent Role="dialog">
-              <PropertyRef Name="sceneIntno" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK_subtitles_To_dialogs">
-          <End Type="DUBBDBModel.dialog" Role="dialog" Multiplicity="1">
-            <OnDelete Action="Cascade" />
-          </End>
-          <End Type="DUBBDBModel.subtitle" Role="subtitle" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="dialog">
-              <PropertyRef Name="dialogIntno" />
-            </Principal>
-            <Dependent Role="subtitle">
-              <PropertyRef Name="dialogIntno" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK_scenes_To_orderTrnHdrs">
-          <End Type="DUBBDBModel.orderTrnHdr" Role="orderTrnHdr" Multiplicity="1" />
-          <End Type="DUBBDBModel.scene" Role="scene" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="orderTrnHdr">
-              <PropertyRef Name="orderTrnHdrIntno" />
-            </Principal>
-            <Dependent Role="scene">
-              <PropertyRef Name="orderTrnHdrIntno" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK_subtitles_To_dubbingSheetHdrs">
-          <End Type="DUBBDBModel.dubbingSheetHdr" Role="dubbingSheetHdr" Multiplicity="1" />
-          <End Type="DUBBDBModel.subtitle" Role="subtitle" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="dubbingSheetHdr">
-              <PropertyRef Name="dubbSheetHdrIntno" />
-            </Principal>
-            <Dependent Role="subtitle">
-              <PropertyRef Name="dubbSheetHdrIntno" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
         <EntityType Name="logWork">
           <Key>
             <PropertyRef Name="logIntno" />
@@ -3127,6 +3041,104 @@
           <Property Name="totalOtherCharges" Type="Int32" Nullable="false" />
           <Property Name="lastUpdate" Type="DateTime" Nullable="false" Precision="3" />
         </EntityType>
+        <EntityType Name="dialog">
+          <Key>
+            <PropertyRef Name="dialogIntno" />
+          </Key>
+          <Property Name="dialogIntno" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="sceneIntno" Type="Int64" Nullable="false" />
+          <Property Name="dialogNo" Type="Int16" Nullable="false" />
+          <Property Name="startTimeCode" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
+          <Property Name="endTimeCode" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
+          <Property Name="isTaken" Type="Boolean" Nullable="false" />
+          <Property Name="startSecond" Type="Int64" Nullable="false" />
+          <Property Name="endSecond" Type="Int64" Nullable="false" />
+          <NavigationProperty Name="scene" Relationship="DUBBDBModel.FK_dialogs_To_scenes" FromRole="dialog" ToRole="scene" />
+          <NavigationProperty Name="subtitles" Relationship="DUBBDBModel.FK_subtitles_To_dialogs" FromRole="dialog" ToRole="subtitle" />
+        </EntityType>
+        <EntityType Name="scene">
+          <Key>
+            <PropertyRef Name="sceneIntno" />
+          </Key>
+          <Property Name="sceneIntno" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="orderTrnHdrIntno" Type="Int64" Nullable="false" />
+          <Property Name="sceneNo" Type="Int16" Nullable="false" />
+          <Property Name="startTimeCode" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
+          <Property Name="endTimeCode" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
+          <Property Name="isTaken" Type="Boolean" Nullable="false" />
+          <Property Name="startSecond" Type="Int64" Nullable="false" />
+          <Property Name="endSecond" Type="Int64" Nullable="false" />
+          <NavigationProperty Name="dialogs" Relationship="DUBBDBModel.FK_dialogs_To_scenes" FromRole="scene" ToRole="dialog" />
+          <NavigationProperty Name="orderTrnHdr" Relationship="DUBBDBModel.FK_scenes_To_orderTrnHdrs" FromRole="scene" ToRole="orderTrnHdr" />
+        </EntityType>
+        <EntityType Name="subtitle">
+          <Key>
+            <PropertyRef Name="subtitleIntno" />
+          </Key>
+          <Property Name="subtitleIntno" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="dialogIntno" Type="Int64" Nullable="false" />
+          <Property Name="subtitleNo" Type="Int16" Nullable="false" />
+          <Property Name="dubbSheetHdrIntno" Type="Int64" Nullable="false" />
+          <Property Name="scentence" Type="String" Nullable="false" MaxLength="500" FixedLength="false" Unicode="true" />
+          <Property Name="startTimeCode" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
+          <Property Name="endTimeCode" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
+          <Property Name="startSecond" Type="Int64" Nullable="false" />
+          <Property Name="endSecond" Type="Int64" Nullable="false" />
+          <NavigationProperty Name="dialog" Relationship="DUBBDBModel.FK_subtitles_To_dialogs" FromRole="subtitle" ToRole="dialog" />
+          <NavigationProperty Name="dubbingSheetHdr" Relationship="DUBBDBModel.FK_subtitles_To_dubbingSheetHdrs" FromRole="subtitle" ToRole="dubbingSheetHdr" />
+        </EntityType>
+        <Association Name="FK_dialogs_To_scenes">
+          <End Type="DUBBDBModel.scene" Role="scene" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Type="DUBBDBModel.dialog" Role="dialog" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="scene">
+              <PropertyRef Name="sceneIntno" />
+            </Principal>
+            <Dependent Role="dialog">
+              <PropertyRef Name="sceneIntno" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_subtitles_To_dialogs">
+          <End Type="DUBBDBModel.dialog" Role="dialog" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Type="DUBBDBModel.subtitle" Role="subtitle" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="dialog">
+              <PropertyRef Name="dialogIntno" />
+            </Principal>
+            <Dependent Role="subtitle">
+              <PropertyRef Name="dialogIntno" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_subtitles_To_dubbingSheetHdrs">
+          <End Type="DUBBDBModel.dubbingSheetHdr" Role="dubbingSheetHdr" Multiplicity="1" />
+          <End Type="DUBBDBModel.subtitle" Role="subtitle" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="dubbingSheetHdr">
+              <PropertyRef Name="dubbSheetHdrIntno" />
+            </Principal>
+            <Dependent Role="subtitle">
+              <PropertyRef Name="dubbSheetHdrIntno" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_scenes_To_orderTrnHdrs">
+          <End Type="DUBBDBModel.orderTrnHdr" Role="orderTrnHdr" Multiplicity="1" />
+          <End Type="DUBBDBModel.scene" Role="scene" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="orderTrnHdr">
+              <PropertyRef Name="orderTrnHdrIntno" />
+            </Principal>
+            <Dependent Role="scene">
+              <PropertyRef Name="orderTrnHdrIntno" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -3616,43 +3628,6 @@
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
-          <EntitySetMapping Name="dialogs">
-            <EntityTypeMapping TypeName="DUBBDBModel.dialog">
-              <MappingFragment StoreEntitySet="dialogs">
-                <ScalarProperty Name="isTaken" ColumnName="isTaken" />
-                <ScalarProperty Name="endTimeCode" ColumnName="endTimeCode" />
-                <ScalarProperty Name="startTimeCode" ColumnName="startTimeCode" />
-                <ScalarProperty Name="dialogNo" ColumnName="dialogNo" />
-                <ScalarProperty Name="sceneIntno" ColumnName="sceneIntno" />
-                <ScalarProperty Name="dialogIntno" ColumnName="dialogIntno" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="scenes">
-            <EntityTypeMapping TypeName="DUBBDBModel.scene">
-              <MappingFragment StoreEntitySet="scenes">
-                <ScalarProperty Name="isTaken" ColumnName="isTaken" />
-                <ScalarProperty Name="endTimeCode" ColumnName="endTimeCode" />
-                <ScalarProperty Name="startTimeCode" ColumnName="startTimeCode" />
-                <ScalarProperty Name="sceneNo" ColumnName="sceneNo" />
-                <ScalarProperty Name="orderTrnHdrIntno" ColumnName="orderTrnHdrIntno" />
-                <ScalarProperty Name="sceneIntno" ColumnName="sceneIntno" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="subtitles">
-            <EntityTypeMapping TypeName="DUBBDBModel.subtitle">
-              <MappingFragment StoreEntitySet="subtitles">
-                <ScalarProperty Name="dubbSheetHdrIntno" ColumnName="dubbSheetHdrIntno" />
-                <ScalarProperty Name="endTimeCode" ColumnName="endTimeCode" />
-                <ScalarProperty Name="startTimeCode" ColumnName="startTimeCode" />
-                <ScalarProperty Name="scentence" ColumnName="scentence" />
-                <ScalarProperty Name="subtitleNo" ColumnName="subtitleNo" />
-                <ScalarProperty Name="dialogIntno" ColumnName="dialogIntno" />
-                <ScalarProperty Name="subtitleIntno" ColumnName="subtitleIntno" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
           <FunctionImportMapping FunctionImportName="archiveEndorsedWork" FunctionName="DUBBDBModel.Store.archiveEndorsedWork" />
           <EntitySetMapping Name="logWorks">
             <EntityTypeMapping TypeName="DUBBDBModel.logWork">
@@ -3723,6 +3698,49 @@
                 <ScalarProperty Name="logMonth" ColumnName="logMonth" />
                 <ScalarProperty Name="logYear" ColumnName="logYear" />
                 <ScalarProperty Name="logIntno" ColumnName="logIntno" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="dialogs">
+            <EntityTypeMapping TypeName="DUBBDBModel.dialog">
+              <MappingFragment StoreEntitySet="dialogs">
+                <ScalarProperty Name="endSecond" ColumnName="endSecond" />
+                <ScalarProperty Name="startSecond" ColumnName="startSecond" />
+                <ScalarProperty Name="isTaken" ColumnName="isTaken" />
+                <ScalarProperty Name="endTimeCode" ColumnName="endTimeCode" />
+                <ScalarProperty Name="startTimeCode" ColumnName="startTimeCode" />
+                <ScalarProperty Name="dialogNo" ColumnName="dialogNo" />
+                <ScalarProperty Name="sceneIntno" ColumnName="sceneIntno" />
+                <ScalarProperty Name="dialogIntno" ColumnName="dialogIntno" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="scenes">
+            <EntityTypeMapping TypeName="DUBBDBModel.scene">
+              <MappingFragment StoreEntitySet="scenes">
+                <ScalarProperty Name="endSecond" ColumnName="endSecond" />
+                <ScalarProperty Name="startSecond" ColumnName="startSecond" />
+                <ScalarProperty Name="isTaken" ColumnName="isTaken" />
+                <ScalarProperty Name="endTimeCode" ColumnName="endTimeCode" />
+                <ScalarProperty Name="startTimeCode" ColumnName="startTimeCode" />
+                <ScalarProperty Name="sceneNo" ColumnName="sceneNo" />
+                <ScalarProperty Name="orderTrnHdrIntno" ColumnName="orderTrnHdrIntno" />
+                <ScalarProperty Name="sceneIntno" ColumnName="sceneIntno" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="subtitles">
+            <EntityTypeMapping TypeName="DUBBDBModel.subtitle">
+              <MappingFragment StoreEntitySet="subtitles">
+                <ScalarProperty Name="endSecond" ColumnName="endSecond" />
+                <ScalarProperty Name="startSecond" ColumnName="startSecond" />
+                <ScalarProperty Name="endTimeCode" ColumnName="endTimeCode" />
+                <ScalarProperty Name="startTimeCode" ColumnName="startTimeCode" />
+                <ScalarProperty Name="scentence" ColumnName="scentence" />
+                <ScalarProperty Name="dubbSheetHdrIntno" ColumnName="dubbSheetHdrIntno" />
+                <ScalarProperty Name="subtitleNo" ColumnName="subtitleNo" />
+                <ScalarProperty Name="dialogIntno" ColumnName="dialogIntno" />
+                <ScalarProperty Name="subtitleIntno" ColumnName="subtitleIntno" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>

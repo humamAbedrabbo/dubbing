@@ -59,12 +59,12 @@ namespace dubbingModel
         public virtual DbSet<paymentDetail> paymentDetails { get; set; }
         public virtual DbSet<payment> payments { get; set; }
         public virtual DbSet<paymentTemp> paymentTemps { get; set; }
-        public virtual DbSet<dialog> dialogs { get; set; }
-        public virtual DbSet<scene> scenes { get; set; }
-        public virtual DbSet<subtitle> subtitles { get; set; }
         public virtual DbSet<logWork> logWorks { get; set; }
         public virtual DbSet<logActor> logActors { get; set; }
         public virtual DbSet<logOrder> logOrders { get; set; }
+        public virtual DbSet<dialog> dialogs { get; set; }
+        public virtual DbSet<scene> scenes { get; set; }
+        public virtual DbSet<subtitle> subtitles { get; set; }
     
         public virtual int archiveEndorsedWork(Nullable<long> workIntno, string respMsg)
         {

@@ -1,0 +1,39 @@
+﻿@using dubbingModel
+@using dubbingApp.Models
+@model AdaptationViewModel
+
+@{
+    ViewBag._IsLeft = true;
+    ViewBag.msg_dir = "";
+    ViewBag.char_pull = "pull-left";
+    ViewBag.time_pull = "pull-right";
+
+}
+@foreach (var subtitle in Model.Subtitles)
+{
+    if (ViewBag._IsLeft)
+    {
+        ViewBag.msg_dir = "";
+        ViewBag.char_pull = "pull-left";
+        ViewBag.time_pull = "pull-right";
+        ViewBag._IsLeft = false;
+    }
+    else
+    {
+        ViewBag.msg_dir = "right";
+        ViewBag.char_pull = "pull-right";
+        ViewBag.time_pull = "pull-left";
+        ViewBag._IsLeft = true;
+    }
+    <div class="direct-chat-msg @ViewBag.msg_dir">
+        <div class="direct-chat-info clearfix">
+            <span class="direct-chat-name @ViewBag.char_pull">@subtitle.CharacterName</span>
+            <span class="direct-chat-timestamp @ViewBag.time_pull">@subtitle.StartTime - @subtitle.EndTime</span>
+        </div>
+        <img class="direct-chat-img" src="~/Content/Images/user.svg" alt="Character">
+        <div class="direct-chat-text">
+            @subtitle.Text
+        </div>
+    </div>
+
+}

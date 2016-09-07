@@ -26,6 +26,8 @@ namespace dubbingModel
         public string startTimeCode { get; set; }
         public string endTimeCode { get; set; }
         public bool isTaken { get; set; }
+        public long startSecond { get; set; }
+        public long endSecond { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<dialog> dialogs { get; set; }

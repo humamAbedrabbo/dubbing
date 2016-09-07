@@ -582,6 +582,7 @@
     <Content Include="Views\workLoad\_resourceAssignmentsList.cshtml" />
     <Content Include="Views\workLoad\_waitingList.cshtml" />
     <Content Include="Views\adaptation\Edit2.cshtml" />
+    <Content Include="Views\adaptation\_subtitlesList2.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
