@@ -1,4 +1,5 @@
 ﻿using dubbingApp.Models;
+using dubbingApp.Utils;
 using dubbingModel;
 using System;
 using System.Collections.Generic;
@@ -20,7 +21,9 @@ namespace dubbingApp.Controllers
         public ActionResult Index()
         {
             // Get list of episodes where adaptation is in progress
-            var model = ctx.orderTrnHdrs.Include(x => x.agreementWork).Where(x => x.startAdaptation.HasValue && !x.endAdaptation.HasValue).ToList();
+            var model = ctx.orderTrnDtls.Include(x => x.employee).Include(x => x.orderTrnHdr).Include(x => x.orderTrnHdr.agreementWork).Where(x => !x.status).ToList();
+            
+
             if (User.IsInRole("EDITOR"))
             {
                 var employee = ctx.employees.FirstOrDefault(x => x.email.ToUpper() == User.Identity.Name);
@@ -31,10 +34,8 @@ namespace dubbingApp.Controllers
                 else
                 {
                     var userWorks = ctx.workPersonnels.Where(x => x.empIntno == employee.empIntno && x.status == true && (x.titleType == "04" || x.titleType == "05" || x.titleType == "06")).Select(x => x.workIntno).ToList() ;
-                    var userOrders = ctx.orderTrnDtls.Include(x => x.orderTrnHdr).Where(x => x.empIntno == employee.empIntno && userWorks.Contains(x.orderTrnHdr.workIntno) && (x.activityType == "01" || x.activityType == "02")).Select(x => x.orderTrnHdrIntno).ToList() ;
-                    model = model.Where(x => userOrders.Contains(x.orderTrnHdrIntno)).ToList();
+                    model = model.Where(x => x.empIntno == employee.empIntno && userWorks.Contains(x.orderTrnHdr.workIntno) && (x.activityType == "01" || x.activityType == "02")).ToList() ;
                 }
-                
             }
 
             return View(model);
@@ -59,10 +60,57 @@ namespace dubbingApp.Controllers
             return View(model);
         }
 
-        public ActionResult Edit2(long? id)
+        public ActionResult Edit2(long? id, string fromTime = "00:00:00", string toTime = "00:00:00")
         {
-            // var model = ctx.orderTrnHdrs.Include(x => x.agreementWork).First(x => x.orderTrnHdrIntno == id);
+            var hdr = ctx.orderTrnHdrs.Include(x => x.agreementWork).First(x => x.orderTrnHdrIntno == id);
             var model = new AdaptationViewModel();
+
+            // setup model
+            model.Title = string.Format("{0}/{1}", hdr.agreementWork.workName, hdr.episodeNo);
+            model.SceneMin = TimeConverter.StringToSeconds(fromTime);
+            model.SceneMax = TimeConverter.StringToSeconds(toTime);
+            model.SceneMinNo = 1;
+            model.SceneMaxNo = 1000;
+
+            var subtitles = ctx.subtitles.Include(x => x.dialog)
+                .Include(x => x.dialog.scene)
+                .Include(x => x.dubbingSheetHdr)
+                .Include(x => x.dubbingSheetHdr.workCharacter)
+                .Where(x => x.dialog.scene.orderTrnHdrIntno == id).ToList()
+                .OrderBy(x => TimeConverter.StringToSeconds(x.startTimeCode));
+            
+            foreach(var s in subtitles)
+            {
+                model.Subtitles.Add(new ASubtitle()
+                {
+                    Id = s.subtitleIntno,
+                    SceneId = s.dialog.scene.sceneIntno,
+                    SceneNo = s.dialog.scene.sceneNo,
+                    DlgId = s.dialog.dialogIntno,
+                    DlgNo = s.dialog.dialogNo,
+                    No = s.subtitleNo,
+                    StartTime = s.startTimeCode,
+                    Start = TimeConverter.StringToSeconds(s.startTimeCode),
+                    EndTime = s.endTimeCode,
+                    End = TimeConverter.StringToSeconds(s.endTimeCode),
+                    Text = s.scentence,
+                    CharacterId = s.dubbingSheetHdr.workCharacterIntno,
+                    CharacterName = s.dubbingSheetHdr.characterName
+                });
+            }
+
+            var wchars = ctx.workCharacters.Where(x => x.workIntno == hdr.agreementWork.workIntno).ToList();
+            foreach(var w in wchars)
+            {
+                model.Characters.Add(new ACharacter()
+                {
+                    Id = w.workIntno,
+                    Name = w.characterName,
+                    Gender = (w.characterGender == "01") ? "M" : "F",
+                    Type = w.characterType
+                });
+            }
+
             return View("Edit2", model);
         }
 

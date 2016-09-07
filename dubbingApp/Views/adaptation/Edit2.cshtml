@@ -103,7 +103,7 @@
             <video id="video" style="background-color: black !important; width:100%;" controls></video> 
         </div>
         <!-- Video Controls -->
-        <div id="video-controls">
+        <div id="video-controls" class="hidden">
             <input type="text" id="vid_slider" name="vid_slider" value="" style="width: 100%; max-width:100%;" />
             <input type="text" id="vid_slider2" name="vid_slider2" value="" style="width: 100%; max-width:100%; margin-top: 5px;" />
             
@@ -233,6 +233,7 @@
 
                 var fileURL = URL.createObjectURL(file)
                 video.src = fileURL
+                $("#video-controls").removeClass("hidden");
             }
             $("#vidFile").change(playSelectedFile);
 

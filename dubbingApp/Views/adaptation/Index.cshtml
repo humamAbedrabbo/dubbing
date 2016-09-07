@@ -1,5 +1,5 @@
 ﻿@using dubbingModel
-@model IEnumerable<orderTrnHdr>
+@model IEnumerable<orderTrnDtl>
 
 @{
 
@@ -14,7 +14,10 @@
         <tr>
             <th>Work</th>
             <th>Episode</th>
+            <th>Assigned To</th>
             <th>Adaptation Start</th>
+            <th>From</th>
+            <th>To</th>
             <th></th>
             <th></th>
         </tr>
@@ -23,10 +26,13 @@
         @foreach (var item in Model)
         {
         <tr>
-            <td>@item.agreementWork.workName</td>
-            <td>@item.episodeNo</td>
-            <td>@item.startAdaptation.Value.ToShortDateString()</td>
-            <td><a class="btn btn-primary" href='@Url.Action("Edit2", "adaptation", new { id = item.orderTrnHdrIntno})'>Edit</a></td>
+            <td>@item.orderTrnHdr.agreementWork.workName</td>
+            <td>@item.orderTrnHdr.episodeNo</td>
+            <td>@item.employee.fullName</td>
+            <td>@item.orderTrnHdr.startAdaptation.Value.ToShortDateString()</td>
+            <td>@item.fromTimeCode</td>
+            <td>@item.thruTimeCode</td>
+            <td><a class="btn btn-primary" href='@Url.Action("Edit2", "adaptation", new { id = item.orderTrnHdrIntno, fromTime = item.fromTimeCode, toTime = item.thruTimeCode})'>Edit</a></td>
             <td><a class="btn btn-success" href='@Url.Action("CompleteAdaptation", "adaptation", new { id = item.orderTrnHdrIntno})'>Complete Work</a></td>
         </tr>
         }
