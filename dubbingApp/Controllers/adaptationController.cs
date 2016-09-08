@@ -89,8 +89,8 @@ namespace dubbingApp.Controllers
                 .Include(x => x.dialog.scene)
                 .Include(x => x.dubbingSheetHdr)
                 .Include(x => x.dubbingSheetHdr.workCharacter)
-                .Where(x => x.dialog.scene.orderTrnHdrIntno == order.orderTrnHdrIntno).ToList()
-                .OrderBy(x => TimeConverter.StringToSeconds(x.startTimeCode));
+                .Where(x => x.dialog.scene.orderTrnHdrIntno == order.orderTrnHdrIntno).OrderBy(x => x.startSecond).ThenBy(x => x.endSecond)
+                .ToList();
 
             model.Subtitles.Clear();
 

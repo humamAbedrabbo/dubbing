@@ -9,7 +9,7 @@
     ViewBag.time_pull = "pull-right";
 
 }
-@foreach (var subtitle in Model.Subtitles)
+@foreach (var subtitle in Model.Subtitles.OrderBy(x=>x.Start).ThenBy(x=>x.End))
 {
     if (ViewBag._IsLeft)
     {
