@@ -14,6 +14,12 @@ namespace dubbingApp.Utils
 
             int result = 0;
             int[] timeParts = time.Split(':').Select(x => Convert.ToInt32(x)).ToArray();
+            if(timeParts.Length == 2)
+            {
+                result = (timeParts[0] * 60) + timeParts[0];
+                return result;
+            }
+
             result = (timeParts[0] * 3600) + (timeParts[1] * 60) + timeParts[2];
             return result;
         }

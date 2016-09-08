@@ -149,6 +149,28 @@ namespace dubbingApp.Controllers
             return PartialView("_subtitlesList2", model);
         }
 
+        public string FixAllSubtitles()
+        {
+            foreach(var item in ctx.scenes)
+            {
+                item.startSecond = TimeConverter.StringToSeconds(item.startTimeCode);
+                item.endSecond = TimeConverter.StringToSeconds(item.endTimeCode);
+            }
+            foreach (var item in ctx.dialogs)
+            {
+                item.startSecond = TimeConverter.StringToSeconds(item.startTimeCode);
+                item.endSecond = TimeConverter.StringToSeconds(item.endTimeCode);
+            }
+            foreach (var item in ctx.subtitles)
+            {
+                item.startSecond = TimeConverter.StringToSeconds(item.startTimeCode);
+                item.endSecond = TimeConverter.StringToSeconds(item.endTimeCode);
+            }
+            ctx.SaveChanges();
+
+            return "OK";
+        }
+
         
         public void SubmitSubtitle(long orderTrnHdrIntno, string name, string from, string to, string text, bool newScene = true, bool newDlg = true)
         {
