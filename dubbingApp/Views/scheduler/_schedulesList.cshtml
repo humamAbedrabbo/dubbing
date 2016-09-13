@@ -1,0 +1,31 @@
+﻿@model IEnumerable<dubbingModel.dubbingTrnHdr>
+
+<div class="container-fluid" style="padding:0px">
+    <div class="panel panel-info">
+        <div class="panel-heading">
+            <div class="row">
+                <div class="col-sm-12">
+                    <label><small>Schedules</small></label>
+                </div>
+            </div>
+        </div>
+        <div class="panel-body">
+            <input type="hidden" id="currentScheduleHF" />
+            <div class="col-sm-12">
+                <a class="schedule" href="#" onclick="onScheduleSelectClick(null)" id="sch0">
+                    <small>Unscheduled</small>
+                </a>
+            </div>
+            <br /><br />
+            @foreach (dubbingModel.dubbingTrnHdr sch in Model)
+            {
+                string id = "sch" + sch.dubbTrnHdrIntno;
+                <div class="col-sm-12">
+                    <a class="schedule" href="#" onclick="onScheduleSelectClick(@sch.dubbTrnHdrIntno)" id="@id">
+                        <small>@sch.fromDate.ToString("dd/MM") - @sch.thruDate.ToString("dd/MM")</small>
+                    </a>
+                </div>
+            }
+        </div>
+    </div>
+</div>

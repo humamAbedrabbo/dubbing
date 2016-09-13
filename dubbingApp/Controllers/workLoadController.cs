@@ -41,14 +41,14 @@ namespace dubbingApp.Controllers
         public ActionResult assignmentsList()
         {
             var model = db.orderTrnDtls.Include(b => b.orderTrnHdr.agreementWork).Include(b => b.employee)
-                        .Where(b => (b.activityType != "03" && b.activityType != "05") && b.status == false);
+                        .Where(b => (b.activityType != "03" && b.activityType != "05") && b.status == true);
             return PartialView("_assignmentsList", model.ToList());
         }
 
         public ActionResult resourceAssignmentsList(long empIntno, string empName, long workIntno, string workName)
         {
             var model = db.orderTrnDtls.Include(b => b.orderTrnHdr.agreementWork)
-                        .Where(b => b.orderTrnHdr.workIntno == workIntno && b.empIntno == empIntno);
+                        .Where(b => b.orderTrnHdr.workIntno == workIntno && b.empIntno == empIntno && b.status == true);
             ViewBag.workName = workName;
             ViewBag.empName = empName;
             return PartialView("_resourceAssignmentsList", model.ToList());
@@ -63,18 +63,50 @@ namespace dubbingApp.Controllers
             return PartialView("_assignmentAddNew");
         }
 
-        public JsonResult activityTypeChanged(string activityType)
+        public JsonResult activityTypeChanged(string activityType, long? workIntno)
         {
+            List<SelectListItem> rlist = new List<SelectListItem>();
             var x = db.employees.Where(b => b.status == true);
             var model = x;
-            if (activityType == "01") //translation
-                model = x.Where(b => b.empType == "03");
-            else if (activityType == "02") //adaptation
-                model = x.Where(b => b.empType == "04" || b.empType == "02");
-            else //studio supervisor
-                model = x.Where(b => b.empType == "01");
+            long empDefault = 0;
+            var y = x.Where(b => b.workPersonnels.Where(d => d.workIntno == workIntno && d.status == true)
+                                                        .Select(d => d.empIntno).Contains(b.empIntno));
+            var y1 = y.FirstOrDefault();
+            if (y.Count() != 0)
+            {
+                if (activityType == "01") //translation
+                    y1 = y.FirstOrDefault(b => b.empType == "03");
+                else if (activityType == "02") //adaptation
+                    y1 = y.FirstOrDefault(b => b.empType == "04" || b.empType == "02");
+                else //studio supervisor
+                    y1 = y.FirstOrDefault(b => b.empType == "01");
 
-            return Json(new SelectList(model.Select(b => new { b.empIntno, b.fullName }), "empIntno", "fullName"));
+                if (y1 != null)
+                {
+                    SelectListItem rscDefault = new SelectListItem();
+                    rscDefault.Value = y1.empIntno.ToString();
+                    rscDefault.Text = y1.fullName + " (Default)";
+                    rscDefault.Selected = true;
+                    empDefault = y1.empIntno;
+                    rlist.Add(rscDefault);
+                }
+            }
+
+            if (activityType == "01") //translation
+                model = x.Where(b => b.empType == "03" && b.empIntno != empDefault);
+            else if (activityType == "02") //adaptation
+                model = x.Where(b => (b.empType == "04" || b.empType == "02") && b.empIntno != empDefault);
+            else //studio supervisor
+                model = x.Where(b => b.empType == "01" && b.empIntno != empDefault);
+            foreach(var emp in model)
+            {
+                SelectListItem rsc = new SelectListItem();
+                rsc.Value = emp.empIntno.ToString();
+                rsc.Text = emp.fullName;
+                rsc.Selected = false;
+                rlist.Add(rsc);
+            }
+            return Json(rlist);
         }
 
         [ValidateAntiForgeryToken]
@@ -135,7 +167,7 @@ namespace dubbingApp.Controllers
                 dtl.thruTimeCode = thruTimeCode;
                 dtl.assignedDate = today;
                 dtl.forDueDate = forDueDate;
-                dtl.status = false;
+                dtl.status = true;
                 dtlModel.Add(dtl);
 
                 switch (item.taskType)
@@ -148,7 +180,7 @@ namespace dubbingApp.Controllers
                         hdr.startAdaptation = today;
                         break;
                     case "04": //dubbing
-                        hdr.startDubbing = today;
+                        hdr.plannedDubbing = forDueDate.Value.AddDays(-6);
                         break;
                 }
             }
@@ -185,11 +217,11 @@ namespace dubbingApp.Controllers
         public ActionResult assignmentUpdate(orderTrnDtl item, long dtlIntno, long _workIntno, string _workName)
         {
             var model = db.orderTrnDtls.Include(b => b.employee).FirstOrDefault(b => b.orderTrnDtlIntno == dtlIntno);
-            long empIntno1 = model.empIntno;
-            string empName1 = model.employee.fullName;
             UpdateModel(model);
             db.SaveChanges();
 
+            long empIntno1 = model.empIntno;
+            string empName1 = model.employee.fullName;
             return RedirectToAction("resourceAssignmentsList", new { empIntno = empIntno1, empName = empName1, workIntno = _workIntno, workName = _workName });
         }
 
@@ -197,14 +229,22 @@ namespace dubbingApp.Controllers
         {
             var model = db.orderTrnDtls;
             var modelItem = model.Find(id);
+            var model1 = db.studioEpisodes;
+
+            var x = model1.Where(b => b.orderTrnDtlIntno == id).ToList();
+            if (x.Count() != 0)
+                model1.RemoveRange(x);
             model.Remove(modelItem);
+
             db.SaveChanges();
             return RedirectToAction("assignmentsList");
         }
         
         public ActionResult waitingList(string activityType)
         {
-            var x = db.orderTrnHdrs.Include(b => b.agreementWork).Where(b => b.status == "04" && b.agreementWork.status == "01");
+            var x = db.orderTrnHdrs.Include(b => b.agreementWork)
+                                    .Where(b => b.status == "04" && b.agreementWork.status == "01"
+                                    && !b.orderTrnDtls.Select(d => d.orderTrnHdrIntno).Contains(b.orderTrnHdrIntno));
             var model = x;
 
             List<string> wList = new List<string>();

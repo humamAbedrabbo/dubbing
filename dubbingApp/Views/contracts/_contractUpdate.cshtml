@@ -1,15 +1,16 @@
 ﻿@model dubbingModel.agreementWork
 @{ 
     string firstShow = Model.firstEpisodeShowDate.HasValue ? Model.firstEpisodeShowDate.Value.ToString("yyyy-MM-dd") : null;
+    string status = dubbingApp.Models.LookupModels.decodeDictionaryItem("workStatus", Model.status);
 }
 <div class="container-fluid" style="padding:0px">
     <div class="panel panel-default">
         <div class="panel-heading">
             <div class="row">
-                <div class="col-sm-10">
-                    <label>Update Contracted Work Info</label>
+                <div class="col-sm-11">
+                    <small><label>@Model.workName</label> &nbsp; <span class="badge">@status</span></small>
                 </div>
-                <div class="col-sm-2">
+                <div class="col-sm-1">
                     <button class="btn btn-default btn-xs pull-right" onclick="onCloseClick()" title="Close">
                         <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
                     </button>
@@ -112,8 +113,16 @@
                 </div>
                 
                 <div class="form-group-sm">
-                    <button type="submit" class="btn btn-default btn-sm">Submit</button>
-                    <small><label class="alert-success" id="formResult"></label></small>
+                    <div class="btn-group" style="padding-top:10px;">
+                        <button type="submit" class="btn btn-primary btn-xs">Update</button>
+                        <button type="button" class="btn btn-danger btn-xs" onclick="onContractChangeStatusClick(@Model.workIntno, '04')">Cancel</button>&nbsp;
+                        <button type="button" class="btn btn-success btn-xs" onclick="onContractChangeStatusClick(@Model.workIntno, '03')">Endorse</button>&nbsp;
+                        <button type="button" class="btn btn-info btn-xs" onclick="onContractChangeStatusClick(@Model.workIntno, '02')">Suspend</button>
+                        <button type="button" class="btn btn-default btn-xs" onclick="onContractChangeStatusClick(@Model.workIntno, '01')">Activate</button>
+                    </div>
+                    <p>
+                        <small><label class="alert-success" id="formResult"></label></small>
+                    </p>
                 </div>
             }
         </div>

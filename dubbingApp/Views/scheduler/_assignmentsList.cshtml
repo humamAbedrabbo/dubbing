@@ -1,0 +1,57 @@
+﻿@model IEnumerable<dubbingApp.Models.ViewModels.assignmentViewModel>
+
+<div class="container-fluid" style="padding:0px">
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <div class="row">
+                <div class="col-sm-12">
+                    <label><small>Assignments</small></label>
+                </div>
+            </div>
+        </div>
+        <div class="panel-body">
+            <table class="table table-hover table-condensed">
+                <thead>
+                    <tr>
+                        <th class="col-sm-1"><small>#</small></th>
+                        <th class="col-sm-3"><small>Supervisor</small></th>
+                        <th class="col-sm-5"><small>Work</small></th>
+                        <th class="col-sm-1"><small>Episode</small></th>
+                        <th class="col-sm-1"><small>Due</small></th>
+                        <th class="col-sm-1"><small>Studio</small></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr class=@item.status>
+                            <td class="col-sm-1">
+                                @if (item.studioIntno.HasValue)
+                                {
+                                    <button class="btn btn-default btn-xs pull-left" onclick="onRescheduleClick(@item.orderTrnDtlIntno)" title="Reschedule">
+                                        <span class="glyphicon glyphicon-refresh" aria-hidden="true"></span>
+                                    </button>
+                                }
+                            </td>
+                            <td class="col-sm-3"><small>@item.empName</small></td>
+                            <td class="col-sm-5"><small>@item.workName</small></td>
+                            <td class="col-sm-1"><small>@item.episodeNo</small></td>
+                            <td class="col-sm-1"><small>@item.dueDate</small></td>
+                            <td class="col-sm-1">
+                                @if (item.studioIntno.HasValue)
+                                {
+                                    <button class="btn btn-default btn-xs" onclick="onStudioAllocationClick(@item.studioIntno)" title="Allocation">
+                                        @{ string allocation = string.IsNullOrEmpty(item.studioNo) ? "---" : item.studioNo; }
+                                        @allocation
+                                    </button>
+                                }
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+            
+        </div>
+    </div>
+</div>
+

@@ -416,7 +416,8 @@ namespace dubbingApp.Controllers
         {
             List<string> oiDetailsList = new List<string>();
             var x = db.orderTrnHdrs.Find(id);
-            long y = 0;
+            var dtl = db.orderTrnDtls.Include(b => b.employee).Where(b => b.orderTrnHdrIntno == x.orderTrnHdrIntno).ToList();
+            string personnel = null;
 
             oiDetailsList.Add("Work|" + x.agreementWork.workName);
             oiDetailsList.Add("Episode|" + x.episodeNo);
@@ -424,41 +425,55 @@ namespace dubbingApp.Controllers
             oiDetailsList.Add("Order No|" + x.workOrder.orderIntno);
             oiDetailsList.Add("Priority|" + LookupModels.decodeDictionaryItem("priority", x.priority));
             oiDetailsList.Add("Status|" + LookupModels.decodeDictionaryItem("orderItemStatus", x.status));
+
             oiDetailsList.Add(null);
-            oiDetailsList.Add("Translation Started|" + (x.startTranslation.HasValue ? x.startTranslation.Value.ToShortDateString() : null));
-            oiDetailsList.Add("Translation Ended|" + (x.endTranslation.HasValue ? x.endTranslation.Value.ToShortDateString() : null));
-            if (x.endTranslation.HasValue && x.orderTrnDtls.FirstOrDefault(b => b.activityType == "01") != null)
+            oiDetailsList.Add("Timetable:|");
+            oiDetailsList.Add("Translation|" + (x.startTranslation.HasValue ? x.startTranslation.Value.ToShortDateString() : null)
+                            + " - " + (x.endTranslation.HasValue ? x.endTranslation.Value.ToShortDateString() : null));
+            oiDetailsList.Add("Adaptation|" + (x.startAdaptation.HasValue ? x.startAdaptation.Value.ToShortDateString() : null)
+                            + " - " + (x.endAdaptation.HasValue ? x.endAdaptation.Value.ToShortDateString() : null));
+            oiDetailsList.Add("Dubbing|" + (x.startDubbing.HasValue ? x.startDubbing.Value.ToShortDateString() : null)
+                            + " - " + (x.endDubbing.HasValue ? x.endDubbing.Value.ToShortDateString() : null));
+            oiDetailsList.Add("Mixage|" + (x.startMixage.HasValue ? x.startMixage.Value.ToShortDateString() : null)
+                            + " - " + (x.endMixage.HasValue ? x.endMixage.Value.ToShortDateString() : null));
+            oiDetailsList.Add("Montage|" + (x.startMontage.HasValue ? x.startMontage.Value.ToShortDateString() : null)
+                            + " - " + (x.endMontage.HasValue ? x.endMontage.Value.ToShortDateString() : null));
+            oiDetailsList.Add("Upload|" + (x.shipmentLowRes.HasValue ? x.shipmentLowRes.Value.ToShortDateString() : null));
+            oiDetailsList.Add("Shipment|" + (x.shipmentFinal.HasValue ? x.shipmentFinal.Value.ToShortDateString() : null));
+
+            oiDetailsList.Add(null);
+            oiDetailsList.Add("Personnel:|");
+            foreach(var dtl1 in dtl.Where(b => b.activityType == "01"))
             {
-                y = x.orderTrnDtls.FirstOrDefault(b => b.activityType == "01").empIntno;
-                oiDetailsList.Add("Translation By|" + db.employees.FirstOrDefault(e => e.empIntno == y).fullName);
+                if (string.IsNullOrEmpty(personnel))
+                    personnel = dtl1.employee.fullName;
+                else
+                    personnel = personnel + ", " + dtl1.employee.fullName;
             }
-            else
-                oiDetailsList.Add("Translation By|");
-            oiDetailsList.Add(null);
-            oiDetailsList.Add("Adaptation Started|" + (x.startAdaptation.HasValue ? x.startAdaptation.Value.ToShortDateString() : null));
-            oiDetailsList.Add("Adaptation Ended|" + (x.endAdaptation.HasValue ? x.endAdaptation.Value.ToShortDateString() : null));
-            if (x.startAdaptation.HasValue && x.orderTrnDtls.FirstOrDefault(b => b.activityType == "02") != null)
+            oiDetailsList.Add("Translation|" + personnel);
+
+            personnel = null;
+            foreach (var dtl1 in dtl.Where(b => b.activityType == "02"))
             {
-                y = x.orderTrnDtls.FirstOrDefault(b => b.activityType == "02").empIntno;
-                oiDetailsList.Add("Adaptation By|" + db.employees.FirstOrDefault(e => e.empIntno == y).fullName);
+                if (string.IsNullOrEmpty(personnel))
+                    personnel = dtl1.employee.fullName;
+                else
+                    personnel = personnel + ", " + dtl1.employee.fullName;
             }
-            else
-                oiDetailsList.Add("Adaptation By|");
-            oiDetailsList.Add(null);
-            oiDetailsList.Add("Dubbing Started|" + (x.startDubbing.HasValue ? x.startDubbing.Value.ToShortDateString() : null));
-            oiDetailsList.Add("Dubbing Ended|" + (x.endDubbing.HasValue ? x.endDubbing.Value.ToShortDateString() : null));
-            oiDetailsList.Add("Dubbing By|");
-            oiDetailsList.Add(null);
-            oiDetailsList.Add("Mixage Started|" + (x.startMixage.HasValue ? x.startMixage.Value.ToShortDateString() : null));
-            oiDetailsList.Add("Mixage Ended|" + (x.endMixage.HasValue ? x.endMixage.Value.ToShortDateString() : null));
-            oiDetailsList.Add("Mixage By|");
-            oiDetailsList.Add(null);
-            oiDetailsList.Add("Montage Started|" + (x.startMontage.HasValue ? x.startMontage.Value.ToShortDateString() : null));
-            oiDetailsList.Add("Montage Ended|" + (x.endMontage.HasValue ? x.endMontage.Value.ToShortDateString() : null));
-            oiDetailsList.Add("Montage By|");
-            oiDetailsList.Add(null);
-            oiDetailsList.Add("Uploaded On|" + (x.shipmentLowRes.HasValue ? x.shipmentLowRes.Value.ToShortDateString() : null));
-            oiDetailsList.Add("Shipped On|" + (x.shipmentFinal.HasValue ? x.shipmentFinal.Value.ToShortDateString() : null));
+            oiDetailsList.Add("Adaptation|" + personnel);
+
+            personnel = null;
+            foreach (var dtl1 in dtl.Where(b => b.activityType == "04"))
+            {
+                if (string.IsNullOrEmpty(personnel))
+                    personnel = dtl1.employee.fullName;
+                else
+                    personnel = personnel + ", " + dtl1.employee.fullName;
+            }
+            oiDetailsList.Add("Dubbing|" + personnel);
+            
+            oiDetailsList.Add("Mixage|");
+            oiDetailsList.Add("Montage|");
 
             ViewBag.orderTrnHdrIntno = id;
             return PartialView("_orderItemDetails", oiDetailsList);

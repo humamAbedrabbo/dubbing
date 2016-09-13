@@ -5,18 +5,22 @@
     <div class="panel panel-default">
         <div class="panel-heading">
             <div class="row">
-                <div class="col-sm-12">
-                    <button class="btn btn-default btn-xs pull-right" onclick="onCloseClick('schedulesAddNew')" title="Close">
+                <div class="col-sm-10">
+                    <small><label>New Schedule</label></small>
+                </div>
+                <div class="col-sm-2">
+                    <button class="btn btn-default btn-xs pull-right" onclick="onCloseClick()" title="Close">
                         <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
                     </button>
                 </div>
             </div>
         </div>
         <div class="panel-body">
-            @using (Ajax.BeginForm("schedulesAddNew", "scheduling",
+            @using (Ajax.BeginForm("schedulesAddNew", "scheduler",
                                                 new AjaxOptions()
                                                 {
                                                     HttpMethod = "POST",
+                                                    UpdateTargetId = "schedulesList",
                                                     OnSuccess = "onScheduleSuccess",
                                                     OnFailure = "onScheduleFailure"
                                                 }
@@ -37,7 +41,7 @@
                 <br />
                 <div class="form-group-sm">
                     <button type="submit" class="btn btn-default btn-sm pull-left">Submit</button>
-                    <label class="alert-success" id="result"></label>
+                    <small class="alert-success" id="formResult"></small>
                 </div>
             }
         </div>

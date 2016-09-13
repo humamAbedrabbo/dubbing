@@ -93,22 +93,22 @@ namespace dubbingApp.Controllers
                 rm.sceneNo = x2.sceneNo.ToString();
 
                 //calculate total schedule completed scenes
-                var scn = (from A in db.dubbingTrnDtls
-                           join B in db.orderTrnHdrs on A.orderTrnHdrIntno equals B.orderTrnHdrIntno
-                           join C in db.dubbingSheetDtls on B.orderTrnHdrIntno equals C.orderTrnHdrIntno
-                           where (!schedule.HasValue || A.dubbTrnHdrIntno == schedule.Value) && C.studioNo == std && C.isTaken == true
-                           select new { A });
-                rm.completed = scn.Count().ToString();
+                //var scn = (from A in db.dubbingTrnDtls
+                //           join B in db.orderTrnHdrs on A.orderTrnHdrIntno equals B.orderTrnHdrIntno
+                //           join C in db.dubbingSheetDtls on B.orderTrnHdrIntno equals C.orderTrnHdrIntno
+                //           where (!schedule.HasValue || A.dubbTrnHdrIntno == schedule.Value) && C.studioNo == std && C.isTaken == true
+                //           select new { A });
+                //rm.completed = scn.Count().ToString();
 
                 //calculate progress
-                var y = (from A in db.studios
-                         join B in db.studioEpisodes on A.studioIntno equals B.studioIntno
-                         join C in db.dubbingTrnDtls on B.dubbTrnDtlIntno equals C.dubbTrnDtlIntno
-                         join D in db.orderTrnHdrs on C.orderTrnHdrIntno equals D.orderTrnHdrIntno
-                         join E in db.dubbingSheetDtls on D.orderTrnHdrIntno equals E.orderTrnHdrIntno
-                         where A.studioNo == std && A.dubbTrnHdrIntno == schedule && B.status == true
-                         select new { E.isTaken });
-                rm.progress = y.Where(b => b.isTaken == true).Count() * 100 / y.Count();
+                //var y = (from A in db.studios
+                //         join B in db.studioEpisodes on A.studioIntno equals B.studioIntno
+                //         join C in db.dubbingTrnDtls on B.dubbTrnDtlIntno equals C.dubbTrnDtlIntno
+                //         join D in db.orderTrnHdrs on C.orderTrnHdrIntno equals D.orderTrnHdrIntno
+                //         join E in db.dubbingSheetDtls on D.orderTrnHdrIntno equals E.orderTrnHdrIntno
+                //         where A.studioNo == std && A.dubbTrnHdrIntno == schedule && B.status == true
+                //         select new { E.isTaken });
+                //rm.progress = y.Where(b => b.isTaken == true).Count() * 100 / y.Count();
                 model.Add(rm);
             }
             return Json(model, JsonRequestBehavior.AllowGet);

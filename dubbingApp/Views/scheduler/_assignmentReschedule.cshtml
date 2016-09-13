@@ -1,0 +1,56 @@
+﻿<div class="container-fluid" style="padding:0px">
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <div class="row">
+                <div class="col-sm-10">
+                    <small><label>Re Schedule</label></small>
+                </div>
+                <div class="col-sm-2">
+                    <button class="btn btn-default btn-xs pull-right" onclick="onCloseClick()" title="Close">
+                        <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div class="panel-body">
+            <table>
+                <tbody>
+                    @foreach (string dtl in ViewBag.assignmentDetailsList)
+                    {
+                        string[] dtl1 = dtl.Split('|');
+                        <tr>
+                            <td><small><label>@dtl1[0]</label></small></td>
+                            <td><small>@dtl1[1]</small></td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+            <br />
+            
+            @using (Ajax.BeginForm("assignmentReschedule", "scheduler",
+                                                new { assignment = ViewBag.assignment, oldSchedule = ViewBag.oldSchedule },
+                                                new AjaxOptions()
+                                                {
+                                                    HttpMethod = "POST",
+                                                    UpdateTargetId = "assignmentsList",
+                                                    OnSuccess = "onRescheduleSuccess"
+                                                }
+                                                ))
+            {
+                @Html.AntiForgeryToken()
+
+                <div class="form-group-sm">
+                    @Html.DropDownList("newSchedule", ViewBag.schList as SelectList, "Select New Schedule ...", htmlAttributes: new { @class = "form-control" })
+                </div>
+
+                <br />
+                <div class="form-group-sm btn-group-xs">
+                    <button type="submit" name="submit" value="1" class="btn btn-primary btn-xs">Re Schedule</button>
+                    <button type="submit" name="submit" value="2" class="btn btn-danger btn-xs">Remove from Schedule</button>
+                    <small class="alert-success" id="formResult"></small>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+

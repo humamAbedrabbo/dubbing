@@ -197,7 +197,7 @@
     <Compile Include="Controllers\ordersController.cs" />
     <Compile Include="Controllers\paymentController.cs" />
     <Compile Include="Controllers\personnelController.cs" />
-    <Compile Include="Controllers\schedulingController.cs" />
+    <Compile Include="Controllers\schedulerController.cs" />
     <Compile Include="Controllers\workLoadController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
@@ -480,15 +480,6 @@
     <Content Include="Views\calendar\_appointmentsList.cshtml" />
     <Content Include="Views\calendar\_appointmentUpdate.cshtml" />
     <Content Include="Views\calendar\_studioCalendarPopup.cshtml" />
-    <Content Include="Views\scheduling\Index.cshtml" />
-    <Content Include="Views\scheduling\_schedulesList.cshtml" />
-    <Content Include="Views\scheduling\_scheduleDetails.cshtml" />
-    <Content Include="Views\scheduling\_schedulesAddNew.cshtml" />
-    <Content Include="Views\scheduling\_episodesList.cshtml" />
-    <Content Include="Views\scheduling\_studiosList.cshtml" />
-    <Content Include="Views\scheduling\_episodesAddNew.cshtml" />
-    <Content Include="Views\scheduling\_studioAllocationList.cshtml" />
-    <Content Include="Views\scheduling\_studioAllocationAddNew.cshtml" />
     <Content Include="Views\assembly\Index.cshtml" />
     <Content Include="Views\assembly\_episodesList.cshtml" />
     <Content Include="Views\assembly\_shipmentsList.cshtml" />
@@ -584,6 +575,15 @@
     <Content Include="Views\workLoad\_waitingList.cshtml" />
     <Content Include="Views\adaptation\Edit2.cshtml" />
     <Content Include="Views\adaptation\_subtitlesList2.cshtml" />
+    <Content Include="Views\scheduler\Index.cshtml" />
+    <Content Include="Views\scheduler\_schedulesList.cshtml" />
+    <Content Include="Views\scheduler\_schedulesAddNew.cshtml" />
+    <Content Include="Views\scheduler\_supervisorsList.cshtml" />
+    <Content Include="Views\scheduler\_assignmentsList.cshtml" />
+    <Content Include="Views\scheduler\_scheduleDetails.cshtml" />
+    <Content Include="Views\scheduler\_assignmentReschedule.cshtml" />
+    <Content Include="Views\scheduler\_studioAllocation.cshtml" />
+    <Content Include="Views\scheduler\_studiosList.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

@@ -123,7 +123,6 @@
     <Build Include="dbo\Tables\dubbingAppointments.sql" />
     <Build Include="dbo\Tables\dubbingSheetDtls.sql" />
     <Build Include="dbo\Tables\dubbingSheetHdrs.sql" />
-    <Build Include="dbo\Tables\dubbingTrnDtls.sql" />
     <Build Include="dbo\Tables\dubbingTrnHdrs.sql" />
     <Build Include="dbo\Tables\employees.sql" />
     <Build Include="dbo\Tables\orderBatchTrnHdrs.sql" />

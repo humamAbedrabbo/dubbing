@@ -17,10 +17,10 @@ namespace dubbingModel
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         public voiceActor()
         {
-            this.dubbingSheetHdrs = new HashSet<dubbingSheetHdr>();
-            this.workActors = new HashSet<workActor>();
             this.dubbingAppointments = new HashSet<dubbingAppointment>();
+            this.dubbingSheetHdrs = new HashSet<dubbingSheetHdr>();
             this.payments = new HashSet<payment>();
+            this.workActors = new HashSet<workActor>();
         }
     
         public long voiceActorIntno { get; set; }
@@ -33,12 +33,12 @@ namespace dubbingModel
         public string accountNo { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<dubbingSheetHdr> dubbingSheetHdrs { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<workActor> workActors { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<dubbingAppointment> dubbingAppointments { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<dubbingSheetHdr> dubbingSheetHdrs { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<payment> payments { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<workActor> workActors { get; set; }
     }
 }

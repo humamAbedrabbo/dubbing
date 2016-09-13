@@ -17,14 +17,13 @@ namespace dubbingModel
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         public orderTrnHdr()
         {
+            this.clientClaims = new HashSet<clientClaim>();
             this.dubbingSheetDtls = new HashSet<dubbingSheetDtl>();
             this.dubbingSheetHdrs = new HashSet<dubbingSheetHdr>();
             this.orderChecks = new HashSet<orderCheck>();
             this.orderTrnDtls = new HashSet<orderTrnDtl>();
-            this.dubbingTrnDtls = new HashSet<dubbingTrnDtl>();
-            this.shipmentDetails = new HashSet<shipmentDetail>();
-            this.clientClaims = new HashSet<clientClaim>();
             this.scenes = new HashSet<scene>();
+            this.shipmentDetails = new HashSet<shipmentDetail>();
         }
     
         public long orderTrnHdrIntno { get; set; }
@@ -56,6 +55,8 @@ namespace dubbingModel
     
         public virtual agreementWork agreementWork { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<clientClaim> clientClaims { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<dubbingSheetDtl> dubbingSheetDtls { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<dubbingSheetHdr> dubbingSheetHdrs { get; set; }
@@ -65,12 +66,8 @@ namespace dubbingModel
         public virtual ICollection<orderTrnDtl> orderTrnDtls { get; set; }
         public virtual workOrder workOrder { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<dubbingTrnDtl> dubbingTrnDtls { get; set; }
+        public virtual ICollection<scene> scenes { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<shipmentDetail> shipmentDetails { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<clientClaim> clientClaims { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<scene> scenes { get; set; }
     }
 }

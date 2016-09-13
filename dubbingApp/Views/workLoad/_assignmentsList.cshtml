@@ -31,8 +31,10 @@
                             foreach (var work in x)
                             {
                                 var y = Model.Where(b => b.empIntno == emp.empIntno && b.orderTrnHdr.workIntno == work.workIntno).ToList();
+                                string empName = work.fullName;
+                                string workName = work.workName;
                                 <tr>
-                                    <td class="col-sm-7"><small><a href="#" onclick="onTaskSelectClick(@work.empIntno, '@work.fullName', @work.workIntno, '@work.workName')">@work.workName</a></small></td>
+                                    <td class="col-sm-7"><small><a href="#" onclick="onTaskSelectClick(@work.empIntno, @empName, @work.workIntno, @workName)">@work.workName</a></small></td>
                                     <td class="col-sm-1"><small>@y.Count()</small></td>
                                 </tr>
                             }

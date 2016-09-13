@@ -14,6 +14,12 @@ namespace dubbingModel
     
     public partial class orderTrnDtl
     {
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
+        public orderTrnDtl()
+        {
+            this.studioEpisodes = new HashSet<studioEpisode>();
+        }
+    
         public long orderTrnDtlIntno { get; set; }
         public long orderTrnHdrIntno { get; set; }
         public string activityType { get; set; }
@@ -28,7 +34,9 @@ namespace dubbingModel
         public Nullable<System.DateTime> assignedDate { get; set; }
         public Nullable<System.DateTime> forDueDate { get; set; }
     
-        public virtual orderTrnHdr orderTrnHdr { get; set; }
         public virtual employee employee { get; set; }
+        public virtual orderTrnHdr orderTrnHdr { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<studioEpisode> studioEpisodes { get; set; }
     }
 }

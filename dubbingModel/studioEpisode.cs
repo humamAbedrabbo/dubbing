@@ -16,10 +16,9 @@ namespace dubbingModel
     {
         public long studioEpisodeIntno { get; set; }
         public long studioIntno { get; set; }
-        public long dubbTrnDtlIntno { get; set; }
-        public bool status { get; set; }
+        public long orderTrnDtlIntno { get; set; }
     
-        public virtual dubbingTrnDtl dubbingTrnDtl { get; set; }
+        public virtual orderTrnDtl orderTrnDtl { get; set; }
         public virtual studio studio { get; set; }
     }
 }

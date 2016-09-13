@@ -105,9 +105,6 @@
     <Compile Include="dubbingSheetHdr.cs">
       <DependentUpon>dubbingDataModel.tt</DependentUpon>
     </Compile>
-    <Compile Include="dubbingTrnDtl.cs">
-      <DependentUpon>dubbingDataModel.tt</DependentUpon>
-    </Compile>
     <Compile Include="dubbingTrnHdr.cs">
       <DependentUpon>dubbingDataModel.tt</DependentUpon>
     </Compile>

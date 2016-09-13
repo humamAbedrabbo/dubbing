@@ -1,0 +1,13 @@
+﻿@model IEnumerable<dubbingModel.employee>
+
+<div class="container-fluid" style="padding:0px">
+    @foreach (var emp in Model)
+    {
+        string id = "sup" + emp.empIntno;
+        <div class="col-sm-12">
+            <a class="supervisor" href="#" onclick="onSupervisorSelectClick(@emp.empIntno)" id="@id">
+                <small>@emp.fullName</small>
+            </a>
+        </div>
+    }
+</div>

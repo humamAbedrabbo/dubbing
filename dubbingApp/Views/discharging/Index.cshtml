@@ -74,21 +74,6 @@
             });
         }
 
-        function onGenerateCalendarClick(oi) {
-            $.ajax({
-                url: '@Url.Action("generateCalendar", "discharging")',
-                type: 'GET',
-                data: { orderItem: oi },
-                success: function (result) {
-                    alert(result);
-                    $('#calendarBtn').removeClass('btn-default').addClass('btn-success');
-                },
-                failure: function (result) {
-                    alert(result);
-                }
-            });
-        }
-
         function onEndorseClick(sheetHdr1) {
             if (confirm("Please Confirm! About to Manually Endorse Dubbing of ALL Scenes for the selected Actor.")) {
                 $.ajax({

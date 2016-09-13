@@ -2,6 +2,7 @@
 
 <div class="container-fluid" style="padding:0px">
     <div class="btn-group-sm">
+        <button class="btn btn-primary" onclick="onStudioClick()" title="All"><small>All Studios</small></button>
         @{
             List<string> std = ViewBag.allocatedList;
             string btnColor;
@@ -15,7 +16,7 @@
                 {
                     btnColor = "btn-default";
                 }
-                <button class="btn @btnColor" onclick="onStudioAllocationClick(@ViewBag.schedule, '@item.domainCode')" title="Allocation"><small>@item.domainValue</small></button>
+                <button class="btn @btnColor" onclick="onStudioClick('@item.domainCode')" title="Studio"><small>@item.domainValue</small></button>
             }
         }
     </div>

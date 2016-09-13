@@ -14,28 +14,32 @@
                 </div>
             </div>
         </div>
-        <div class="panel-body">
-            <div class="btn-group">
+        <div class="panel-body" style="padding:5px">
+            <div class="btn-group" style="padding:10px">
                 <button class="btn btn-xs alert-info" onclick="onOrderItemUpdateClick(@ViewBag.orderTrnHdrIntno, 'A')" title="Activate Rejected Episode">Activate</button>
                 <button class="btn btn-xs" onclick="onOrderItemUpdateClick(@ViewBag.orderTrnHdrIntno, 'R')" title="Remove Episode from List">Cancel</button>
                 <button class="btn btn-xs alert-info" onclick="onOrderItemUpdateClick(@ViewBag.orderTrnHdrIntno, 'P')" title="Increase Priority">Promote</button>
                 <button class="btn btn-xs" onclick="onOrderItemUpdateClick(@ViewBag.orderTrnHdrIntno, 'D')" title="Decrease Priority">Demote</button>
             </div>
             <br />
-            <dl class="dl-horizontal">
-                @foreach (string item in Model)
-                {
-                    if (item == null)
+            <table>
+                <tbody>
+                    @foreach (string item in Model)
                     {
-                        <dt>&nbsp;</dt><dd>&nbsp;</dd>
+                        if (item == null)
+                        {
+                            <tr><td>-----------------</td><td>------------------</td></tr>
+                        }
+                        else
+                        {
+                            <tr>
+                                <td class="col-sm-4"><small><label>@item.Split('|')[0]</label></small></td>
+                                <td class="col-sm-8"><small>@item.Split('|')[1]</small></td>
+                            </tr>
+                        }
                     }
-                    else
-                    {
-                        <dt><small>@item.Split('|')[0]</small></dt>
-                        <dd><small>@item.Split('|')[1]</small></dd>
-                    }
-                }
-            </dl>
+                </tbody>
+            </table>
         </div>
     </div>
 </div>

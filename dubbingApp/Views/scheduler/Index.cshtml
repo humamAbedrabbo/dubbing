@@ -1,0 +1,257 @@
+﻿@{
+    ViewBag.Title = "Scheduling";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container-fluid">
+    <div class="jumbotron" style="padding:5px">
+        <h2>Dubbing Scheduler</h2>
+        <p class="lead"><h5>Optimize Dubbing Scheduling Through Balancing the Allocation of the Different Resources; Works, Studios &amp; Studio Teams. You can Reload a Schedule to reflect last changes on Dubbing Assignments or You can ReSchedule/Remove an Assignment from a Certain Schedule. When the Schedule is Completed, You can Publish it to allow making Actors' Appointments. For shortlisting, You can always use Studio or Supervisor Filters.</h5></p>
+        <span><label><a href="#" onclick="onSchedulesAddNewClick()">Create New Schedule ...</a></label></span>
+    </div>
+    
+    <div class="row">
+        <div class="col-md-10 col-md-offset-2" id="stdList">
+            @Html.Action("studiosList")
+        </div>
+    </div>
+    <br />
+
+    <div class="row">
+        <div class="col-md-2" style="padding-right:0px">
+            <div id="schedulesList">
+                @Html.Action("schedulesList", "scheduler")
+            </div>
+
+            <div id="supervisorsList">
+                @Html.Action("supervisorsList", "scheduler")
+            </div>
+        </div>
+
+        <div class="col-md-7" id="assignmentsList" style="padding-left:5px;padding-right:5px">
+            @Html.Action("assignmentsList")
+        </div>
+        <div class="col-md-3" style="padding-left:0px">
+            <div id="bulletin"></div>
+            <div id="details"></div>
+        </div>
+    </div>
+
+</div>
+
+@section Scripts
+{
+    @Scripts.Render("~/bundles/jqueryval")
+    <script src="~/Scripts/dubbing/busySpinner.js"></script>
+
+    <script>
+        //global ajax callback events handlers
+        // to exclude specific ajax call write: "global: false," in the begining of ajax function
+        $(document).ajaxStart(function () {
+            ajaxIndicatorStart('loading data.. please wait..');
+        }).ajaxComplete(function () {
+            ajaxIndicatorStop();
+        });
+
+        $(document).ready(function () {
+            $('#sch0').css('background-color', 'silver');
+            $('#bulletin').hide();
+        })
+
+        function onCloseClick() {
+            $('#details').html(null);
+            $('#bulletin').show();
+        }
+        function onSuccess() {
+            $('#formResult').html("Successfully Created / Updated");
+        }
+
+        // schedules
+        function onSchedulesAddNewClick() {
+            $('#bulletin').hide();
+            $.ajax({
+                url: '@Url.Action("schedulesAddNew", "scheduler")',
+                type: 'GET',
+                success: function (result) {
+                    $('#details').html(result);
+                }
+            })
+        }
+        function onScheduleSuccess() {
+            $('#formResult').html("Successfully Created");
+        }
+        function onScheduleFailure() {
+            $('#formResult').html("Failed! Please Provide Starting Date which Conforms to System Settings and is NOT Already Scheduled.");
+        }
+
+        function onScheduleSelectClick(sch) {
+            $('#currentScheduleHF').val(sch);
+            $('#details').html(null);
+            $('.schedule').css('background-color', 'white');
+            if (sch === null) {
+                $('#sch0').css('background-color', 'silver');
+                $('#bulletin').html(null);
+                $('#bulletin').hide();
+            }
+            else {
+                $('#sch' + sch).css('background-color', 'silver');
+
+                $.ajax({
+                    url: '@Url.Action("scheduleDetails", "scheduler")',
+                    type: 'GET',
+                    data: { schedule: sch },
+                    success: function (result) {
+                        $('#bulletin').html(result);
+                        $('#bulletin').show();
+                    }
+                });
+            }
+
+            $.ajax({
+                url: '@Url.Action("assignmentsList", "scheduler")',
+                type: 'GET',
+                data: { schedule: sch },
+                success: function (result) {
+                    $('#assignmentsList').html(result);
+                }
+            });
+            $.ajax({
+                url: '@Url.Action("supervisorsList", "scheduler")',
+                type: 'GET',
+                data: { schedule: sch },
+                success: function (result) {
+                    $('#supervisorsList').html(result);
+                }
+            });
+        }
+        function onSchedulesReloadClick(schedule1) {
+            if (confirm("Please Confirm! About to Reload the Selected Schedule.")) {
+                $.ajax({
+                    url: '@Url.Action("schedulesReload", "scheduler")',
+                    type: 'GET',
+                    data: { schedule: schedule1 },
+                    success: function (result) {
+                        $('#assignmentsList').html(result);
+                        $.ajax({
+                            url: '@Url.Action("scheduleDetails", "scheduler")',
+                            type: 'GET',
+                            data: { schedule: schedule1 },
+                            success: function (result) {
+                                $('#bulletin').html(result);
+                            }
+                        });
+                    }
+                });
+            }
+        }
+        function onSchedulesPublishClick(schedule1) {
+            if (confirm("Please Confirm! About to Generate Dubbing Calendar for the Selected Schedule.")) {
+                $.ajax({
+                    url: '@Url.Action("generateCalendar", "scheduler")',
+                    type: 'GET',
+                    data: { schedule: schedule1 },
+                    success: function (result) {
+                        alert(result);
+                    }
+                });
+            }
+        }
+        function onSchedulesDeleteClick(schedule1) {
+            if (confirm("Please Confirm! About to Delete the Selected Schedule.")) {
+                $.ajax({
+                    url: '@Url.Action("schedulesDelete", "scheduler")',
+                    type: 'GET',
+                    data: { schedule: schedule1 },
+                    success: function (result) {
+                        $('#schedulesList').html(result);
+                        $('#assignmentsList').html(null);
+                        $('#bulletin').hide();
+                    }
+                });
+            }
+        }
+        function onSchedulesEndorseClick(schedule1) {
+            if (confirm("Please Confirm! About to Endorse the Selected Schedule.")) {
+                $.ajax({
+                    url: '@Url.Action("schedulesEndorse", "scheduler")',
+                    type: 'GET',
+                    data: { schedule: schedule1 },
+                    success: function (result) {
+                        $('#schedulesList').html(result);
+                        $('#assignmentsList').html(null);
+                        $('#bulletin').hide();
+                    }
+                });
+            }
+        }
+
+        //supervisors
+        function onSupervisorSelectClick(emp) {
+            $('.supervisor').css('background-color', 'white');
+            $('#sup' + emp).css('background-color', 'silver');
+            $.ajax({
+                url: '@Url.Action("assignmentsList", "scheduler")',
+                type: 'GET',
+                data: { schedule: $('#currentScheduleHF').val(), empIntno: emp },
+                success: function (result) {
+                    $('#assignmentsList').html(result);
+                }
+            });
+        }
+
+        //assignments
+        function onRescheduleClick(id) {
+            $('#bulletin').hide();
+            $.ajax({
+                url: '@Url.Action("assignmentReschedule", "scheduler")',
+                type: 'GET',
+                data: { assignment: id, oldSchedule: $('#currentScheduleHF').val() },
+                success: function (result) {
+                    $('#details').html(result);
+                }
+            });
+        }
+
+        function onRescheduleSuccess() {
+            $('#details').html(null);
+            $.ajax({
+                url: '@Url.Action("scheduleDetails", "scheduler")',
+                type: 'GET',
+                data: { schedule: schedule1 },
+                success: function (result) {
+                    $('#bulletin').html(result);
+                }
+            });
+            $('#bulletin').show();
+        }
+
+        //studios
+        function onStudioClick(std) {
+            if ($('#currentScheduleHF').val() === "") {
+                return false;
+            }
+            else {
+                $.ajax({
+                    url: '@Url.Action("assignmentsList", "scheduler")',
+                    type: 'GET',
+                    data: { schedule: $('#currentScheduleHF').val(), studioNo: std },
+                    success: function (result) {
+                        $('#assignmentsList').html(result);
+                    }
+                });
+            }
+        }
+        function onStudioAllocationClick(studio1) {
+            $('#bulletin').hide();
+            $.ajax({
+                url: '@Url.Action("studioAllocation", "scheduler")',
+                type: 'GET',
+                data: { studioIntno: studio1 },
+                success: function (result) {
+                    $('#details').html(result);
+                }
+            });
+        }
+    </script>
+
+}

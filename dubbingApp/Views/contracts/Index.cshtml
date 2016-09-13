@@ -288,14 +288,18 @@
             })
         }
         function onContractChangeStatusClick(wrk, st) {
-            if (confirm('Please Confirm! About to Remove the Selected Item from the Active Contracts List.')) {
+            if (confirm('Please Confirm! About to Modify the Status of the selected Contract and will be MOVED to the corresponding Repository.')) {
                 $.ajax({
                     url: '@Url.Action("contractStatusChange", "contracts")',
                     type: 'GET',
                     data: { client: $('#clientsList').val(), agreement: $('#agreementsList').val(), work: wrk, newStatus: st },
                     success: function (result) {
                         $('#cList').html(result);
+                        $('#workStatus').prop('selected', false).filter(function () {
+                            return $(this).val('01');
+                        }).prop('selected', true);
                         $('#allDetails').html(null);
+                        $('#ordersHistory').show();
                     }
                 })
             }

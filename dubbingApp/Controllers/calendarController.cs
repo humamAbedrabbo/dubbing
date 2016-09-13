@@ -35,9 +35,9 @@ namespace dubbingApp.Controllers
 
         public ActionResult actorsList(long schedule)
         {
-            var model = (from A in db.dubbingTrnDtls
-                         join B in db.orderTrnHdrs on A.orderTrnHdrIntno equals B.orderTrnHdrIntno
-                         join C in db.dubbingSheetHdrs on B.orderTrnHdrIntno equals C.orderTrnHdrIntno
+            var model = (from A in db.studios
+                         join B in db.dubbingAppointments on A.studioIntno equals B.studioIntno
+                         join C in db.dubbingSheetHdrs on B.voiceActorIntno equals C.voiceActorIntno
                          join D in db.voiceActors on C.voiceActorIntno equals D.voiceActorIntno
                          where A.dubbTrnHdrIntno == schedule
                          select new { D.voiceActorIntno, D.fullName }).Distinct().OrderBy(b => b.fullName);

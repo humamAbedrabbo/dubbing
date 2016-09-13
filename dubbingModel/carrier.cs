@@ -24,8 +24,8 @@ namespace dubbingModel
         public string carrierType { get; set; }
         public string carrierName { get; set; }
         public string othCarrierName { get; set; }
-        public bool status { get; set; }
         public string schedule { get; set; }
+        public bool status { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<shipment> shipments { get; set; }

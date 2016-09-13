@@ -37,14 +37,8 @@ namespace dubbingApp.Controllers
         public ActionResult castingList(long orderItem)
         {
             var sheetHdr = db.dubbingSheetHdrs.Where(b => b.orderTrnHdrIntno == orderItem);
-            var schHdr = (from A in db.dubbingTrnDtls
-                          join B in db.studioEpisodes on A.dubbTrnDtlIntno equals B.dubbTrnDtlIntno
-                          where A.orderTrnHdrIntno == orderItem
-                          select new { A.dubbTrnHdrIntno }).Distinct();
-
             List<ViewModels.castingListViewModel> model = new List<ViewModels.castingListViewModel>();
-            bool isGenerated = true;
-            foreach(dubbingSheetHdr hdr in sheetHdr)
+            foreach (dubbingSheetHdr hdr in sheetHdr)
             {
                 ViewModels.castingListViewModel item = new ViewModels.castingListViewModel();
                 item.dubbSheetHdrIntno = hdr.dubbSheetHdrIntno;
@@ -56,15 +50,7 @@ namespace dubbingApp.Controllers
                 item.totalScenes = db.subtitles.Include(b => b.dialog.scene).Where(b => b.dubbSheetHdrIntno == hdr.dubbSheetHdrIntno)
                                     .Select(b => b.dialog.scene.sceneNo).Distinct().Count();
                 model.Add(item);
-                foreach(var sch in schHdr)
-                {
-                    var apt = db.dubbingAppointments.Include(b => b.studio.dubbingTrnHdr)
-                        .Where(b => b.studio.dubbTrnHdrIntno == sch.dubbTrnHdrIntno && b.voiceActorIntno == hdr.voiceActorIntno && b.actorName == hdr.actorName);
-                    if (apt.Count() == 0)
-                        isGenerated = false;
-                }
             }
-            ViewBag.isGenerated = isGenerated;
 
             var orderHdr = db.orderTrnHdrs.Find(orderItem);
             long workId = orderHdr.workIntno;
@@ -78,7 +64,7 @@ namespace dubbingApp.Controllers
             ViewBag.actorsList = new SelectList(x, "voiceActorIntno", "fullName");
             ViewBag.orderItem = orderItem;
             ViewBag.workEpisode = db.agreementWorks.Find(workId).workName + " / Episode: " + orderHdr.episodeNo;
-            
+
             return PartialView("_castingList", model.OrderBy(b => b.voiceActorIntno));
         }
 
@@ -118,62 +104,6 @@ namespace dubbingApp.Controllers
 
             long oi = orderItem;
             return RedirectToAction("castingList", new { orderItem = oi });
-        }
-
-        public ActionResult generateCalendar(long orderItem)
-        {
-            var schDtl = (from A in db.dubbingTrnDtls
-                          join B in db.studioEpisodes on A.dubbTrnDtlIntno equals B.dubbTrnDtlIntno
-                          where A.orderTrnHdrIntno == orderItem
-                          select new { A.dubbTrnHdrIntno, B.studioIntno }).Distinct();
-            if (schDtl.Count() == 0)
-                return new HttpStatusCodeResult(500, "Could Not Generate Calendar! Episode is not Scheduled Yet.");
-            else
-            {
-                foreach (var sch in schDtl)
-                {
-                    long schedule = sch.dubbTrnHdrIntno;
-                    long std = sch.studioIntno;
-                    var model = db.dubbingAppointments;
-                    DateTime fromDate = db.dubbingTrnHdrs.Find(schedule).fromDate;
-                    var x = (from A in db.studios
-                             join B in db.studioEpisodes on A.studioIntno equals B.studioIntno
-                             join C in db.dubbingTrnDtls on B.dubbTrnDtlIntno equals C.dubbTrnDtlIntno
-                             join D in db.orderTrnHdrs on C.orderTrnHdrIntno equals D.orderTrnHdrIntno
-                             join E in db.dubbingSheetHdrs on D.orderTrnHdrIntno equals E.orderTrnHdrIntno
-                             where A.dubbTrnHdrIntno == schedule && D.orderTrnHdrIntno == orderItem && A.studioIntno == std && A.status == true && B.status == true
-                             select new { A.workIntno, E.voiceActorIntno, E.actorName, E.dubbSheetHdrIntno }).Distinct().ToList();
-
-                    for (int i = 0; i < x.Count(); i++)
-                    {
-                        long actor = x[i].voiceActorIntno;
-                        string actorName = x[i].actorName;
-                        long work = x[i].workIntno;
-                        var y = db.dubbingAppointments.Where(b => b.voiceActorIntno == actor && b.actorName == actorName && b.studioIntno == std).ToList();
-                        if (y.Count() == 0)
-                        {
-                            dubbingAppointment apt = new dubbingAppointment();
-                            apt.voiceActorIntno = actor;
-                            apt.actorName = actorName;
-                            apt.studioIntno = std;
-                            apt.appointmentDate = fromDate;
-                            apt.workIntno = work;
-                            long sheetHdr = x[i].dubbSheetHdrIntno;
-                            int totalScenes = db.subtitles.Include(b => b.dialog.scene).Where(b => b.dubbSheetHdrIntno == sheetHdr)
-                                                .Select(b => b.dialog.scene.sceneNo).Distinct().Count();
-                            apt.totalScenes = totalScenes;
-                            var sph = db.workActors.FirstOrDefault(b => b.voiceActorIntno == actor && b.workIntno == work && b.status == true);
-                            if (sph != null && sph.scenesPerHour != 0)
-                                apt.totalMinutes = totalScenes * 60 / sph.scenesPerHour;
-                            else
-                                apt.totalMinutes = 0;
-                            model.Add(apt);
-                        }
-                    }
-                }
-                db.SaveChanges();
-                return Content("Calendar Generated / Updated Successfully.", "text/html");
-            }
         }
 
         public ActionResult endorseDubbing(long sheetHdr)

@@ -25,17 +25,13 @@ namespace dubbingModel
         public long dubbTrnHdrIntno { get; set; }
         public long workIntno { get; set; }
         public string studioNo { get; set; }
-        public long supervisor { get; set; }
-        public long sound { get; set; }
-        public bool isDefaultTeam { get; set; }
-        public bool status { get; set; }
+        public Nullable<long> sound { get; set; }
     
         public virtual agreementWork agreementWork { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<dubbingAppointment> dubbingAppointments { get; set; }
         public virtual dubbingTrnHdr dubbingTrnHdr { get; set; }
         public virtual employee employee { get; set; }
-        public virtual employee employee1 { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<studioEpisode> studioEpisodes { get; set; }
     }

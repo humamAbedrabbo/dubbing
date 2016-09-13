@@ -17,7 +17,6 @@ namespace dubbingModel
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         public dubbingTrnHdr()
         {
-            this.dubbingTrnDtls = new HashSet<dubbingTrnDtl>();
             this.studios = new HashSet<studio>();
         }
     
@@ -27,8 +26,6 @@ namespace dubbingModel
         public bool isPaid { get; set; }
         public bool status { get; set; }
     
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<dubbingTrnDtl> dubbingTrnDtls { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<studio> studios { get; set; }
     }

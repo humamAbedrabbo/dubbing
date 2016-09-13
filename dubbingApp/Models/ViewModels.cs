@@ -14,7 +14,7 @@ namespace dubbingApp.Models
 
         public class episodeItem
         {
-            public dubbingTrnDtl episode { get; set; }
+            public orderTrnDtl episode { get; set; }
             public string status { get; set; }
         }
 
@@ -71,6 +71,22 @@ namespace dubbingApp.Models
             public long voiceActorIntno { get; set; }
             public string actorName { get; set; }
             public int totalScenes { get; set; }
+        }
+
+        public class assignmentViewModel
+        {
+            public long orderTrnDtlIntno { get; set; }
+            public long empIntno { get; set; }
+            public string empName { get; set; }
+            public long workIntno { get; set; }
+            public string workName { get; set; }
+            public short episodeNo { get; set; }
+            public string dueDate { get; set; }
+            public long? studioIntno { get; set; }
+            public string studioNo { get; set; }
+            public long? dubbTrnHdrIntno { get; set; }
+            public string schedule { get; set; }
+            public string status { get; set; }
         }
     }
 }

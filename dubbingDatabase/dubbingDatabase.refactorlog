@@ -49,4 +49,11 @@
     <Property Name="ParentElementType" Value="SqlTable" />
     <Property Name="NewName" Value="scentence" />
   </Operation>
+  <Operation Name="Rename Refactor" Key="c4f4335d-fa0e-4f89-aacd-7ecc5084821c" ChangeDateTime="09/11/2016 08:02:35">
+    <Property Name="ElementName" Value="[dbo].[studioEpisodes].[dubbTrnDtlIntno]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[studioEpisodes]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="orderTrnDtlIntno" />
+  </Operation>
 </Operations>

@@ -36,7 +36,7 @@
                 <div class="form-group-sm">
                     <label class="control-label">Work</label>
                     <div>
-                        @Html.DropDownList("workIntno", ViewBag.worksList as SelectList, "Select Work ...", htmlAttributes: new { @class = "form-control" })
+                        @Html.DropDownList("workIntno", ViewBag.worksList as SelectList, "Select Work ...", htmlAttributes: new { @class = "form-control", @id = "worksCombo", onchange = "onActivitiesComboChanged()" })
                     </div>
                 </div>
 

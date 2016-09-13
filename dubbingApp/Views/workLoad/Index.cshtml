@@ -52,18 +52,26 @@
         function onActivitiesComboChanged() {
             $("#resourcesCombo").empty();
             $("#resourcesCombo").append('<option value="">Select Resource ...</option>');
-            $.ajax({
-                url: '@Url.Action("activityTypeChanged", "workLoad")',
-                type: 'POST',
-                data: { activityType: $('#activitiesCombo').val() },
-                dataType: 'json',
-                success: function (resources) {
-                    $.each(resources, function (i, item) {
-                        $("#resourcesCombo").append('<option value="' + item.Value + '">' +
-                        item.Text + '</option>');
-                    });
-                }
-            })
+            if ($('#activitiesCombo').val() !== "" && $('#worksCombo').val() !== "") {
+                $.ajax({
+                    url: '@Url.Action("activityTypeChanged", "workLoad")',
+                    type: 'POST',
+                    data: { activityType: $('#activitiesCombo').val(), workIntno: $('#worksCombo').val() },
+                    dataType: 'json',
+                    success: function (resources) {
+                        $.each(resources, function (i, item) {
+                            if (i === 0) {
+                                $("#resourcesCombo").append('<option selected value="' + item.Value + '">' +
+                                item.Text + '</option>');
+                            }
+                            else {
+                                $("#resourcesCombo").append('<option value="' + item.Value + '">' +
+                                item.Text + '</option>');
+                            }
+                        });
+                    }
+                })
+            }
         }
 
         function onCloseClick() {

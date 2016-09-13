@@ -14,17 +14,8 @@
                 <div class="col-sm-9">
                     <label>Characters List For @ViewBag.workEpisode</label>
                 </div>
-                @{ 
-                    string btnColor = "btn-default";
-                    if (ViewBag.isGenerated)
-                    {
-                        btnColor = "btn-success";
-                    }
-                }
+                
                 <div class="col-sm-2">
-                    <button class="btn @btnColor btn-xs pull-right" id="calendarBtn" onclick="onGenerateCalendarClick(@ViewBag.orderItem)" title="Generate Calendar">
-                        <span class="glyphicon glyphicon-calendar" aria-hidden="true"></span>
-                    </button>
                     <button class="btn btn-default btn-xs pull-right" onclick="onDischargeClick(@ViewBag.orderItem)" title="Download Discharging Table">
                         <span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span>
                     </button>
