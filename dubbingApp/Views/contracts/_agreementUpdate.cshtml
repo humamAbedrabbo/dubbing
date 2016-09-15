@@ -27,79 +27,69 @@
                                                 new { @class = "form-horizontal" }))
             {
                 @Html.AntiForgeryToken()
-                @Html.ValidationSummary(true, "", new { @class = "text-danger" })
                 @Html.HiddenFor(model => model.agreementIntno)
                 @Html.HiddenFor(model => model.clientIntno)
 
                 <div class="form-group-sm">
-                    <small>@Html.LabelFor(model => model.agreementType, "Type", htmlAttributes: new { @class = "control-label" })</small>
+                    @Html.LabelFor(model => model.agreementType, "Type", htmlAttributes: new { @class = "control-label" })
                     <div>
-                        @Html.DropDownListFor(model => model.agreementType, new SelectList(ViewBag.agreementTypesList, "key", "value"), string.Empty, htmlAttributes: new { @class = "form-control" })
-                        @Html.ValidationMessageFor(model => model.agreementType, "", new { @class = "text-danger" })
+                        @Html.DropDownListFor(model => model.agreementType, new SelectList(ViewBag.agreementTypesList, "key", "value"), string.Empty, htmlAttributes: new { @class = "form-control", required = "true", autofocus = "" })
                     </div>
                 </div>
 
                 <div class="form-group-sm">
-                    <small>@Html.LabelFor(model => model.agreementName, "Name", htmlAttributes: new { @class = "control-label" })</small>
+                    @Html.LabelFor(model => model.agreementName, "Name", htmlAttributes: new { @class = "control-label" })
                     <div>
-                        @Html.EditorFor(model => model.agreementName, new { htmlAttributes = new { @class = "form-control" } })
-                        @Html.ValidationMessageFor(model => model.agreementName, "", new { @class = "text-danger" })
+                        @Html.EditorFor(model => model.agreementName, new { htmlAttributes = new { @class = "form-control", required = "true" } })
                     </div>
                 </div>
 
                 <div class="form-group-sm">
-                    <small>@Html.LabelFor(model => model.othAgreementName, "Other Name", htmlAttributes: new { @class = "control-label" })</small>
+                    @Html.LabelFor(model => model.othAgreementName, "Other Name", htmlAttributes: new { @class = "control-label" })
                     <div>
-                        @Html.EditorFor(model => model.othAgreementName, new { htmlAttributes = new { @class = "form-control" } })
-                        @Html.ValidationMessageFor(model => model.othAgreementName, "", new { @class = "text-danger" })
+                        @Html.EditorFor(model => model.othAgreementName, new { htmlAttributes = new { @class = "form-control", required = "true" } })
                     </div>
                 </div>
 
                 <div class="form-group-sm">
-                    <small>@Html.LabelFor(model => model.fromDate, "From Date", htmlAttributes: new { @class = "control-label" })</small>
+                    @Html.LabelFor(model => model.fromDate, "From Date", htmlAttributes: new { @class = "control-label" })
                     <div>
-                        <input type="date" name="fromDate" class="form-control" />
-                        @Html.ValidationMessageFor(model => model.fromDate, "", new { @class = "text-danger" })
+                        <input type="date" name="fromDate" class="form-control" required />
                     </div>
                 </div>
 
                 <div class="form-group-sm">
-                    <small>@Html.LabelFor(model => model.agreementDuration, "Duration", htmlAttributes: new { @class = "control-label" })</small>
+                    @Html.LabelFor(model => model.agreementDuration, "Duration", htmlAttributes: new { @class = "control-label" })
                     <div>
-                        @Html.EditorFor(model => model.agreementDuration, new { htmlAttributes = new { @class = "form-control" } })
-                        @Html.ValidationMessageFor(model => model.agreementDuration, "", new { @class = "text-danger" })
+                        @Html.EditorFor(model => model.agreementDuration, new { htmlAttributes = new { @class = "form-control", required = "true" } })
                     </div>
                 </div>
 
                 <div class="form-group-sm">
-                    <small>@Html.LabelFor(model => model.durationUom, "Unit", htmlAttributes: new { @class = "control-label" })</small>
+                    @Html.LabelFor(model => model.durationUom, "Unit", htmlAttributes: new { @class = "control-label" })
                     <div>
-                        @Html.DropDownListFor(model => model.durationUom, new SelectList(ViewBag.durationUomList, "key", "value"), string.Empty, htmlAttributes: new { @class = "form-control" })
-                        @Html.ValidationMessageFor(model => model.durationUom, "", new { @class = "text-danger" })
+                        @Html.DropDownListFor(model => model.durationUom, new SelectList(ViewBag.durationUomList, "key", "value"), string.Empty, htmlAttributes: new { @class = "form-control", required = "true" })
                     </div>
                 </div>
 
                 <div class="form-group-sm">
-                    <small>@Html.LabelFor(model => model.thruDate, "Till Date", htmlAttributes: new { @class = "control-label" })</small>
+                    @Html.LabelFor(model => model.thruDate, "Till Date", htmlAttributes: new { @class = "control-label" })
                     <div>
                         <input type="date" name="thruDate" class="form-control" />
-                        @Html.ValidationMessageFor(model => model.thruDate, "", new { @class = "text-danger" })
                     </div>
                 </div>
 
                 <div class="form-group-sm">
-                    <small>@Html.LabelFor(model => model.remarks, "Remarks", htmlAttributes: new { @class = "control-label" })</small>
+                    @Html.LabelFor(model => model.remarks, "Remarks", htmlAttributes: new { @class = "control-label" })
                     <div>
                         @Html.EditorFor(model => model.remarks, new { htmlAttributes = new { @class = "form-control" } })
-                        @Html.ValidationMessageFor(model => model.remarks, "", new { @class = "text-danger" })
                     </div>
                 </div>
 
                 <div class="form-group-sm">
-                    <small>@Html.LabelFor(model => model.status, "Status", htmlAttributes: new { @class = "control-label" })</small>
+                    @Html.LabelFor(model => model.status, "Status", htmlAttributes: new { @class = "control-label" })
                     <div>
-                        @Html.DropDownListFor(model => model.status, new SelectList(ViewBag.statusList, "key", "value"), string.Empty, htmlAttributes: new { @class = "form-control" })
-                        @Html.ValidationMessageFor(model => model.status, "", new { @class = "text-danger" })
+                        @Html.DropDownListFor(model => model.status, new SelectList(ViewBag.statusList, "key", "value"), string.Empty, htmlAttributes: new { @class = "form-control", required = "true" })
                     </div>
                 </div>
 

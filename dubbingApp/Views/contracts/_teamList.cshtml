@@ -5,15 +5,15 @@
     <div class="panel panel-primary">
         <div class="panel-heading">
             <div class="row">
-                <div class="col-sm-8">
+                <div class="col-sm-9">
                     <label>Personnel</label>
                 </div>
-                <div class="col-sm-4">
-                    <button class="btn btn-default btn-xs pull-right" onclick="onCloseClick()" title="Close">
-                        <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
-                    </button>
-                    <button class="btn btn-default btn-xs pull-right" onclick="onPersonnelAddNewClick(@ViewBag.workIntno)" title="Add New">
+                <div class="col-sm-3 btn-group-xs">
+                    <button class="btn btn-default" onclick="onPersonnelAddNewClick(@ViewBag.workIntno)" title="Add New">
                         <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+                    </button>
+                    <button class="btn btn-default" onclick="onCloseClick()" title="Close">
+                        <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
                     </button>
                 </div>
             </div>
@@ -33,7 +33,7 @@
                                 <tr>
                                     <th class="col-sm-6"><small>Name</small></th>
                                     <th class="col-sm-4"><small>Since</small></th>
-                                    <th class="col-sm-2"><small>#</small></th>
+                                    <th class="col-sm-1"><small>#</small></th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -42,8 +42,8 @@
                                     <tr>
                                         <td class="col-sm-6"><small>@item.employee.fullName</small></td>
                                         <td class="col-sm-4"><small>@item.fromDate.ToShortDateString()</small></td>
-                                        <td class="col-sm-2">
-                                            <button class="btn btn-default btn-xs" onclick="onPersonnelDeleteClick(@item.workPersonnelIntno)" title="Remove">
+                                        <td class="col-sm-1">
+                                            <button class="btn btn-default btn-xs pull-right" onclick="onPersonnelDeleteClick(@item.workPersonnelIntno)" title="Remove">
                                                 <span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
                                             </button>
                                         </td>

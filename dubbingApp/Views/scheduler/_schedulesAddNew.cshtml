@@ -27,14 +27,12 @@
                                                 ))
             {
                 @Html.AntiForgeryToken()
-                @Html.ValidationSummary(true, "", new { @class = "text-danger" })
 
                 <div class="form-group-sm">
-                    <small>@Html.LabelFor(model => model.fromDate, "Week Starting", htmlAttributes: new { @class = "control-label" })</small>
+                    @Html.LabelFor(model => model.fromDate, "Week Starting", htmlAttributes: new { @class = "control-label" })
                     <p><small>Note: New Schedule MUST Start on a &nbsp; <label>@LookupModels.decodeDictionaryItem("settings", "fdw")</label> &nbsp; as per System Settings.</small></p>
                     <div>
-                        <input type="date" name="fromDate" class="form-control" />
-                        @Html.ValidationMessageFor(model => model.fromDate, "", new { @class = "text-danger" })
+                        <input type="date" name="fromDate" class="form-control" required autofocus />
                     </div>
                 </div>
 

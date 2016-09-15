@@ -8,7 +8,7 @@
         <div class="panel-heading">
             <div class="row">
                 <div class="col-sm-11">
-                    <small><label>@Model.workName</label> &nbsp; <span class="badge">@status</span></small>
+                    <label>@Model.workName</label> &nbsp; <span class="badge">@status</span>
                 </div>
                 <div class="col-sm-1">
                     <button class="btn btn-default btn-xs pull-right" onclick="onCloseClick()" title="Close">
@@ -28,87 +28,76 @@
                                                 new { @class = "form-horizontal" }))
             {
                 @Html.AntiForgeryToken()
-                @Html.ValidationSummary(true, "", new { @class = "text-danger" })
                 @Html.HiddenFor(model => model.workIntno)
                 @Html.HiddenFor(model => model.agreementIntno)
 
                 <div class="form-group-sm">
-                    <small>@Html.LabelFor(model => model.workType, "Type", htmlAttributes: new { @class = "control-label" })</small>
+                    @Html.LabelFor(model => model.workType, "Type", htmlAttributes: new { @class = "control-label" })
                     <div>
-                        @Html.DropDownListFor(model => model.workType, new SelectList(ViewBag.workTypesList, "key", "value"), string.Empty, htmlAttributes: new { @class = "form-control" })
-                        @Html.ValidationMessageFor(model => model.workType, "", new { @class = "text-danger" })
+                        @Html.DropDownListFor(model => model.workType, new SelectList(ViewBag.workTypesList, "key", "value"), string.Empty, htmlAttributes: new { @class = "form-control", required = "true", autofocus = "" })
                     </div>
                 </div>
 
                 <div class="form-group-sm">
-                    <small>@Html.LabelFor(model => model.agreementIntno, "Agreement", htmlAttributes: new { @class = "control-label" })</small>
+                    @Html.LabelFor(model => model.agreementIntno, "Agreement", htmlAttributes: new { @class = "control-label" })
                     <div>
-                        @Html.DropDownListFor(model => model.agreementIntno, ViewBag.agreementsList as SelectList, string.Empty, htmlAttributes: new { @class = "form-control" })
-                        @Html.ValidationMessageFor(model => model.agreementIntno, "", new { @class = "text-danger" })
+                        @Html.DropDownListFor(model => model.agreementIntno, ViewBag.agreementsList as SelectList, string.Empty, htmlAttributes: new { @class = "form-control", required = "true" })
                     </div>
                 </div>
 
                 <div class="form-group-sm">
-                    <small>@Html.LabelFor(model => model.workName, "Name", htmlAttributes: new { @class = "control-label" })</small>
+                    @Html.LabelFor(model => model.workName, "Name", htmlAttributes: new { @class = "control-label" })
                     <div>
-                        @Html.EditorFor(model => model.workName, new { htmlAttributes = new { @class = "form-control" } })
-                        @Html.ValidationMessageFor(model => model.workName, "", new { @class = "text-danger" })
+                        @Html.EditorFor(model => model.workName, new { htmlAttributes = new { @class = "form-control", required = "true" } })
                     </div>
                 </div>
 
                 <div class="form-group-sm">
-                    <small>@Html.LabelFor(model => model.othWorkName, "Other Name", htmlAttributes: new { @class = "control-label" })</small>
+                    @Html.LabelFor(model => model.othWorkName, "Other Name", htmlAttributes: new { @class = "control-label" })
                     <div>
-                        @Html.EditorFor(model => model.othWorkName, new { htmlAttributes = new { @class = "form-control" } })
-                        @Html.ValidationMessageFor(model => model.othWorkName, "", new { @class = "text-danger" })
+                        @Html.EditorFor(model => model.othWorkName, new { htmlAttributes = new { @class = "form-control", required = "true" } })
                     </div>
                 </div>
 
                 <div class="form-group-sm">
-                    <small>@Html.LabelFor(model => model.workNationality, "Nationality", htmlAttributes: new { @class = "control-label" })</small>
+                    @Html.LabelFor(model => model.workNationality, "Nationality", htmlAttributes: new { @class = "control-label" })
                     <div>
-                        @Html.DropDownListFor(model => model.workNationality, new SelectList(ViewBag.workNationalitiesList, "key", "value"), string.Empty, htmlAttributes: new { @class = "form-control" })
-                        @Html.ValidationMessageFor(model => model.workNationality, "", new { @class = "text-danger" })
+                        @Html.DropDownListFor(model => model.workNationality, new SelectList(ViewBag.workNationalitiesList, "key", "value"), string.Empty, htmlAttributes: new { @class = "form-control", required = "true" })
                     </div>
                 </div>
 
                 <div class="form-group-sm">
-                    <small>@Html.LabelFor(model => model.workOriginalLanguage, "Original Language", htmlAttributes: new { @class = "control-label" })</small>
+                    @Html.LabelFor(model => model.workOriginalLanguage, "Original Language", htmlAttributes: new { @class = "control-label" })
                     <div>
-                        @Html.DropDownListFor(model => model.workOriginalLanguage, new SelectList(ViewBag.originalLanguagesList, "key", "value"), string.Empty, htmlAttributes: new { @class = "form-control" })
-                        @Html.ValidationMessageFor(model => model.workOriginalLanguage, "", new { @class = "text-danger" })
+                        @Html.DropDownListFor(model => model.workOriginalLanguage, new SelectList(ViewBag.originalLanguagesList, "key", "value"), string.Empty, htmlAttributes: new { @class = "form-control", required = "true" })
                     </div>
                 </div>
 
                 <div class="form-group-sm">
-                    <small>@Html.LabelFor(model => model.totalNbrEpisodes, "Total Episodes", htmlAttributes: new { @class = "control-label" })</small>
+                    @Html.LabelFor(model => model.totalNbrEpisodes, "Total Episodes", htmlAttributes: new { @class = "control-label" })
                     <div>
-                        @Html.EditorFor(model => model.totalNbrEpisodes, new { htmlAttributes = new { @class = "form-control" } })
-                        @Html.ValidationMessageFor(model => model.totalNbrEpisodes, "", new { @class = "text-danger" })
+                        @Html.EditorFor(model => model.totalNbrEpisodes, new { htmlAttributes = new { @class = "form-control", required = "true" } })
                     </div>
                 </div>
 
                 <div class="form-group-sm">
-                    <small>@Html.LabelFor(model => model.totalWeekNbrEpisodes, "Weekly Episodes", htmlAttributes: new { @class = "control-label" })</small>
+                    @Html.LabelFor(model => model.totalWeekNbrEpisodes, "Weekly Episodes", htmlAttributes: new { @class = "control-label" })
                     <div>
-                        @Html.EditorFor(model => model.totalWeekNbrEpisodes, new { htmlAttributes = new { @class = "form-control" } })
-                        @Html.ValidationMessageFor(model => model.totalWeekNbrEpisodes, "", new { @class = "text-danger" })
+                        @Html.EditorFor(model => model.totalWeekNbrEpisodes, new { htmlAttributes = new { @class = "form-control", required = "true" } })
                     </div>
                 </div>
 
                 <div class="form-group-sm">
-                    <small>@Html.LabelFor(model => model.firstEpisodeShowDate, "First Show", htmlAttributes: new { @class = "control-label" })</small>
+                    @Html.LabelFor(model => model.firstEpisodeShowDate, "First Show", htmlAttributes: new { @class = "control-label" })
                     <div>
                         <input type="date" name="firstEpisodeShowDate" class="form-control" value="@firstShow" />
-                        @Html.ValidationMessageFor(model => model.firstEpisodeShowDate, "", new { @class = "text-danger" })
                     </div>
                 </div>
 
                 <div class="form-group-sm">
-                    <small>@Html.LabelFor(model => model.contactIntno, "contacts", htmlAttributes: new { @class = "control-label" })</small>
+                    @Html.LabelFor(model => model.contactIntno, "contacts", htmlAttributes: new { @class = "control-label" })
                     <div>
-                        @Html.DropDownListFor(model => model.contactIntno, ViewBag.contactsList as SelectList, string.Empty, htmlAttributes: new { @class = "form-control" })
-                        @Html.ValidationMessageFor(model => model.contactIntno, "", new { @class = "text-danger" })
+                        @Html.DropDownListFor(model => model.contactIntno, ViewBag.contactsList as SelectList, string.Empty, htmlAttributes: new { @class = "form-control", required = "true" })
                     </div>
                 </div>
                 
@@ -121,7 +110,7 @@
                         <button type="button" class="btn btn-default btn-xs" onclick="onContractChangeStatusClick(@Model.workIntno, '01')">Activate</button>
                     </div>
                     <p>
-                        <small><label class="alert-success" id="formResult"></label></small>
+                        <label class="alert-success" id="formResult"></label>
                     </p>
                 </div>
             }

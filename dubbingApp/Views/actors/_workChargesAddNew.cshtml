@@ -7,57 +7,51 @@
                                                 HttpMethod = "POST",
                                                 UpdateTargetId = "result",
                                                 OnSuccess = "onChargesSuccess(" + ViewBag.workPartyIntno + ")"
-                                            }
+                                            },
+                                            new { @class = "form-horizontal" }
                                             ))
 {
     @Html.AntiForgeryToken()
-    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
 
     <div class="form-group-sm">
-        <small>@Html.LabelFor(model => model.workIntno, "Work", htmlAttributes: new { @class = "control-label" })</small>
+        @Html.LabelFor(model => model.workIntno, "Work", htmlAttributes: new { @class = "control-label" })
         <div>
-            @Html.DropDownListFor(model => model.workIntno, ViewBag.worksList as SelectList, string.Empty, htmlAttributes: new { @class = "form-control" })
-            @Html.ValidationMessageFor(model => model.workIntno, "", new { @class = "text-danger" })
+            @Html.DropDownListFor(model => model.workIntno, ViewBag.worksList as SelectList, string.Empty, htmlAttributes: new { @class = "form-control", required = "true", autofocus = "" })
         </div>
     </div>
 
     <div class="form-group-sm">
-        <small>@Html.LabelFor(model => model.chargeUom, "Charge Basis", htmlAttributes: new { @class = "control-label" })</small>
+        @Html.LabelFor(model => model.chargeUom, "Charge Basis", htmlAttributes: new { @class = "control-label" })
         <div>
-            @Html.DropDownListFor(model => model.chargeUom, new SelectList(ViewBag.chargeUomList, "key", "value"), string.Empty, htmlAttributes: new { @class = "form-control" })
-            @Html.ValidationMessageFor(model => model.chargeUom, "", new { @class = "text-danger" })
+            @Html.DropDownListFor(model => model.chargeUom, new SelectList(ViewBag.chargeUomList, "key", "value"), string.Empty, htmlAttributes: new { @class = "form-control", required = "true" })
         </div>
     </div>
 
     <div class="form-group-sm">
-        <small>@Html.LabelFor(model => model.chargeAmount, "Amount", htmlAttributes: new { @class = "control-label" })</small>
+        @Html.LabelFor(model => model.chargeAmount, "Amount", htmlAttributes: new { @class = "control-label" })
         <div>
-            @Html.EditorFor(model => model.chargeAmount, new { htmlAttributes = new { @class = "form-control" } })
-            @Html.ValidationMessageFor(model => model.chargeAmount, "", new { @class = "text-danger" })
+            @Html.EditorFor(model => model.chargeAmount, new { htmlAttributes = new { @class = "form-control", required = "true" } })
         </div>
     </div>
     
     <div class="form-group-sm">
-        <small>@Html.LabelFor(model => model.currencyCode, "Currency", htmlAttributes: new { @class = "control-label" })</small>
+        @Html.LabelFor(model => model.currencyCode, "Currency", htmlAttributes: new { @class = "control-label" })
         <div>
-            @Html.DropDownListFor(model => model.currencyCode, new SelectList(ViewBag.currenciesList, "key", "value"), string.Empty, htmlAttributes: new { @class = "form-control" })
-            @Html.ValidationMessageFor(model => model.currencyCode, "", new { @class = "text-danger" })
+            @Html.DropDownListFor(model => model.currencyCode, new SelectList(ViewBag.currenciesList, "key", "value"), string.Empty, htmlAttributes: new { @class = "form-control", required = "true" })
         </div>
     </div>
 
     <div class="form-group-sm">
-        <small>@Html.LabelFor(model => model.fromDate, "Start Date", htmlAttributes: new { @class = "control-label" })</small>
+        @Html.LabelFor(model => model.fromDate, "Start Date", htmlAttributes: new { @class = "control-label" })
         <div>
-            <input type="date" name="fromDate" />
-            @Html.ValidationMessageFor(model => model.fromDate, "", new { @class = "text-danger" })
+            <input type="date" name="fromDate" required />
         </div>
     </div>
 
     <div class="form-group-sm">
-        <small>@Html.LabelFor(model => model.remarks, "Remarks", htmlAttributes: new { @class = "control-label" })</small>
+        @Html.LabelFor(model => model.remarks, "Remarks", htmlAttributes: new { @class = "control-label" })
         <div>
             @Html.EditorFor(model => model.remarks, new { htmlAttributes = new { @class = "form-control" } })
-            @Html.ValidationMessageFor(model => model.remarks, "", new { @class = "text-danger" })
         </div>
     </div>
     

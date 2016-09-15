@@ -541,7 +541,6 @@
     <Content Include="Views\adaptation\_namesList.cshtml" />
     <Content Include="Views\adaptation\_sceneDetails.cshtml" />
     <Content Include="Views\adaptation\_subtitleDetails.cshtml" />
-    <Content Include="Views\orders\_adaptationAddNew.cshtml" />
     <Content Include="Views\assembly\_carriersList.cshtml" />
     <Content Include="Views\assembly\_carriersAddNew.cshtml" />
     <Content Include="Views\assembly\_carriersUpdate.cshtml" />

@@ -9,7 +9,6 @@
                                 }, new { @class="form-inline"}))
 {
     @Html.AntiForgeryToken()
-    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
     @Html.HiddenFor(m => m.dubbSheetHdrIntno)
     @Html.HiddenFor(m => m.orderTrnHdrIntno)
     @Html.HiddenFor(m => m.workCharacterIntno)

@@ -21,64 +21,57 @@
                                                     HttpMethod = "POST",
                                                     UpdateTargetId = "formResult",
                                                     OnSuccess = "onNewOrderSuccess"
-                                                }))
+                                                },
+                                                new { @class = "form-horizontal" }
+                                                ))
             {
                 @Html.AntiForgeryToken()
-                @Html.ValidationSummary(true, "", new { @class = "text-danger" })
 
                 <div class="form-group-sm">
-                    <small>@Html.LabelFor(model => model.clientIntno, "Client", htmlAttributes: new { @class = "control-label col-sm-12" })</small>
-                    <div class="col-sm-12">
-                        @Html.DropDownListFor(model => model.clientIntno, ViewBag.clientsList as SelectList, "Select Client ...", htmlAttributes: new { @class = "form-control", onchange = "onClientComboChanged()", @id = "clientCombo", autofocus = true })
-                        @Html.ValidationMessageFor(model => model.clientIntno, "", new { @class = "text-danger" })
+                    @Html.LabelFor(model => model.clientIntno, "Client", htmlAttributes: new { @class = "control-label" })
+                    <div>
+                        @Html.DropDownListFor(model => model.clientIntno, ViewBag.clientsList as SelectList, "Select Client ...", htmlAttributes: new { @class = "form-control", onchange = "onClientComboChanged()", @id = "clientCombo", required = "true", autofocus = "" })
                     </div>
                 </div>
 
                 <div class="form-group-sm">
-                    <small>@Html.LabelFor(model => model.workIntno, "Work", htmlAttributes: new { @class = "control-label col-sm-12" })</small>
-                    <div class="col-sm-12">
-                        @Html.DropDownListFor(model => model.workIntno, ViewBag.worksList as SelectList, "Select Work ...", htmlAttributes: new { @class = "form-control", id = "workCombo" })
-                        @Html.ValidationMessageFor(model => model.workIntno, "", new { @class = "text-danger" })
+                    @Html.LabelFor(model => model.workIntno, "Work", htmlAttributes: new { @class = "control-label" })
+                    <div>
+                        @Html.DropDownListFor(model => model.workIntno, ViewBag.worksList as SelectList, "Select Work ...", htmlAttributes: new { @class = "form-control", id = "workCombo", required = "true" })
                     </div>
                 </div>
 
                 <div class="form-group-sm">
-                    <small>@Html.LabelFor(model => model.fromEpisode, "From Episode", htmlAttributes: new { @class = "control-label col-sm-12" })</small>
-                    <div class="col-sm-12">
-                        @Html.EditorFor(model => model.fromEpisode, new { htmlAttributes = new { @class = "form-control" } })
-                        @Html.ValidationMessageFor(model => model.fromEpisode, "", new { @class = "text-danger" })
+                    @Html.LabelFor(model => model.fromEpisode, "From Episode", htmlAttributes: new { @class = "control-label" })
+                    <div>
+                        @Html.EditorFor(model => model.fromEpisode, new { htmlAttributes = new { @class = "form-control", required = "true" } })
                     </div>
                 </div>
 
                 <div class="form-group-sm">
-                    <small>@Html.LabelFor(model => model.thruEpisode, "Thru Episode", htmlAttributes: new { @class = "control-label col-sm-12" })</small>
-                    <div class="col-sm-12">
-                        @Html.EditorFor(model => model.thruEpisode, new { htmlAttributes = new { @class = "form-control" } })
-                        @Html.ValidationMessageFor(model => model.thruEpisode, "", new { @class = "text-danger" })
+                    @Html.LabelFor(model => model.thruEpisode, "Thru Episode", htmlAttributes: new { @class = "control-label" })
+                    <div>
+                        @Html.EditorFor(model => model.thruEpisode, new { htmlAttributes = new { @class = "form-control", required = "true" } })
                     </div>
                 </div>
 
                 <div class="form-group-sm">
-                    <small>@Html.LabelFor(model => model.receivedDate, "Received Date", htmlAttributes: new { @class = "control-label col-sm-12" })</small>
-                    <div class="col-sm-12">
-                        <input type="date" name="receivedDate" class="form-control" />
-                        @Html.ValidationMessageFor(model => model.receivedDate, "", new { @class = "text-danger" })
+                    @Html.LabelFor(model => model.receivedDate, "Received Date", htmlAttributes: new { @class = "control-label" })
+                    <div>
+                        <input type="date" name="receivedDate" class="form-control" required />
                     </div>
                 </div>
 
                 <div class="form-group-sm">
-                    <small>@Html.LabelFor(model => model.remarks, "Remarks", htmlAttributes: new { @class = "control-label col-sm-12" })</small>
-                    <div class="col-sm-12">
+                    @Html.LabelFor(model => model.remarks, "Remarks", htmlAttributes: new { @class = "control-label" })
+                    <div>
                         @Html.EditorFor(model => model.remarks, new { htmlAttributes = new { @class = "form-control" } })
-                        @Html.ValidationMessageFor(model => model.remarks, "", new { @class = "text-danger" })
                     </div>
                 </div>
 
                 <div class="form-group-sm">
-                    <div class="col-sm-12">
-                        <button type="submit" class="btn btn-default btn-sm">Submit</button>
-                        <label class="alert-success" id="formResult"></label>
-                    </div>
+                    <button type="submit" class="btn btn-default btn-sm">Submit</button>
+                    <label class="alert-success" id="formResult"></label>
                 </div>
             }
         </div>

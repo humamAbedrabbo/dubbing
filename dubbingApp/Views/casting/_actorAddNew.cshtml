@@ -3,7 +3,16 @@
 <div class="container-fluid" style="padding:0px">
     <div class="panel panel-default">
         <div class="panel-heading">
-            <label>New Casting</label>
+            <div class="row">
+                <div class="col-sm-10">
+                    <label>New Casting</label>
+                </div>
+                <div class="col-sm-2">
+                    <button class="btn btn-default btn-xs pull-right" onclick="onCloseClick()" title="Close">
+                        <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+                    </button>
+                </div>
+            </div>
         </div>
         <div class="panel-body">
             @using (Ajax.BeginForm("actorAddNew", "casting",
@@ -11,58 +20,45 @@
                                                 {
                                                     HttpMethod = "POST",
                                                     OnSuccess = "onSuccess"
-                                                }))
+                                                },
+                                                new { @class = "form-horizontal" }
+                                                ))
             {
                 @Html.AntiForgeryToken()
-                @Html.ValidationSummary(true, "", new { @class = "text-danger" })
                 @Html.HiddenFor(model => model.workIntno)
                 @Html.HiddenFor(model => model.workCharacterIntno)
 
                 <div class="form-group-sm">
-                    <small>@Html.LabelFor(model => model.voiceActorIntno, "Voice Actor", htmlAttributes: new { @class = "control-label col-sm-12" })</small>
-                    <div class="col-sm-12">
-                        <small>
-                            @Html.DropDownListFor(model => model.voiceActorIntno, ViewBag.actorsList as SelectList, string.Empty, htmlAttributes: new { @class = "form-control" })
-                            @Html.ValidationMessageFor(model => model.voiceActorIntno, "", new { @class = "text-danger" })
-                        </small>
+                    @Html.LabelFor(model => model.voiceActorIntno, "Voice Actor", htmlAttributes: new { @class = "control-label" })
+                    <div>
+                        @Html.DropDownListFor(model => model.voiceActorIntno, ViewBag.actorsList as SelectList, string.Empty, htmlAttributes: new { @class = "form-control", required = "true", autofocus = "" })
                     </div>
                 </div>
 
                 <div class="form-group-sm">
-                    <small>@Html.LabelFor(model => model.fromDate, "Since", htmlAttributes: new { @class = "control-label col-sm-12" })</small>
-                    <div class="col-sm-12">
-                        <small>
-                            <input type="date" name="fromDate" class="form-control" />
-                            @Html.ValidationMessageFor(model => model.fromDate, "", new { @class = "text-danger" })
-                        </small>
+                    @Html.LabelFor(model => model.fromDate, "Since", htmlAttributes: new { @class = "control-label" })
+                    <div>
+                        <input type="date" name="fromDate" class="form-control" required />
                     </div>
                 </div>
 
                 <div class="form-group-sm">
-                    <small>@Html.LabelFor(model => model.scenesPerHour, "Scene / Hour", htmlAttributes: new { @class = "control-label col-sm-12" })</small>
-                    <div class="col-sm-12">
-                        <small>
-                            @Html.EditorFor(model => model.scenesPerHour, new { htmlAttributes = new { @class = "form-control" } })
-                            @Html.ValidationMessageFor(model => model.scenesPerHour, "", new { @class = "text-danger" })
-                        </small>
+                    @Html.LabelFor(model => model.scenesPerHour, "Scene / Hour", htmlAttributes: new { @class = "control-label" })
+                    <div>
+                        @Html.EditorFor(model => model.scenesPerHour, new { htmlAttributes = new { @class = "form-control", required = "true" } })
                     </div>
                 </div>
 
                 <div class="form-group-sm">
-                    <small>@Html.LabelFor(model => model.remarks, "Remarks", htmlAttributes: new { @class = "control-label col-sm-12" })</small>
-                    <div class="col-sm-12">
-                        <small>
-                            @Html.EditorFor(model => model.remarks, new { htmlAttributes = new { @class = "form-control" } })
-                            @Html.ValidationMessageFor(model => model.remarks, "", new { @class = "text-danger" })
-                        </small>
+                    @Html.LabelFor(model => model.remarks, "Remarks", htmlAttributes: new { @class = "control-label" })
+                    <div>
+                        @Html.EditorFor(model => model.remarks, new { htmlAttributes = new { @class = "form-control" } })
                     </div>
                 </div>
 
                 <div class="form-group-sm">
-                    <div class="col-sm-12">
-                        <button type="submit" class="btn btn-default btn-sm">Submit</button>
-                        <label class="alert-success" id="formResult"></label>
-                    </div>
+                    <button type="submit" class="btn btn-default btn-sm">Submit</button>
+                    <label class="alert-success" id="formResult"></label>
                 </div>
             }
         </div>
