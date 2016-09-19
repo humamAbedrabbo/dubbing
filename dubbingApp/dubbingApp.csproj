@@ -583,6 +583,7 @@
     <Content Include="Views\scheduler\_assignmentReschedule.cshtml" />
     <Content Include="Views\scheduler\_studioAllocation.cshtml" />
     <Content Include="Views\scheduler\_studiosList.cshtml" />
+    <Content Include="Views\adaptation\_adaptationWorks.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -611,7 +612,7 @@
     <VisualStudio>
       <FlavorProperties GUID="{349c5851-65df-11da-9384-00065b846f21}">
         <WebProjectProperties>
-          <UseIIS>True</UseIIS>
+          <UseIIS>False</UseIIS>
           <AutoAssignPort>True</AutoAssignPort>
           <DevelopmentServerPort>3329</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>

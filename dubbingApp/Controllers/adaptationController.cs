@@ -20,26 +20,75 @@ namespace dubbingApp.Controllers
          // GET: adaptations
         public ActionResult Index()
         {
-            // Get list of episodes where adaptation is in progress
-            var model = ctx.orderTrnDtls.Include(x => x.employee).Include(x => x.orderTrnHdr).Include(x => x.orderTrnHdr.agreementWork).Where(x => x.status).ToList();
+
+
+            return View();
             
+        }
+
+        public ActionResult GetAdaptationWorks(bool isActive = true)
+        {
+            // Get list of episodes where adaptation is in progress
+            var model = ctx.orderTrnDtls.Include(x => x.employee).Include(x => x.orderTrnHdr).Include(x => x.orderTrnHdr.agreementWork).Where(x => (x.activityType == "01" || x.activityType == "02") && x.status == isActive).ToList();
+
 
             if (User.IsInRole("EDITOR"))
             {
                 var employee = ctx.employees.FirstOrDefault(x => x.email.ToUpper() == User.Identity.Name);
-                if(employee == null)
+                if (employee == null)
                 {
                     model.Clear();
                 }
                 else
                 {
-                    var userWorks = ctx.workPersonnels.Where(x => x.empIntno == employee.empIntno && x.status == true && (x.titleType == "04" || x.titleType == "05" || x.titleType == "06")).Select(x => x.workIntno).ToList() ;
-                    model = model.Where(x => x.empIntno == employee.empIntno && userWorks.Contains(x.orderTrnHdr.workIntno) && (x.activityType == "01" || x.activityType == "02")).ToList() ;
+                    var userWorks = ctx.workPersonnels.Where(x => x.empIntno == employee.empIntno && x.status == true && (x.titleType == "04" || x.titleType == "05" || x.titleType == "06")).Select(x => x.workIntno).ToList();
+                    model = model.Where(x => x.empIntno == employee.empIntno && userWorks.Contains(x.orderTrnHdr.workIntno) && (x.activityType == "01" || x.activityType == "02")).ToList();
                 }
             }
+            ViewBag.Status = isActive;
+            return PartialView("_adaptationWorks", model);
+        }
 
-            return View(model);
-            
+        public void RenumberScenesAndDialogs(long orderTrnHdrIntno)
+        {
+            var order = ctx.orderTrnHdrs.Find(orderTrnHdrIntno);
+            short sceneNo = 0;
+            short dlgNo = 0;
+            short sNo = 0;
+            long lastDlgId = 0;
+            long lastSceneId = 0;
+            var subtitles = ctx.subtitles.Include(x => x.dialog).Include(x => x.dialog.scene).Where(x => x.dialog.scene.orderTrnHdrIntno == orderTrnHdrIntno).OrderBy(x => x.startSecond).ThenBy(x => x.endSecond).ToList();
+            foreach(var s in subtitles)
+            {
+                if(s.dialog.scene.sceneIntno == lastSceneId)
+                {
+                    s.dialog.scene.sceneNo = sceneNo;
+                }
+                else
+                {
+                    sceneNo += 1;
+                    lastSceneId = s.dialog.scene.sceneIntno;
+                    s.dialog.scene.sceneNo = sceneNo;
+                    lastDlgId = 0;
+                    dlgNo = 0;
+                    sNo = 0;
+                }
+
+                if(s.dialog.dialogIntno == lastDlgId)
+                {
+                    s.dialog.dialogNo = dlgNo;
+                }
+                else
+                {
+                    dlgNo += 1;
+                    lastDlgId = s.dialogIntno;
+                    s.dialog.dialogNo = dlgNo;
+                    sNo = 0;
+                }
+                sNo += 1;
+                s.subtitleNo = sNo;
+            }
+            ctx.SaveChanges();
         }
 
         public ActionResult CompleteAdaptation(long orderTrnDtlIntno)
@@ -53,6 +102,7 @@ namespace dubbingApp.Controllers
             {
                 order.orderTrnHdr.endAdaptation = DateTime.Now;
                 ctx.SaveChanges();
+                RenumberScenesAndDialogs(order.orderTrnHdrIntno);
             }
             return RedirectToAction("Index");
         }
@@ -379,6 +429,8 @@ namespace dubbingApp.Controllers
         public FileStreamResult downloadFile(long orderTrnHdrIntno)
         {
             var order = ctx.orderTrnHdrs.Find(orderTrnHdrIntno);
+            
+
             StringBuilder sb = new StringBuilder();
             int line = 1;
 
