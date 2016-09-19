@@ -325,6 +325,9 @@
                 //track1.addCue(new VTTCue(5, 10.5, "أهلا وسهلا <u>بكم</u> في القصر"));
 
                 var dur = Math.floor(video.duration);
+                if ($("#scene_max").val() == 0)
+                    $("#scene_max").val(dur);
+
                 var sceneMin = $("#scene_min").val();
                 var sceneMax = $("#scene_max").val();
 

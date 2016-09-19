@@ -21,7 +21,7 @@ namespace dubbingApp.Controllers
         public ActionResult Index()
         {
             // Get list of episodes where adaptation is in progress
-            var model = ctx.orderTrnDtls.Include(x => x.employee).Include(x => x.orderTrnHdr).Include(x => x.orderTrnHdr.agreementWork).Where(x => !x.status).ToList();
+            var model = ctx.orderTrnDtls.Include(x => x.employee).Include(x => x.orderTrnHdr).Include(x => x.orderTrnHdr.agreementWork).Where(x => x.status).ToList();
             
 
             if (User.IsInRole("EDITOR"))
@@ -45,9 +45,9 @@ namespace dubbingApp.Controllers
         public ActionResult CompleteAdaptation(long orderTrnDtlIntno)
         {
             var order = ctx.orderTrnDtls.Find(orderTrnDtlIntno);
-            order.status = true;
+            order.status = false;
             ctx.SaveChanges();
-            var assignments = order.orderTrnHdr.orderTrnDtls.Where(x =>x.activityType == order.activityType && x.status == false);
+            var assignments = order.orderTrnHdr.orderTrnDtls.Where(x =>x.activityType == order.activityType && x.status);
 
             if (assignments.Count() == 0 && !order.orderTrnHdr.endAdaptation.HasValue)
             {
