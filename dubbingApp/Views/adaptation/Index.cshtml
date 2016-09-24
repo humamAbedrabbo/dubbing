@@ -1,5 +1,4 @@
-﻿@using dubbingModel
-@model IEnumerable<orderTrnDtl>
+﻿
 
 @{
 
@@ -8,33 +7,46 @@
 
 
 <h2>Index</h2>
+<div class="pull-right">
+    <div class="btn-group" role="group" aria-label="...">
+        <button id="filterActive" onclick="javascript: filterActive();" type="button" class="btn btn-default active">Active</button>
+        <button id="filterCompleted" onclick="javascript: filterCompleted();" type="button" class="btn btn-default">Completed</button>
+        
+    </div>
+</div>
+<br />
+<div id="worksContainer">
+    @Html.Action("GetAdaptationWorks", new { isActive = true })
+</div>
 
-<table class="table">
-    <thead>
-        <tr>
-            <th>Work</th>
-            <th>Episode</th>
-            <th>Assigned To</th>
-            <th>Adaptation Start</th>
-            <th>From</th>
-            <th>To</th>
-            <th></th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in Model)
-        {
-        <tr>
-            <td>@item.orderTrnHdr.agreementWork.workName</td>
-            <td>@item.orderTrnHdr.episodeNo</td>
-            <td>@item.employee.fullName</td>
-            <td>@string.Format("{0:d}",item.assignedDate)</td>
-            <td>@item.fromTimeCode</td>
-            <td>@item.thruTimeCode</td>
-            <td><a class="btn btn-primary" href='@Url.Action("Edit2", "adaptation", new { id = item.orderTrnHdrIntno, fromTime = item.fromTimeCode, toTime = item.thruTimeCode})'>Edit</a></td>
-            <td><a class="btn btn-success" href='@Url.Action("CompleteAdaptation", "adaptation", new { orderTrnDtlIntno = item.orderTrnDtlIntno})'>Complete Work</a></td>
-        </tr>
+
+@section Scripts 
+{
+    <script>
+        function filterActive() {
+            updateWorks(true);
+            
+            $("#filterCompleted").removeClass("active");
+            $("#filterActive").addClass("active");
         }
-    </tbody>
-</table>
+        function filterCompleted() {
+            updateWorks(false);
+            $("#filterActive").removeClass("active");
+            $("#filterCompleted").addClass("active");
+        }
+        function updateWorks(status) {
+            var url = '/adaptation/GetAdaptationWorks';
+            $.ajax({
+                url: url,
+                data: { isActive: status },
+                success: function (result) {
+                    $("#worksContainer").empty();
+                    $("#worksContainer").html(result);
+                }
+            });
+        }
+        $(function () {
+
+        });
+    </script>
+}

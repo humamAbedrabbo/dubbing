@@ -1,0 +1,77 @@
+﻿@using dubbingModel
+@model IEnumerable<orderTrnDtl>
+
+@if(ViewBag.Status)
+{
+
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Work</th>
+            <th>Episode</th>
+            <th>Assigned To</th>
+            <th>Adaptation Start</th>
+            <th>From</th>
+            <th>To</th>
+            <th></th>
+            <th></th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.orderTrnHdr.agreementWork.workName</td>
+                <td>@item.orderTrnHdr.episodeNo</td>
+                <td>@item.employee.fullName</td>
+                <td>@string.Format("{0:d}", item.assignedDate)</td>
+                <td>@item.fromTimeCode</td>
+                <td>@item.thruTimeCode</td>
+                <td><a class="btn btn-primary" href='@Url.Action("Edit2", "adaptation", new { id = item.orderTrnHdrIntno, fromTime = item.fromTimeCode, toTime = item.thruTimeCode})'>Edit</a></td>
+                <td><a class="btn btn-success" href='@Url.Action("CompleteAdaptation", "adaptation", new { orderTrnDtlIntno = item.orderTrnDtlIntno})'>Complete Work</a></td>
+                <td><a class="btn btn-primary form-control" href='@Url.Action("downloadFile", new { item.orderTrnHdrIntno })'>Subtitles</a></td>
+            </tr>
+        }
+    </tbody>
+</table>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Work</th>
+                <th>Episode</th>
+                <th>Assigned To</th>
+                <th>Adaptation Start</th>
+                <th>Adaptation End</th>
+                <th></th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@item.orderTrnHdr.agreementWork.workName</td>
+                    <td>@item.orderTrnHdr.episodeNo</td>
+                    <td>@item.employee.fullName</td>
+                    <td>@string.Format("{0:d}", item.orderTrnHdr.startAdaptation)</td>
+                    <td>@string.Format("{0:d}", item.orderTrnHdr.endAdaptation)</td>
+                    @if (User.IsInRole("ADMIN") || User.IsInRole("GENERAL_MANAGER") || User.IsInRole("STUDIO_SUPERVISOR"))
+                    {
+                        <td><a class="btn btn-primary" href='@Url.Action("Edit2", "adaptation", new { id = item.orderTrnHdrIntno, fromTime = item.fromTimeCode, toTime = item.thruTimeCode})'>Edit</a></td>
+                    }
+                    else
+                    {
+                        <td></td>
+                    }
+                    <td><a class="btn btn-success form-control" href='@Url.Action("downloadFile", new { item.orderTrnHdrIntno })'>Subtitles</a></td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+}
