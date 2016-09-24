@@ -69,7 +69,8 @@ namespace dubbingApp.Controllers
             }
             else
                 return Content("Failed! Please Enter All Data.", "text/html");
-            return Content("Successfully Created.", "text/html");
+            long id1 = id;
+            return RedirectToAction("specsList", new { id = id1 });
         }
 
         public ActionResult specsDelete(long id)
@@ -89,8 +90,7 @@ namespace dubbingApp.Controllers
             {
                 return Content("Failed to Delete! " + e.Message, "text/html");
             }
-            var model1 = model.Where(b => b.agreementIntno == agr && b.specsType == sType);
-            return PartialView("_specsList", model.ToList());
+            return RedirectToAction("specsList", new { id = agr });
         }
 
         // terms
@@ -127,7 +127,8 @@ namespace dubbingApp.Controllers
             }
             else
                 return Content("Failed! Please Enter All Data.", "text/html");
-            return Content("Successfully Created.", "text/html");
+            long id1 = id;
+            return RedirectToAction("termsList", new { id = id1 });
         }
 
         public ActionResult termsDelete(long id)
@@ -145,8 +146,7 @@ namespace dubbingApp.Controllers
             {
                 return Content("Failed to Delete! " + e.Message, "text/html");
             }
-            var model1 = model.Where(b => b.agreementIntno == agr);
-            return PartialView("_termsList", model.ToList());
+            return RedirectToAction("termsList", new { id = agr });
         }
     }
 }

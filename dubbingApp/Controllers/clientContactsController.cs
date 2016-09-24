@@ -28,7 +28,7 @@ namespace dubbingApp.Controllers
 
         public ActionResult clientContactsList(long id)
         {
-            var model = db.contacts.Where(b => b.partyIntno == id && b.contactParty == "01" && b.status == true);
+            var model = db.contacts.Where(b => b.partyIntno == id && b.contactParty == "01");
             ViewBag.clientIntno = id;
             return PartialView("_clientContactsList", model.ToList());
         }
@@ -62,7 +62,8 @@ namespace dubbingApp.Controllers
             }
             else
                 return Content("Failed! Please Enter All Data.", "text/html");
-            return Content("Successfully Added.", "text/html");
+            long id1 = id;
+            return RedirectToAction("clientContactsList", new { id = id1 });
         }
 
         public ActionResult clientContactUpdate(long id)
@@ -93,7 +94,7 @@ namespace dubbingApp.Controllers
             }
             else
                 return Content("Failed! Please Enter All Data.", "text/html");
-            return Content("Successfully Updated.", "text/html");
+            return RedirectToAction("clientContactsList", new { id = item.contactIntno });
         }
     }
 }

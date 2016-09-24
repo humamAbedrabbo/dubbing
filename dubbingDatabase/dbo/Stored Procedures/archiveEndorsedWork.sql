@@ -20,10 +20,9 @@ BEGIN
 			-- delete studio and related: cascade delete appointments and studio episodes
 			delete from studios where workIntno = @workIntno;
 			
-			-- delete schedule and related: cascade delete dubbingTrnDtls
-			delete from dubbingTrnDtls where workIntno = @workIntno;
+			-- delete schedule
 			delete from dubbingTrnHdrs where dubbTrnHdrIntno not in
-					(select dubbTrnHdrIntno from dubbingTrnDtls);
+					(select dubbTrnHdrIntno from studios);
 			
 			-- delete scenes and related: cascade delete dialogs and subtitles
 			delete from scenes where orderTrnHdrIntno in

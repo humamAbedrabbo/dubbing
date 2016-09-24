@@ -25,7 +25,7 @@
             <p><a href="#" onclick="onFilterChange('03')">Finished Mixage</a></p>
             <p><a href="#" onclick="onFilterChange('04')">Uploaded</a></p>
             <p><a href="#" onclick="onFilterChange('05')">Shipped</a></p>
-            <p><a href="#" onclick="onFilterChange()">All ...</a></p>
+            <p><a href="#" onclick="onFilterChange()">Pre Dubbing ...</a></p>
             <br /><br />
 
             <div id="carriersList">
@@ -42,8 +42,8 @@
             
             <p><label class="badge alert-info">Endorse ...</label></p>
             <p>
-                <a href="#" onclick="endorseSelection('01')">Mixage</a>| &nbsp;
-                <a href="#" onclick="endorseSelection('02')">Montage</a>| &nbsp;
+                <a href="#" onclick="endorseSelection('01')">Mixage</a> | &nbsp;
+                <a href="#" onclick="endorseSelection('02')">Montage</a> | &nbsp;
                 <a href="#" onclick="endorseSelection('03')">Upload</a>
             </p>
             
@@ -65,6 +65,14 @@
                     @Html.Action("shipmentsList", "assembly", new { isPopup = false })
                 </div>
             </div>
+
+            <br />
+            <p><label class="badge alert-info">Agreement Compliance ...</label></p>
+            <p>
+                <a href="#" onclick="onSpecsAndTermsClick('02')" data-toggle="modal" data-target="#popupForm">Audio Specs</a> | &nbsp;
+                <a href="#" onclick="onSpecsAndTermsClick('01')" data-toggle="modal" data-target="#popupForm">Video Specs</a> | &nbsp;
+                <a href="#" onclick="onSpecsAndTermsClick('03')" data-toggle="modal" data-target="#popupForm">Delivery Terms</a>
+            </p>
         </div>
     </div>
 </div>
@@ -74,7 +82,7 @@
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" id="modalClose" data-dismiss="modal">&times;</button>
-                <div class="modal-title">Form</div>
+                <div class="modal-title">Info</div>
             </div>
             <div class="modal-body" id="popupFormBody">
 
@@ -175,6 +183,7 @@
             })
         }
         function onMeDetailsClick(id1) {
+            $('#popupFormBody').html(null);
             $.ajax({
                 url: '@Url.Action("musicEffectsDetails", "assembly")',
                 type: 'GET',
@@ -207,6 +216,7 @@
 
         // shipments
         function onShipmentsAddNewClick() {
+            $('#popupFormBody').html(null);
             $.ajax({
                 url: '@Url.Action("shipmentsAddNew", "assembly")',
                 type: 'GET',
@@ -216,6 +226,7 @@
             })
         }
         function onShipmentsUpdateClick(ship1) {
+            $('#popupFormBody').html(null);
             $.ajax({
                 url: '@Url.Action("shipmentsUpdate", "assembly")',
                 data: { ship: ship1 },
@@ -266,6 +277,7 @@
             })
         }
         function onShipmentDetailsAddNewClick() {
+            $('#popupFormBody').html(null);
             $.ajax({
                 url: '@Url.Action("shipmentsList", "assembly")',
                 type: 'GET',
@@ -278,6 +290,7 @@
 
         // music & effects
         function onMusicEffectsAddNewClick() {
+            $('#popupFormBody').html(null);
             var episodes1 = getSelection();
             $.ajax({
                 url: '@Url.Action("musicEffectsAddNew", "assembly")',
@@ -291,6 +304,7 @@
 
         //client claims
         function onClientClaimsAddNewClick() {
+            $('#popupFormBody').html(null);
             var episodes1 = getSelection();
             $.ajax({
                 url: '@Url.Action("clientClaimsAddNew", "assembly")',
@@ -305,6 +319,7 @@
             onFilterChange();
         }
         function onClientClaimsDetailsClick(id1) {
+            $('#popupFormBody').html(null);
             $.ajax({
                 url: '@Url.Action("clientClaimsDetails", "assembly")',
                 type: 'GET',
@@ -335,6 +350,7 @@
 
         //carrier
         function onNewCarrierClick() {
+            $('#popupFormBody').html(null);
             $.ajax({
                 url: '@Url.Action("carriersAddNew", "assembly")',
                 type: 'GET',
@@ -353,6 +369,7 @@
             })
         }
         function onCarrierUpdateClick(id1) {
+            $('#popupFormBody').html(null);
             $.ajax({
                 url: '@Url.Action("carriersUpdate", "assembly")',
                 type: 'GET',
@@ -361,6 +378,25 @@
                     $('#popupFormBody').html(result);
                 }
             })
+        }
+
+        //agreement
+        function onSpecsAndTermsClick(cat1) {
+            if ($('#workIntno').val() === '') {
+                alert('Please Select Work from the List.');
+                event.stopPropagation();
+            }
+            else {
+                $('#popupFormBody').html(null);
+                $.ajax({
+                    url: '@Url.Action("specsAndTermsList", "assembly")',
+                    type: 'GET',
+                    data: { work: $('#workIntno').val(), cat: cat1 },
+                    success: function (result) {
+                        $('#popupFormBody').html(result);
+                    }
+                })
+            }
         }
     </script>
 }

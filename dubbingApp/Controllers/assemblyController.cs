@@ -478,5 +478,32 @@ namespace dubbingApp.Controllers
             }
             return Content("Carrier Successfully Updated.", "text/html");
         }
+
+        //agreement
+        public ActionResult specsAndTermsList(long work, string cat)
+        {
+            long agr = db.agreementWorks.Find(work).agreementIntno;
+            List<string> stList = new List<string>();
+            switch(cat)
+            {
+                case "01": //video specs
+                    var x = db.agreementSpecs.Where(b => b.agreementIntno == agr && b.specsType == cat).ToList();
+                    foreach(var x1 in x)
+                        stList.Add(LookupModels.decodeDictionaryItem("videoSpecsSubtype", x1.specsSubtype) + "|" + x1.specsValue);
+                    break;
+                case "02":
+                    var y = db.agreementSpecs.Where(b => b.agreementIntno == agr && b.specsType == cat).ToList();
+                    foreach (var y1 in y)
+                        stList.Add(LookupModels.decodeDictionaryItem("videoSpecsSubtype", y1.specsSubtype) + "|" + y1.specsValue);
+                    break;
+                case "03":
+                    var z = db.agreementTerms.Where(b => b.agreementIntno == agr).OrderBy(b => b.sortOrder).ToList();
+                    foreach (var z1 in z)
+                        stList.Add(z1.termDesc);
+                    break;
+            }
+            ViewBag.cat = cat;
+            return PartialView("_specsAndTermsList", stList);
+        }
     }
 }

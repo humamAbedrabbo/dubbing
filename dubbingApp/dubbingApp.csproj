@@ -221,7 +221,6 @@
     <Content Include="Content\bootstrap.css" />
     <Content Include="Content\bootstrap.min.css" />
     <Content Include="Content\fonts\glyphicons-halflings-regular.svg" />
-    <Content Include="Content\Images\ajax-loader.gif" />
     <Content Include="Content\Images\Fardous.png" />
     <Content Include="Content\Images\user.svg" />
     <Content Include="Content\ion\css\ion.rangeSlider.css" />
@@ -497,7 +496,6 @@
     <Content Include="Views\payment\_paymentsList.cshtml" />
     <Content Include="Views\payment\_paymentsUpdate.cshtml" />
     <Content Include="Views\dubbing\_scheduledWorksList.cshtml" />
-    <Content Include="Views\dubbing\studioNotAllocated.cshtml" />
     <Content Include="Views\adaptation\Edit.cshtml" />
     <Content Include="Views\adaptation\Index.cshtml" />
     <Content Include="Views\adaptation\_sceneList.cshtml" />
@@ -583,6 +581,10 @@
     <Content Include="Views\scheduler\_assignmentReschedule.cshtml" />
     <Content Include="Views\scheduler\_studioAllocation.cshtml" />
     <Content Include="Views\scheduler\_studiosList.cshtml" />
+    <Content Include="Views\assembly\_specsAndTermsList.cshtml" />
+    <Content Include="Views\dubbing\studio.cshtml" />
+    <Content Include="Views\dubbing\_actorCalendar.cshtml" />
+    <Content Include="Views\dubbing\_studioCalendar.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

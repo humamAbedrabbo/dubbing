@@ -1,0 +1,254 @@
+﻿@{
+    ViewBag.Title = "Dubbing";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<input type="hidden" id="currentActorHF" />
+<input type="hidden" id="dialogueControlHF" />
+
+<div class="container-fluid">
+    <div class="jumbotron" style="padding:5px">
+        <div class="row">
+            <div class="col-md-3 pull-left">
+                <small>Today @DateTime.Today.DayOfWeek &nbsp; @DateTime.Today.ToShortDateString()</small>
+            </div>
+            <div class="col-md-6" style="text-align:center; padding:0px"><small>Hello! <label>@ViewBag.team</label></small></div>
+            <div class="col-md-3">
+                <button class="btn btn-default btn-xs pull-right" onclick="history.go(-1)" title="Back to Index">
+                    <span class="glyphicon glyphicon-log-out" aria-hidden="true"></span>
+                </button>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-4">
+                <div class="row">
+                    <div class="col-sm-12">
+                        <h2><label>@ViewBag.studioNo</label></h2>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-12">
+                        <small>Dubbing Week &nbsp; @ViewBag.schedule</small>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div class="progress" style="padding:0px; width:300px; height:10px" title="Weekly Progress">
+                            <div class="progress-bar" role="progressbar" aria-valuenow="70" aria-valuemin="0" aria-valuemax="100" style="width:100%">
+                                <span class="sr-only">50% Complete</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-8">
+                @Html.Action("sceneHeader", "dubbing")
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-2" style="padding-right:5px">
+            <div id="actorsList">
+                @Html.Action("actorsList", "dubbing")
+            </div>
+            <br />
+            <div id="actAptList"></div>
+            <br />
+            <div id="stdAptList">
+                @Html.Action("studioCalendar")
+            </div>
+        </div>
+
+        <div class="col-md-6" id="dialoguesList" style="padding-left:5px; padding-right:5px"></div>
+        <div class="col-md-4" id="scenesList" style="padding-left:5px"></div>
+    </div>
+</div>
+
+@section Scripts
+{
+    @Scripts.Render("~/bundles/jqueryval")
+    <script src="~/Scripts/dubbing/busySpinner.js"></script>
+
+    <script>
+        //global ajax callback events handlers
+        // to exclude specific ajax call write: "global: false," in the begining of ajax function
+        $(document).ajaxStart(function () {
+            ajaxIndicatorStart('loading data.. please wait..');
+        }).ajaxComplete(function () {
+            ajaxIndicatorStop();
+        });
+
+        $(document).ready(function () {
+            $(window).on('load', function () {
+                $('#dialogueControlHF').val('0');
+                $.ajax({
+                    url: '@Url.Action("progressBarUpdate", "dubbing")',
+                    type: 'GET',
+                    success: function (result) {
+                        $('.progress-bar').attr('aria-valuenow', result);
+                        $('.progress-bar').css('width', result);
+                    }
+                })
+            })
+
+            $(".actorLbl").click(function () {
+                $('.actorLbl').removeClass("badge");
+                var actor1 = $(this).attr('id');
+                $('#' + actor1).addClass("badge");
+            });
+        })
+
+        function onActorSelectClick(actor1, actorName1) {
+            $('#currentActorHF').val(actor1);
+            $('#dialogueControlHF').val(null);
+            $('#dialoguesList').html(null);
+            refreshStudio(null, null, null);
+            $.ajax({
+                url: '@Url.Action("scenesList", "dubbing")',
+                type: 'GET',
+                data: { actor: actor1, actorName: actorName1 },
+                success: function (result) {
+                    $('#scenesList').html(result);
+                }
+            });
+            $.ajax({
+                url: '@Url.Action("actorCalendar", "dubbing")',
+                type: 'GET',
+                data: { actorIntno: actor1, actorName: actorName1 },
+                success: function (result) {
+                    $('#actAptList').html(result);
+                }
+            })
+        }
+
+        function onEpisodeClick(episode1, sheetHdr1) {
+            $.ajax({
+                url: '@Url.Action("selectEpisodeFirstScene", "dubbing")',
+                type: 'GET',
+                data: { sheetHdr: sheetHdr1 },
+                dataType: 'json',
+                cache: false,
+                success: function (result) {
+                    refreshStudio(episode1, result.sceneNo, result.startTimeCode);
+                    if (result.sceneIntno !== null) {
+                        $.ajax({
+                            url: '@Url.Action("dialoguesList", "dubbing")',
+                            type: 'GET',
+                            data: { sceneId: result.sceneIntno, sheetHdr: sheetHdr1, isReadOnly: false },
+                            success: function (result) {
+                                $('#dialoguesList').html(result);
+                                $('.startTaken').show();
+                                $('.endTaken').show();
+                            }
+                        })
+                    }
+                }
+            });
+        }
+
+        //scenes
+        function onSceneClick(id1, sheetHdr1) {
+            $.ajax({
+                url: '@Url.Action("dialoguesList", "dubbing")',
+                type: 'GET',
+                data: { sceneId: id1, sheetHdr: sheetHdr1, isReadOnly: true },
+                success: function (result) {
+                    $('#dialoguesList').html(result);
+                    $('.startTaken').hide();
+                    $('.endTaken').hide();
+                }
+            })
+        }
+
+        //dialogue taken events
+        function onStartTakenClick(dlg) {
+            $('#dialogueControlHF').val(dlg);
+            $('#' + dlg).removeClass("panel-default").addClass("panel-danger");
+        }
+        function onEndTakenClick(dlg, id1, sheetHdr1) {
+            if ($('#dialogueControlHF').val() === dlg) {
+                $.ajax({
+                    url: '@Url.Action("dialogueTaken", "dubbing")',
+                    type: 'GET',
+                    data: { id: id1, sheetHdr: sheetHdr1 },
+                    dataType: 'json',
+                    cache: false,
+                    success: function (result) {
+                        $('#dialogueControlHF').val('0');
+                        $('#' + dlg).remove();
+                        if (result.sceneNo !== null) {
+                            $('#' + result.sceneIntno).removeClass("btn-default").addClass("btn-success");
+                            onEpisodeClick(result.episodeNo, sheetHdr1);
+                        }
+                        else {
+                            $.ajax({
+                                url: '@Url.Action("dialoguesList", "dubbing")',
+                                type: 'GET',
+                                data: { sceneId: result.sceneIntno, sheetHdr: sheetHdr1, isReadOnly: false },
+                                success: function (result) {
+                                    $('#dialoguesList').html(result);
+                                    $('.startTaken').show();
+                                    $('.endTaken').show();
+                                }
+                            })
+                        }
+                    }
+                })
+            }
+            else {
+                alert('Dialogue Action Not Started Yet!.');
+            }
+        }
+
+        // refresh studio
+        function refreshStudio(episode1, scene1, startTimeCode) {
+            if (episode1 !== null) {
+                $('#currentEpisode').html("Episode " + episode1);
+            }
+            else {
+                $('#currentEpisode').html(null);
+            }
+
+            var timeCode;
+            var scene;
+            if (scene1 !== null) {
+                scene = scene1;
+                var y = startTimeCode.split(':');
+                var separator;
+
+                if (y.length <= 3) {
+                    separator = " : ";
+                }
+                else {
+                    separator = ":";
+                }
+                $.each(y, function (i, item) {
+                    if (i === 0) {
+                        timeCode = item;
+                    }
+                    else {
+                        timeCode = timeCode + separator + item;
+                    }
+                });
+            }
+            else {
+                scene = '-';
+                timeCode = '00 : 00 : 00';
+            }
+            $('#timeCode').html(timeCode);
+            $('#currentScene').html(scene);
+
+            //refresh progress bar
+            $.ajax({
+                url: '@Url.Action("progressBarUpdate", "dubbing")',
+                type: 'GET',
+                success: function (result) {
+                    $('.progress-bar').attr('aria-valuenow', result);
+                    $('.progress-bar').css('width', result);
+                }
+            })
+        }
+
+    </script>
+}

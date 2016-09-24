@@ -1,241 +1,193 @@
-﻿@{
+﻿@model IEnumerable<dubbingApp.Models.ViewModels.assignmentViewModel>
+
+@{
     ViewBag.Title = "Dubbing";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<input type="hidden" id="studioIntnoHF" value="@ViewBag.studioIntno" />
-<input type="hidden" id="scheduleIntnoHF" value="@ViewBag.scheduleIntno" />
-<input type="hidden" id="currentActorHF" />
-<input type="hidden" id="dialogueControlHF" />
-
 <div class="container-fluid">
     <div class="jumbotron" style="padding:5px">
-        <div class="row">
-            <div class="col-md-3 pull-left">
-                <small>Today @DateTime.Today.DayOfWeek &nbsp; @DateTime.Today.ToShortDateString()</small>
-            </div>
-            <div class="col-md-6" style="text-align:center; padding:0px"><small>@ViewBag.team</small></div>
-            <div class="col-md-3">
-                <button class="btn btn-default btn-xs pull-right" onclick="javascript:document.getElementById('logoutForm').submit()" title="Log Out">
-                    <span class="glyphicon glyphicon-log-out" aria-hidden="true"></span>
-                </button>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-md-4">
-                <div class="row">
-                    <div class="col-sm-12">
-                        <h2><label>STUDIO 01</label></h2>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-sm-12">
-                        <small>Dubbing Week 12/07 - 18/07</small>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-sm-12">
-                        <div class="progress" style="padding:0px; width:300px; height:10px" title="Weekly Progress">
-                            <div class="progress-bar" role="progressbar" aria-valuenow="70" aria-valuemin="0" aria-valuemax="100" style="width:100%">
-                                <span class="sr-only">50% Complete</span>
+        <h2>Dubbing Assignments Index</h2>
+        <p class="lead"><h5>Select the appropriate entry point to studio.</h5></p>
+    </div>
+
+    @*scheduled assignments*@
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="container-fluid" style="padding:0px">
+                <div class="panel panel-primary">
+                    <div class="panel-heading">
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <label>Scheduled</label> &nbsp; <small>Episodes that are Scheduled for Dubbing This Week</small>
                             </div>
+                        </div>
+                    </div>
+                    <div class="panel-body">
+                        <div class="row">
+                            @foreach (var work in Model.Where(b => b.status == "SCHEDULED").Select(b => new { b.workIntno, b.workName, b.studioEpisodeIntno, b.studioNo, b.schedule, b.dueDate }).Distinct())
+                            {
+                                <div class="col-sm-4">
+                                    <div class="container-fluid" style="padding:0px">
+                                        <div class="panel panel-default">
+                                            <div class="panel-heading">
+                                                <div class="row">
+                                                    <div class="col-sm-10">
+                                                        <label><small>@work.workName &nbsp; (Due Date: @work.dueDate)</small></label>
+                                                    </div>
+                                                    <div class="col-sm-2">
+                                                        @{ long oiDtl = Model.FirstOrDefault(b => b.workIntno == work.workIntno && b.dueDate == work.dueDate && b.status == "SCHEDULED").orderTrnDtlIntno; }
+                                                        <button class="btn btn-default btn-xs pull-right" onclick="onStartClick(@oiDtl, @work.studioEpisodeIntno)">
+                                                            Start
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="panel-body">
+                                                <p>
+                                                    <div class="row">
+                                                        <div class="col-sm-6"><small><label>Studio</label>@work.studioNo</small></div>
+                                                        <div class="col-sm-6"><small><label>Schedule</label>@work.schedule</small></div>
+                                                    </div>
+                                                </p>
+                                                @foreach (var ep in Model.Where(b => b.workIntno == work.workIntno && b.dueDate == work.dueDate && b.status == "SCHEDULED"))
+                                                {
+                                                    <label class="badge alert-info">@ep.episodeNo</label>
+                                                }
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
                         </div>
                     </div>
                 </div>
             </div>
-            <div class="col-md-8">
-                @Html.Action("sceneHeader", "dubbing")
+        </div>
+    </div>
+
+    @*due - not scheduled assignments*@
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="container-fluid" style="padding:0px">
+                <div class="panel panel-danger">
+                    <div class="panel-heading">
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <label>Due - Not Scheduled</label> &nbsp; <small>Episodes that are Due Starting from Today, But are NOT Scheduled for Dubbing This Week</small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="panel-body">
+                        <div class="row">
+                            @foreach (var work in Model.Where(b => b.status == "DUE").Select(b => new { b.workIntno, b.workName, b.dueDate }).Distinct())
+                            {
+                                <div class="col-sm-4">
+                                    <div class="container-fluid" style="padding:0px">
+                                        <div class="panel panel-default">
+                                            <div class="panel-heading">
+                                                <div class="row">
+                                                    <div class="col-sm-10">
+                                                        <label><small>@work.workName &nbsp; (Due Date: @DateTime.Parse(@work.dueDate).ToString("dd/MM"))</small></label>
+                                                    </div>
+                                                    <div class="col-sm-2">
+                                                        @{ long oiDtl = Model.FirstOrDefault(b => b.workIntno == work.workIntno && b.dueDate == work.dueDate && b.status == "DUE").orderTrnDtlIntno; }
+                                                        <button class="btn btn-default btn-xs pull-right" onclick="onStartClick(@oiDtl, null)">
+                                                            Start
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="panel-body">
+                                                @foreach (var ep in Model.Where(b => b.workIntno == work.workIntno && b.dueDate == work.dueDate && b.status == "DUE"))
+                                                {
+                                                    <label class="badge alert-info">@ep.episodeNo</label>
+                                                }
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 
+    @*assignments - not scheduled, not due*@
     <div class="row">
-        <div class="col-md-2">
-            <div id="actorsList">
-                @Html.Action("actorsList", "dubbing", new { std = @ViewBag.studioIntno })
-            </div>
-            <br />
-            <div>
-                @Html.Action("scheduledWorksList", "dubbing", new { studio = ViewBag.studioIntno , schedule = ViewBag.schedule })
+        <div class="col-sm-12">
+            <div class="container-fluid" style="padding:0px">
+                <div class="panel panel-info">
+                    <div class="panel-heading">
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <label>Assigned</label> &nbsp; <small>Episodes that are Assigned But NOT Scheduled NOR Due for this Dubbing Week</small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="panel-body">
+                        <div class="row">
+                            @foreach (var work in Model.Where(b => b.status == "ASSIGNED").Select(b => new { b.workIntno, b.workName, b.dueDate }).Distinct())
+                            {
+                                <div class="col-sm-4">
+                                    <div class="container-fluid" style="padding:0px">
+                                        <div class="panel panel-default">
+                                            <div class="panel-heading">
+                                                <div class="row">
+                                                    <div class="col-sm-10">
+                                                        <label><small>@work.workName &nbsp; (Due Date: @work.dueDate)</small></label>
+                                                    </div>
+                                                    <div class="col-sm-2">
+                                                        @{ long oiDtl = Model.FirstOrDefault(b => b.workIntno == work.workIntno && b.dueDate == work.dueDate && b.status == "ASSIGNED").orderTrnDtlIntno; }
+                                                        <button class="btn btn-default btn-xs pull-right" onclick="onStartClick(@oiDtl, null)">
+                                                            Start
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="panel-body">
+                                                @foreach (var ep in Model.Where(b => b.workIntno == work.workIntno && b.dueDate == work.dueDate && b.status == "ASSIGNED"))
+                                                {
+                                                    <label class="badge alert-info">@ep.episodeNo</label>
+                                                }
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
-
-        <div class="col-md-6" id="dialoguesList"></div>
-        <div class="col-md-4" id="scenesList"></div>
     </div>
 </div>
 
 @section Scripts
 {
     @Scripts.Render("~/bundles/jqueryval")
+    <script src="~/Scripts/dubbing/busySpinner.js"></script>
 
     <script>
-        $(document).ready(function () {
-
-            $(window).on('load', function () {
-                $('#dialogueControlHF').val('0');
-                $.ajax({
-                    url: '@Url.Action("progressBarUpdate", "dubbing")',
-                    type: 'GET',
-                    data: { studio: $('#studioIntnoHF').val(), schedule: $('#scheduleIntnoHF').val() },
-                    success: function (result) {
-                        $('.progress-bar').attr('aria-valuenow', result);
-                        $('.progress-bar').css('width', result);
-                    }
-                })
-            })
-
-            $(".actorLbl").click(function () {
-                $('.actorLbl').removeClass("badge");
-                var actor1 = $(this).attr('id');
-                $('#' + actor1).addClass("badge");
-            });
-        })
-
-        function onActorSelectClick(actor1, actorName1) {
-            $('#currentActorHF').val(actor1);
-            $('#dialogueControlHF').val(null);
-            $('#dialoguesList').html(null);
-            refreshStudio(null, null, null, null);
-            $.ajax({
-                url: '@Url.Action("scenesList", "dubbing")',
-                type: 'GET',
-                data: { actor: actor1, actorName: actorName1, studio: $('#studioIntnoHF').val() },
-                success: function (result) {
-                    $('#scenesList').html(result);
-                }
-            })
-        }
-
-        function onEpisodeClick(workName1, episode1, sheetHdr1) {
-            $.ajax({
-                url: '@Url.Action("selectEpisodeFirstScene", "dubbing")',
-                type: 'GET',
-                data: { sheetHdr: sheetHdr1 },
-                dataType: 'json',
-                cache: false,
-                success: function (result) {
-                    refreshStudio(workName1, episode1, result.sceneNo, result.startTimeCode);
-                    if (result.sceneIntno !== null) {
-                        $.ajax({
-                            url: '@Url.Action("dialoguesList", "dubbing")',
-                            type: 'GET',
-                            data: { sceneId: result.sceneIntno, sheetHdr: sheetHdr1, isReadOnly: false },
-                            success: function (result) {
-                                $('#dialoguesList').html(result);
-                                $('.startTaken').show();
-                                $('.endTaken').show();
-                            }
-                        })
-                    }
-                }
-            });
-        }
-
-        //scenes
-        function onSceneClick(id1, sheetHdr1) {
-            $.ajax({
-                url: '@Url.Action("dialoguesList", "dubbing")',
-                type: 'GET',
-                data: { sceneId: id1, sheetHdr: sheetHdr1, isReadOnly: true },
-                success: function (result) {
-                    $('#dialoguesList').html(result);
-                    $('.startTaken').hide();
-                    $('.endTaken').hide();
-                }
-            })
-        }
-
-        //dialogue taken events
-        function onStartTakenClick(dlg) {
-            $('#dialogueControlHF').val(dlg);
-            $('#' + dlg).removeClass("panel-default").addClass("panel-danger");
-        }
-        function onEndTakenClick(dlg, id1, sheetHdr1) {
-            if ($('#dialogueControlHF').val() === dlg) {
-                $.ajax({
-                    url: '@Url.Action("dialogueTaken", "dubbing")',
-                    type: 'GET',
-                    data: { id: id1, studioIntno: $('#studioIntnoHF').val(), sheetHdr: sheetHdr1 },
-                    dataType: 'json',
-                    cache: false,
-                    success: function (result) {
-                        $('#dialogueControlHF').val('0');
-                        $('#' + dlg).remove();
-                        if (result.sceneNo !== null) {
-                            $('#' + result.sceneIntno).removeClass("btn-default").addClass("btn-success");
-                            onEpisodeClick(result.workName, result.episodeNo, sheetHdr1);
-                        }
-                        else {
-                            $.ajax({
-                                url: '@Url.Action("dialoguesList", "dubbing")',
-                                type: 'GET',
-                                data: { sceneId: result.sceneIntno, sheetHdr: sheetHdr1, isReadOnly: false },
-                                success: function (result) {
-                                    $('#dialoguesList').html(result);
-                                    $('.startTaken').show();
-                                    $('.endTaken').show();
-                                }
-                            })
-                        }
-                    }
-                })
+        //global ajax callback events handlers
+        // to exclude specific ajax call write: "global: false," in the begining of ajax function
+        $(document).ajaxStart(function () {
+            ajaxIndicatorStart('loading data.. please wait..');
+        }).ajaxComplete(function () {
+            ajaxIndicatorStop();
+        });
+        
+        function onStartClick(oiDtl, std1) {
+            if (std1 === null)
+            {
+                window.location.href = "/dubbing/studio?id=" + oiDtl;
             }
-            else {
-                alert('Dialogue Action Not Started Yet!.');
+            else
+            {
+                window.location.href = "/dubbing/studio?id=" + oiDtl + "&std=" + std1;
             }
         }
-
-        // refresh studio
-        function refreshStudio(workName1, episode1, scene1, startTimeCode) {
-            $('#currentWork').html(workName1);
-            if (episode1 !== null) {
-                $('#currentEpisode').html("Episode " + episode1);
-            }
-            else {
-                $('#currentEpisode').html(null);
-            }
-
-            var timeCode;
-            var scene;
-            if (scene1 !== null) {
-                scene = scene1;
-                var y = startTimeCode.split(':');
-                var separator;
-
-                if (y.length <= 3) {
-                    separator = " : ";
-                }
-                else {
-                    separator = ":";
-                }
-                $.each(y, function (i, item) {
-                    if (i === 0) {
-                        timeCode = item;
-                    }
-                    else {
-                        timeCode = timeCode + separator + item;
-                    }
-                });
-            }
-            else {
-                scene = '-';
-                timeCode = '00 : 00 : 00';
-            }
-            $('#timeCode').html(timeCode);
-            $('#currentScene').html(scene);
-
-            //refresh progress bar
-            $.ajax({
-                url: '@Url.Action("progressBarUpdate", "dubbing")',
-                type: 'GET',
-                data: { studio: $('#studioIntnoHF').val(), schedule: $('#scheduleIntnoHF').val() },
-                success: function (result) {
-                    $('.progress-bar').attr('aria-valuenow', result);
-                    $('.progress-bar').css('width', result);
-                }
-            })
-        }
-
     </script>
 }

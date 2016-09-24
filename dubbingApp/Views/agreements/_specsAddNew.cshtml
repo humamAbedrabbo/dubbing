@@ -19,20 +19,18 @@
                                                 new AjaxOptions()
                                                 {
                                                     HttpMethod = "POST",
-                                                    UpdateTargetId = "result",
-                                                    OnSuccess = "onSpecsSuccess(" + ViewBag.agreementIntno + ")"
+                                                    UpdateTargetId = "sList",
+                                                    OnSuccess = "onSuccess"
                                                 },
                                                 new { @class = "form-horizontal" }
                                                 ))
             {
                 @Html.AntiForgeryToken()
-                @Html.ValidationSummary(true, "", new { @class = "text-danger" })
 
                 <div class="form-group-sm">
                     <small>@Html.LabelFor(model => model.specsSubtype, "Specification", htmlAttributes: new { @class = "control-label" })</small>
                     <div>
                         @Html.DropDownListFor(model => model.specsSubtype, new SelectList(ViewBag.specsSubtypesList, "key", "value"), string.Empty, htmlAttributes: new { @class = "form-control" })
-                        @Html.ValidationMessageFor(model => model.specsSubtype, "", new { @class = "text-danger" })
                     </div>
                 </div>
 
@@ -40,13 +38,12 @@
                     <small>@Html.LabelFor(model => model.specsValue, "Requirement", htmlAttributes: new { @class = "control-label" })</small>
                     <div>
                         @Html.EditorFor(model => model.specsValue, new { htmlAttributes = new { @class = "form-control" } })
-                        @Html.ValidationMessageFor(model => model.specsValue, "", new { @class = "text-danger" })
                     </div>
                 </div>
 
                 <div class="form-group-sm">
                     <button type="submit" class="btn btn-default btn-sm">Submit</button>
-                    <small><label class="alert-success" id="result"></label></small>
+                    <small><label class="alert-success" id="formResult"></label></small>
                 </div>
             }
         </div>

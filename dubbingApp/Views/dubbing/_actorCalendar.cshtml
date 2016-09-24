@@ -1,0 +1,41 @@
+﻿@model IEnumerable<dubbingModel.dubbingAppointment>
+
+<div class="container-fluid" style="padding:0px">
+    <div class="panel panel-primary">
+        <div class="panel-heading">
+            <div class="row">
+                <div class="col-sm-12">
+                    <small><label>@ViewBag.actorName</label></small>
+                </div>
+            </div>
+        </div>
+        <div class="panel-body" style="padding:5px">
+            @if (Model != null)
+            {
+                <table class="table table-hover table-condensed">
+                    <thead>
+                        <tr>
+                            <th><small>Date</small></th>
+                            <th><small>Time</small></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var apt in Model)
+                        {
+                            string fromTime = apt.fromTime.HasValue ? apt.fromTime.Value.ToShortTimeString() : "00:00";
+                            string thruTime = apt.thruTime.HasValue ? apt.thruTime.Value.ToShortTimeString() : "00:00";
+                            <tr>
+                                <td><small>@apt.appointmentDate.ToString("dd/MM")</small></td>
+                                <td><small>@fromTime - @thruTime</small></td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            }
+            else
+            {
+                <small>No Appointment was given to Actor</small>
+            }
+        </div>
+    </div>
+</div>

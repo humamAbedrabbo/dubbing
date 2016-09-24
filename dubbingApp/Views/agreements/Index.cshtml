@@ -48,6 +48,9 @@
         function onCloseClick() {
             $('#aDetails').html(null);
         }
+        function onSuccess() {
+            $('#formResult').html("Successfully Added / Modified.");
+        }
 
         function onSpecsAddNewClick(agr, tp) {
             $.ajax({
@@ -71,17 +74,7 @@
                 })
             }
         }
-        function onSpecsSuccess(agr) {
-            $.ajax({
-                url: '@Url.Action("specsList", "agreements")',
-                data: { id: agr },
-                type: 'GET',
-                success: function (result) {
-                    $('#sList').html(result);
-                }
-            })
-        }
-
+        
         function onTermsAddNewClick(agr) {
             $.ajax({
                 url: '@Url.Action("termsAddNew", "agreements")',
@@ -104,16 +97,5 @@
                 })
             }
         }
-        function onTermsSuccess(agr) {
-            $.ajax({
-                url: '@Url.Action("termsList", "agreements")',
-                data: { id: agr },
-                type: 'GET',
-                success: function (result) {
-                    $('#tList').html(result);
-                }
-            })
-        }
-
     </script>
 }

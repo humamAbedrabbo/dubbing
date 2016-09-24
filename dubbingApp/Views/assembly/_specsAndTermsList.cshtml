@@ -1,0 +1,31 @@
+﻿@model IEnumerable<string>
+
+@{
+    string cat = ViewBag.cat;
+}
+
+@if (cat == "03" && Model.Count() != 0)
+{
+    <ol>
+        @foreach (string str in Model)
+        {
+            <li><small><label>@str</label></small></li>
+        }
+    </ol>
+}
+else if (cat != "03" && Model.Count() != 0)
+{
+    <dl class="dl-horizontal">
+        @foreach (string str in Model)
+        {
+            string[] rec = str.Split('|');
+            <dt><small><label>@rec[0]</label></small></dt>
+            <dd><small>@rec[1]</small></dd>
+        }
+    </dl>
+}
+else
+{
+    <p><small><label>No Information Defined By Management for this Work.</label></small></p>
+}
+    

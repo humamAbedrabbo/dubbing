@@ -45,13 +45,14 @@ namespace dubbingApp.Controllers
             return PartialView("_assignmentsList", model.ToList());
         }
 
-        public ActionResult resourceAssignmentsList(long empIntno, string empName, long workIntno, string workName)
+        public ActionResult resourceAssignmentsList(long empIntno, long workIntno)
         {
-            var model = db.orderTrnDtls.Include(b => b.orderTrnHdr.agreementWork)
-                        .Where(b => b.orderTrnHdr.workIntno == workIntno && b.empIntno == empIntno && b.status == true);
-            ViewBag.workName = workName;
-            ViewBag.empName = empName;
-            return PartialView("_resourceAssignmentsList", model.ToList());
+            var model = db.orderTrnDtls.Include(b => b.orderTrnHdr.agreementWork).Include(b => b.employee)
+                        .Where(b => b.orderTrnHdr.workIntno == workIntno && b.empIntno == empIntno && b.status == true).ToList();
+            var x = model.First();
+            ViewBag.workName = x.orderTrnHdr.agreementWork.workName;
+            ViewBag.empName = x.employee.fullName;
+            return PartialView("_resourceAssignmentsList", model);
         }
 
         public ActionResult assignmentAddNew()
@@ -194,7 +195,7 @@ namespace dubbingApp.Controllers
             var model = db.orderTrnDtls.Find(id);
             string activityType = model.activityType;
 
-            var oi = db.orderTrnHdrs.Include(b => b.agreementWork).FirstOrDefault(b => b.orderTrnHdrIntno == model.orderTrnHdrIntno);
+            var oi = db.orderTrnHdrs.FirstOrDefault(b => b.orderTrnHdrIntno == model.orderTrnHdrIntno);
             var x = db.employees.Where(b => b.status == true);
             var y = x;
             if (activityType == "01") //translation
@@ -204,7 +205,6 @@ namespace dubbingApp.Controllers
             else //studio supervisor
                 y = x.Where(b => b.empType == "01");
 
-            ViewBag.workName = oi.agreementWork.workName;
             ViewBag.workIntno = oi.workIntno;
             ViewBag.episodeNo = oi.episodeNo;
             ViewBag.resourcesList = new SelectList(y, "empIntno", "fullName");
@@ -214,15 +214,13 @@ namespace dubbingApp.Controllers
 
         [ValidateAntiForgeryToken]
         [HttpPost, ValidateInput(false)]
-        public ActionResult assignmentUpdate(orderTrnDtl item, long dtlIntno, long _workIntno, string _workName)
+        public ActionResult assignmentUpdate(orderTrnDtl item, long dtlIntno, long _workIntno)
         {
             var model = db.orderTrnDtls.Include(b => b.employee).FirstOrDefault(b => b.orderTrnDtlIntno == dtlIntno);
             UpdateModel(model);
             db.SaveChanges();
 
-            long empIntno1 = model.empIntno;
-            string empName1 = model.employee.fullName;
-            return RedirectToAction("resourceAssignmentsList", new { empIntno = empIntno1, empName = empName1, workIntno = _workIntno, workName = _workName });
+            return RedirectToAction("resourceAssignmentsList", new { empIntno = model.empIntno, workIntno = _workIntno });
         }
 
         public ActionResult assignmentDelete(long id)

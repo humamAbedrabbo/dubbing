@@ -83,10 +83,12 @@ namespace dubbingApp.Models
             public short episodeNo { get; set; }
             public string dueDate { get; set; }
             public long? studioIntno { get; set; }
+            public long? studioEpisodeIntno { get; set; }
             public string studioNo { get; set; }
             public long? dubbTrnHdrIntno { get; set; }
             public string schedule { get; set; }
             public string status { get; set; }
         }
+
     }
 }

@@ -23,19 +23,16 @@
                         @foreach (var emp in Model.Where(b => b.employee.empType == "02").Select(b => new { b.empIntno, b.employee.fullName }).Distinct())
                         {
                             var x = Model.Where(b => b.empIntno == emp.empIntno).Select(b => new { b.empIntno, b.employee.fullName, b.orderTrnHdr.workIntno, b.orderTrnHdr.agreementWork.workName }).Distinct();
-                            int cnt = x.Count() + 1;
+                            int r = x.Count() + 1;
                             <tr>
-                                <td rowspan="@cnt" class="col-sm-4"><small>@emp.fullName</small></td>
+                                <td rowspan="@r" class="col-sm-4"><small>@emp.fullName</small></td>
                             </tr>
-                            cnt = cnt - 1;
                             foreach (var work in x)
                             {
-                                var y = Model.Where(b => b.empIntno == emp.empIntno && b.orderTrnHdr.workIntno == work.workIntno).ToList();
-                                string empName = work.fullName;
-                                string workName = work.workName;
+                                int cnt = Model.Where(b => b.empIntno == emp.empIntno && b.orderTrnHdr.workIntno == work.workIntno).Count();
                                 <tr>
-                                    <td class="col-sm-7"><small><a href="#" onclick="onTaskSelectClick(@work.empIntno, @empName, @work.workIntno, @workName)">@work.workName</a></small></td>
-                                    <td class="col-sm-1"><small>@y.Count()</small></td>
+                                    <td class="col-sm-7"><small><a href="#" onclick="onTaskSelectClick(@work.empIntno, @work.workIntno)">@work.workName</a></small></td>
+                                    <td class="col-sm-1"><small>@cnt</small></td>
                                 </tr>
                             }
                         }
@@ -67,17 +64,16 @@
                         @foreach (var emp in Model.Where(b => b.employee.empType == "03").Select(b => new { b.empIntno, b.employee.fullName }).Distinct())
                         {
                             var x = Model.Where(b => b.empIntno == emp.empIntno).Select(b => new { b.empIntno, b.employee.fullName, b.orderTrnHdr.workIntno, b.orderTrnHdr.agreementWork.workName }).Distinct();
-                            int cnt = x.Count() + 1;
+                            int r = x.Count() + 1;
                             <tr>
-                                <td rowspan="@cnt" class="col-sm-4"><small>@emp.fullName</small></td>
+                                <td rowspan="@r" class="col-sm-4"><small>@emp.fullName</small></td>
                             </tr>
-                            cnt = cnt - 1;
                             foreach (var work in x)
                             {
-                                var y = Model.Where(b => b.empIntno == emp.empIntno && b.orderTrnHdr.workIntno == work.workIntno).ToList();
+                                int cnt = Model.Where(b => b.empIntno == emp.empIntno && b.orderTrnHdr.workIntno == work.workIntno).Count();
                                 <tr>
-                                    <td class="col-sm-7"><small><a href="#" onclick="onTaskSelectClick(@work.empIntno, '@work.fullName', @work.workIntno, '@work.workName')">@work.workName</a></small></td>
-                                    <td class="col-sm-1"><small>@y.Count()</small></td>
+                                    <td class="col-sm-7"><small><a href="#" onclick="onTaskSelectClick(@work.empIntno, @work.workIntno)">@work.workName</a></small></td>
+                                    <td class="col-sm-1"><small>@cnt</small></td>
                                 </tr>
                             }
                         }
@@ -109,17 +105,16 @@
                         @foreach (var emp in Model.Where(b => b.employee.empType == "04").Select(b => new { b.empIntno, b.employee.fullName }).Distinct())
                         {
                             var x = Model.Where(b => b.empIntno == emp.empIntno).Select(b => new { b.empIntno, b.employee.fullName, b.orderTrnHdr.workIntno, b.orderTrnHdr.agreementWork.workName }).Distinct();
-                            int cnt = x.Count() + 1;
+                            int r = x.Count() + 1;
                             <tr>
-                                <td rowspan="@cnt" class="col-sm-4"><small>@emp.fullName</small></td>
+                                <td rowspan="@r" class="col-sm-4"><small>@emp.fullName</small></td>
                             </tr>
-                            cnt = cnt - 1;
                             foreach (var work in x)
                             {
-                                int y = Model.Where(b => b.empIntno == emp.empIntno && b.orderTrnHdr.workIntno == work.workIntno).Count();
+                                int cnt = Model.Where(b => b.empIntno == emp.empIntno && b.orderTrnHdr.workIntno == work.workIntno).Count();
                                 <tr>
-                                    <td class="col-sm-7"><small><a href="#" onclick="onTaskSelectClick(@work.empIntno, '@work.fullName', @work.workIntno, '@work.workName')">@work.workName</a></small></td>
-                                    <td class="col-sm-1"><small>@y</small></td>
+                                    <td class="col-sm-7"><small><a href="#" onclick="onTaskSelectClick(@work.empIntno, @work.workIntno)">@work.workName</a></small></td>
+                                    <td class="col-sm-1"><small>@cnt</small></td>
                                 </tr>
                             }
                         }
@@ -151,17 +146,16 @@
                         @foreach (var emp in Model.Where(b => b.employee.empType == "01").Select(b => new { b.empIntno, b.employee.fullName }).Distinct())
                         {
                             var x = Model.Where(b => b.empIntno == emp.empIntno).Select(b => new { b.empIntno, b.employee.fullName, b.orderTrnHdr.workIntno, b.orderTrnHdr.agreementWork.workName }).Distinct();
-                            int cnt = x.Count() + 1;
+                            int r = x.Count() + 1;
                             <tr>
-                                <td rowspan="@cnt" class="col-sm-4"><small>@emp.fullName</small></td>
+                                <td rowspan="@r" class="col-sm-4"><small>@emp.fullName</small></td>
                             </tr>
-                            cnt = cnt - 1;
                             foreach (var work in x)
                             {
-                                int y = Model.Where(b => b.empIntno == emp.empIntno && b.orderTrnHdr.workIntno == work.workIntno).Count();
+                                int cnt = Model.Where(b => b.empIntno == emp.empIntno && b.orderTrnHdr.workIntno == work.workIntno).Count();
                                 <tr>
-                                    <td class="col-sm-7"><small><a href="#" onclick="onTaskSelectClick(@work.empIntno, '@work.fullName', @work.workIntno, '@work.workName')">@work.workName</a></small></td>
-                                    <td class="col-sm-1"><small>@y</small></td>
+                                    <td class="col-sm-7"><small><a href="#" onclick="onTaskSelectClick(@work.empIntno, @work.workIntno)">@work.workName</a></small></td>
+                                    <td class="col-sm-1"><small>@cnt</small></td>
                                 </tr>
                             }
                         }

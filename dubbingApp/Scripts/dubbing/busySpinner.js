@@ -1,7 +1,7 @@
 ﻿function ajaxIndicatorStart(text)
 {
     if ($('body').find('#resultLoading').attr('id') != 'resultLoading') {
-	    $('body').append('<div id="resultLoading" style="display:none"><div><img src="../Content/Images/ajax-loader.gif" /><div>' + text + '</div></div><div class="bg"></div></div>');
+        $('body').append('<div id="resultLoading" style="display:none"><div><i class="fa fa-spinner fa-spin" style="font-size:24px"></i><div>' + text + '</div></div><div class="bg"></div></div>');
 	}
 
 	$('#resultLoading').css({

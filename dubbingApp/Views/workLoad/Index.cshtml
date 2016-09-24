@@ -39,7 +39,7 @@
         }).ajaxComplete(function() {
             ajaxIndicatorStop();
         });
-
+        
         function onEpisodeChange() {
             if ($('#ep1').val() === $('#ep2').val()) {
                 $('#isPartialEpisode').removeClass('hidden');
@@ -131,11 +131,11 @@
             }
         }
 
-        function onTaskSelectClick(empIntno1, empName1, workIntno1, workName1) {
+        function onTaskSelectClick(empIntno1, workIntno1) {
             $.ajax({
                 url: '@Url.Action("resourceAssignmentsList", "workLoad")',
                 type: 'GET',
-                data: { empIntno: empIntno1, empName: empName1, workIntno: workIntno1, workName: workName1 },
+                data: { empIntno: empIntno1, workIntno: workIntno1 },
                 success: function (result) {
                     $('#resourceAssignmentsList').html(result);
                 }

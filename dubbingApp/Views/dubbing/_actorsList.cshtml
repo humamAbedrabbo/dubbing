@@ -1,4 +1,4 @@
-﻿@model IEnumerable <dubbingModel.dubbingAppointment>
+﻿@model IEnumerable <dubbingModel.dubbingSheetHdr>
 @{ int id = 0; }
 
 <div class="container-fluid" style="padding:0px">
@@ -8,24 +8,8 @@
             id++;
             string actorId = "D" + id.ToString();
             string actorName = '"' + actor.actorName + '"';
-            string actorApt = null;
-            string fromTime;
-            string thruTime;
-            foreach(var apt in Model.Where(b => b.voiceActorIntno == actor.voiceActorIntno && b.actorName == actor.actorName))
-            {
-                fromTime = apt.fromTime.HasValue ? apt.fromTime.Value.ToShortTimeString() : "00:00";
-                thruTime = apt.thruTime.HasValue ? apt.thruTime.Value.ToShortTimeString() : "00:00";
-                if (string.IsNullOrEmpty(actorApt))
-                {
-                    actorApt = "[" + apt.appointmentDate.ToString("dd/MM") + " @ " + fromTime + " - " + thruTime + "]";
-                }
-                else
-                {
-                    actorApt = actorApt +  " [" + apt.appointmentDate.ToString("dd/MM") + " @ " + fromTime + " - " + thruTime + "]";
-                }
-            }
             <li>
-                <a class="actorLbl" id="@actorId" onclick="onActorSelectClick(@actor.voiceActorIntno, @actorName)" href="#" title="@actorApt">@actor.actorName</a>
+                <a class="actorLbl" id="@actorId" onclick="onActorSelectClick(@actor.voiceActorIntno, @actorName)" href="#">@actor.actorName</a>
             </li>
         }
     </ul>

@@ -16,7 +16,7 @@
         </div>
         <div class="panel-body">
             @using (Ajax.BeginForm("assignmentUpdate", "workLoad",
-                new { dtlIntno = ViewBag.dtlIntno, _workIntno = ViewBag.workIntno, _workName = ViewBag.workName },
+                new { dtlIntno = ViewBag.dtlIntno, _workIntno = ViewBag.workIntno },
                 new AjaxOptions()
                 {
                     HttpMethod = "POST",
