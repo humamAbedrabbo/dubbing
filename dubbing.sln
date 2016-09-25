@@ -13,6 +13,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "clientWeb", "clientWeb\clie
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MergeSubtitles", "MergeSubtitles\MergeSubtitles.csproj", "{33C48333-188D-4A61-96C4-4958E9CDDDCD}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "merge-subtitles-dist", "merge-subtitles-dist", "{0D1F305C-4AE1-4BA7-A08B-839DA79A207B}"
+	ProjectSection(SolutionItems) = preProject
+		merge-subtitles-dist\merge-subtitles-dist.zip = merge-subtitles-dist\merge-subtitles-dist.zip
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
