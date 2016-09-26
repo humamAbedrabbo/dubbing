@@ -7,25 +7,34 @@
     <div class="jumbotron" style="padding:5px">
         <h2>Payments</h2>
         <p class="lead"><h5>Given the List of Performed Casting / Assignments, Payment Vouchers can be "Generated" (One Voucher Per Dubbing Work), They Can be "Endorsed" (at Payment Time), and Finally They Can be "Exported" to the Accounting System.</h5></p>
-        <p><a class="btn btn-primary" href="#" onclick="onPaidVouchersClick()">Show Paid Vouchers &raquo;</a></p>
     </div>
 
     <div class="row">
+        <div class="col-sm-9">
+            <div class="row">
+                <div class="col-sm-12" id="paymentsDueList">
+                    @Html.Action("paymentsDueList", "payment")
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-12" id="paidVouchersList"></div>
+            </div>
+        </div>
         <div class="col-sm-3">
-            <label><small>In-Process Payments</small></label>
-            <div class="col-sm-12" id="actorsList">
-                @Html.Action("actorsList", "payment")
+            <div>
+                <p>
+                    <a class="btn btn-primary" href="#" onclick="onPaymentsDueClick()">&laquo; Show Payments Due</a>
+                </p>
+                <p>
+                    <a class="btn btn-success" href="#" onclick="onPaidVouchersClick()">&laquo; Show Paid Vouchers</a>
+                </p>
+                <p>
+                    <a class="btn btn-info" id="exportBtn" href="#" onclick="onExportClick()">&laquo; Export All to Excel ...</a>
+                </p>
             </div>
+            <br />
+            <div id="details"></div>
         </div>
-        <div class="col-sm-6">
-            <div class="row">
-                <div class="col-sm-12" id="paymentsDueList"></div>
-            </div>
-            <div class="row">
-                <div class="col-sm-12" id="paymentsList"></div>
-            </div>
-        </div>
-        <div class="col-sm-3" id="details"></div>
     </div>
 </div>
 
@@ -42,49 +51,38 @@
         }).ajaxComplete(function () {
             ajaxIndicatorStop();
         });
-
         $(document).ready(function () {
-
+            $('#paidVouchersList').hide();
+            $('#exportBtn').hide();
+            $('#paymentsDueList').show();
         });
 
-        function onActorSelectClick(id1, name1, idx) {
-            $('.actorMenu').css('background-color', 'white');
-            $('#' + idx).css('background-color', 'silver');
-            $.ajax({
-                url: '@Url.Action("paymentsDueList", "payment")',
-                data: { id: id1, name: name1 },
-                type: 'GET',
-                success: function (result) {
-                    $('#paymentsDueList').html(result);
-                }
-            });
-            $.ajax({
-                url: '@Url.Action("paymentsList", "payment")',
-                data: { id: id1, name: name1 },
-                type: 'GET',
-                success: function (result) {
-                    $('#paymentsList').html(result);
-                }
-            })
-        }
+        $(document).on("keypress", ":input:not(textarea)", function (event) {
+            if (event.keyCode == 13) {
+                event.preventDefault();
+            }
+        });
 
-        function onGeneratePaymentClick(id1, name1) {
-            if (confirm("Please Confirm! About to Generate All Related Payments.")) {
+        function onGeneratePaymentClick(wId, wName, id1, name1) {
+            if (confirm("Please Confirm! About to Generate Payment Voucher.")) {
                 $.ajax({
                     url: '@Url.Action("paymentsAddNew", "payment")',
-                    data: { id: id1, name: name1 },
+                    data: { workIntno: wId, workName: wName, rscId: id1, rscName: name1 },
                     type: 'GET',
                     success: function (result) {
-                        $('#paymentsList').html(result);
+                        $('#details').html(result);
                     }
                 })
             }
         }
 
-        function onPaymentsDueRefreshClick(id1, name1) {
+        function onVoucherChange() {
+            $('#totalAmount1').val($('#totalScenes1').val() * $('#unitRate1').val() - $('#deduction1').val());
+        }
+
+        function onPaymentsDueRefreshClick() {
             $.ajax({
                 url: '@Url.Action("paymentsDueList", "payment")',
-                data: { id: id1, name: name1 },
                 type: 'GET',
                 success: function (result) {
                     $('#paymentsDueList').html(result);
@@ -92,47 +90,42 @@
             });
         }
 
-        function onPaymentUpdateClick(id1) {
+        function onExportClick() {
             $.ajax({
-                url: '@Url.Action("paymentsUpdate", "payment")',
-                data: { id: id1 },
+                url: '@Url.Action("exportToExcel", "payment")',
                 type: 'GET',
                 success: function (result) {
-                    $('#details').html(result);
-                }
-            })
-        }
-        function onPaymentSuccess(id1, name1) {
-            $.ajax({
-                url: '@Url.Action("paymentsDueList", "payment")',
-                data: { id: id1, name: name1 },
-                type: 'GET',
-                success: function (result) {
-                    $('#paymentsDueList').html(result);
+                    alert("Vouchers Successfully Exported to Excel.");
                 }
             });
-            $.ajax({
-                url: '@Url.Action("paymentsList", "payment")',
-                data: { id: id1, name: name1 },
-                type: 'GET',
-                success: function (result) {
-                    $('#paymentsList').html(result);
-                }
-            })
+        }
+
+        function onSuccess() {
+            $('#formResult').html('Successfully Created.');
         }
         function onCloseClick() {
             $('#details').html(null);
         }
 
         function onPaidVouchersClick() {
+            $('#details').html(null);
+            $('#exportBtn').show();
+            $('#paymentsDueList').hide();
             $.ajax({
                 url: '@Url.Action("paidVouchersList", "payment")',
                 type: 'GET',
                 success: function (result) {
-                    $('#paymentsDueList').html(null);
-                    $('#paymentsList').html(result);
+                    $('#paidVouchersList').html(result);
                 }
-            })
+            });
+            $('#paidVouchersList').show();
+        }
+        function onPaymentsDueClick() {
+            $('#details').html(null);
+            $('#exportBtn').hide();
+            $('#paidVouchersList').html(null);
+            $('#paidVouchersList').hide();
+            $('#paymentsDueList').show();
         }
     </script>
 }

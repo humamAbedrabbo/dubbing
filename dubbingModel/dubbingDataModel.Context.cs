@@ -51,7 +51,6 @@ namespace dubbingModel
         public virtual DbSet<orderTrnHdr> orderTrnHdrs { get; set; }
         public virtual DbSet<paymentDetail> paymentDetails { get; set; }
         public virtual DbSet<payment> payments { get; set; }
-        public virtual DbSet<paymentTemp> paymentTemps { get; set; }
         public virtual DbSet<scene> scenes { get; set; }
         public virtual DbSet<shipmentDetail> shipmentDetails { get; set; }
         public virtual DbSet<shipment> shipments { get; set; }
@@ -64,6 +63,7 @@ namespace dubbingModel
         public virtual DbSet<workCharge> workCharges { get; set; }
         public virtual DbSet<workOrder> workOrders { get; set; }
         public virtual DbSet<workPersonnel> workPersonnels { get; set; }
+        public virtual DbSet<paymentsDueVW> paymentsDueVWs { get; set; }
     
         public virtual int archiveEndorsedWork(Nullable<long> workIntno, string respMsg)
         {

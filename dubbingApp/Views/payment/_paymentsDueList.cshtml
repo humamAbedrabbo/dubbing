@@ -1,5 +1,4 @@
-﻿@model IEnumerable<dubbingModel.paymentTemp>
-@{ string text1 = '"' + ViewBag.name + '"'; }
+﻿@model IEnumerable<dubbingModel.paymentsDueVW>
 
 @if (Model.Count() != 0)
 {
@@ -7,12 +6,9 @@
         <div class="panel panel-default">
             <div class="panel-heading">
                 <div class="row">
-                    <div class="col-sm-9"><label class="badge">Performed Works By the Actor</label></div>
-                    <div class="col-sm-3">
-                        <button class="btn btn-default btn-xs pull-right" onclick="onGeneratePaymentClick(@ViewBag.id, @text1)" title="Generate Payment">
-                            <span class="glyphicon glyphicon-usd" aria-hidden="true"></span>
-                        </button>
-                        <button class="btn btn-default btn-xs pull-right" onclick="onPaymentsDueRefreshClick(@ViewBag.id, @text1)" title="Refresh">
+                    <div class="col-sm-11"><label class="badge">Payments Due List</label></div>
+                    <div class="col-sm-1">
+                        <button class="btn btn-default btn-xs pull-right" onclick="onPaymentsDueRefreshClick()" title="Refresh">
                             <span class="glyphicon glyphicon-refresh" aria-hidden="true"></span>
                         </button>
                     </div>
@@ -22,25 +18,43 @@
                 <table class="table table-hover table-condensed">
                     <thead>
                         <tr>
-                            <th class="col-sm-3"><small>Dubbing Date</small></th>
-                            <th class="col-sm-7"><small>Work</small></th>
-                            <th class="col-sm-2"><small>Total Scenes</small></th>
+                            <th><small>Actor</small></th>
+                            <th><small>Dubbing Date</small></th>
+                            <th><small>Work</small></th>
+                            <th><small>Scenes</small></th>
+                            <th><small>#</small></th>
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach (var x in Model)
+                        @foreach (var rsc in Model)
                         {
+                            var x = Model.Where(b => b.voiceActorIntno == rsc.voiceActorIntno && b.actorName == rsc.actorName).Distinct();
+                            int r = x.Count() + 1;
+                            int i = 0;
+                            var x1 = x.First();
                             <tr>
-                                <td class="col-sm-3">
-                                    <small>@x.trnDate.DayOfWeek @x.trnDate.ToString("dd/MM")</small>
-                                </td>
-                                <td class="col-sm-7">
-                                    <small>@x.workName</small>
-                                </td>
-                                <td class="col-sm-2">
-                                    <small>@x.totalUnits</small>
+                                <td rowspan="@r"><small><label>@rsc.actorName</label></small></td>
+                                <td><small>@x1.dubbingDate.Value.DayOfWeek @x1.dubbingDate.Value.ToString("dd/MM")</small></td>
+                                <td><small>@x1.workName</small></td>
+                                <td><small>@x1.totalUnits</small></td>
+                                <td rowspan="@r">
+                                    <button class="btn btn-default btn-xs" onclick="onGeneratePaymentClick(@x1.workIntno, '@x1.workName', @x1.voiceActorIntno, '@x1.actorName')" title="Generate Payment">
+                                        <span class="glyphicon glyphicon-usd" aria-hidden="true"></span>
+                                    </button>
                                 </td>
                             </tr>
+                            foreach (var x2 in x)
+                            {
+                                if (i != 0)
+                                {
+                                    <tr>
+                                        <td><small>@x2.dubbingDate.Value.DayOfWeek @x2.dubbingDate.Value.ToString("dd/MM")</small></td>
+                                        <td><small>@x2.workName</small></td>
+                                        <td><small>@x2.totalUnits</small></td>
+                                    </tr>
+                                }
+                                i++;
+                            }
                         }
                     </tbody>
                 </table>

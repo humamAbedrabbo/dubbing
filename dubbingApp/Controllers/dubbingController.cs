@@ -305,6 +305,7 @@ namespace dubbingApp.Controllers
                     dtl.soundTechnician = std.sound;
                 }
                 dtl.takenTimeStamp = DateTime.Now;
+                dtl.dubbingDate = DateTime.Now.Date;
                 trnModel.Add(dtl);
                 db.SaveChanges();
             }

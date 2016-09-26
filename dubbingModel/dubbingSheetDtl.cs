@@ -24,6 +24,7 @@ namespace dubbingModel
         public Nullable<long> soundTechnician { get; set; }
         public Nullable<long> assistant { get; set; }
         public Nullable<System.DateTime> takenTimeStamp { get; set; }
+        public Nullable<System.DateTime> dubbingDate { get; set; }
     
         public virtual dubbingSheetHdr dubbingSheetHdr { get; set; }
         public virtual employee employee { get; set; }

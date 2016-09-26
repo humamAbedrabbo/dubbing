@@ -12,15 +12,13 @@ namespace dubbingModel
     using System;
     using System.Collections.Generic;
     
-    public partial class paymentTemp
+    public partial class paymentsDueVW
     {
-        public long tempIntno { get; set; }
-        public long personIntno { get; set; }
-        public string personName { get; set; }
         public long workIntno { get; set; }
         public string workName { get; set; }
-        public System.DateTime trnDate { get; set; }
-        public int totalUnits { get; set; }
-        public Nullable<long> refPaymentIntno { get; set; }
+        public long voiceActorIntno { get; set; }
+        public string actorName { get; set; }
+        public Nullable<System.DateTime> dubbingDate { get; set; }
+        public Nullable<int> totalUnits { get; set; }
     }
 }

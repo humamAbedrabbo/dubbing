@@ -29,7 +29,6 @@
         <EntityTypeShape EntityType="DUBBDBModel.orderTrnHdr" Width="1.5" PointX="12.75" PointY="39.5" />
         <EntityTypeShape EntityType="DUBBDBModel.paymentDetail" Width="1.5" PointX="9.75" PointY="51.625" />
         <EntityTypeShape EntityType="DUBBDBModel.payment" Width="1.5" PointX="7.5" PointY="46" />
-        <EntityTypeShape EntityType="DUBBDBModel.paymentTemp" Width="1.5" PointX="6.75" PointY="0.75" />
         <EntityTypeShape EntityType="DUBBDBModel.scene" Width="1.5" PointX="15" PointY="60.875" />
         <EntityTypeShape EntityType="DUBBDBModel.shipmentDetail" Width="1.5" PointX="15" PointY="38.5" />
         <EntityTypeShape EntityType="DUBBDBModel.shipment" Width="1.5" PointX="3" PointY="37.75" />
@@ -94,6 +93,7 @@
         <AssociationConnector Association="DUBBDBModel.FK_studioEpisodes_studios" />
         <AssociationConnector Association="DUBBDBModel.FK_workActors_voiceActors" />
         <AssociationConnector Association="DUBBDBModel.FK_workActors_workCharacters" />
+        <EntityTypeShape EntityType="DUBBDBModel.paymentsDueVW" Width="1.5" PointX="7.375" PointY="0.75" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

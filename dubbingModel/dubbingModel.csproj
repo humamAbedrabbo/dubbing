@@ -138,7 +138,7 @@
     <Compile Include="paymentDetail.cs">
       <DependentUpon>dubbingDataModel.tt</DependentUpon>
     </Compile>
-    <Compile Include="paymentTemp.cs">
+    <Compile Include="paymentsDueVW.cs">
       <DependentUpon>dubbingDataModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />

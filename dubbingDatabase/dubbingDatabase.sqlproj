@@ -131,7 +131,6 @@
     <Build Include="dbo\Tables\orderTrnHdrs.sql" />
     <Build Include="dbo\Tables\paymentDetails.sql" />
     <Build Include="dbo\Tables\payments.sql" />
-    <Build Include="dbo\Tables\paymentTemps.sql" />
     <Build Include="dbo\Tables\shipmentDetails.sql" />
     <Build Include="dbo\Tables\shipments.sql" />
     <Build Include="dbo\Tables\studioEpisodes.sql" />
@@ -149,6 +148,7 @@
     <Build Include="dbo\Tables\logWorks.sql" />
     <Build Include="dbo\Tables\logOrders.sql" />
     <Build Include="dbo\Tables\logActors.sql" />
+    <Build Include="dbo\Views\paymentsDueVW.sql" />
   </ItemGroup>
   <ItemGroup>
     <PostDeploy Include="load.dubbing.data.sql" />
