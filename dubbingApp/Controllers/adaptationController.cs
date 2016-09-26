@@ -103,6 +103,7 @@ namespace dubbingApp.Controllers
                 order.orderTrnHdr.endAdaptation = DateTime.Now;
                 ctx.SaveChanges();
                 RenumberScenesAndDialogs(order.orderTrnHdrIntno);
+                CleanSheetHdrsWithoutScenes(order.orderTrnHdrIntno);
             }
             return RedirectToAction("Index");
         }
@@ -117,6 +118,11 @@ namespace dubbingApp.Controllers
         public ActionResult Edit2(long? id, string fromTime = "00:00:00", string toTime = "00:00:00")
         {
             var hdr = ctx.orderTrnHdrs.Include(x => x.agreementWork).First(x => x.orderTrnHdrIntno == id);
+            if(!hdr.startAdaptation.HasValue)
+            {
+                hdr.startAdaptation = DateTime.Now;
+                ctx.SaveChanges();
+            }
             var model = new AdaptationViewModel();
 
             // setup model
@@ -420,6 +426,15 @@ namespace dubbingApp.Controllers
             ctx.SaveChanges();
 
         }
+
+        private void CleanSheetHdrsWithoutScenes(long orderTrnHdrIntno)
+        {
+            var order = ctx.orderTrnHdrs.Find(orderTrnHdrIntno);
+            var sheetHdrs = ctx.dubbingSheetHdrs.Include(x => x.subtitles).Where(x => x.orderTrnHdrIntno == orderTrnHdrIntno && x.subtitles.Count == 0);
+            ctx.dubbingSheetHdrs.RemoveRange(sheetHdrs);
+            ctx.SaveChanges();
+        }
+
         /***********************************************************************************************************
         *
         * OLD CODE FOR Edit1
