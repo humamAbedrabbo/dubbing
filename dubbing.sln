@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
-VisualStudioVersion = 14.0.25123.0
+VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "dubbingModel", "dubbingModel\dubbingModel.csproj", "{B9A92335-DC9F-4DED-96A0-DA0975BEB7CD}"
 EndProject
@@ -10,6 +10,13 @@ EndProject
 Project("{00D1A9C2-B5F0-4AF3-8072-F6C62B433612}") = "dubbingDatabase", "dubbingDatabase\dubbingDatabase.sqlproj", "{4A35DB03-82E9-40A3-8224-11038FCEFE9A}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "clientWeb", "clientWeb\clientWeb.csproj", "{416CEC3B-776E-499B-876F-E01DE986875E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MergeSubtitles", "MergeSubtitles\MergeSubtitles.csproj", "{33C48333-188D-4A61-96C4-4958E9CDDDCD}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "merge-subtitles-dist", "merge-subtitles-dist", "{0D1F305C-4AE1-4BA7-A08B-839DA79A207B}"
+	ProjectSection(SolutionItems) = preProject
+		merge-subtitles-dist\merge-subtitles-dist.zip = merge-subtitles-dist\merge-subtitles-dist.zip
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -35,6 +42,10 @@ Global
 		{416CEC3B-776E-499B-876F-E01DE986875E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{416CEC3B-776E-499B-876F-E01DE986875E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{416CEC3B-776E-499B-876F-E01DE986875E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{33C48333-188D-4A61-96C4-4958E9CDDDCD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{33C48333-188D-4A61-96C4-4958E9CDDDCD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{33C48333-188D-4A61-96C4-4958E9CDDDCD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{33C48333-188D-4A61-96C4-4958E9CDDDCD}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
