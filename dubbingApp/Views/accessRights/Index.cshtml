@@ -7,9 +7,10 @@
     <div class="jumbotron" style="padding:5px">
         <h2>Access Rights</h2>
         <p class="lead"><h5>Maintain Users List and their Access Rights through Assigning Users to Predefined Roles.</h5></p>
+        <p><a href="#" class="btn btn-primary" onclick="onNewUserClick()">Register New User &raquo;</a></p>
     </div>
     <div class="row">
-        <div class="col-sm-3">
+        <div class="col-sm-3" id="rolesList">
             @Html.Action("rolesList", "accessRights")
         </div>
         <div class="col-sm-6" id="usersInRoleList"></div>
@@ -29,7 +30,7 @@
                 $('#userDetails').html(null);
             }
 
-            if (role1 === 'no-role') {
+            if (role1 === null) {
                 role2 = null;
                 $.ajax({
                     url: '@Url.Action("usersNoRoleList", "accessRights")',
@@ -50,7 +51,7 @@
                 })
             }
         }
-        
+
         function onGrantUserClick(role1) {
             $.ajax({
                 url: '@Url.Action("grantRoleToUser", "accessRights")',
@@ -75,6 +76,25 @@
             }
         }
 
+        function onNewUserClick() {
+            $.ajax({
+                url: '@Url.Action("usersAddNew", "accessRights")',
+                type: 'GET',
+                success: function (result) {
+                    $('#userDetails').html(result);
+                }
+            })
+        }
+        function onAddUserSuccess() {
+            $.ajax({
+                url: '@Url.Action("rolesList", "accessRights")',
+                type: 'GET',
+                success: function (result) {
+                    $('#rolesList').html(result);
+                }
+            })
+        }
+
         function onUserClick(user1, role1) {
             $.ajax({
                 url: '@Url.Action("usersUpdate", "accessRights")',
@@ -97,6 +117,10 @@
             $('#userDetails').html(null);
         }
         function onSuccess(role) {
+            if (role === '')
+            {
+                role = null;
+            }
             onRoleClick(role, false);
         }
     </script>

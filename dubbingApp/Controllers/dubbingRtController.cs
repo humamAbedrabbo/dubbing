@@ -3,15 +3,15 @@
 namespace dubbingApp.Controllers
 {
     [Authorize(Roles = "ADMIN, GENERAL_MANAGER, PRODUCTION_MANAGER, STUDIO_SUPERVISOR")]
-    public class dubbingRouterController : Controller
+    public class dubbingRtController : Controller
     {
-        // GET: dubbingRouter
+        // GET: dubbingRt
         public ActionResult Index()
         {
-            if (User.IsInRole("STUDIO_SUPERVISOR") || User.IsInRole("STUDIO_ASSISTANT") || User.IsInRole("ADMIN"))
-                return RedirectToRoutePermanent("dubbing");
+            if (User.IsInRole("STUDIO_SUPERVISOR") || User.IsInRole("STUDIO_ASSISTANT"))
+                return RedirectToRoute("dubbingRoute");
             else if (User.IsInRole("GENERAL_MANAGER") || User.IsInRole("PRODUCTION_MANAGER") || User.IsInRole("ADMIN"))
-                return RedirectToRoutePermanent("dubbingMonitor");
+                return RedirectToRoute("dubbingMonitorRoute");
             else
                 return View();
         }

@@ -190,7 +190,7 @@
     <Compile Include="Controllers\dubbDomainsController.cs" />
     <Compile Include="Controllers\dubbingController.cs" />
     <Compile Include="Controllers\dubbingMonitorController.cs" />
-    <Compile Include="Controllers\dubbingRouterController.cs" />
+    <Compile Include="Controllers\dubbingRtController.cs" />
     <Compile Include="Controllers\executiveSummaryController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\ManageController.cs" />
@@ -501,7 +501,6 @@
     <Content Include="Views\adaptation\_dialogList.cshtml" />
     <Content Include="Views\payment\_paidVouchersList.cshtml" />
     <Content Include="Views\adaptation\_subtitlesList.cshtml" />
-    <Content Include="Views\dubbingRouter\Index.cshtml" />
     <Content Include="Views\dubbingMonitor\Index.cshtml" />
     <Content Include="Views\dubbingMonitor\_studiosList.cshtml" />
     <Content Include="Views\dubbingMonitor\_progressList.cshtml" />
@@ -584,6 +583,8 @@
     <Content Include="Views\dubbing\studio.cshtml" />
     <Content Include="Views\dubbing\_actorCalendar.cshtml" />
     <Content Include="Views\dubbing\_studioCalendar.cshtml" />
+    <Content Include="Views\dubbingRt\Index.cshtml" />
+    <Content Include="Views\accessRights\_usersAddNew.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

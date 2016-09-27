@@ -1,12 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Data.Entity;
 using System.Web;
 using System.Web.Mvc;
 using dubbingModel;
 using dubbingApp.Models;
 using Microsoft.AspNet.Identity;
+using Microsoft.AspNet.Identity.Owin;
+using Microsoft.Owin.Security;
 using Microsoft.AspNet.Identity.EntityFramework;
 
 namespace dubbingApp.Controllers
@@ -28,7 +31,6 @@ namespace dubbingApp.Controllers
         // GET: accessRights
         public ActionResult Index()
         {
-            
             return View();
         }
 
@@ -114,17 +116,33 @@ namespace dubbingApp.Controllers
             return RedirectToAction("usersInRoleList", new { role = roleId });
         }
 
+        public ActionResult usersAddNew()
+        {
+            return PartialView("_usersAddNew");
+        }
+
+        [ValidateAntiForgeryToken]
+        [HttpPost, ValidateInput(false)]
+        public ActionResult usersAddNew(RegisterViewModel item)
+        {
+            UserManager = new UserManager<ApplicationUser>(new UserStore<ApplicationUser>(context));
+            string newPassword = item.Email.Split('@')[0] + "@123";
+            var user = new ApplicationUser { UserName = item.Email, Email = item.Email };
+            var result = UserManager.CreateAsync(user, newPassword);
+            return Content("User Created with password: " + newPassword, "text/html");
+        }
+
         public ActionResult usersUpdate(string user, string role)
         {
             UserManager = new UserManager<ApplicationUser>(new UserStore<ApplicationUser>(context));
             var model = context.Users.Find(user);
+            List<string> otherRolesList = new List<string>();
             if (!string.IsNullOrEmpty(role))
             {
                 string roleName;
                 roleName = context.Roles.Find(role).Name;
                 ViewBag.roleId = role;
                 ViewBag.roleName = roleName;
-                List<string> otherRolesList = new List<string>();
                 otherRolesList = UserManager.GetRoles(user).ToList();
                 otherRolesList.Remove(roleName);
                 ViewBag.otherRolesList = otherRolesList;
@@ -133,7 +151,7 @@ namespace dubbingApp.Controllers
             {
                 ViewBag.roleId = null;
                 ViewBag.roleName = "User has no Role Assigned.";
-                ViewBag.otherRolesList = null;
+                ViewBag.otherRolesList = otherRolesList;
             }
             return PartialView("_usersUpdate", model);
         }

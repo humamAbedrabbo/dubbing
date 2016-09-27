@@ -1,4 +1,4 @@
-﻿@model IEnumerable<dubbingModel.studio>
+﻿@model IEnumerable<dubbingModel.studioEpisode>
 
 <div class="container-fluid" style="padding:0px">
     <div class="row">
@@ -10,23 +10,23 @@
 
     @foreach (var std in Model)
     {
-        string studioStartedTime = "studioStartedTime" + std.studioNo;
-        string studioLastTime = "studioLastTime" + std.studioNo;
-        string weekTotalScenes = "weekTotalScenes" + std.studioNo;
+        string studioStartedTime = "studioStartedTime" + std.studio.studioNo;
+        string studioLastTime = "studioLastTime" + std.studio.studioNo;
+        string weekTotalScenes = "weekTotalScenes" + std.studio.studioNo;
         <div class="row">
             <div class="col-sm-4" style="padding:0px">
                 <div class="panel panel-default">
                     <div class="panel-heading">
                         <div class="row">
                             <div class="col-sm-12">
-                                <small><label>@std.employee1.fullName &nbsp; @std.employee.fullName</label></small>
+                                <small><label>@std.orderTrnDtl.employee.fullName, &nbsp; @std.studio.employee.fullName</label></small>
                             </div>
                         </div>
                     </div>
                     <div class="panel-body">
                         <div class="row">
                             <div class="col-sm-4">
-                                <div class="badge alert-info pull-left" style="width:75px;height:60px;font-size:50px">@std.studioNo</div>
+                                <div class="badge alert-info pull-left" style="width:75px;height:60px;font-size:50px">@std.studio.studioNo</div>
                             </div>
                             <div class="col-sm-8">
                                 <div class="row">
@@ -49,14 +49,14 @@
                     <div class="panel-heading">
                         <div class="row">
                             <div class="col-sm-12">
-                                <strong><small>@std.agreementWork.workName</small></strong>
+                                <strong><small>@std.orderTrnDtl.orderTrnHdr.agreementWork.workName</small></strong>
                             </div>
                         </div>
                     </div>
                     <div class="panel-body">
-                        @foreach (var ep in std.studioEpisodes)
+                        @foreach (var ep in Model)
                         {
-                            <span><small><label class="badge">@ep.dubbingTrnDtl.episodeNo</label></small></span>
+                            <span><small><label class="badge">@ep.orderTrnDtl.orderTrnHdr.episodeNo</label></small></span>
                         }        
                     </div>
                 </div>

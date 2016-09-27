@@ -90,14 +90,16 @@
                         $('.progress-bar').attr('aria-valuenow', result);
                         $('.progress-bar').css('width', result);
                     }
-                })
-            })
+                });
+            });
 
             $(".actorLbl").click(function () {
                 $('.actorLbl').removeClass("badge");
                 var actor1 = $(this).attr('id');
                 $('#' + actor1).addClass("badge");
             });
+
+            
         })
 
         function onActorSelectClick(actor1, actorName1) {
@@ -141,6 +143,7 @@
                                 $('#dialoguesList').html(result);
                                 $('.startTaken').show();
                                 $('.endTaken').show();
+                                addTags();
                             }
                         })
                     }
@@ -158,8 +161,16 @@
                     $('#dialoguesList').html(result);
                     $('.startTaken').hide();
                     $('.endTaken').hide();
+                    addTags();
                 }
             })
+        }
+        function addTags() {
+            $(".scentence").each(function (index) {
+                var s = $(this).text().trim();
+                s = addTextTags(s);
+                $(this).html(s);
+            });
         }
 
         //dialogue taken events

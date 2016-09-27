@@ -19,11 +19,11 @@ namespace dubbingApp
                 defaults: new { controller = "Home", action = "Index", id = UrlParameter.Optional }
             );
             routes.MapRoute(
-                name: "dubbing",
+                name: "dubbingRoute",
                 url: "dubbing/Index"
             );
             routes.MapRoute(
-                name: "dubbingMonitor",
+                name: "dubbingMonitorRoute",
                 url: "dubbingMonitor/Index"
             );
             routes.MapRoute(

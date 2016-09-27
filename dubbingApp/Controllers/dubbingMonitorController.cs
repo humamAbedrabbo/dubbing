@@ -39,13 +39,14 @@ namespace dubbingApp.Controllers
             if (sch != null)
                 ViewBag.schedule = sch.dubbTrnHdrIntno;
             else
-                ViewBag.schedule = null;
+                ViewBag.schedule = 0;
             return View();
         }
 
-        public ActionResult studiosList(long? schedule)
+        public ActionResult studiosList(long schedule)
         {
-            var model = db.studios.Include(b => b.employee).Where(b => (!schedule.HasValue || b.dubbTrnHdrIntno == schedule.Value)).OrderBy(b => b.studioIntno);
+            var model = db.studioEpisodes.Include(b => b.studio.employee).Include(b => b.orderTrnDtl.employee).Include(b => b.orderTrnDtl.orderTrnHdr.agreementWork)
+                                        .Where(b => b.studio.dubbTrnHdrIntno == schedule);
             return PartialView("_studiosList", model.ToList());
         }
 
@@ -62,9 +63,9 @@ namespace dubbingApp.Controllers
             return PartialView("_currentActivity");
         }
 
-        public ActionResult progressList(long? schedule)
+        public ActionResult progressList(long schedule)
         {
-            var model = db.studios.Include(b => b.employee).Where(b => (!schedule.HasValue || b.dubbTrnHdrIntno == schedule.Value)).OrderBy(b => b.studioIntno);
+            var model = db.studios.Include(b => b.employee).Where(b => b.dubbTrnHdrIntno == schedule).OrderBy(b => b.studioIntno);
             return PartialView("_progressList", model.ToList());
         }
 
