@@ -40,27 +40,50 @@ namespace dubbingApp.Controllers
             return PartialView("_rolesList", model.ToList());
         }
 
-        public ActionResult usersInRoleList(string role)
+        public ActionResult usersInRoleList(string filterType, string role)
         {
             UserManager = new UserManager<ApplicationUser>(new UserStore<ApplicationUser>(context));
-            
             List<ViewModels.usersViewModel> usersList = new List<ViewModels.usersViewModel>();
-            var model = context.Users.Where(b => b.Roles.Select(y => y.RoleId).Contains(role));
-            var z1 = db.employees;
-            var z2 = db.contacts;
-            foreach (var x in model)
+            var model1 = context.Users.AsQueryable();
+            var model = model1;
+
+            switch(filterType)
+            {
+                case "03": // un authorized
+                    model = model1.Where(b => !b.Roles.Any());
+                    break;
+                case "04": // users in role
+                    model = model1.Where(b => b.Roles.Select(r => r.RoleId).Contains(role));
+                    break;
+            }
+            var x = db.employees.Where(b => b.status == true);
+            var y = db.contacts;
+            foreach (var z in model)
             {
                 ViewModels.usersViewModel usr = new ViewModels.usersViewModel();
-                usr.userId = x.Id;
+                usr.userId = z.Id;
                 usr.roleId = role;
-                usr.userName = x.UserName;
-                if (z1.FirstOrDefault(b => b.email == usr.userName && b.status == true) != null)
-                    usr.personnelName = z1.FirstOrDefault(b => b.email == usr.userName && b.status == true).fullName;
-                else if (z2.FirstOrDefault(b => b.contactEmailAddr == usr.userName && b.status == true) != null)
-                    usr.personnelName = z2.FirstOrDefault(b => b.contactEmailAddr == usr.userName && b.status == true).contactName;
-                else
-                    usr.personnelName = null;
-                usersList.Add(usr);
+                usr.userName = z.UserName;
+                var x1 = x.FirstOrDefault(b => b.email == usr.userName);
+                var y1 = y.FirstOrDefault(b => b.contactEmailAddr == usr.userName);
+                if (filterType == "02")
+                {
+                    if (x1 == null && y1 == null)
+                    {
+                        usr.personnelName = null;
+                        usersList.Add(usr);
+                    }
+                }
+                else if (filterType != "02")
+                {
+                    if (x1 != null)
+                        usr.personnelName = x1.fullName;
+                    else if (y1 != null)
+                        usr.personnelName = y1.contactName;
+                    else
+                        usr.personnelName = null;
+                    usersList.Add(usr);
+                }
             }
             ViewBag.roleId = role;
             return PartialView("_usersInRoleList", usersList);

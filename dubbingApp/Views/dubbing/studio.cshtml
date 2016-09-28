@@ -68,18 +68,9 @@
 @section Scripts
 {
     @Scripts.Render("~/bundles/jqueryval")
-    <script src="~/Scripts/dubbing/busySpinner.js"></script>
     <script src="~/Scripts/dubbing/adaptation.js"></script>
 
     <script>
-        //global ajax callback events handlers
-        // to exclude specific ajax call write: "global: false," in the begining of ajax function
-        $(document).ajaxStart(function () {
-            ajaxIndicatorStart('loading data.. please wait..');
-        }).ajaxComplete(function () {
-            ajaxIndicatorStop();
-        });
-
         $(document).ready(function () {
             $(window).on('load', function () {
                 $('#dialogueControlHF').val('0');

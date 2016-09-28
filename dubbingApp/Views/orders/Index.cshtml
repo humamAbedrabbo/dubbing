@@ -58,7 +58,6 @@
 @section Scripts
 {
     @Scripts.Render("~/bundles/jqueryval")
-    <script src="~/Scripts/dubbing/busySpinner.js"></script>
 
     <script>
         $(document).ready(function () {
@@ -67,14 +66,6 @@
                 $('#pf01').css('background-color', 'silver');
             });
         })
-
-        //global ajax callback events handlers
-        // to exclude specific ajax call write: "global: false," in the begining of ajax function
-        $(document).ajaxStart(function() {
-            ajaxIndicatorStart('loading data.. please wait..');
-        }).ajaxComplete(function() {
-            ajaxIndicatorStop();
-        });
 
         function onFindEpisodesClick() {
             $('#allDetails').html(null);

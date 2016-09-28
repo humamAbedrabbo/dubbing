@@ -45,5 +45,16 @@
     @Scripts.Render("~/bundles/jquery")
     @Scripts.Render("~/bundles/bootstrap")
     @RenderSection("scripts", required: false)
+
+    <script src="~/Scripts/dubbing/busySpinner.js"></script>
+    <script>
+        //global ajax callback events handlers
+        // to exclude specific ajax call write: "global: false," in the begining of ajax function
+        $(document).ajaxStart(function () {
+            ajaxIndicatorStart('loading data.. please wait..');
+        }).ajaxComplete(function () {
+            ajaxIndicatorStop();
+        });
+    </script>
 </body>
 </html>

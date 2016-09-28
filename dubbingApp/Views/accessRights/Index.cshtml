@@ -11,6 +11,24 @@
     </div>
     <div class="row">
         <div class="col-sm-3" id="rolesList">
+            <div class="container-fluid" style="padding:0px">
+                <div class="panel panel-warning">
+                    <div class="panel-heading">
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <small><label>Users</label></small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="panel-body" style="padding:5px">
+                        <ul>
+                            <li><a href="#" onclick="onFilterClick('01', null)"><small>All ...</small></a></li>
+                            <li><a href="#" onclick="onFilterClick('02', null)"><small>Un Authenticated</small></a></li>
+                            <li><a href="#" onclick="onFilterClick('03', null)"><small>Un Authorized</small></a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
             @Html.Action("rolesList", "accessRights")
         </div>
         <div class="col-sm-6" id="usersInRoleList"></div>
@@ -23,33 +41,19 @@
     @Scripts.Render("~/bundles/jqueryval")
 
     <script>
-        function onRoleClick(role1, clr) {
+        function onFilterClick(filterType1, role1) {
             $('.roleLbl').removeClass('badge');
             $('#' + role1).addClass('badge');
-            if (clr === true) {
-                $('#userDetails').html(null);
-            }
-
-            if (role1 === null) {
-                role2 = null;
-                $.ajax({
-                    url: '@Url.Action("usersNoRoleList", "accessRights")',
-                    type: 'GET',
-                    success: function (result) {
-                        $('#usersInRoleList').html(result);
-                    }
-                })
-            }
-            else {
-                $.ajax({
-                    url: '@Url.Action("usersInRoleList", "accessRights")',
-                    type: 'GET',
-                    data: { role: role1 },
-                    success: function (result) {
-                        $('#usersInRoleList').html(result);
-                    }
-                })
-            }
+            $('#userDetails').html(null);
+            
+            $.ajax({
+                url: '@Url.Action("usersInRoleList", "accessRights")',
+                type: 'GET',
+                data: { filterType: filterType1, role: role1 },
+                success: function (result) {
+                    $('#usersInRoleList').html(result);
+                }
+            })
         }
 
         function onGrantUserClick(role1) {
@@ -82,15 +86,6 @@
                 type: 'GET',
                 success: function (result) {
                     $('#userDetails').html(result);
-                }
-            })
-        }
-        function onAddUserSuccess() {
-            $.ajax({
-                url: '@Url.Action("rolesList", "accessRights")',
-                type: 'GET',
-                success: function (result) {
-                    $('#rolesList').html(result);
                 }
             })
         }

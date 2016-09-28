@@ -1,16 +1,23 @@
 ﻿@model IEnumerable<Microsoft.AspNet.Identity.EntityFramework.IdentityRole>
 
-<div>
-    @foreach (var role in Model)
-    {
-        <p>
-            <a href="#" class="roleLbl" id="@role.Id" onclick="onRoleClick('@role.Id', true)"><strong>@role.Name</strong></a>
-        </p>
-    }
+<div class="container-fluid" style="padding:0px">
+    <div class="panel panel-info">
+        <div class="panel-heading">
+            <div class="row">
+                <div class="col-sm-12">
+                    <small><label>Users In Role</label></small>
+                </div>
+            </div>
+        </div>
+        <div class="panel-body" style="padding:5px">
+            <ul>
+                @foreach (var role in Model)
+                {
+                    <li>
+                        <a href="#" class="roleLbl" id="@role.Id" onclick="onFilterClick('04', '@role.Id')"><small>@role.Name</small></a>
+                    </li>
+                }
+            </ul>
+        </div>
+    </div>
 </div>
-<br />
-<strong>-----</strong>
-<br />
-<p>
-    <a href="#" class="roleLbl" id="no-role" onclick="onRoleClick(null, true)"><strong>Users Not Assigned</strong></a>
-</p>

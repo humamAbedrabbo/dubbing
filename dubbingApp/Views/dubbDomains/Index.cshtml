@@ -9,29 +9,34 @@
     @Html.ActionLink("Create New", "Create")
 </p>
 
-<p>
-    <small>
-        @Html.DropDownList("Name", new SelectList(ViewBag.domainsList, "domainName"), "Filter Domain ...", htmlAttributes: new { id = "domainFilter", onChange = "onFilterChange()" })
-    </small>
-</p>
+<div class="row">
+    <div class="col-sm-3">
+        <div class="input-group">
+            @Html.DropDownList("Name", new SelectList(ViewBag.domainsList, "domainName"), "Filter Domain ...", htmlAttributes: new { @class = "form-control", id = "domainFilter", onChange = "onFilterChange()" })
+            <span class="input-group-btn">
+                <button type="button" class="btn btn-primary" onclick="onFilterClear()" title="Clear">X</button>
+            </span>
+        </div>
+    </div>
+</div>
+<br />
 
 <div id="index">
-    @Html.Action("domainsList")    
+    @Html.Action("domainsList", new { domainName = ViewBag.domainName })    
 </div>
 
 @section Scripts
 {
     @Scripts.Render("~/bundles/jqueryval")
-    <script src="~/Scripts/dubbing/busySpinner.js"></script>
 
     <script>
-        //global ajax callback events handlers
-        // to exclude specific ajax call write: "global: false," in the begining of ajax function
-        $(document).ajaxStart(function () {
-            ajaxIndicatorStart('loading data.. please wait..');
-        }).ajaxComplete(function () {
-            ajaxIndicatorStop();
-        });
+        //$(document).ready(function () {
+        //    $(window).on('load', function () {
+        //        $('#domainFilter').prop('selected', false).filter(function () {
+        //            return $(this).val(data.client);
+        //        }).prop('selected', true);
+        //    });
+        //})
 
         function onFilterChange() {
             $.ajax({
@@ -42,6 +47,11 @@
                     $('#index').html(result);
                 }
             });
+        }
+
+        function onFilterClear() {
+            $('#domainFilter').val(null);
+            onFilterChange();
         }
     </script>
 }

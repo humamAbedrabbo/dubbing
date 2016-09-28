@@ -40,6 +40,7 @@ namespace dubbingApp.Models
             short accessLevel = 0;
             return staticCache.getDomainValuesList()
                 .Where(b => b.domainName == domainName && b.langCode == getLangCode() && b.minAccessLevel <= accessLevel)
+                .OrderBy(b => b.sortOrder)
                 .ToDictionary(b => b.domainCode, b => b.domainValue);
         }
 

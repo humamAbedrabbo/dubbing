@@ -19,14 +19,14 @@ namespace dubbingApp.Controllers
         // GET: dubbDomains
         public ActionResult Index(string domainName)
         {
-            var model = staticCache.getDomainValuesList();
-            ViewBag.domainsList = model.Select(b => b.domainName).Distinct();
+            ViewBag.domainsList = db.dubbDomains.Select(b => b.domainName).Distinct();
+            ViewBag.domainName = domainName;
             return View();
         }
 
         public ActionResult domainsList(string domainName)
         {
-            var model = staticCache.getDomainValuesList().Where(b => (string.IsNullOrEmpty(domainName) || b.domainName == domainName));
+            var model = db.dubbDomains.Where(b => (string.IsNullOrEmpty(domainName) || b.domainName == domainName));
             return PartialView("domainsList", model);
         }
 
@@ -54,17 +54,17 @@ namespace dubbingApp.Controllers
         // POST: dubbDomains/Create
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
+        [HttpPost, ValidateInput(false)]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "domainIntno,domainName,domainCode,domainValue,userMessage,valueUsage,langCode,sortOrder,minAccessLevel,status")] dubbDomain dubbDomain)
+        public ActionResult Create(dubbDomain dubbDomain)
         {
             if (ModelState.IsValid)
             {
                 db.dubbDomains.Add(dubbDomain);
                 db.SaveChanges();
-                return RedirectToAction("Index");
+                staticCache.loadDomainValuesList();
+                return RedirectToAction("Index", new { domainName = dubbDomain.domainName });
             }
-
             return View(dubbDomain);
         }
 
@@ -94,7 +94,8 @@ namespace dubbingApp.Controllers
             {
                 db.Entry(dubbDomain).State = EntityState.Modified;
                 db.SaveChanges();
-                return RedirectToAction("Index");
+                staticCache.loadDomainValuesList();
+                return RedirectToAction("Index", new { domainName = dubbDomain.domainName });
             }
             return View(dubbDomain);
         }
@@ -122,7 +123,8 @@ namespace dubbingApp.Controllers
             dubbDomain dubbDomain = db.dubbDomains.Find(id);
             db.dubbDomains.Remove(dubbDomain);
             db.SaveChanges();
-            return RedirectToAction("Index");
+            staticCache.loadDomainValuesList();
+            return RedirectToAction("Index", new { domainName = dubbDomain.domainName });
         }
 
         protected override void Dispose(bool disposing)
