@@ -219,6 +219,7 @@
     <Compile Include="Models\ViewModels.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Startup.cs" />
+    <Compile Include="Utils\ImportManager.cs" />
     <Compile Include="Utils\SecurityManager.cs" />
     <Compile Include="Utils\TimeConverter.cs" />
   </ItemGroup>
@@ -375,7 +376,7 @@
     <Content Include="Content\bootstrap\alerts.less" />
     <Content Include="Content\_bootstrap-datetimepicker.less" />
     <Content Include="Content\bootstrap-datetimepicker-build.less" />
-    <Content Include="Content\templates\Adaptation.xlsx" />
+    <Content Include="Content\templates\adaptation-template.xlsx" />
     <None Include="Properties\PublishProfiles\dubbingApp2016 - FTP.pubxml" />
     <None Include="Properties\PublishProfiles\dubbingApp2016 - Web Deploy.pubxml" />
     <None Include="Scripts\jquery-2.2.3.intellisense.js" />
@@ -598,6 +599,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
+    <Folder Include="Content\Files\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="packages.config" />

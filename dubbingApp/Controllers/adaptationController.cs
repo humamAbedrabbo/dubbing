@@ -435,6 +435,29 @@ namespace dubbingApp.Controllers
             ctx.SaveChanges();
         }
 
+        [HttpPost]
+        public ActionResult ImportFile(long order)
+        {
+            string savedFileName = "";
+            foreach (string file in Request.Files)
+            {
+                HttpPostedFileBase hpf = Request.Files[file] as HttpPostedFileBase;
+                if (hpf.ContentLength == 0)
+                    continue;
+                savedFileName = Path.Combine(
+                   Server.MapPath("~/Content/Files"),
+                   Path.GetFileName(hpf.FileName));
+                hpf.SaveAs(savedFileName);
+            }
+
+
+            ImportManager im = new Utils.ImportManager();
+            im.ImportFile(order, savedFileName);
+
+            System.IO.File.Delete(savedFileName);
+            return RedirectToAction("Index");
+        }
+
         /***********************************************************************************************************
         *
         * OLD CODE FOR Edit1
@@ -489,7 +512,7 @@ namespace dubbingApp.Controllers
         public FileStreamResult downloadTemplateFile(long orderTrnHdrIntno)
         {
             var order = ctx.orderTrnHdrs.Find(orderTrnHdrIntno);
-            var tempFile = Server.MapPath("~/Content/templates/Adaptation.xlsx");
+            var tempFile = Server.MapPath("~/Content/templates/adaptation-template.xlsx");
             byte[] contentAsBytes = System.IO.File.ReadAllBytes(tempFile);
 
             string fileName = orderTrnHdrIntno.ToString() + "-" + order.agreementWork.workName + " - " + order.episodeNo + ".xlsx";
