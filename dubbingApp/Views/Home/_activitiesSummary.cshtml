@@ -1,4 +1,6 @@
-﻿<br />
+﻿@model IEnumerable<string>
+@{ string[] rec; }
+<br />
 <div class="container-fluid" style="padding:0px">
     <div class="panel panel-primary" onclick="onSummaryClick()">
         <div class="panel-heading">
@@ -8,9 +10,36 @@
                 </div>
             </div>
         </div>
-        <div class="panel-body">
+        <div class="panel-body" style="padding:5px">
             <div id="panel1">
-                Current Work Load ...
+                <small>
+                    <label>Works In Hand</label> &nbsp;
+                    <span class="badge alert-info">Episodes</span>
+                    <span class="badge alert-danger">Claims</span>
+                </small>
+                <ul>
+                    @foreach (string x in Model)
+                    {
+                        rec = x.Split('|');
+                        <li>
+                            <small>@rec[0]</small> &nbsp;
+                            <span class="badge alert-info">@rec[1]</span>
+                            <span class="badge alert-danger">@rec[2]</span>
+                        </li>
+                    }
+                </ul>
+                <div>
+                    <small>
+                        <label>Delayed Uploads</label> &nbsp;
+                        <span>@ViewBag.delayedUploads</span> &nbsp; Episodes
+                    </small>
+                </div>
+                <div>
+                    <small>
+                        <label>Upcoming Shipment</label> &nbsp;
+                        <span>@ViewBag.nextShipment</span> &nbsp;
+                    </small>
+                </div>
             </div>
         </div>
     </div>
