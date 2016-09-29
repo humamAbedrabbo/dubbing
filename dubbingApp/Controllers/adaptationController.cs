@@ -486,6 +486,20 @@ namespace dubbingApp.Controllers
 
         }
 
+        public FileStreamResult downloadTemplateFile(long orderTrnHdrIntno)
+        {
+            var order = ctx.orderTrnHdrs.Find(orderTrnHdrIntno);
+            var tempFile = Server.MapPath("~/Content/templates/Adaptation.xlsx");
+            byte[] contentAsBytes = System.IO.File.ReadAllBytes(tempFile);
+
+            string fileName = orderTrnHdrIntno.ToString() + "-" + order.agreementWork.workName + " - " + order.episodeNo + ".xlsx";
+            var stream = new MemoryStream(contentAsBytes);
+
+
+            return File(stream, "text/plain", fileName);
+
+        }
+
 
     }    
 }
