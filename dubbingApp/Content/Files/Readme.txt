@@ -1,0 +1,1 @@
+﻿This file is required only to let the "Files" folder to get deployed with the site.
