@@ -94,6 +94,31 @@
         <AssociationConnector Association="DUBBDBModel.FK_workActors_voiceActors" />
         <AssociationConnector Association="DUBBDBModel.FK_workActors_workCharacters" />
         <EntityTypeShape EntityType="DUBBDBModel.paymentsDueVW" Width="1.5" PointX="7.375" PointY="0.75" />
+        <EntityTypeShape EntityType="DUBBDBModel.audioSampleDtl" Width="1.5" PointX="7.875" PointY="9.25" />
+        <EntityTypeShape EntityType="DUBBDBModel.audioSampleHdr" Width="1.5" PointX="5.625" PointY="15.625" />
+        <EntityTypeShape EntityType="DUBBDBModel.chrCastListDtl" Width="1.5" PointX="21" PointY="67.5" />
+        <EntityTypeShape EntityType="DUBBDBModel.chrCastListHdr" Width="1.5" PointX="9.75" PointY="58.125" />
+        <EntityTypeShape EntityType="DUBBDBModel.chrTemplateDtl" Width="1.5" PointX="7.875" PointY="12.375" />
+        <EntityTypeShape EntityType="DUBBDBModel.chrTemplateHdr" Width="1.5" PointX="5.625" PointY="20.375" />
+        <EntityTypeShape EntityType="DUBBDBModel.tag" Width="1.5" PointX="5.625" PointY="12.25" />
+        <EntityTypeShape EntityType="DUBBDBModel.tagTemplateDtl" Width="1.5" PointX="7.875" PointY="15.25" />
+        <EntityTypeShape EntityType="DUBBDBModel.tagTemplateHdr" Width="1.5" PointX="3.375" PointY="16.25" />
+        <EntityTypeShape EntityType="DUBBDBModel.tagType" Width="1.5" PointX="3.375" PointY="12.625" />
+        <AssociationConnector Association="DUBBDBModel.FK_audioSampleDtls_To_audioSampleHdrs" />
+        <AssociationConnector Association="DUBBDBModel.FK_audioSampleDtls_To_tags" />
+        <AssociationConnector Association="DUBBDBModel.FK_audioSampleHdrs_To_tagTemplateHdrs" />
+        <AssociationConnector Association="DUBBDBModel.FK_audioSampleHdrs_To_voiceActors" />
+        <AssociationConnector Association="DUBBDBModel.FK_chrCastListDtls_To_chrCastListHdrs" />
+        <AssociationConnector Association="DUBBDBModel.FK_chrCastListDtls_To_voiceActors" />
+        <AssociationConnector Association="DUBBDBModel.FK_chrCastListHdrs_To_clients" />
+        <AssociationConnector Association="DUBBDBModel.FK_chrCastListHdrs_To_workCharacters" />
+        <AssociationConnector Association="DUBBDBModel.FK_chrTemplateDtls_To_chrTemplateHdrs" />
+        <AssociationConnector Association="DUBBDBModel.FK_chrTemplateDtls_To_tags" />
+        <AssociationConnector Association="DUBBDBModel.FK_chrTemplateHdrs_To_tagTemplateHdrs" />
+        <AssociationConnector Association="DUBBDBModel.FK_chrTemplateHdrs_To_workCharacters" />
+        <AssociationConnector Association="DUBBDBModel.FK_tags_To_tagTypes" />
+        <AssociationConnector Association="DUBBDBModel.FK_tagTemplateDtls_To_tags" />
+        <AssociationConnector Association="DUBBDBModel.FK_tagTemplateDtls_To_tagTemplateHdrs" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

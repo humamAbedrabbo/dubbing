@@ -63,7 +63,25 @@
     <Compile Include="agreementWork.cs">
       <DependentUpon>dubbingDataModel.tt</DependentUpon>
     </Compile>
+    <Compile Include="audioSampleDtl.cs">
+      <DependentUpon>dubbingDataModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="audioSampleHdr.cs">
+      <DependentUpon>dubbingDataModel.tt</DependentUpon>
+    </Compile>
     <Compile Include="carrier.cs">
+      <DependentUpon>dubbingDataModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="chrCastListDtl.cs">
+      <DependentUpon>dubbingDataModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="chrCastListHdr.cs">
+      <DependentUpon>dubbingDataModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="chrTemplateDtl.cs">
+      <DependentUpon>dubbingDataModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="chrTemplateHdr.cs">
       <DependentUpon>dubbingDataModel.tt</DependentUpon>
     </Compile>
     <Compile Include="client.cs">
@@ -158,6 +176,18 @@
       <DependentUpon>dubbingDataModel.tt</DependentUpon>
     </Compile>
     <Compile Include="subtitle.cs">
+      <DependentUpon>dubbingDataModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="tag.cs">
+      <DependentUpon>dubbingDataModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="tagTemplateDtl.cs">
+      <DependentUpon>dubbingDataModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="tagTemplateHdr.cs">
+      <DependentUpon>dubbingDataModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="tagType.cs">
       <DependentUpon>dubbingDataModel.tt</DependentUpon>
     </Compile>
     <Compile Include="voiceActor.cs">

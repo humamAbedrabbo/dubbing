@@ -21,6 +21,7 @@ namespace dubbingModel
             this.clientClaims = new HashSet<clientClaim>();
             this.shipments = new HashSet<shipment>();
             this.workOrders = new HashSet<workOrder>();
+            this.chrCastListHdrs = new HashSet<chrCastListHdr>();
         }
     
         public long clientIntno { get; set; }
@@ -38,5 +39,7 @@ namespace dubbingModel
         public virtual ICollection<shipment> shipments { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<workOrder> workOrders { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<chrCastListHdr> chrCastListHdrs { get; set; }
     }
 }

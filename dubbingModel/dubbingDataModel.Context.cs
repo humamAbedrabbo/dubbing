@@ -64,6 +64,16 @@ namespace dubbingModel
         public virtual DbSet<workOrder> workOrders { get; set; }
         public virtual DbSet<workPersonnel> workPersonnels { get; set; }
         public virtual DbSet<paymentsDueVW> paymentsDueVWs { get; set; }
+        public virtual DbSet<audioSampleDtl> audioSampleDtls { get; set; }
+        public virtual DbSet<audioSampleHdr> audioSampleHdrs { get; set; }
+        public virtual DbSet<chrCastListDtl> chrCastListDtls { get; set; }
+        public virtual DbSet<chrCastListHdr> chrCastListHdrs { get; set; }
+        public virtual DbSet<chrTemplateDtl> chrTemplateDtls { get; set; }
+        public virtual DbSet<chrTemplateHdr> chrTemplateHdrs { get; set; }
+        public virtual DbSet<tag> tags { get; set; }
+        public virtual DbSet<tagTemplateDtl> tagTemplateDtls { get; set; }
+        public virtual DbSet<tagTemplateHdr> tagTemplateHdrs { get; set; }
+        public virtual DbSet<tagType> tagTypes { get; set; }
     
         public virtual int archiveEndorsedWork(Nullable<long> workIntno, string respMsg)
         {
