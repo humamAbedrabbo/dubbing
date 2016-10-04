@@ -178,6 +178,22 @@ INSERT INTO [dbo].[dubbDomain] ([domainIntno], [domainName], [domainCode], [doma
 INSERT INTO [dbo].[dubbDomain] ([domainIntno], [domainName], [domainCode], [domainValue], [userMessage], [valueUsage], [langCode], [sortOrder], [minAccessLevel], [status]) VALUES (236, N'settings', N'fdw', N'Saturday', N'First Day of the Week', N'SYS', N'en', 1, 0, 1)
 INSERT INTO [dbo].[dubbDomain] ([domainIntno], [domainName], [domainCode], [domainValue], [userMessage], [valueUsage], [langCode], [sortOrder], [minAccessLevel], [status]) VALUES (238, N'empType', N'02', N'Translation & Adaptation', NULL, N'USR', N'en', 4, 0, 1)
 INSERT INTO [dbo].[dubbDomain] ([domainIntno], [domainName], [domainCode], [domainValue], [userMessage], [valueUsage], [langCode], [sortOrder], [minAccessLevel], [status]) VALUES (239, N'empType', N'05', N'Contractor', NULL, N'USR', N'en', 5, 0, 1)
+INSERT INTO [dbo].[dubbDomain] ([domainIntno], [domainName], [domainCode], [domainValue], [userMessage], [valueUsage], [langCode], [sortOrder], [minAccessLevel], [status]) VALUES (240, N'vlScore', N'1', N'Not Avaiable', NULL, N'USR', N'en', 1, 0, 1)
+INSERT INTO [dbo].[dubbDomain] ([domainIntno], [domainName], [domainCode], [domainValue], [userMessage], [valueUsage], [langCode], [sortOrder], [minAccessLevel], [status]) VALUES (241, N'vlScore', N'2', N'Below Expectation', NULL, N'USR', N'en', 2, 0, 1)
+INSERT INTO [dbo].[dubbDomain] ([domainIntno], [domainName], [domainCode], [domainValue], [userMessage], [valueUsage], [langCode], [sortOrder], [minAccessLevel], [status]) VALUES (242, N'vlScore', N'3', N'Good', NULL, N'USR', N'en', 3, 0, 1)
+INSERT INTO [dbo].[dubbDomain] ([domainIntno], [domainName], [domainCode], [domainValue], [userMessage], [valueUsage], [langCode], [sortOrder], [minAccessLevel], [status]) VALUES (243, N'vlScore', N'4', N'Outstanding', NULL, N'USR', N'en', 4, 0, 1)
+INSERT INTO [dbo].[dubbDomain] ([domainIntno], [domainName], [domainCode], [domainValue], [userMessage], [valueUsage], [langCode], [sortOrder], [minAccessLevel], [status]) VALUES (244, N'vlWeight', N'0', N'Not Used', NULL, N'USR', N'en', 1, 0, 1)
+INSERT INTO [dbo].[dubbDomain] ([domainIntno], [domainName], [domainCode], [domainValue], [userMessage], [valueUsage], [langCode], [sortOrder], [minAccessLevel], [status]) VALUES (245, N'vlWeight', N'1', N'Normal', NULL, N'USR', N'en', 2, 0, 1)
+INSERT INTO [dbo].[dubbDomain] ([domainIntno], [domainName], [domainCode], [domainValue], [userMessage], [valueUsage], [langCode], [sortOrder], [minAccessLevel], [status]) VALUES (246, N'vlWeight', N'2', N'High', NULL, N'USR', N'en', 3, 0, 1)
+INSERT INTO [dbo].[dubbDomain] ([domainIntno], [domainName], [domainCode], [domainValue], [userMessage], [valueUsage], [langCode], [sortOrder], [minAccessLevel], [status]) VALUES (247, N'vlWeight', N'3', N'Very High', NULL, N'USR', N'en', 4, 0, 1)
+INSERT INTO [dbo].[dubbDomain] ([domainIntno], [domainName], [domainCode], [domainValue], [userMessage], [valueUsage], [langCode], [sortOrder], [minAccessLevel], [status]) VALUES (248, N'vlAudioSample', N'1', N'Not Evaluated', NULL, N'USR', N'en', 1, 0, 1)
+INSERT INTO [dbo].[dubbDomain] ([domainIntno], [domainName], [domainCode], [domainValue], [userMessage], [valueUsage], [langCode], [sortOrder], [minAccessLevel], [status]) VALUES (249, N'vlAudioSample', N'2', N'Evaluated', NULL, N'USR', N'en', 2, 0, 1)
+INSERT INTO [dbo].[dubbDomain] ([domainIntno], [domainName], [domainCode], [domainValue], [userMessage], [valueUsage], [langCode], [sortOrder], [minAccessLevel], [status]) VALUES (250, N'vlCastList', N'1', N'Draft', NULL, N'USR', N'en', 1, 0, 1)
+INSERT INTO [dbo].[dubbDomain] ([domainIntno], [domainName], [domainCode], [domainValue], [userMessage], [valueUsage], [langCode], [sortOrder], [minAccessLevel], [status]) VALUES (251, N'vlCastList', N'2', N'Published', NULL, N'USR', N'en', 2, 0, 1)
+INSERT INTO [dbo].[dubbDomain] ([domainIntno], [domainName], [domainCode], [domainValue], [userMessage], [valueUsage], [langCode], [sortOrder], [minAccessLevel], [status]) VALUES (252, N'vlCastList', N'3', N'Reviewed', NULL, N'USR', N'en', 3, 0, 1)
+INSERT INTO [dbo].[dubbDomain] ([domainIntno], [domainName], [domainCode], [domainValue], [userMessage], [valueUsage], [langCode], [sortOrder], [minAccessLevel], [status]) VALUES (253, N'vlCastList', N'4', N'Cancelled', NULL, N'USR', N'en', 4, 0, 1)
+
+
 SET IDENTITY_INSERT [dbo].[dubbDomain] OFF
 
 
