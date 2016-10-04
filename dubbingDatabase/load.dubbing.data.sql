@@ -953,13 +953,13 @@ INSERT INTO [dbo].[orderTrnHdrs] ([orderTrnHdrIntno], [workIntno], [orderIntno],
 SET IDENTITY_INSERT [dbo].[orderTrnHdrs] OFF
 
 -- Default tag types
-INSERT INTO TagTypes (Id, TypeName) VALUES (10, N'Gender');
-INSERT INTO TagTypes (Id, TypeName) VALUES (20, N'Genre');
-INSERT INTO TagTypes (Id, TypeName) VALUES (30, N'Characterstics');
-INSERT INTO TagTypes (Id, TypeName) VALUES (40, N'Roles');
-INSERT INTO TagTypes (Id, TypeName) VALUES (50, N'Age');
-INSERT INTO TagTypes (Id, TypeName) VALUES (60, N'Language and Accent');
-INSERT INTO TagTypes (Id, TypeName) VALUES (90, N'Unclassified');
+INSERT INTO TagTypes (Id, Name) VALUES (10, N'Gender');
+INSERT INTO TagTypes (Id, Name) VALUES (20, N'Genre');
+INSERT INTO TagTypes (Id, Name) VALUES (30, N'Characterstics');
+INSERT INTO TagTypes (Id, Name) VALUES (40, N'Roles');
+INSERT INTO TagTypes (Id, Name) VALUES (50, N'Age');
+INSERT INTO TagTypes (Id, Name) VALUES (60, N'Language and Accent');
+INSERT INTO TagTypes (Id, Name) VALUES (90, N'Unclassified');
 
 -- Gender default tags
 INSERT INTO Tags (TagTypeId, Name) VALUES (10, N'Male');
