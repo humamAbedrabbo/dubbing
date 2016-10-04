@@ -936,3 +936,115 @@ INSERT INTO [dbo].[orderTrnHdrs] ([orderTrnHdrIntno], [workIntno], [orderIntno],
 INSERT INTO [dbo].[orderTrnHdrs] ([orderTrnHdrIntno], [workIntno], [orderIntno], [episodeNo], [priority], [orderReceivedDate], [expectedDeliveryDate], [allowFirstDubbing], [startTranslation], [endTranslation], [startAdaptation], [endAdaptation], [startDischarge], [endDischarge], [plannedDubbing], [startDubbing], [endDubbing], [startMixage], [endMixage], [startMontage], [endMontage], [plannedUpload], [shipmentLowRes], [plannedShipment], [shipmentFinal], [status]) VALUES (290, 7, 15, 93, NULL, N'2016-05-07 00:00:00', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, N'04')
 SET IDENTITY_INSERT [dbo].[orderTrnHdrs] OFF
 
+-- Default tag types
+INSERT INTO TagTypes (Id, TypeName) VALUES (10, N'Gender');
+INSERT INTO TagTypes (Id, TypeName) VALUES (20, N'Genre');
+INSERT INTO TagTypes (Id, TypeName) VALUES (30, N'Characterstics');
+INSERT INTO TagTypes (Id, TypeName) VALUES (40, N'Roles');
+INSERT INTO TagTypes (Id, TypeName) VALUES (50, N'Age');
+INSERT INTO TagTypes (Id, TypeName) VALUES (60, N'Language and Accent');
+INSERT INTO TagTypes (Id, TypeName) VALUES (90, N'Unclassified');
+
+-- Gender default tags
+INSERT INTO Tags (TagTypeId, Name) VALUES (10, N'Male');
+INSERT INTO Tags (TagTypeId, Name) VALUES (10, N'Female');
+
+-- Genre default tags
+INSERT INTO Tags (TagTypeId, Name) VALUES (20, N'Animation and Character');
+INSERT INTO Tags (TagTypeId, Name) VALUES (20, N'Announcement');
+INSERT INTO Tags (TagTypeId, Name) VALUES (20, N'Audiobook');
+INSERT INTO Tags (TagTypeId, Name) VALUES (20, N'Commercial');
+INSERT INTO Tags (TagTypeId, Name) VALUES (20, N'Corporate');
+INSERT INTO Tags (TagTypeId, Name) VALUES (20, N'Dialog');
+INSERT INTO Tags (TagTypeId, Name) VALUES (20, N'Documentary');
+INSERT INTO Tags (TagTypeId, Name) VALUES (20, N'Education');
+INSERT INTO Tags (TagTypeId, Name) VALUES (20, N'Dialog');
+INSERT INTO Tags (TagTypeId, Name) VALUES (20, N'Film');
+INSERT INTO Tags (TagTypeId, Name) VALUES (20, N'Government');
+INSERT INTO Tags (TagTypeId, Name) VALUES (20, N'Impressions');
+INSERT INTO Tags (TagTypeId, Name) VALUES (20, N'Narration');
+INSERT INTO Tags (TagTypeId, Name) VALUES (20, N'Podcast');
+INSERT INTO Tags (TagTypeId, Name) VALUES (20, N'Promo and Trailer');
+INSERT INTO Tags (TagTypeId, Name) VALUES (20, N'Promotional');
+INSERT INTO Tags (TagTypeId, Name) VALUES (20, N'Song');
+INSERT INTO Tags (TagTypeId, Name) VALUES (20, N'TV');
+
+-- Characterstics defaults tags
+INSERT INTO Tags (TagTypeId, Name) VALUES (30, N'arrogant');
+INSERT INTO Tags (TagTypeId, Name) VALUES (30, N'attitude');
+INSERT INTO Tags (TagTypeId, Name) VALUES (30, N'believable');
+INSERT INTO Tags (TagTypeId, Name) VALUES (30, N'calming');
+INSERT INTO Tags (TagTypeId, Name) VALUES (30, N'casual');
+INSERT INTO Tags (TagTypeId, Name) VALUES (30, N'charming');
+INSERT INTO Tags (TagTypeId, Name) VALUES (30, N'cheerful');
+INSERT INTO Tags (TagTypeId, Name) VALUES (30, N'classy');
+INSERT INTO Tags (TagTypeId, Name) VALUES (30, N'clear');
+INSERT INTO Tags (TagTypeId, Name) VALUES (30, N'cool');
+INSERT INTO Tags (TagTypeId, Name) VALUES (30, N'corporate');
+INSERT INTO Tags (TagTypeId, Name) VALUES (30, N'cute');
+INSERT INTO Tags (TagTypeId, Name) VALUES (30, N'deep');
+INSERT INTO Tags (TagTypeId, Name) VALUES (30, N'easy-going');
+INSERT INTO Tags (TagTypeId, Name) VALUES (30, N'educational');
+INSERT INTO Tags (TagTypeId, Name) VALUES (30, N'elegant');
+INSERT INTO Tags (TagTypeId, Name) VALUES (30, N'enthusiastic');
+INSERT INTO Tags (TagTypeId, Name) VALUES (30, N'exciting');
+INSERT INTO Tags (TagTypeId, Name) VALUES (30, N'friendly');
+INSERT INTO Tags (TagTypeId, Name) VALUES (30, N'fun');
+INSERT INTO Tags (TagTypeId, Name) VALUES (30, N'gravely');
+INSERT INTO Tags (TagTypeId, Name) VALUES (30, N'happy');
+INSERT INTO Tags (TagTypeId, Name) VALUES (30, N'informative');
+INSERT INTO Tags (TagTypeId, Name) VALUES (30, N'innocent');
+INSERT INTO Tags (TagTypeId, Name) VALUES (30, N'inviting');
+INSERT INTO Tags (TagTypeId, Name) VALUES (30, N'intelligent');
+INSERT INTO Tags (TagTypeId, Name) VALUES (30, N'luxurious');
+INSERT INTO Tags (TagTypeId, Name) VALUES (30, N'neighborly');
+INSERT INTO Tags (TagTypeId, Name) VALUES (30, N'optimistic');
+INSERT INTO Tags (TagTypeId, Name) VALUES (30, N'playful');
+INSERT INTO Tags (TagTypeId, Name) VALUES (30, N'powerfull');
+INSERT INTO Tags (TagTypeId, Name) VALUES (30, N'raw');
+INSERT INTO Tags (TagTypeId, Name) VALUES (30, N'relaxing');
+INSERT INTO Tags (TagTypeId, Name) VALUES (30, N'rough');
+INSERT INTO Tags (TagTypeId, Name) VALUES (30, N'sarcastic');
+INSERT INTO Tags (TagTypeId, Name) VALUES (30, N'sesual');
+INSERT INTO Tags (TagTypeId, Name) VALUES (30, N'sexy');
+INSERT INTO Tags (TagTypeId, Name) VALUES (30, N'silly');
+INSERT INTO Tags (TagTypeId, Name) VALUES (30, N'smooth');
+INSERT INTO Tags (TagTypeId, Name) VALUES (30, N'sweet');
+INSERT INTO Tags (TagTypeId, Name) VALUES (30, N'tough');
+INSERT INTO Tags (TagTypeId, Name) VALUES (30, N'warm');
+
+-- Roles default tags
+INSERT INTO Tags (TagTypeId, Name) VALUES (40, N'father');
+INSERT INTO Tags (TagTypeId, Name) VALUES (40, N'mother');
+INSERT INTO Tags (TagTypeId, Name) VALUES (40, N'grandfather');
+INSERT INTO Tags (TagTypeId, Name) VALUES (40, N'grnadmother');
+INSERT INTO Tags (TagTypeId, Name) VALUES (40, N'friend');
+INSERT INTO Tags (TagTypeId, Name) VALUES (40, N'boss');
+INSERT INTO Tags (TagTypeId, Name) VALUES (40, N'son');
+INSERT INTO Tags (TagTypeId, Name) VALUES (40, N'daughter');
+INSERT INTO Tags (TagTypeId, Name) VALUES (40, N'student');
+INSERT INTO Tags (TagTypeId, Name) VALUES (40, N'teacher');
+INSERT INTO Tags (TagTypeId, Name) VALUES (40, N'manager');
+INSERT INTO Tags (TagTypeId, Name) VALUES (40, N'police');
+INSERT INTO Tags (TagTypeId, Name) VALUES (40, N'security');
+INSERT INTO Tags (TagTypeId, Name) VALUES (40, N'salesman');
+INSERT INTO Tags (TagTypeId, Name) VALUES (40, N'driver');
+INSERT INTO Tags (TagTypeId, Name) VALUES (40, N'Father');
+
+
+-- Age default tags
+INSERT INTO Tags (TagTypeId, Name) VALUES (50, N'Child');
+INSERT INTO Tags (TagTypeId, Name) VALUES (50, N'Preteen');
+INSERT INTO Tags (TagTypeId, Name) VALUES (50, N'Teenager');
+INSERT INTO Tags (TagTypeId, Name) VALUES (50, N'20s');
+INSERT INTO Tags (TagTypeId, Name) VALUES (50, N'30s');
+INSERT INTO Tags (TagTypeId, Name) VALUES (50, N'40s');
+INSERT INTO Tags (TagTypeId, Name) VALUES (50, N'50s');
+INSERT INTO Tags (TagTypeId, Name) VALUES (50, N'60s');
+INSERT INTO Tags (TagTypeId, Name) VALUES (50, N'Senior');
+
+-- Language and Accent
+INSERT INTO Tags (TagTypeId, Name) VALUES (60, N'Arabic');
+INSERT INTO Tags (TagTypeId, Name) VALUES (60, N'English');
+INSERT INTO Tags (TagTypeId, Name) VALUES (60, N'Hindi');
+INSERT INTO Tags (TagTypeId, Name) VALUES (60, N'Urdo');

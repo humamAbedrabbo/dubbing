@@ -56,4 +56,109 @@
     <Property Name="ParentElementType" Value="SqlTable" />
     <Property Name="NewName" Value="orderTrnDtlIntno" />
   </Operation>
+  <Operation Name="Rename Refactor" Key="1a5fe9f4-d3fc-4579-90ee-92d19114b12f" ChangeDateTime="10/04/2016 17:58:08">
+    <Property Name="ElementName" Value="[dbo].[tagTemplateHdr].[Id]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[tagTemplateHdr]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="tagTemplateHdrIntno" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="efd6eb3c-35e1-4d68-90f8-5f0120ab5f6f" ChangeDateTime="10/04/2016 18:02:05">
+    <Property Name="ElementName" Value="[dbo].[tagTemplateDtls].[Id]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[tagTemplateDtls]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="tagTemplateDtlIntno" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="f73cfac5-ad97-4d0e-9a28-fc5f175847f4" ChangeDateTime="10/04/2016 18:48:36">
+    <Property Name="ElementName" Value="[dbo].[audioSample].[Id]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[audioSample]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="audioSampleIntno" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="f3ab152e-6384-4844-b68a-52128296bd86" ChangeDateTime="10/04/2016 18:53:17">
+    <Property Name="ElementName" Value="[dbo].[audioSampleHdr].[audioSampleIntno]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[audioSampleHdr]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="audioSampleHdrIntno" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="3d7205c3-daa8-4d6d-9a42-cf45b666d7c7" ChangeDateTime="10/04/2016 18:56:22">
+    <Property Name="ElementName" Value="[dbo].[audioSampleDtls].[Id]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[audioSampleDtls]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="audioSampleHdrIntno" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="fe762f3c-bf97-4470-98bc-115c25c8492a" ChangeDateTime="10/04/2016 18:56:48">
+    <Property Name="ElementName" Value="[dbo].[audioSampleDtls].[audioSampleHdrIntno]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[audioSampleDtls]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="audioSampleDtlIntno" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="116a9122-2142-49c2-9826-4732bc390c57" ChangeDateTime="10/04/2016 19:01:33">
+    <Property Name="ElementName" Value="[dbo].[audioSampleDtls].[tagScore]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[audioSampleDtls]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="TagScore" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="e59d61a9-431f-459f-ba85-791b57ab26e8" ChangeDateTime="10/04/2016 19:06:32">
+    <Property Name="ElementName" Value="[dbo].[characterTemplateHdrs].[Id]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[characterTemplateHdrs]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="characterTemplateHdrIntno" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="0f8c845a-f8bf-4fcb-ac1f-e46305d813de" ChangeDateTime="10/04/2016 19:07:04">
+    <Property Name="ElementName" Value="[dbo].[characterTemplateHdrs].[characterTemplateHdrIntno]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[characterTemplateHdrs]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="chrTemplateHdrIntno" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="96b7c384-369d-4af0-a519-1ff959263c59" ChangeDateTime="10/04/2016 19:11:28">
+    <Property Name="ElementName" Value="[dbo].[tags].[Id]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[tags]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="tagIntno" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="b6eec324-b921-45d3-a3d4-cfba0b2879ae" ChangeDateTime="10/04/2016 19:11:41">
+    <Property Name="ElementName" Value="[dbo].[tags].[tagIntno]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[tags]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="Id" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="0e33969f-86c7-4b5a-8b91-b4d102cf1ad6" ChangeDateTime="10/04/2016 19:12:32">
+    <Property Name="ElementName" Value="[dbo].[FK_chrTemplateHdrs_ToTable]" />
+    <Property Name="ElementType" Value="SqlForeignKeyConstraint" />
+    <Property Name="ParentElementName" Value="[dbo].[chrTemplateHdrs]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="[FK_chrTemplateHdrs_To_workCharacters]" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="91e0d94b-cee3-471b-aff6-24ce33da05eb" ChangeDateTime="10/04/2016 19:15:25">
+    <Property Name="ElementName" Value="[dbo].[chrTemplateDtls].[Id]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[chrTemplateDtls]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="chrTemplateDtlIntno" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="23cd92cd-3feb-4f20-a844-a2a273ac77f1" ChangeDateTime="10/04/2016 19:41:00">
+    <Property Name="ElementName" Value="[dbo].[chrCastListHdrs].[Id]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[chrCastListHdrs]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="chrCastListHdrIntno" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="71607631-3834-49bc-988a-ecfeb03105b2" ChangeDateTime="10/04/2016 19:44:14">
+    <Property Name="ElementName" Value="[dbo].[chrCastListDtls].[Id]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[chrCastListDtls]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="chrCastListDtlIntno" />
+  </Operation>
 </Operations>
