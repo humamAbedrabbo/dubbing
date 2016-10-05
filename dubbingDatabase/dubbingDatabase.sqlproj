@@ -159,7 +159,7 @@
     <Build Include="dbo\Tables\chrTemplateDtls.sql" />
     <Build Include="dbo\Tables\chrCastListHdrs.sql" />
     <Build Include="dbo\Tables\chrCastListDtls.sql" />
-    <Build Include="dbo\Stored Procedures\voiceLibrary.sql" />
+    <None Include="dbo\Stored Procedures\voiceLibrary.sql" />
   </ItemGroup>
   <ItemGroup>
     <PostDeploy Include="load.dubbing.data.sql" />
