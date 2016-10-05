@@ -1,0 +1,57 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="http://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.min.css">
+    <title>@ViewBag.Title - DOMS</title>
+    @Styles.Render("~/Content/css")
+    @Scripts.Render("~/bundles/modernizr")
+</head>
+<body>
+    <div class="navbar navbar-inverse navbar-fixed-top">
+        <div class="container">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                @Html.ActionLink("Voice Library", "Index", "Home", new { area = "" }, new { @class = "navbar-brand" })
+            </div>
+            <div class="navbar-collapse collapse">
+                <ul class="nav navbar-nav">
+                    <li><img class="img-rounded" height="50" width="60" src="~/Content/Images/Fardous.png" /></li>
+                </ul>
+                @Html.Partial("_LoginPartial")
+            </div>
+        </div>
+    </div>
+    <div class="container body-content">
+        @RenderBody()
+        <hr />
+        <footer>
+            <p>
+                <img class="img-rounded" height="40" width="40" src="~/Content/Images/Fardous.png"/>
+                &copy; @DateTime.Now.Year - Fardous Drama
+            </p>
+        </footer>
+    </div>
+
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/bootstrap")
+    @RenderSection("scripts", required: false)
+    
+    <script src="~/Scripts/dubbing/busySpinner.js"></script>
+    <script>
+        //global ajax callback events handlers
+        // to exclude specific ajax call write: "global: false," in the begining of ajax function
+        $(document).ajaxStart(function () {
+            ajaxIndicatorStart('loading data.. please wait..');
+        }).ajaxComplete(function () {
+            ajaxIndicatorStop();
+        });
+    </script>
+
+</body>
+</html>
