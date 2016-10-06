@@ -1,0 +1,84 @@
+﻿@using dubbingModel;
+@model IEnumerable<tagType>
+
+@{
+    ViewBag.Title = "Index";
+}
+
+<h2>Tags</h2>
+<hr />
+
+<div class="row">
+    <a class="btn btn-primary pull-right" data-toggle="modal" data-target="#newTagModal">New Tag</a>
+    <br /><br />
+    <div id="tagsContainer">
+        @Html.Partial("_Tags", Model)
+    </div>
+
+
+</div>
+<div class="modal fade" id="newTagModal" tabindex="-1" role="dialog" aria-labelledby="newTagModal-label">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="newTagModal-label">New Tag</h4>
+            </div>
+            <div class="modal-body">
+                <form class="form-group">
+                    <label for="newTagType">Tag Type</label>
+                    <select id="newTagType" name="newTagType" class="form-control">
+                        @{ 
+                            var s = true;
+
+                            foreach (var t in Model)
+                            {
+                                if (s)
+                                {
+                                    <option value="@t.Id" selected>@t.Name</option>
+                                }
+                                else
+                                {
+                                    <option value="@t.Id" >@t.Name</option>
+                                }
+
+                                s = false;
+                            }
+                        }
+                    </select>
+                    <br />
+                    <label for="tagName">Tag Name</label>
+                    <input id="tagName" class="form-control" placeholder="Enter tag name" />
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" onclick="addTag()" data-dismiss="modal">Save</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts
+{
+    <script>
+        function addTag() {
+            var tagTypeId = newTagType.selectedOptions[0].value;
+            var tagName = $("#tagName").val();
+            var url = "/Tags/addTag";
+            $.ajax({
+                contentType: 'application/json',
+                method: 'GET',
+                url: url,
+                data: { tagTypeId: tagTypeId, tagName: tagName },
+                success: function (result) {
+                    $("#tagsContainer").empty();
+                    $("#tagsContainer").html(result);
+                }
+            });
+        }
+        $(function () {
+            
+        });
+    </script>    
+}

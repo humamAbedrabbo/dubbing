@@ -7,6 +7,7 @@
     <title>@ViewBag.Title - DOMS</title>
     @Styles.Render("~/Content/css")
     @Scripts.Render("~/bundles/modernizr")
+    
 </head>
 <body>
     <div class="navbar navbar-inverse navbar-fixed-top">
@@ -42,16 +43,5 @@
     @Scripts.Render("~/bundles/bootstrap")
     @RenderSection("scripts", required: false)
     
-    <script src="~/Scripts/dubbing/busySpinner.js"></script>
-    <script>
-        //global ajax callback events handlers
-        // to exclude specific ajax call write: "global: false," in the begining of ajax function
-        $(document).ajaxStart(function () {
-            ajaxIndicatorStart('loading data.. please wait..');
-        }).ajaxComplete(function () {
-            ajaxIndicatorStop();
-        });
-    </script>
-
 </body>
 </html>
