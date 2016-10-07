@@ -13,6 +13,7 @@
 </div>
 <br />
 <br />
+
 <div class="row">
     <div id="tempContainer">
         @Html.Partial("_templates", Model)
@@ -45,6 +46,7 @@
             <div class="modal-footer">
                 <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
                 <button type="button" class="btn btn-primary" data-dismiss="modal" onclick="saveTemplate();">Save</button>
+                
             </div>
         </div>
     </div>
@@ -103,9 +105,11 @@
             });
         }
         $(function () {
-            var availableTags = [
-                "raw", "one", "two", "three", "four"
-            ];
+            var availableTags = [];
+            @foreach (var d in ViewBag.Tags)
+            {
+                @:availableTags.push("@d");
+            }
             $(".tag").autocomplete({
                 source: availableTags
             });

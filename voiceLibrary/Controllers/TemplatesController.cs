@@ -5,6 +5,7 @@ using System.Web;
 using System.Data.Entity;
 using System.Web.Mvc;
 using dubbingModel;
+using System.Text;
 
 namespace voiceLibrary.Controllers
 {
@@ -16,6 +17,7 @@ namespace voiceLibrary.Controllers
         public ActionResult Index()
         {
             var model = ctx.tagTemplateHdrs.Include(x => x.tagTemplateDtls).OrderBy(x => x.Title).ToList();
+            ViewBag.Tags = ctx.tags.Select(x => x.Name).OrderBy(x => x).ToList();
             return View(model);
         }
         public ActionResult GetTemplates()
