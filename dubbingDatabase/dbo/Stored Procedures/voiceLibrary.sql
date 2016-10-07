@@ -55,7 +55,7 @@ SET QUOTED_IDENTIFIER ON
 GO
 
 CREATE TABLE [dbo].[tagTemplateHdrs](
-	[tagTemplateHdrIntno] [bigint] NOT NULL,
+	[tagTemplateHdrIntno] [bigint] NOT NULL IDENTITY(1,1),
 	[Title] [nvarchar](150) NOT NULL,
 	[Description] [nvarchar](max) NULL,
 	[Text] [nvarchar](max) NULL,

@@ -539,7 +539,7 @@
           <Key>
             <PropertyRef Name="tagTemplateHdrIntno" />
           </Key>
-          <Property Name="tagTemplateHdrIntno" Type="bigint" Nullable="false" />
+          <Property Name="tagTemplateHdrIntno" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="Title" Type="nvarchar" MaxLength="150" Nullable="false" />
           <Property Name="Description" Type="nvarchar(max)" />
           <Property Name="Text" Type="nvarchar(max)" />
@@ -2082,7 +2082,6 @@ warning 6002: The table/view 'DUBBDB.dbo.paymentsDueVW' does not have a primary 
           <EntitySet Name="chrTemplateHdrs" EntityType="DUBBDBModel.chrTemplateHdr" />
           <EntitySet Name="tags" EntityType="DUBBDBModel.tag" />
           <EntitySet Name="tagTemplateDtls" EntityType="DUBBDBModel.tagTemplateDtl" />
-          <EntitySet Name="tagTemplateHdrs" EntityType="DUBBDBModel.tagTemplateHdr" />
           <EntitySet Name="tagTypes" EntityType="DUBBDBModel.tagType" />
           <AssociationSet Name="FK_audioSampleDtls_To_audioSampleHdrs" Association="DUBBDBModel.FK_audioSampleDtls_To_audioSampleHdrs">
             <End Role="audioSampleHdr" EntitySet="audioSampleHdrs" />
@@ -2091,10 +2090,6 @@ warning 6002: The table/view 'DUBBDB.dbo.paymentsDueVW' does not have a primary 
           <AssociationSet Name="FK_audioSampleDtls_To_tags" Association="DUBBDBModel.FK_audioSampleDtls_To_tags">
             <End Role="tag" EntitySet="tags" />
             <End Role="audioSampleDtl" EntitySet="audioSampleDtls" />
-          </AssociationSet>
-          <AssociationSet Name="FK_audioSampleHdrs_To_tagTemplateHdrs" Association="DUBBDBModel.FK_audioSampleHdrs_To_tagTemplateHdrs">
-            <End Role="tagTemplateHdr" EntitySet="tagTemplateHdrs" />
-            <End Role="audioSampleHdr" EntitySet="audioSampleHdrs" />
           </AssociationSet>
           <AssociationSet Name="FK_audioSampleHdrs_To_voiceActors" Association="DUBBDBModel.FK_audioSampleHdrs_To_voiceActors">
             <End Role="voiceActor" EntitySet="voiceActors" />
@@ -2124,10 +2119,6 @@ warning 6002: The table/view 'DUBBDB.dbo.paymentsDueVW' does not have a primary 
             <End Role="tag" EntitySet="tags" />
             <End Role="chrTemplateDtl" EntitySet="chrTemplateDtls" />
           </AssociationSet>
-          <AssociationSet Name="FK_chrTemplateHdrs_To_tagTemplateHdrs" Association="DUBBDBModel.FK_chrTemplateHdrs_To_tagTemplateHdrs">
-            <End Role="tagTemplateHdr" EntitySet="tagTemplateHdrs" />
-            <End Role="chrTemplateHdr" EntitySet="chrTemplateHdrs" />
-          </AssociationSet>
           <AssociationSet Name="FK_chrTemplateHdrs_To_workCharacters" Association="DUBBDBModel.FK_chrTemplateHdrs_To_workCharacters">
             <End Role="workCharacter" EntitySet="workCharacters" />
             <End Role="chrTemplateHdr" EntitySet="chrTemplateHdrs" />
@@ -2139,6 +2130,15 @@ warning 6002: The table/view 'DUBBDB.dbo.paymentsDueVW' does not have a primary 
           <AssociationSet Name="FK_tagTemplateDtls_To_tags" Association="DUBBDBModel.FK_tagTemplateDtls_To_tags">
             <End Role="tag" EntitySet="tags" />
             <End Role="tagTemplateDtl" EntitySet="tagTemplateDtls" />
+          </AssociationSet>
+          <EntitySet Name="tagTemplateHdrs" EntityType="DUBBDBModel.tagTemplateHdr" />
+          <AssociationSet Name="FK_audioSampleHdrs_To_tagTemplateHdrs" Association="DUBBDBModel.FK_audioSampleHdrs_To_tagTemplateHdrs">
+            <End Role="tagTemplateHdr" EntitySet="tagTemplateHdrs" />
+            <End Role="audioSampleHdr" EntitySet="audioSampleHdrs" />
+          </AssociationSet>
+          <AssociationSet Name="FK_chrTemplateHdrs_To_tagTemplateHdrs" Association="DUBBDBModel.FK_chrTemplateHdrs_To_tagTemplateHdrs">
+            <End Role="tagTemplateHdr" EntitySet="tagTemplateHdrs" />
+            <End Role="chrTemplateHdr" EntitySet="chrTemplateHdrs" />
           </AssociationSet>
           <AssociationSet Name="FK_tagTemplateDtls_To_tagTemplateHdrs" Association="DUBBDBModel.FK_tagTemplateDtls_To_tagTemplateHdrs">
             <End Role="tagTemplateHdr" EntitySet="tagTemplateHdrs" />
@@ -3465,8 +3465,8 @@ warning 6002: The table/view 'DUBBDB.dbo.paymentsDueVW' does not have a primary 
           <Property Name="Description" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
           <Property Name="Status" Type="String" MaxLength="10" FixedLength="false" Unicode="true" />
           <NavigationProperty Name="audioSampleDtls" Relationship="DUBBDBModel.FK_audioSampleDtls_To_audioSampleHdrs" FromRole="audioSampleHdr" ToRole="audioSampleDtl" />
-          <NavigationProperty Name="tagTemplateHdr" Relationship="DUBBDBModel.FK_audioSampleHdrs_To_tagTemplateHdrs" FromRole="audioSampleHdr" ToRole="tagTemplateHdr" />
           <NavigationProperty Name="voiceActor" Relationship="DUBBDBModel.FK_audioSampleHdrs_To_voiceActors" FromRole="audioSampleHdr" ToRole="voiceActor" />
+          <NavigationProperty Name="tagTemplateHdr" Relationship="DUBBDBModel.FK_audioSampleHdrs_To_tagTemplateHdrs" FromRole="audioSampleHdr" ToRole="tagTemplateHdr" />
         </EntityType>
         <EntityType Name="chrCastListDtl">
           <Key>
@@ -3515,8 +3515,8 @@ warning 6002: The table/view 'DUBBDB.dbo.paymentsDueVW' does not have a primary 
           <Property Name="workCharacterIntno" Type="Int64" Nullable="false" />
           <Property Name="tagTemplateHdrIntno" Type="Int64" Nullable="false" />
           <NavigationProperty Name="chrTemplateDtls" Relationship="DUBBDBModel.FK_chrTemplateDtls_To_chrTemplateHdrs" FromRole="chrTemplateHdr" ToRole="chrTemplateDtl" />
-          <NavigationProperty Name="tagTemplateHdr" Relationship="DUBBDBModel.FK_chrTemplateHdrs_To_tagTemplateHdrs" FromRole="chrTemplateHdr" ToRole="tagTemplateHdr" />
           <NavigationProperty Name="workCharacter" Relationship="DUBBDBModel.FK_chrTemplateHdrs_To_workCharacters" FromRole="chrTemplateHdr" ToRole="workCharacter" />
+          <NavigationProperty Name="tagTemplateHdr" Relationship="DUBBDBModel.FK_chrTemplateHdrs_To_tagTemplateHdrs" FromRole="chrTemplateHdr" ToRole="tagTemplateHdr" />
         </EntityType>
         <EntityType Name="tag">
           <Key>
@@ -3541,18 +3541,6 @@ warning 6002: The table/view 'DUBBDB.dbo.paymentsDueVW' does not have a primary 
           <Property Name="Weight" Type="Int32" />
           <NavigationProperty Name="tag" Relationship="DUBBDBModel.FK_tagTemplateDtls_To_tags" FromRole="tagTemplateDtl" ToRole="tag" />
           <NavigationProperty Name="tagTemplateHdr" Relationship="DUBBDBModel.FK_tagTemplateDtls_To_tagTemplateHdrs" FromRole="tagTemplateDtl" ToRole="tagTemplateHdr" />
-        </EntityType>
-        <EntityType Name="tagTemplateHdr">
-          <Key>
-            <PropertyRef Name="tagTemplateHdrIntno" />
-          </Key>
-          <Property Name="tagTemplateHdrIntno" Type="Int64" Nullable="false" />
-          <Property Name="Title" Type="String" Nullable="false" MaxLength="150" FixedLength="false" Unicode="true" />
-          <Property Name="Description" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
-          <Property Name="Text" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
-          <NavigationProperty Name="audioSampleHdrs" Relationship="DUBBDBModel.FK_audioSampleHdrs_To_tagTemplateHdrs" FromRole="tagTemplateHdr" ToRole="audioSampleHdr" />
-          <NavigationProperty Name="chrTemplateHdrs" Relationship="DUBBDBModel.FK_chrTemplateHdrs_To_tagTemplateHdrs" FromRole="tagTemplateHdr" ToRole="chrTemplateHdr" />
-          <NavigationProperty Name="tagTemplateDtls" Relationship="DUBBDBModel.FK_tagTemplateDtls_To_tagTemplateHdrs" FromRole="tagTemplateHdr" ToRole="tagTemplateDtl" />
         </EntityType>
         <EntityType Name="tagType">
           <Key>
@@ -3585,18 +3573,6 @@ warning 6002: The table/view 'DUBBDB.dbo.paymentsDueVW' does not have a primary 
             </Principal>
             <Dependent Role="audioSampleDtl">
               <PropertyRef Name="tagId" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK_audioSampleHdrs_To_tagTemplateHdrs">
-          <End Type="DUBBDBModel.tagTemplateHdr" Role="tagTemplateHdr" Multiplicity="1" />
-          <End Type="DUBBDBModel.audioSampleHdr" Role="audioSampleHdr" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="tagTemplateHdr">
-              <PropertyRef Name="tagTemplateHdrIntno" />
-            </Principal>
-            <Dependent Role="audioSampleHdr">
-              <PropertyRef Name="tagTemplateHdrIntno" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -3696,20 +3672,6 @@ warning 6002: The table/view 'DUBBDB.dbo.paymentsDueVW' does not have a primary 
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK_chrTemplateHdrs_To_tagTemplateHdrs">
-          <End Type="DUBBDBModel.tagTemplateHdr" Role="tagTemplateHdr" Multiplicity="1">
-            <OnDelete Action="Cascade" />
-          </End>
-          <End Type="DUBBDBModel.chrTemplateHdr" Role="chrTemplateHdr" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="tagTemplateHdr">
-              <PropertyRef Name="tagTemplateHdrIntno" />
-            </Principal>
-            <Dependent Role="chrTemplateHdr">
-              <PropertyRef Name="tagTemplateHdrIntno" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
         <Association Name="FK_chrTemplateHdrs_To_workCharacters">
           <End Type="DUBBDBModel.workCharacter" Role="workCharacter" Multiplicity="1">
             <OnDelete Action="Cascade" />
@@ -3745,6 +3707,44 @@ warning 6002: The table/view 'DUBBDB.dbo.paymentsDueVW' does not have a primary 
             </Principal>
             <Dependent Role="tagTemplateDtl">
               <PropertyRef Name="tagId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityType Name="tagTemplateHdr">
+          <Key>
+            <PropertyRef Name="tagTemplateHdrIntno" />
+          </Key>
+          <Property Name="tagTemplateHdrIntno" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Title" Type="String" Nullable="false" MaxLength="150" FixedLength="false" Unicode="true" />
+          <Property Name="Description" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Text" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="audioSampleHdrs" Relationship="DUBBDBModel.FK_audioSampleHdrs_To_tagTemplateHdrs" FromRole="tagTemplateHdr" ToRole="audioSampleHdr" />
+          <NavigationProperty Name="chrTemplateHdrs" Relationship="DUBBDBModel.FK_chrTemplateHdrs_To_tagTemplateHdrs" FromRole="tagTemplateHdr" ToRole="chrTemplateHdr" />
+          <NavigationProperty Name="tagTemplateDtls" Relationship="DUBBDBModel.FK_tagTemplateDtls_To_tagTemplateHdrs" FromRole="tagTemplateHdr" ToRole="tagTemplateDtl" />
+        </EntityType>
+        <Association Name="FK_audioSampleHdrs_To_tagTemplateHdrs">
+          <End Type="DUBBDBModel.tagTemplateHdr" Role="tagTemplateHdr" Multiplicity="1" />
+          <End Type="DUBBDBModel.audioSampleHdr" Role="audioSampleHdr" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="tagTemplateHdr">
+              <PropertyRef Name="tagTemplateHdrIntno" />
+            </Principal>
+            <Dependent Role="audioSampleHdr">
+              <PropertyRef Name="tagTemplateHdrIntno" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_chrTemplateHdrs_To_tagTemplateHdrs">
+          <End Type="DUBBDBModel.tagTemplateHdr" Role="tagTemplateHdr" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Type="DUBBDBModel.chrTemplateHdr" Role="chrTemplateHdr" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="tagTemplateHdr">
+              <PropertyRef Name="tagTemplateHdrIntno" />
+            </Principal>
+            <Dependent Role="chrTemplateHdr">
+              <PropertyRef Name="tagTemplateHdrIntno" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -4442,6 +4442,14 @@ warning 6002: The table/view 'DUBBDB.dbo.paymentsDueVW' does not have a primary 
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
+          <EntitySetMapping Name="tagTypes">
+            <EntityTypeMapping TypeName="DUBBDBModel.tagType">
+              <MappingFragment StoreEntitySet="tagTypes">
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
           <EntitySetMapping Name="tagTemplateHdrs">
             <EntityTypeMapping TypeName="DUBBDBModel.tagTemplateHdr">
               <MappingFragment StoreEntitySet="tagTemplateHdrs">
@@ -4449,14 +4457,6 @@ warning 6002: The table/view 'DUBBDB.dbo.paymentsDueVW' does not have a primary 
                 <ScalarProperty Name="Description" ColumnName="Description" />
                 <ScalarProperty Name="Title" ColumnName="Title" />
                 <ScalarProperty Name="tagTemplateHdrIntno" ColumnName="tagTemplateHdrIntno" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="tagTypes">
-            <EntityTypeMapping TypeName="DUBBDBModel.tagType">
-              <MappingFragment StoreEntitySet="tagTypes">
-                <ScalarProperty Name="Name" ColumnName="Name" />
-                <ScalarProperty Name="Id" ColumnName="Id" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>

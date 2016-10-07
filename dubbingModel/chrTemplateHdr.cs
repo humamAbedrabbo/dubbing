@@ -26,7 +26,7 @@ namespace dubbingModel
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<chrTemplateDtl> chrTemplateDtls { get; set; }
-        public virtual tagTemplateHdr tagTemplateHdr { get; set; }
         public virtual workCharacter workCharacter { get; set; }
+        public virtual tagTemplateHdr tagTemplateHdr { get; set; }
     }
 }

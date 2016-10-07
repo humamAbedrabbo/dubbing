@@ -72,8 +72,8 @@ namespace dubbingModel
         public virtual DbSet<chrTemplateHdr> chrTemplateHdrs { get; set; }
         public virtual DbSet<tag> tags { get; set; }
         public virtual DbSet<tagTemplateDtl> tagTemplateDtls { get; set; }
-        public virtual DbSet<tagTemplateHdr> tagTemplateHdrs { get; set; }
         public virtual DbSet<tagType> tagTypes { get; set; }
+        public virtual DbSet<tagTemplateHdr> tagTemplateHdrs { get; set; }
     
         public virtual int archiveEndorsedWork(Nullable<long> workIntno, string respMsg)
         {

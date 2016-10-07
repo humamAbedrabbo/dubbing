@@ -4,7 +4,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="http://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.min.css">
-    <title>@ViewBag.Title - DOMS</title>
+    <title>@ViewBag.Title - Voice Library</title>
     @Styles.Render("~/Content/css")
     @Scripts.Render("~/bundles/modernizr")
     
@@ -23,6 +23,8 @@
             <div class="navbar-collapse collapse">
                 <ul class="nav navbar-nav">
                     <li><img class="img-rounded" height="50" width="60" src="~/Content/Images/Fardous.png" /></li>
+                    <li>@Html.ActionLink("Tags", "Index", "Tags")</li>
+                    <li>@Html.ActionLink("Templates", "Index", "Templates")</li>
                 </ul>
                 @Html.Partial("_LoginPartial")
             </div>
