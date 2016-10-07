@@ -44,5 +44,13 @@ namespace voiceLibrary.Controllers
             ctx.SaveChanges();
             return GetTemplates();
         }
+        public ActionResult DeleteTemplateTag(long tagTemplateDtlIntno)
+        {
+            var dtl = ctx.tagTemplateDtls.Find(tagTemplateDtlIntno);
+            ctx.tagTemplateDtls.Remove(dtl);
+            ctx.SaveChanges();
+
+            return GetTemplates();
+        }
     }
 }

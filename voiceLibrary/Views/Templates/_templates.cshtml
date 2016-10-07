@@ -19,7 +19,7 @@
                 <tbody>
                     <tr>
                         <td>
-                            <input id="newTagName_@hdr.tagTemplateHdrIntno" class="form-control" />
+                            <input id="newTagName_@hdr.tagTemplateHdrIntno" class="form-control tag" />
                         </td>
                         <td>
                             <input id="newMinScore_@hdr.tagTemplateHdrIntno" class="form-control" />
@@ -34,10 +34,12 @@
                     @foreach(var t in hdr.tagTemplateDtls)
                     {
                         <tr>
-                            <td><input class="form-control" value="@t.tag.Name" /></td>
+                            <td><input class="form-control tag" value="@t.tag.Name" /></td>
                             <td><input class="form-control" type="number" value="@t.MinScore" /></td>
                             <td><input class="form-control" type="number" value="@t.Weight" /></td>
-                            <td>&nbsp;</td>
+                            <td>
+                                <a class="btn btn-sm" data-id="@hdr.tagTemplateHdrIntno" href="javascript:deleteTempDtl(@t.tagTemplateDtlIntno);"><span class="glyphicon glyphicon-trash">&nbsp;</span></a>
+                            </td>
                         </tr>
 
                     }

@@ -4,7 +4,7 @@
 @{
     ViewBag.Title = "Index";
 }
-
+<link href="~/Content/themes/base/jquery-ui.css" rel="stylesheet" />
 <h2>Voice Templates</h2>
 <hr />
 
@@ -88,8 +88,27 @@
                 }
             });
         }
-        $(function () {
+        function deleteTempDtl(id) {
+            var url = '/Templates/DeleteTemplateTag';
 
+            $.ajax({
+                contentType: 'application/json',
+                method: 'GET',
+                url: url,
+                data: { tagTemplateDtlIntno: id },
+                success: function (result) {
+                    $("#tempContainer").empty();
+                    $("#tempContainer").html(result);
+                }
+            });
+        }
+        $(function () {
+            var availableTags = [
+                "raw", "one", "two", "three", "four"
+            ];
+            $(".tag").autocomplete({
+                source: availableTags
+            });
         });
     </script>
 }
