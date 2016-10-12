@@ -1,12 +1,39 @@
 ﻿@using dubbingModel
-@model IEnumerable<tag>
+
 
 @{
     ViewBag.Title = "Index";
 }
 
-<h2>Index</h2>
-
+<h2>Tags</h2>
+<hr />
 <div class="container">
-    
+    <div class="controls-container">
+        <a class="btn btn-primary pull-right" href="#" data-toggle="modal" data-target="#newTagModal">New Tag</a>
+        <select class="form-control" id="tag_type_selector" name="tag_type_selector">
+            <option value="">select tag type</option>
+            @foreach (var tt in ViewBag.tagTypes)
+            {
+                <option value="@tt.Id">@tt.Name</option>
+            }
+        </select>
+
+    </div>
+    <div id="tag_list">
+        @Html.Action("tagList", 10)
+    </div>
 </div>
+@Html.Partial("_newTag")
+
+@section Scripts
+{
+    <script src="~/Scripts/VL/vl.js"></script>
+    <script>
+
+        $(function () {
+            $("#tag_type_selector").change(function () {
+                dispTags();
+            });
+        });
+    </script>
+}
