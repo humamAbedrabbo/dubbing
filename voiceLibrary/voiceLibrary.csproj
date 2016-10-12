@@ -172,6 +172,7 @@
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\ManageController.cs" />
     <Compile Include="Controllers\tagsController.cs" />
+    <Compile Include="Controllers\templatesController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
@@ -300,6 +301,8 @@
     <Content Include="Views\tags\Index.cshtml" />
     <Content Include="Views\tags\_tagList.cshtml" />
     <Content Include="Views\tags\_newTag.cshtml" />
+    <Content Include="Views\templates\Index.cshtml" />
+    <Content Include="Views\templates\_templateList.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
