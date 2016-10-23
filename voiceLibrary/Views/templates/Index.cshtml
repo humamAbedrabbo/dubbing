@@ -7,10 +7,57 @@
 <hr />
 <div class="container">
     <div class="template-controls">
-
+        <a class="btn btn-primary" data-toggle="modal" data-target="#newTemplateModal">New Template</a>
     </div>
+    <br />
+    <br />
     <div id="templateList">
         @Html.Action("templateList")
+    </div>
+</div>
+
+<div class="modal fade" id="newTemplateModal" tabindex="-1" role="dialog" aria-labelledby="newTemplateModal-label">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="newTemplateModal-label">new Template</h4>
+            </div>
+            <div class="modal-body">
+                <form id="newTemplateContainer">
+                    <label for="ntempTitle">Title</label>
+                    <input id="ntempTitle" name="ntempTitle" value="" placeholder="Enter title" class="form-control" />
+                    <label for="ntempDesc">Description</label>
+                    <textarea id="ntempDesc" name="ntempDesc" rows="2" class="form-control fullSize"></textarea>
+                    <label for="ntempText">Text</label>
+                    <textarea id="ntempText" name="ntempText" rows="2" class="form-control fullSize"></textarea>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" data-dismiss="modal" onclick="saveNewTemplate()">Save</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="editTemplateModal" tabindex="-1" role="dialog" aria-labelledby="editTemplateModal-label">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="editTemplateModal-label">Edit Template</h4>
+            </div>
+            <div class="modal-body">
+                <form id="editTemplateContainer">
+
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" data-dismiss="modal" onclick="saveTemplate()">Save</button>
+            </div>
+        </div>
     </div>
 </div>
 
@@ -18,6 +65,72 @@
 {
     <script src="~/Scripts/VL/vl.js"></script>
     <script>
+
+        function editTemplate(tagTemplateHdrIntno) {
+            var url = '/templates/editTemplate';
+            $.ajax({
+                contentType: 'text/html',
+                method: 'GET',
+                url: url,
+                data: { id: tagTemplateHdrIntno },
+                success: function (result) {
+                    $("#editTemplateContainer").empty();
+                    $("#editTemplateContainer").html(result);
+
+                }
+            });
+
+        }
+        function saveTemplate() {
+            var tagTemplateHdrIntno = $("#tagTemplateHdrIntno").val();
+            var tempTitle = $("#tempTitle").val();
+            var tempDescription = $("#tempDesc").val();
+            var tempText = $("#tempText").val();
+            var url = '/templates/saveTemplate';
+            $.ajax({
+                contentType: 'text/html',
+                method: 'GET',
+                url: url,
+                data: { tagTemplateHdrIntno: tagTemplateHdrIntno, title: tempTitle, desc: tempDescription, text: tempText },
+                success: function (result) {
+                    $("#templateList").empty();
+                    $("#templateList").html(result);
+
+                }
+            });
+        }
+        function saveNewTemplate() {
+            var tagTemplateHdrIntno = 0;
+            var tempTitle = $("#ntempTitle").val();
+            var tempDescription = $("#ntempDesc").val();
+            var tempText = $("#ntempText").val();
+            var url = '/templates/saveTemplate';
+            $.ajax({
+                contentType: 'text/html',
+                method: 'GET',
+                url: url,
+                data: { tagTemplateHdrIntno: tagTemplateHdrIntno, title: tempTitle, desc: tempDescription, text: tempText },
+                success: function (result) {
+                    $("#templateList").empty();
+                    $("#templateList").html(result);
+
+                }
+            });
+        }
+        function deleteTemplate(id) {
+            var url = '/templates/deleteTemplate';
+            $.ajax({
+                contentType: 'text/html',
+                method: 'GET',
+                url: url,
+                data: { id: id },
+                success: function (result) {
+                    $("#templateList").empty();
+                    $("#templateList").html(result);
+
+                }
+            });
+        }
         $(function () {
 
         });

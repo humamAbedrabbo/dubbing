@@ -303,6 +303,7 @@
     <Content Include="Views\tags\_newTag.cshtml" />
     <Content Include="Views\templates\Index.cshtml" />
     <Content Include="Views\templates\_templateList.cshtml" />
+    <Content Include="Views\templates\_editTemplate.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

@@ -22,5 +22,40 @@ namespace voiceLibrary.Controllers
             var model = ctx.tagTemplateHdrs.Include(x=>x.tagTemplateDtls);
             return PartialView("_templateList", model);
         }
+
+        public ActionResult editTemplate(long id)
+        {
+            var model = ctx.tagTemplateHdrs.Find(id);
+            return PartialView("_editTemplate", model);
+        }
+        public ActionResult saveTemplate(long tagTemplateHdrIntno, string title, string desc, string text)
+        {
+            if(tagTemplateHdrIntno == 0)
+            {
+                var model = ctx.tagTemplateHdrs.Create();
+                model.Title = title;
+                model.Description = desc;
+                model.Text = text;
+                ctx.tagTemplateHdrs.Add(model);
+                ctx.SaveChanges();
+            }
+            else
+            {
+                var model = ctx.tagTemplateHdrs.Find(tagTemplateHdrIntno);
+                model.Title = title;
+                model.Description = desc;
+                model.Text = text;
+            }
+            ctx.SaveChanges();
+
+            return RedirectToAction("templateList");
+        }
+        public ActionResult deleteTemplate(long id)
+        {
+            var model = ctx.tagTemplateHdrs.Find(id);
+            ctx.tagTemplateHdrs.Remove(model);
+            ctx.SaveChanges();
+            return RedirectToAction("templateList");
+        }
     }
 }

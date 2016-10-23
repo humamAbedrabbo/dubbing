@@ -1,0 +1,10 @@
+﻿@using dubbingModel
+@model tagTemplateHdr
+
+@Html.Hidden("tagTemplateHdrIntno")
+<label for="tempTitle">Title</label>
+<input id="tempTitle" name="tempTitle" value="@Model.Title" placeholder="Enter title" class="form-control" />
+<label for="tempDesc">Description</label>
+<textarea id="tempDesc" name="tempDesc" rows="2" class="form-control fullSize">@Model.Description</textarea>
+<label for="tempText">Text</label>
+<textarea id="tempText" name="tempText" rows="2" class="form-control fullSize">@Model.Text</textarea>
