@@ -8,3 +8,18 @@
 <textarea id="tempDesc" name="tempDesc" rows="2" class="form-control fullSize">@Model.Description</textarea>
 <label for="tempText">Text</label>
 <textarea id="tempText" name="tempText" rows="2" class="form-control fullSize">@Model.Text</textarea>
+
+<table id="templateDetailsContainer" class="table">
+    <thead>
+        <tr>
+            <th>Tag</th>
+            <th>Min. Score</th>
+            <th>Weight</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody id="templateDtlList">
+
+        @Html.Partial("_templateDtlList", Model)
+    </tbody>
+</table>

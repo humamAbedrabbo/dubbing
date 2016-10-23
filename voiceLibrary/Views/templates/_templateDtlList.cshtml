@@ -1,0 +1,22 @@
+﻿@using dubbingModel
+@model tagTemplateHdr
+
+<tr>
+    <td><input id="newDtlTagName" name="newDtlTagName" class="form-control" value="" /></td>
+    <td><input id="newDtlMinScore" name="newDtlMinScore" class="form-control" style="width: 50px;" value="" /></td>
+    <td><input id="newDtlWeight" name="newDtlWeight" class="form-control" style="width: 50px;" value="1" /></td>
+    <td><a class="btn btn-success" href="javascript:addtemplateDtl(@Model.tagTemplateHdrIntno)">Add</a></td>
+</tr>
+@foreach (var dtl in @Model.tagTemplateDtls)
+{
+    <tr>
+        <td><input id="dtlTagName_@dtl.tagTemplateDtlIntno" class="form-control" value="@dtl.tag.Name" /></td>
+        <td><input id="dtlMinScore_@dtl.tagTemplateDtlIntno" class="form-control" style="width: 50px;" value="@dtl.MinScore" /></td>
+        <td><input id="dtlWeight_@dtl.tagTemplateDtlIntno" class="form-control" style="width: 50px;" value="@dtl.Weight" /></td>
+        <td>
+            <a data-id="@dtl.tagTemplateDtlIntno" href="javascript:saveDetail(@dtl.tagTemplateDtlIntno)"><span class="glyphicon glyphicon-floppy-disk"></span></a>
+            <span>&nbsp;</span>
+            <a data-id="@dtl.tagTemplateDtlIntno" href="javascript:deleteDetail(@dtl.tagTemplateDtlIntno)"><span class="glyphicon glyphicon-trash"></span></a>
+        </td>
+    </tr>
+}

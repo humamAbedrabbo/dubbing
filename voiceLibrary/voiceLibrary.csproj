@@ -304,6 +304,7 @@
     <Content Include="Views\templates\Index.cshtml" />
     <Content Include="Views\templates\_templateList.cshtml" />
     <Content Include="Views\templates\_editTemplate.cshtml" />
+    <Content Include="Views\templates\_templateDtlList.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

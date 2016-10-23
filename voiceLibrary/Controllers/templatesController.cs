@@ -25,8 +25,9 @@ namespace voiceLibrary.Controllers
 
         public ActionResult editTemplate(long id)
         {
-            var model = ctx.tagTemplateHdrs.Find(id);
+            var model = ctx.tagTemplateHdrs.Include(x=>x.tagTemplateDtls).Include("tagTemplateDtls.tag").First(x=>x.tagTemplateHdrIntno == id);
             return PartialView("_editTemplate", model);
+            
         }
         public ActionResult saveTemplate(long tagTemplateHdrIntno, string title, string desc, string text)
         {
@@ -56,6 +57,48 @@ namespace voiceLibrary.Controllers
             ctx.tagTemplateHdrs.Remove(model);
             ctx.SaveChanges();
             return RedirectToAction("templateList");
+        }
+
+        public ActionResult addDetail(long id, string tagName, int minScore, int weight)
+        {
+            var tag = ctx.tags.FirstOrDefault(x => x.Name.ToUpper() == tagName.ToUpper());
+            if(tag != null)
+            {
+                var dtl = ctx.tagTemplateDtls.Create();
+                dtl.tagTemplateHdrIntno = id;
+                dtl.tagId = tag.Id;
+                dtl.MinScore = minScore;
+                dtl.Weight = weight;
+                ctx.tagTemplateDtls.Add(dtl);
+                ctx.SaveChanges();
+            }
+            var hdr = ctx.tagTemplateHdrs.Find(id);
+            return PartialView("_templateDtlList", hdr);
+        }
+
+        public ActionResult saveDetail(long id, string tagName, int minScore, int weight)
+        {
+            var tag = ctx.tags.FirstOrDefault(x => x.Name.ToUpper() == tagName.ToUpper());
+            var dtl = ctx.tagTemplateDtls.Find(id); 
+            if (tag != null)
+            {
+                dtl.tagId = tag.Id;
+                dtl.MinScore = minScore;
+                dtl.Weight = weight;
+                ctx.SaveChanges();
+            }
+            var hdr = dtl.tagTemplateHdr;
+            return PartialView("_templateDtlList", hdr);
+        }
+        public ActionResult deleteDetail(long id)
+        {
+
+            var dtl = ctx.tagTemplateDtls.Find(id);
+            var hdr = dtl.tagTemplateHdr;
+            ctx.tagTemplateDtls.Remove(dtl);
+            ctx.SaveChanges();
+
+            return PartialView("_templateDtlList", hdr);
         }
     }
 }
