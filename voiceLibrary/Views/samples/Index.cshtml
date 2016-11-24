@@ -1,0 +1,28 @@
+﻿@using dubbingModel
+@model IEnumerable<voiceActor>
+
+@{
+    ViewBag.Title = "Actors";
+}
+
+<h2>Actors</h2>
+<hr />
+<table class="table">
+    <thead>
+        <tr>
+            <th>Actor</th>
+             <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach(var a in Model)
+        {
+            <tr>
+                <td>@a.fullName</td>
+                <td>
+                    <a class="btn btn-primary" href="/samples/actorSamples/@a.voiceActorIntno">Audio Samples</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

@@ -1,0 +1,21 @@
+﻿@using dubbingModel
+@model IEnumerable<tagTemplateHdr>
+
+@foreach(var t in Model)
+{
+    <div class="col-sm-4 col-md-2 tagTemplate" data-id="@t.tagTemplateHdrIntno">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                @t.Title
+                <a class="pull-right" href="#" onclick="deleteTemplate(@t.tagTemplateHdrIntno);"><span class="glyphicon glyphicon-trash">&nbsp;</span></a>
+                <a class="pull-right" href="#" onclick="editTemplate(@t.tagTemplateHdrIntno);" data-toggle="modal" data-target="#editTemplateModal" ><span class="glyphicon glyphicon-edit">&nbsp;</span></a>
+            </div>
+            <div class="panel-body">
+                @t.Description
+            </div>
+            <div class="panel-footer">
+            </div>
+        </div>
+    </div>
+}
+

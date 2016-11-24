@@ -7,6 +7,7 @@
 *.userosscache
 *.sln.docstates
 *.bak 
+*.jfm
 
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs
@@ -211,3 +212,4 @@ FakesAssemblies/
 GeneratedArtifacts/
 _Pvt_Extensions/
 ModelManifest.xml
+/voiceLibrary/SQLQuery1.sql

@@ -1,0 +1,74 @@
+﻿
+@{
+    ViewBag.Title = "Index";
+}
+
+<h2>Templates</h2>
+<hr />
+<div class="container">
+    <div class="template-controls">
+        <a class="btn btn-primary" data-toggle="modal" data-target="#newTemplateModal">New Template</a>
+    </div>
+    <br />
+    <br />
+    <div id="templateList">
+        @Html.Action("templateList")
+    </div>
+</div>
+
+<div class="modal fade" id="newTemplateModal" tabindex="-1" role="dialog" aria-labelledby="newTemplateModal-label">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="newTemplateModal-label">new Template</h4>
+            </div>
+            <div class="modal-body">
+                <form id="newTemplateContainer">
+                    <label for="ntempTitle">Title</label>
+                    <input id="ntempTitle" name="ntempTitle" value="" placeholder="Enter title" class="form-control" />
+                    <label for="ntempDesc">Description</label>
+                    <textarea id="ntempDesc" name="ntempDesc" rows="2" class="form-control fullSize"></textarea>
+                    <label for="ntempText">Text</label>
+                    <textarea id="ntempText" name="ntempText" rows="2" class="form-control fullSize"></textarea>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" data-dismiss="modal" onclick="saveNewTemplate()">Save</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="editTemplateModal" tabindex="-1" role="dialog" aria-labelledby="editTemplateModal-label">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="editTemplateModal-label">Edit Template</h4>
+            </div>
+            <div class="modal-body">
+                <form id="editTemplateContainer">
+
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" data-dismiss="modal" onclick="saveTemplate()">Save</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts
+{
+    <script src="~/Scripts/VL/vl.js"></script>
+    <script>
+
+
+        $(function () {
+
+        });
+    </script>
+}

@@ -1,0 +1,1 @@
+﻿This folder is for local media file upload strategy

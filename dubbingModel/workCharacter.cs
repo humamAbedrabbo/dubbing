@@ -19,6 +19,8 @@ namespace dubbingModel
         {
             this.dubbingSheetHdrs = new HashSet<dubbingSheetHdr>();
             this.workActors = new HashSet<workActor>();
+            this.chrCastListHdrs = new HashSet<chrCastListHdr>();
+            this.chrTemplateHdrs = new HashSet<chrTemplateHdr>();
         }
     
         public long workCharacterIntno { get; set; }
@@ -37,5 +39,9 @@ namespace dubbingModel
         public virtual ICollection<dubbingSheetHdr> dubbingSheetHdrs { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<workActor> workActors { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<chrCastListHdr> chrCastListHdrs { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<chrTemplateHdr> chrTemplateHdrs { get; set; }
     }
 }

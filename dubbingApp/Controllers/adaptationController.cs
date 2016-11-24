@@ -34,14 +34,14 @@ namespace dubbingApp.Controllers
 
             if (User.IsInRole("EDITOR"))
             {
-                var employee = ctx.employees.FirstOrDefault(x => x.email.ToUpper() == User.Identity.Name);
+                var employee = ctx.employees.FirstOrDefault(x => x.email.ToUpper() == User.Identity.Name.ToUpper());
                 if (employee == null)
                 {
                     model.Clear();
                 }
                 else
                 {
-                    var userWorks = ctx.workPersonnels.Where(x => x.empIntno == employee.empIntno && x.status == true && (x.titleType == "04" || x.titleType == "05" || x.titleType == "06")).Select(x => x.workIntno).ToList();
+                    var userWorks = ctx.workPersonnels.Where(x => x.empIntno == employee.empIntno && x.status == true && (x.titleType == "02" || x.titleType == "04" || x.titleType == "05" || x.titleType == "06")).Select(x => x.workIntno).ToList();
                     model = model.Where(x => x.empIntno == employee.empIntno && userWorks.Contains(x.orderTrnHdr.workIntno) && (x.activityType == "01" || x.activityType == "02")).ToList();
                 }
             }
@@ -435,6 +435,29 @@ namespace dubbingApp.Controllers
             ctx.SaveChanges();
         }
 
+        [HttpPost]
+        public ActionResult ImportFile(long order)
+        {
+            string savedFileName = "";
+            foreach (string file in Request.Files)
+            {
+                HttpPostedFileBase hpf = Request.Files[file] as HttpPostedFileBase;
+                if (hpf.ContentLength == 0)
+                    continue;
+                savedFileName = Path.Combine(
+                   Server.MapPath("~/Content/Files"),
+                   Path.GetFileName(hpf.FileName));
+                hpf.SaveAs(savedFileName);
+            }
+
+
+            ImportManager im = new Utils.ImportManager();
+            im.ImportFile(order, savedFileName);
+
+            System.IO.File.Delete(savedFileName);
+            return RedirectToAction("Index");
+        }
+
         /***********************************************************************************************************
         *
         * OLD CODE FOR Edit1
@@ -481,6 +504,20 @@ namespace dubbingApp.Controllers
 
             //    }
             //}
+
+            return File(stream, "text/plain", fileName);
+
+        }
+
+        public FileStreamResult downloadTemplateFile(long orderTrnHdrIntno)
+        {
+            var order = ctx.orderTrnHdrs.Find(orderTrnHdrIntno);
+            var tempFile = Server.MapPath("~/Content/templates/adaptation-template.xlsx");
+            byte[] contentAsBytes = System.IO.File.ReadAllBytes(tempFile);
+
+            string fileName = orderTrnHdrIntno.ToString() + "-" + order.agreementWork.workName + " - " + order.episodeNo + ".xlsx";
+            var stream = new MemoryStream(contentAsBytes);
+
 
             return File(stream, "text/plain", fileName);
 

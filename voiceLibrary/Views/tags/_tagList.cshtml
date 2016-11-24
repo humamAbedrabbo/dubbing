@@ -1,0 +1,29 @@
+﻿@using dubbingModel
+@model IEnumerable<tag>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Tag</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var t in @Model)
+        {
+            <tr>
+                <td class="col-md-2">
+                    <span class="tagLabel" data-id="@t.Id">@t.Name</span>
+                    <input class="form-control tag hidden" id="tagName" name="tagName" data-id="@t.Id" value="@t.Name" />
+                </td>
+                <td>
+                    <a id="saveTag" data-id="@t.Id" class="hidden" href="javascript:saveTag(@t.Id);"><span class="glyphicon glyphicon-floppy-disk">&nbsp;</span></a>
+                    <a href="javascript:editTag(@t.Id);"><span class="glyphicon glyphicon-edit">&nbsp;</span></a>
+                    <a href="javascript:deleteTag(@t.Id);"><span class="glyphicon glyphicon-trash">&nbsp;</span></a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+
