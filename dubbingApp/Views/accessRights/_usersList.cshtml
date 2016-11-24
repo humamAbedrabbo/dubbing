@@ -1,0 +1,40 @@
+﻿@model IEnumerable <dubbingApp.Models.ViewModels.usersViewModel>
+
+<div class="container-fluid" style="padding:0px">
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <div class="row">
+                <div class="col-sm-12">
+                    <label>Users List</label>
+                </div>
+            </div>
+        </div>
+        <div class="panel-body">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th><small>User</small></th>
+                        <th><small>Authenticated</small></th>
+                        <th><small>Roles</small></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var user in Model)
+                    {
+                        <tr>
+                            <td>
+                                <a href="#" onclick="onUserClick('@user.userId')"><small>@user.userName</small></a>
+                            </td>
+                            <td>
+                                <small>@user.authenticName</small>
+                            </td>
+                            <td>
+                                <small>@user.roles</small>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

@@ -15,12 +15,12 @@
             </div>
         </div>
         <div class="panel-body">
-            @using (Ajax.BeginForm("usersUpdate", "accessRights", new { roleId = ViewBag.roleId },
+            @using (Ajax.BeginForm("usersUpdate", "accessRights",
                                                         new AjaxOptions()
                                                         {
                                                             HttpMethod = "POST",
                                                             UpdateTargetId = "formResult",
-                                                            OnSuccess = "onSuccess('" + ViewBag.roleId + "')"
+                                                            OnSuccess = "onUpdateSuccess"
                                                         }
                                                         ))
             {
@@ -35,28 +35,7 @@
                         @Html.ValidationMessageFor(model => model.UserName, "", new { @class = "text-danger" })
                     </div>
                 </div>
-
-                <div>
-                    <small><label>Role: </label> @ViewBag.roleName</small>
-                </div>
-                <br />
                 
-                if (new SelectList(ViewBag.otherRolesList).Count() != 0)
-                {
-                    <div>
-                        <small><label>Other User Roles: </label></small>
-                        <ol>
-                            @foreach (string role in ViewBag.otherRolesList)
-                            {
-                                <li>
-                                    <small>@role</small>
-                                </li>
-                            }
-                        </ol>
-                    </div>
-                    <br />
-                }
-
                 <div class="form-group-sm">
                     <button name="submitBtn" value="01" type="submit" onclick="onSubmitClick(event)" class="btn btn-default btn-sm">Update User</button>
                     <button name="submitBtn" value="02" type="submit" onclick="onSubmitClick(event)" class="btn btn-default btn-sm">Delete User</button>

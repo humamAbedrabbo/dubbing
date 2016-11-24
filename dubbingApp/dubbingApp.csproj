@@ -585,6 +585,7 @@
     <Content Include="Views\dubbingRt\Index.cshtml" />
     <Content Include="Views\accessRights\_usersAddNew.cshtml" />
     <Content Include="Views\Shared\_LoginLayout.cshtml" />
+    <Content Include="Views\accessRights\_usersList.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
