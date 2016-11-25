@@ -19,7 +19,8 @@
                                                         new AjaxOptions()
                                                         {
                                                             HttpMethod = "POST",
-                                                            UpdateTargetId = "formResult"
+                                                            UpdateTargetId = "formResult",
+                                                            OnSuccess = "onUpdateSuccess"
                                                         },
                                                         new { @class = "form-horizontal" }
                                                         ))

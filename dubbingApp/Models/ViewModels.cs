@@ -57,9 +57,9 @@ namespace dubbingApp.Models
         public class usersViewModel
         {
             public string userId { get; set; }
-            public string roleId { get; set; }
             public string userName { get; set; }
-            public string personnelName { get; set; }
+            public string authenticName { get; set; }
+            public string roles { get; set; }
         }
         
         public class castingListViewModel

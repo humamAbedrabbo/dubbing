@@ -14,7 +14,7 @@
                 @foreach (var role in Model)
                 {
                     <li>
-                        <a href="#" class="roleLbl" id="@role.Id" onclick="onFilterClick('04', '@role.Id')"><small>@role.Name</small></a>
+                        <a href="#" class="roleLbl" id="@role.Id" onclick="onRoleClick('@role.Id')"><small>@role.Name</small></a>
                     </li>
                 }
             </ul>

@@ -1,11 +1,11 @@
-﻿@model IEnumerable <dubbingApp.Models.ViewModels.usersViewModel>
+﻿@model IEnumerable<dubbingApp.Models.ViewModels.usersViewModel>
 
 <div class="container-fluid">
     <div class="panel panel-default">
         <div class="panel-heading">
             <div class="row">
                 <div class="col-sm-11">
-                    <label>Users List</label>
+                    <label>Users In Role List</label>
                 </div>
                 <div class="col-sm-1">
                     <button class="btn btn-default btn-xs pull-right" onclick="onGrantUserClick('@ViewBag.roleId')" title="Grant User">
@@ -28,14 +28,14 @@
                     {
                         <tr>
                             <td class="col-sm-6">
-                                <a href="#" onclick="onUserClick('@user.userId', '@user.roleId')"><small>@user.userName</small></a>
+                                <small>@user.userName</small>
                             </td>
                             <td class="col-sm-5">
-                                <small>@user.personnelName</small>
+                                <small>@user.authenticName</small>
                             </td>
                             <td class="col-sm-1">
-                                <button class="btn btn-default btn-xs pull-right" onclick="onRevokeUserClick('@user.userId', '@user.roleId')" title="Revoke Role">
-                                    <span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
+                                <button class="btn btn-default btn-xs pull-right" onclick="onRevokeUserClick('@user.userId', '@ViewBag.roleId')" title="Revoke Role">
+                                    <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
                                 </button>
                             </td>
                         </tr>

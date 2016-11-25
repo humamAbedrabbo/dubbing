@@ -21,17 +21,20 @@
                         </div>
                     </div>
                     <div class="panel-body" style="padding:5px">
+                        <input type="hidden" id="filterTypeHF" />
                         <ul>
-                            <li><a href="#" onclick="onFilterClick('01', null)"><small>All ...</small></a></li>
-                            <li><a href="#" onclick="onFilterClick('02', null)"><small>Un Authenticated</small></a></li>
-                            <li><a href="#" onclick="onFilterClick('03', null)"><small>Un Authorized</small></a></li>
+                            <li><a href="#" class="filterLbl badge" id="fl01" onclick="onFilterClick('01')"><small>All ...</small></a></li>
+                            <li><a href="#" class="filterLbl" id="fl02" onclick="onFilterClick('02')"><small>Un Authenticated</small></a></li>
+                            <li><a href="#" class="filterLbl" id="fl03" onclick="onFilterClick('03')"><small>Un Authorized</small></a></li>
                         </ul>
                     </div>
                 </div>
             </div>
             @Html.Action("rolesList", "accessRights")
         </div>
-        <div class="col-sm-6" id="usersInRoleList"></div>
+        <div class="col-sm-9" id="usersList">
+            @Html.Action("usersList", "accessRights", new { filterType = "01" })
+        </div>
         <div class="col-sm-3" id="userDetails"></div>
     </div>
 </div>
@@ -41,22 +44,44 @@
     @Scripts.Render("~/bundles/jqueryval")
 
     <script>
-        function onFilterClick(filterType1, role1) {
+        function showDetails() {
+            $('#usersList').removeClass('col-sm-9').addClass('col-sm-6');
+        }
+
+        function onFilterClick(filterType1) {
+            $('#filterTypeHF').val(filterType1);
+            $('.roleLbl').removeClass('badge');
+            $('.filterLbl').removeClass('badge');
+            $('#fl' + filterType1).addClass('badge');
+            $('#userDetails').html(null);
+
+            $.ajax({
+                url: '@Url.Action("usersList", "accessRights")',
+                type: 'GET',
+                data: { filterType: filterType1 },
+                success: function (result) {
+                    $('#usersList').html(result);
+                }
+            })
+        }
+
+        function onRoleClick(role1) {
+            $('.filterLbl').removeClass('badge');
             $('.roleLbl').removeClass('badge');
             $('#' + role1).addClass('badge');
             $('#userDetails').html(null);
-            
             $.ajax({
                 url: '@Url.Action("usersInRoleList", "accessRights")',
                 type: 'GET',
-                data: { filterType: filterType1, role: role1 },
+                data: { role: role1 },
                 success: function (result) {
-                    $('#usersInRoleList').html(result);
+                    $('#usersList').html(result);
                 }
             })
         }
 
         function onGrantUserClick(role1) {
+            showDetails();
             $.ajax({
                 url: '@Url.Action("grantRoleToUser", "accessRights")',
                 type: 'GET',
@@ -74,13 +99,14 @@
                     type: 'GET',
                     data: { user: user1, role: role1 },
                     success: function (result) {
-                        $('#usersInRoleList').html(result);
+                        $('#usersList').html(result);
                     }
                 })
             }
         }
 
         function onNewUserClick() {
+            showDetails();
             $.ajax({
                 url: '@Url.Action("usersAddNew", "accessRights")',
                 type: 'GET',
@@ -90,11 +116,12 @@
             })
         }
 
-        function onUserClick(user1, role1) {
+        function onUserClick(user1) {
+            showDetails();
             $.ajax({
                 url: '@Url.Action("usersUpdate", "accessRights")',
                 type: 'GET',
-                data: { user: user1, role: role1 },
+                data: { user: user1 },
                 success: function (result) {
                     $('#userDetails').html(result);
                 }
@@ -109,14 +136,24 @@
         }
 
         function onCloseClick() {
+            $('#usersList').removeClass('col-sm-6').addClass('col-sm-9');
             $('#userDetails').html(null);
         }
-        function onSuccess(role) {
-            if (role === '')
-            {
-                role = null;
-            }
-            onRoleClick(role, false);
+        function onSuccess() {
+            $('#formResult').html('Successfully Added/Updated.');
+        }
+        function onUpdateSuccess() {
+            var ft = $('#filterTypeHF').val();
+            $.ajax({
+                    url: '@Url.Action("usersList", "accessRights")',
+                    type: 'GET',
+                    data: { filterType: ft },
+                    success: function (result) {
+                        $('#usersList').html(result);
+                        $('.filterLbl').removeClass('badge');
+                        $('#fl' + ft).addClass('badge');
+                    }
+                })
         }
     </script>
 }
