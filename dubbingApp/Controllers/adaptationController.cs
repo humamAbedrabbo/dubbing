@@ -31,7 +31,6 @@ namespace dubbingApp.Controllers
             // Get list of episodes where adaptation is in progress
             var model = ctx.orderTrnDtls.Include(x => x.employee).Include(x => x.orderTrnHdr).Include(x => x.orderTrnHdr.agreementWork).Where(x => (x.activityType == "01" || x.activityType == "02") && x.status == isActive).ToList();
 
-
             if (User.IsInRole("EDITOR"))
             {
                 var employee = ctx.employees.FirstOrDefault(x => x.email.ToUpper() == User.Identity.Name.ToUpper());
@@ -41,8 +40,7 @@ namespace dubbingApp.Controllers
                 }
                 else
                 {
-                    var userWorks = ctx.workPersonnels.Where(x => x.empIntno == employee.empIntno && x.status == true && (x.titleType == "02" || x.titleType == "04" || x.titleType == "05" || x.titleType == "06")).Select(x => x.workIntno).ToList();
-                    model = model.Where(x => x.empIntno == employee.empIntno && userWorks.Contains(x.orderTrnHdr.workIntno) && (x.activityType == "01" || x.activityType == "02")).ToList();
+                    model = model.Where(x => x.empIntno == employee.empIntno).ToList();
                 }
             }
             ViewBag.Status = isActive;
