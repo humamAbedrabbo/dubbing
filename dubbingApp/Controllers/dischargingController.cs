@@ -36,7 +36,7 @@ namespace dubbingApp.Controllers
 
         public ActionResult castingList(long orderItem)
         {
-            var sheetHdr = db.dubbingSheetHdrs.Where(b => b.orderTrnHdrIntno == orderItem);
+            var sheetHdr = db.dubbingSheetHdrs.Include(b => b.workCharacter).Where(b => b.orderTrnHdrIntno == orderItem).OrderBy(b => b.workCharacter.characterType);
             List<ViewModels.castingListViewModel> model = new List<ViewModels.castingListViewModel>();
             foreach (dubbingSheetHdr hdr in sheetHdr)
             {
@@ -65,7 +65,7 @@ namespace dubbingApp.Controllers
             ViewBag.orderItem = orderItem;
             ViewBag.workEpisode = db.agreementWorks.Find(workId).workName + " / Episode: " + orderHdr.episodeNo;
 
-            return PartialView("_castingList", model.OrderBy(b => b.voiceActorIntno));
+            return PartialView("_castingList", model);
         }
 
         [ValidateAntiForgeryToken]

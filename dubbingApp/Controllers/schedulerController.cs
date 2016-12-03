@@ -152,7 +152,7 @@ namespace dubbingApp.Controllers
         {
             var model = db.dubbingTrnHdrs;
             var modelItem = model.Find(schedule);
-            modelItem.status = false;
+            model.Remove(modelItem);
             db.SaveChanges();
             return RedirectToAction("schedulesList");
         }
@@ -343,14 +343,17 @@ namespace dubbingApp.Controllers
                             studioEpisode se = new studioEpisode();
                             se.orderTrnDtlIntno = assignment;
                             se.studioIntno = y.studioIntno;
+                            episodeModel.Add(se);
                         }
                         else
                         {
                             studio std = new studio();
                             std.dubbTrnHdrIntno = schedule;
                             std.workIntno = workIntno;
+                            studioModel.Add(std);
                             studioEpisode se = new studioEpisode();
                             se.orderTrnDtlIntno = assignment;
+                            episodeModel.Add(se);
                         }
                     }
                 }
