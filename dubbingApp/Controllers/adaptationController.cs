@@ -480,7 +480,9 @@ namespace dubbingApp.Controllers
                         sb.AppendLine();
                         sb.AppendFormat("{0},1 --> {1},1", subtitle.startTimeCode, subtitle.endTimeCode);
                         sb.AppendLine();
-                        sb.AppendFormat("<font size=\"36px\" color=\"white\">{0}</font>", subtitle.scentence);
+                        //sb.AppendFormat("<font size=\"36px\" color=\"white\">{0}</font>", subtitle.scentence);
+                        sb.AppendFormat("{0}", subtitle.scentence);
+                        sb.AppendLine();
                         sb.AppendLine();
                         line++;
                     }
