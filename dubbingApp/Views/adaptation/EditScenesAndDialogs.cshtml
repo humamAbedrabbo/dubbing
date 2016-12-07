@@ -1,0 +1,130 @@
+﻿
+@using dubbingModel
+@using dubbingApp.Models
+@model IEnumerable<subtitle>
+
+@{
+    ViewBag.Title = "Edit Scenes And Dialogs";
+}
+
+<h2>@ViewBag.Episode</h2>
+<hr />
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Scene</th>
+            <th>Dialog</th>
+            <th>New Scene</th>
+            <th>New Dialog</th>
+            <th>S/No</th>
+            <th>Start</th>
+            <th>End</th>
+            <th>Character</th>
+            <th>Subtitle</th>
+            <th></th>
+
+        </tr>
+    </thead>
+    <tbody>
+        @foreach(var s in Model)
+        {
+            <tr>
+                <td>@s.dialog.scene.sceneNo</td>
+                <td>@s.dialog.dialogNo</td>
+                <td>
+                    <select class="form-control" id="scene_@s.subtitleIntno" onchange="refreshDialogs(@s.subtitleIntno)">
+                        <option value="0">New</option>
+                        @foreach (var scene in (ViewBag.Scenes as List<scene>))
+                        {
+                            if (s.dialog.sceneIntno == scene.sceneIntno)
+                            {
+                                <option value="@scene.sceneIntno" selected>@scene.sceneNo</option>
+                            }
+                            else
+                            {
+                                <option value="@scene.sceneIntno">@scene.sceneNo</option>
+                            }
+                        }
+                    </select>
+                </td>
+                <td>
+                    <select class="form-control" id="dlg_@s.subtitleIntno">
+                        <option value="0">New</option>
+                        @foreach (var dlg in (ViewBag.Dialogs as List<dialog>).Where(x => x.sceneIntno == s.dialog.sceneIntno))
+                        {
+                            if (s.dialogIntno == dlg.dialogIntno)
+                            {
+                                <option value="@dlg.dialogIntno" selected>@dlg.dialogNo</option>
+                            }
+                            else
+                            {
+                                <option value="@dlg.dialogIntno">@dlg.dialogNo</option>
+                            }
+                        }
+                    </select>
+                </td>
+                <td>@s.subtitleNo</td>
+                <td>@s.startTimeCode</td>
+                <td>@s.endTimeCode</td>
+                <td>@s.dubbingSheetHdr.characterName</td>
+                <td>@s.scentence</td>
+                <td><a class="btn btn-primary" href="javascript:saveSubtitle(@s.dialog.scene.orderTrnHdrIntno, @s.subtitleIntno);">Save</a></td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@section Scripts
+{
+    <script>
+        function fillDialogs(subtitleIntno, sceneIntno) {
+            var url = '/adaptation/SceneDialogs';
+            $.ajax({
+                url: url,
+                data: { sceneIntno: sceneIntno },
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (result) {
+                    
+                    var html = '<option value="0">New</option>';
+                    for(var x = 0; x < result.length; x++)
+                    {
+                        html = html + '<option value="' + result[x].dialogIntno +  '">' + result[x].dialogNo + '</option>';
+                    }
+                    $("#dlg_" + subtitleIntno).empty();
+                    $("#dlg_" + subtitleIntno).html(html);
+                }
+            });
+        }
+        function refreshDialogs(subtitleIntno) {
+            var sceneIntno = $("#scene_" + subtitleIntno).val();
+            if (sceneIntno == 0) {
+                $("#dlg_" + subtitleIntno).empty();
+                var html = '<option value="0">New</option>';
+                $("#dlg_" + subtitleIntno).html(html);
+            } else {
+                fillDialogs(subtitleIntno, sceneIntno);
+            }
+            
+        }
+
+        function saveSubtitle(orderTrnHdrIntno, subtitleIntno) {
+            var url = '/adaptation/ChangeDialog';
+            var dialogIntno = $("#dlg_" + subtitleIntno).val();
+            var sceneIntno = $("#scene_" + subtitleIntno).val();
+
+            $.ajax({
+                url: url,
+                method: 'GET',
+                data: { orderTrnHdrIntno: orderTrnHdrIntno, subtitleIntno: subtitleIntno, dialogIntno: dialogIntno, sceneIntno: sceneIntno },
+                success: function () {
+                    window.location.reload();
+                }
+            });
+        }
+        $(function () {
+
+        });
+    </script>
+}

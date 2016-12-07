@@ -100,10 +100,85 @@ namespace dubbingApp.Controllers
             {
                 order.orderTrnHdr.endAdaptation = DateTime.Now;
                 ctx.SaveChanges();
-                RenumberScenesAndDialogs(order.orderTrnHdrIntno);
+                
                 CleanSheetHdrsWithoutScenes(order.orderTrnHdrIntno);
+                CleanEmptyDialogs(order.orderTrnHdrIntno);
+                CleanEmptyScenes(order.orderTrnHdrIntno);
+                RenumberScenesAndDialogs(order.orderTrnHdrIntno);
             }
             return RedirectToAction("Index");
+        }
+
+        public ActionResult EditScenesAndDialogs(long orderTrnHdrIntno)
+        {
+            
+            CleanSheetHdrsWithoutScenes(orderTrnHdrIntno);
+            CleanEmptyDialogs(orderTrnHdrIntno);
+            CleanEmptyScenes(orderTrnHdrIntno);
+            RenumberScenesAndDialogs(orderTrnHdrIntno);
+
+            var order = ctx.orderTrnHdrs.Find(orderTrnHdrIntno);
+            ViewBag.Episode = order.agreementWork.workName + " / " + order.episodeNo;
+
+            var model = ctx.subtitles.Include(x => x.dialog)
+                .Include(x => x.dialog.scene)
+                .Include(x => x.dubbingSheetHdr)
+                .Include(x => x.dubbingSheetHdr.workCharacter)
+                .Where(x => x.dialog.scene.orderTrnHdrIntno == orderTrnHdrIntno).OrderBy(x => x.startSecond).ThenBy(x => x.endSecond)
+                .ToList();
+            ViewBag.Dialogs = model.Select(x => x.dialog).Distinct().OrderBy(x => x.scene.sceneNo).ThenBy(x => x.dialogNo).ToList();
+            ViewBag.Scenes = model.Select(x => x.dialog.scene).Distinct().OrderBy(x => x.sceneNo).ToList();
+
+            return View("EditScenesAndDialogs", model);
+        }
+
+        public ActionResult SceneDialogs(long sceneIntno)
+        {
+            var dialogs = ctx.scenes.Find(sceneIntno).dialogs.ToList();
+            return Json(dialogs.Select(x => new { dialogIntno = x.dialogIntno, dialogNo = x.dialogNo }).ToList(), JsonRequestBehavior.AllowGet);
+        }
+
+        public void ChangeDialog(long orderTrnHdrIntno, long subtitleIntno, long dialogIntno, long sceneIntno)
+        {
+            var subtitle = ctx.subtitles.Find(subtitleIntno);
+            if (sceneIntno == 0)
+            {
+                var scene = ctx.scenes.Create();
+                scene.orderTrnHdrIntno = orderTrnHdrIntno;
+                scene.sceneNo = 0;
+                scene.isTaken = false;
+                ctx.scenes.Add(scene);
+                ctx.SaveChanges();
+
+                var dlg = ctx.dialogs.Create();
+                dlg.sceneIntno = scene.sceneIntno;
+                dlg.dialogNo = 0;
+                dlg.isTaken = false;
+                ctx.dialogs.Add(dlg);
+                ctx.SaveChanges();
+
+                subtitle.dialogIntno = dlg.dialogIntno;
+                ctx.SaveChanges();
+            }
+            else
+            {
+                if (dialogIntno == 0)
+                {
+                    var dlg = ctx.dialogs.Create();
+                    dlg.sceneIntno = subtitle.dialog.sceneIntno;
+                    dlg.dialogNo = 0;
+                    dlg.isTaken = false;
+                    ctx.dialogs.Add(dlg);
+                    ctx.SaveChanges();
+                    subtitle.dialogIntno = dlg.dialogIntno;
+                    ctx.SaveChanges();
+                }
+                else
+                {
+                    subtitle.dialogIntno = dialogIntno;
+                    ctx.SaveChanges();
+                }
+            }           
         }
 
         public ActionResult Edit(long? id)
@@ -430,6 +505,23 @@ namespace dubbingApp.Controllers
             var order = ctx.orderTrnHdrs.Find(orderTrnHdrIntno);
             var sheetHdrs = ctx.dubbingSheetHdrs.Include(x => x.subtitles).Where(x => x.orderTrnHdrIntno == orderTrnHdrIntno && x.subtitles.Count == 0);
             ctx.dubbingSheetHdrs.RemoveRange(sheetHdrs);
+            ctx.SaveChanges();
+        }
+
+        private void CleanEmptyDialogs(long orderTrnHdrIntno)
+        {
+            var order = ctx.orderTrnHdrs.Find(orderTrnHdrIntno);
+            var dialogs = ctx.dialogs.Include(x => x.scene).Include(x => x.subtitles).Where(x => x.scene.orderTrnHdrIntno == orderTrnHdrIntno && x.subtitles.Count == 0);
+            
+            ctx.dialogs.RemoveRange(dialogs);
+            ctx.SaveChanges();
+        }
+        private void CleanEmptyScenes(long orderTrnHdrIntno)
+        {
+            var order = ctx.orderTrnHdrs.Find(orderTrnHdrIntno);
+            var scenes = ctx.scenes.Include(x => x.dialogs).Where(x => x.orderTrnHdrIntno == orderTrnHdrIntno && x.dialogs.Count == 0);
+
+            ctx.scenes.RemoveRange(scenes);
             ctx.SaveChanges();
         }
 
