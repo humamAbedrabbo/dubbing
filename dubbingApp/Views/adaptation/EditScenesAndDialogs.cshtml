@@ -32,7 +32,7 @@
             <tr>
                 <td>@s.dialog.scene.sceneNo</td>
                 <td>@s.dialog.dialogNo</td>
-                <td>
+                <td class="col-md-1">
                     <select class="form-control" id="scene_@s.subtitleIntno" onchange="refreshDialogs(@s.subtitleIntno)">
                         <option value="0">New</option>
                         @foreach (var scene in (ViewBag.Scenes as List<scene>))
@@ -48,7 +48,7 @@
                         }
                     </select>
                 </td>
-                <td>
+                <td class="col-md-1">
                     <select class="form-control" id="dlg_@s.subtitleIntno">
                         <option value="0">New</option>
                         @foreach (var dlg in (ViewBag.Dialogs as List<dialog>).Where(x => x.sceneIntno == s.dialog.sceneIntno))
