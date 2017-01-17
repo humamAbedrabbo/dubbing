@@ -87,6 +87,7 @@
                 <a id="deleteSubtitle" class="btn btn-danger" style="display:none;" href="javascript:deleteSubtitle();">Delete</a>
                 <a class="btn btn-primary" href="javascript:loadSubtitles();">Load Subtitles</a>
                 <a class="btn btn-primary" href="javascript:testSubtitle();">Test</a>
+                <a class="btn btn-primary" href="javascript:removeSubtitlesTrack();">Clear Subtitles</a>
                 <a id="newSubtitle" class="btn btn-success" href="javascript:submitSubtitle();">Submit</a>
                 <a id="updateSubtitle" class="btn btn-success" style="display:none;" href="javascript:updateSubtitle();">Update</a>
                 <a id="cancelSubtitleUpdate" class="btn btn-default" style="display:none;" href="javascript:resetToNewSubtitle();">Cancel</a>
@@ -160,6 +161,13 @@
 
                 track.addCue(cue);
             });
+        }
+        function removeSubtitlesTrack() {
+            var track = video.textTracks[0];
+            while (track.cues.length > 0) {
+                var item = track.cues[0];
+                track.removeCue(item);
+            }
         }
         function subtitlesList2() {
             var fromSecond = $("#slider_from2").val();

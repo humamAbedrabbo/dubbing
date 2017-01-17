@@ -18,6 +18,7 @@
             <th></th>
             <th></th>
             <th></th>
+            <th></th>
         </tr>
     </thead>
     <tbody>
@@ -31,6 +32,7 @@
                 <td>@item.fromTimeCode</td>
                 <td>@item.thruTimeCode</td>
                 <td><a class="btn btn-primary" href='@Url.Action("Edit2", "adaptation", new { id = item.orderTrnHdrIntno, fromTime = item.fromTimeCode, toTime = item.thruTimeCode})'>Edit</a></td>
+                <td><a class="btn btn-primary" href='@Url.Action("EditScenesAndDialogs", "adaptation", new { orderTrnHdrIntno = item.orderTrnHdrIntno})'>Scenes</a></td>
                 <td><a class="btn btn-success" href='@Url.Action("CompleteAdaptation", "adaptation", new { orderTrnDtlIntno = item.orderTrnDtlIntno})'>Complete Work</a></td>
                 <td><a class="btn btn-primary form-control" href='@Url.Action("downloadFile", new { item.orderTrnHdrIntno })'>Subtitles</a></td>
                 <td><a class="btn btn-primary form-control" href='@Url.Action("downloadTemplateFile", new { item.orderTrnHdrIntno })'>Download Template</a></td>
