@@ -48,6 +48,9 @@
             $('#exportBtn').hide();
             $('#paymentsDueList').show();
         });
+        $(document).on('submit', function () {
+            $('#submitBtn').attr('disabled', 'true');
+        });
 
         $(document).on("keypress", ":input:not(textarea)", function (event) {
             if (event.keyCode == 13) {
@@ -95,6 +98,10 @@
         function onSuccess() {
             $('#formResult').html('Successfully Created.');
         }
+        function onFailure() {
+            $('#formResult').html('Failed to Generate Voucher. Please enter all Data and then retry.');
+            $('#submitBtn').attr('disabled', 'false');
+        }
         function onCloseClick() {
             $('#details').html(null);
         }
@@ -118,6 +125,17 @@
             $('#paidVouchersList').html(null);
             $('#paidVouchersList').hide();
             $('#paymentsDueList').show();
+        }
+
+        function onPrintClick(id, name) {
+            $.ajax({
+                url: '@Url.Action("printVouchersList", "payment")',
+                type: 'GET',
+                data: { actorId: id, actorName: name },
+                success: function (result) {
+                    $('#paidVouchersList').html(result);
+                }
+            });
         }
     </script>
 }

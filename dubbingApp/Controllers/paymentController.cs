@@ -91,7 +91,7 @@ namespace dubbingApp.Controllers
                 item.isExported = false;
                 item.isPaid = true;
                 model.Add(item);
-
+                
                 //insert payment details
                 var x = db.paymentsDueVWs.Where(b => b.workIntno == item.workIntno && b.voiceActorIntno == item.voiceActorIntno && b.actorName == item.fullName).ToList();
                 foreach(var x1 in x)
@@ -138,6 +138,14 @@ namespace dubbingApp.Controllers
             }
             db.SaveChanges();
             return null;
+        }
+
+        public ActionResult printVouchersList(long actorId, string actorName)
+        {
+            var model = db.paymentDetails.Include(b => b.payment.agreementWork)
+                        .Where(b => b.payment.voiceActorIntno == actorId && b.payment.fullName == actorName && b.payment.status == true && b.payment.isPaid == true && b.payment.isExported == false);
+            ViewBag.actorName = actorName;
+            return PartialView("_printVouchersList", model.ToList());
         }
     }
 }

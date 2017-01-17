@@ -1,0 +1,42 @@
+﻿@model IEnumerable<dubbingModel.paymentDetail>
+
+<h3>Receipt</h3>
+<h3>@ViewBag.actorName</h3>
+<table class="table">
+    <thead>
+        <tr>
+            <th>Payment Date</th>
+            <th>Dubbing Date</th>
+            <th>Work</th>
+            <th>Total Scenes</th>
+            <th>Rate</th>
+            <th>Total</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach(var item in Model)
+        {
+            int total = item.totalUnits * item.payment.unitRate;
+            <tr>
+                <td>@item.payment.paymentDate.Value.ToString("dd-MM-yyyy")</td>
+                <td>@item.dubbingDate.ToString("dd-MM-yyyy")</td>
+                <td>@item.payment.agreementWork.workName</td>
+                <td>@item.totalUnits</td>
+                <td>@item.payment.unitRate</td>
+                <td>@total</td>
+            </tr>
+        }
+    </tbody>
+    <tfoot>
+        @{ 
+            int grandTotal = Model.Select(b => b.payment.totalAmount).Sum();
+            int totalDeduction = Model.Select(b => b.payment.deduction).Sum();
+            int netAmount = grandTotal - totalDeduction;
+        }
+        <tr>
+            <td><strong>Grand Total: &nbsp; @grandTotal</strong></td>
+            <td><strong>Total Deduction: &nbsp; @totalDeduction</strong></td>
+            <td><strong>Net Amount: &nbsp; @netAmount</strong></td>
+        </tr>
+    </tfoot>
+</table>
