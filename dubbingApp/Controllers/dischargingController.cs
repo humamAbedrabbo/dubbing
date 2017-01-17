@@ -124,6 +124,7 @@ namespace dubbingApp.Controllers
                     dtl.orderTrnHdrIntno = orderItem;
                     dtl.sceneNo = sceneNo;
                     dtl.isTaken = true;
+                    dtl.dubbingDate = DateTime.Today.Date;
                     dtl.takenTimeStamp = DateTime.Now;
                     model.Add(dtl);
                 }

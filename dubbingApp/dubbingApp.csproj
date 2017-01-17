@@ -379,8 +379,10 @@
     <Content Include="Content\bootstrap-datetimepicker-build.less" />
     <Content Include="Content\templates\adaptation-template.xlsx" />
     <None Include="Properties\PublishProfiles\dubbingApp2016 - FTP %282%29.pubxml" />
+    <None Include="Properties\PublishProfiles\dubbingApp2016 - FTP %283%29.pubxml" />
     <None Include="Properties\PublishProfiles\dubbingApp2016 - FTP.pubxml" />
     <None Include="Properties\PublishProfiles\dubbingApp2016 - Web Deploy %282%29.pubxml" />
+    <None Include="Properties\PublishProfiles\dubbingApp2016 - Web Deploy %283%29.pubxml" />
     <None Include="Properties\PublishProfiles\dubbingApp2016 - Web Deploy.pubxml" />
     <None Include="Scripts\jquery-2.2.3.intellisense.js" />
     <Content Include="Scripts\Chart.js" />

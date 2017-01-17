@@ -32,9 +32,10 @@
                             int r = x.Count() + 1;
                             int i = 0;
                             var x1 = x.First();
+                            string dubbingDate = rsc.dubbingDate.HasValue ? x1.dubbingDate.Value.DayOfWeek + ", " + x1.dubbingDate.Value.ToString("dd/MM") : null;
                             <tr>
                                 <td rowspan="@r"><small><label>@rsc.actorName</label></small></td>
-                                <td><small>@x1.dubbingDate.Value.DayOfWeek @x1.dubbingDate.Value.ToString("dd/MM")</small></td>
+                                <td><small>@dubbingDate</small></td>
                                 <td><small>@x1.workName</small></td>
                                 <td><small>@x1.totalUnits</small></td>
                                 <td rowspan="@r">
