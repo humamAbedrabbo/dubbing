@@ -22,42 +22,32 @@
                             <th><small>Dubbing Date</small></th>
                             <th><small>Work</small></th>
                             <th><small>Scenes</small></th>
-                            <th><small>#</small></th>
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach (var rsc in Model.Select(b => new { b.voiceActorIntno, b.actorName }).Distinct())
+                        @foreach (var rsc in Model.Select(b => new { b.voiceActorIntno, b.actorName, b.workIntno, b.workName }).Distinct())
                         {
-                            var x = Model.Where(b => b.voiceActorIntno == rsc.voiceActorIntno && b.actorName == rsc.actorName);
+                            var x = Model.Where(b => b.voiceActorIntno == rsc.voiceActorIntno && b.actorName == rsc.actorName && b.workIntno == rsc.workIntno);
                             int r = x.Count() + 1;
-                            int i = 0;
+
+                            <tr>
+                                <td rowspan="@r">
+                                    <button class="btn btn-default btn-xs" onclick="onGeneratePaymentClick(@rsc.workIntno, '@rsc.workName', @rsc.voiceActorIntno, '@rsc.actorName')" title="Generate Payment">
+                                        <span class="glyphicon glyphicon-usd" aria-hidden="true"></span>
+                                    </button>
+                                    &nbsp;
+                                    <small><label>@rsc.actorName</label></small>
+                                </td>
+                            </tr>
+
                             foreach (var x1 in x)
                             {
                                 string dubbingDate = x1.dubbingDate.HasValue ? x1.dubbingDate.Value.DayOfWeek + ", " + x1.dubbingDate.Value.ToString("dd/MM") : null;
-                                if (i == 0)
-                                {
-                                    <tr>
-                                        <td rowspan="@r"><small><label>@rsc.actorName</label></small></td>
-                                        <td><small>@dubbingDate</small></td>
-                                        <td><small>@x1.workName</small></td>
-                                        <td><small>@x1.totalUnits</small></td>
-                                        <td rowspan="@r">
-                                            <button class="btn btn-default btn-xs" onclick="onGeneratePaymentClick(@x1.workIntno, '@x1.workName', @x1.voiceActorIntno, '@x1.actorName')" title="Generate Payment">
-                                                <span class="glyphicon glyphicon-usd" aria-hidden="true"></span>
-                                            </button>
-                                        </td>
-                                    </tr>
-                                    i++;
-                                }
-                                else
-                                {
-                                    <tr>
-                                        <td><small>@dubbingDate</small></td>
-                                        <td><small>@x1.workName</small></td>
-                                        <td><small>@x1.totalUnits</small></td>
-                                    </tr>
-                                }
-                                i++;
+                                <tr>
+                                    <td><small>@dubbingDate</small></td>
+                                    <td><small>@x1.workName</small></td>
+                                    <td><small>@x1.totalUnits</small></td>
+                                </tr>
                             }
                         }
                     </tbody>
@@ -66,4 +56,3 @@
         </div>
     </div>
 }
-                
