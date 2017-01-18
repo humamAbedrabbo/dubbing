@@ -71,6 +71,7 @@ namespace dubbingApp.Models
             public long voiceActorIntno { get; set; }
             public string actorName { get; set; }
             public int totalScenes { get; set; }
+            public bool isEndorsed { get; set; }
         }
 
         public class assignmentViewModel

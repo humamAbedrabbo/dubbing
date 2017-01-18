@@ -6,8 +6,8 @@
 
 <div class="container-fluid">
     <div class="jumbotron hidden-print" style="padding:5px">
-        <h2>Casting</h2>
-        <p class="lead"><h5>Review and Enhance the System Provided Casting. New or Secondary Characters are Casted Anonymously which Shall Require Providing Actors prior to Generating Dubbing Calendar and/or Discharging Table in case of Manual Dubbing.</h5></p>
+        <h2>Discharging</h2>
+        <p class="lead"><h5>Review and Enhance the System Provided Casting where New or Secondary Characters are Casted Anonymously. Casting will be required to be completed prior to Generating Discharging Tables and Dubbing Calendars.</h5></p>
     </div>
     
     <div class="row" id="dischargeTable"></div>
@@ -65,16 +65,31 @@
             });
         }
 
-        function onEndorseClick(sheetHdr1) {
-            if (confirm("Please Confirm! About to Manually Endorse Dubbing of ALL Scenes for the selected Actor.")) {
-                $.ajax({
-                    url: '@Url.Action("endorseDubbing", "discharging")',
-                    type: 'GET',
-                    data: { sheetHdr: sheetHdr1 },
-                    success: function (result) {
-                        alert(result);
-                    }
-                });
+        function onEndorseClick(oi, sheetHdr1, actorName) {
+            if (actorName === "ANONYMOUS")
+            {
+                alert('You cannot endorse before casting the character!');
+            }
+            else
+            {
+                if (confirm("Please Confirm! About to Manually Endorse Dubbing of ALL Scenes for the selected Actor.")) {
+                    $.ajax({
+                        url: '@Url.Action("endorseDubbing", "discharging")',
+                        type: 'GET',
+                        data: { sheetHdr: sheetHdr1 },
+                        success: function (result) {
+                            $.ajax({
+                                url: '@Url.Action("castingList", "discharging")',
+                                type: 'GET',
+                                data: { orderItem: oi },
+                                success: function (result) {
+                                    $('#castingList').html(result);
+                                }
+                            });
+                            alert(result);
+                        }
+                    });
+                }
             }
         }
 

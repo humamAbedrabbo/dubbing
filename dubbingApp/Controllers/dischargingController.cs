@@ -37,6 +37,7 @@ namespace dubbingApp.Controllers
         public ActionResult castingList(long orderItem)
         {
             var sheetHdr = db.dubbingSheetHdrs.Include(b => b.workCharacter).Where(b => b.orderTrnHdrIntno == orderItem).OrderBy(b => b.workCharacter.characterType);
+            var sheetDtls = db.dubbingSheetDtls.Where(b => b.orderTrnHdrIntno == orderItem).ToList();
             List<ViewModels.castingListViewModel> model = new List<ViewModels.castingListViewModel>();
             foreach (dubbingSheetHdr hdr in sheetHdr)
             {
@@ -49,6 +50,12 @@ namespace dubbingApp.Controllers
                 item.actorName = hdr.actorName;
                 item.totalScenes = db.subtitles.Include(b => b.dialog.scene).Where(b => b.dubbSheetHdrIntno == hdr.dubbSheetHdrIntno)
                                     .Select(b => b.dialog.scene.sceneNo).Distinct().Count();
+                int totalCount = sheetDtls.Where(b => b.dubbSheetHdrIntno == hdr.dubbSheetHdrIntno).Count();
+                int takenCount = sheetDtls.Where(b => b.dubbSheetHdrIntno == hdr.dubbSheetHdrIntno && b.isTaken == true).Count();
+                if (totalCount != 0 && takenCount == totalCount)
+                    item.isEndorsed = true;
+                else
+                    item.isEndorsed = false;
                 model.Add(item);
             }
 
