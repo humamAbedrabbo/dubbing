@@ -105,6 +105,8 @@ namespace dubbingApp.Controllers
                 CleanEmptyDialogs(order.orderTrnHdrIntno);
                 CleanEmptyScenes(order.orderTrnHdrIntno);
                 RenumberScenesAndDialogs(order.orderTrnHdrIntno);
+                //added by wael
+                CreateSheetDtls(order.orderTrnHdrIntno);
             }
             return RedirectToAction("Index");
         }
@@ -524,7 +526,29 @@ namespace dubbingApp.Controllers
             ctx.scenes.RemoveRange(scenes);
             ctx.SaveChanges();
         }
+        private void CreateSheetDtls(long orderTrnHdrIntno)
+        {
+            var model = ctx.dubbingSheetDtls;
+            var x = ctx.subtitles.Include(b => b.dialog.scene).Where(b => b.dialog.scene.orderTrnHdrIntno == orderTrnHdrIntno)
+                    .Select(b => new { dubbSheetHdrIntno = b.dubbSheetHdrIntno, sceneNo = b.dialog.scene.sceneNo}).Distinct().ToList();
 
+            foreach (var hdr in x)
+            {
+                var z = ctx.dubbingSheetDtls.FirstOrDefault(b => b.dubbSheetHdrIntno == hdr.dubbSheetHdrIntno && b.orderTrnHdrIntno == orderTrnHdrIntno && b.sceneNo == hdr.sceneNo);
+                if (z == null)
+                {
+                    dubbingSheetDtl dtl = new dubbingSheetDtl();
+                    dtl.dubbSheetHdrIntno = hdr.dubbSheetHdrIntno;
+                    dtl.orderTrnHdrIntno = orderTrnHdrIntno;
+                    dtl.sceneNo = hdr.sceneNo;
+                    dtl.isTaken = false;
+                    dtl.dubbingDate = DateTime.Today.Date;
+                    dtl.takenTimeStamp = DateTime.Now;
+                    model.Add(dtl);
+                }
+            }
+            ctx.SaveChanges();
+        }
         [HttpPost]
         public ActionResult ImportFile(long order)
         {

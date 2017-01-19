@@ -63,6 +63,18 @@
     <Compile Include="agreementWork.cs">
       <DependentUpon>dubbingDataModel.tt</DependentUpon>
     </Compile>
+    <Compile Include="AspNetRole.cs">
+      <DependentUpon>dubbingDataModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="AspNetUser.cs">
+      <DependentUpon>dubbingDataModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="AspNetUserClaim.cs">
+      <DependentUpon>dubbingDataModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="AspNetUserLogin.cs">
+      <DependentUpon>dubbingDataModel.tt</DependentUpon>
+    </Compile>
     <Compile Include="audioSampleDtl.cs">
       <DependentUpon>dubbingDataModel.tt</DependentUpon>
     </Compile>
@@ -91,6 +103,12 @@
       <DependentUpon>dubbingDataModel.tt</DependentUpon>
     </Compile>
     <Compile Include="contact.cs">
+      <DependentUpon>dubbingDataModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="C__MigrationHistory.cs">
+      <DependentUpon>dubbingDataModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="C__RefactorLog.cs">
       <DependentUpon>dubbingDataModel.tt</DependentUpon>
     </Compile>
     <Compile Include="dialog.cs">
@@ -154,9 +172,6 @@
       <DependentUpon>dubbingDataModel.tt</DependentUpon>
     </Compile>
     <Compile Include="paymentDetail.cs">
-      <DependentUpon>dubbingDataModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="paymentsDueVW.cs">
       <DependentUpon>dubbingDataModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />

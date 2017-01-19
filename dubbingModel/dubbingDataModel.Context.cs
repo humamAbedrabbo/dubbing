@@ -27,11 +27,23 @@ namespace dubbingModel
             throw new UnintentionalCodeFirstException();
         }
     
+        public virtual DbSet<C__MigrationHistory> C__MigrationHistory { get; set; }
+        public virtual DbSet<C__RefactorLog> C__RefactorLog { get; set; }
         public virtual DbSet<agreement> agreements { get; set; }
         public virtual DbSet<agreementSpec> agreementSpecs { get; set; }
         public virtual DbSet<agreementTerm> agreementTerms { get; set; }
         public virtual DbSet<agreementWork> agreementWorks { get; set; }
+        public virtual DbSet<AspNetRole> AspNetRoles { get; set; }
+        public virtual DbSet<AspNetUserClaim> AspNetUserClaims { get; set; }
+        public virtual DbSet<AspNetUserLogin> AspNetUserLogins { get; set; }
+        public virtual DbSet<AspNetUser> AspNetUsers { get; set; }
+        public virtual DbSet<audioSampleDtl> audioSampleDtls { get; set; }
+        public virtual DbSet<audioSampleHdr> audioSampleHdrs { get; set; }
         public virtual DbSet<carrier> carriers { get; set; }
+        public virtual DbSet<chrCastListDtl> chrCastListDtls { get; set; }
+        public virtual DbSet<chrCastListHdr> chrCastListHdrs { get; set; }
+        public virtual DbSet<chrTemplateDtl> chrTemplateDtls { get; set; }
+        public virtual DbSet<chrTemplateHdr> chrTemplateHdrs { get; set; }
         public virtual DbSet<clientClaim> clientClaims { get; set; }
         public virtual DbSet<client> clients { get; set; }
         public virtual DbSet<contact> contacts { get; set; }
@@ -57,23 +69,16 @@ namespace dubbingModel
         public virtual DbSet<studioEpisode> studioEpisodes { get; set; }
         public virtual DbSet<studio> studios { get; set; }
         public virtual DbSet<subtitle> subtitles { get; set; }
+        public virtual DbSet<tag> tags { get; set; }
+        public virtual DbSet<tagTemplateDtl> tagTemplateDtls { get; set; }
+        public virtual DbSet<tagTemplateHdr> tagTemplateHdrs { get; set; }
+        public virtual DbSet<tagType> tagTypes { get; set; }
         public virtual DbSet<voiceActor> voiceActors { get; set; }
         public virtual DbSet<workActor> workActors { get; set; }
         public virtual DbSet<workCharacter> workCharacters { get; set; }
         public virtual DbSet<workCharge> workCharges { get; set; }
         public virtual DbSet<workOrder> workOrders { get; set; }
         public virtual DbSet<workPersonnel> workPersonnels { get; set; }
-        public virtual DbSet<paymentsDueVW> paymentsDueVWs { get; set; }
-        public virtual DbSet<audioSampleDtl> audioSampleDtls { get; set; }
-        public virtual DbSet<audioSampleHdr> audioSampleHdrs { get; set; }
-        public virtual DbSet<chrCastListDtl> chrCastListDtls { get; set; }
-        public virtual DbSet<chrCastListHdr> chrCastListHdrs { get; set; }
-        public virtual DbSet<chrTemplateDtl> chrTemplateDtls { get; set; }
-        public virtual DbSet<chrTemplateHdr> chrTemplateHdrs { get; set; }
-        public virtual DbSet<tag> tags { get; set; }
-        public virtual DbSet<tagTemplateDtl> tagTemplateDtls { get; set; }
-        public virtual DbSet<tagType> tagTypes { get; set; }
-        public virtual DbSet<tagTemplateHdr> tagTemplateHdrs { get; set; }
     
         public virtual int archiveEndorsedWork(Nullable<long> workIntno, string respMsg)
         {

@@ -33,7 +33,7 @@ namespace dubbingModel
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<audioSampleDtl> audioSampleDtls { get; set; }
-        public virtual voiceActor voiceActor { get; set; }
         public virtual tagTemplateHdr tagTemplateHdr { get; set; }
+        public virtual voiceActor voiceActor { get; set; }
     }
 }
