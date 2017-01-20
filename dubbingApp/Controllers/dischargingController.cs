@@ -180,16 +180,16 @@ namespace dubbingApp.Controllers
         public ActionResult endorseDubbing(long sheetHdr)
         {
             var model = db.dubbingSheetDtls;
-            var x = db.subtitles.Include(b => b.dialog).Where(b => b.dubbSheetHdrIntno == sheetHdr).Select(b => b.dialog.sceneIntno).Distinct();
-            
-            long orderItem = model.Find(sheetHdr).orderTrnHdrIntno;
-            var orderHdr = db.orderTrnHdrs;
+            var x = db.subtitles.Include(b => b.dialog).Where(b => b.dubbSheetHdrIntno == sheetHdr).Select(b => b.dialog.sceneIntno).Distinct().ToList();
+
+            long orderItem = db.dubbingSheetHdrs.Find(sheetHdr).orderTrnHdrIntno;
+            var orderHdr = db.orderTrnHdrs.FirstOrDefault(b => b.orderTrnHdrIntno == orderItem);
 
             // find if it is the first in episode dubbing
-            int cnt = db.dubbingSheetDtls.Where(b => b.orderTrnHdrIntno == orderItem && b.isTaken == true).Count();
-            if(cnt == 0)
+            var dtls = db.dubbingSheetDtls.Where(b => b.orderTrnHdrIntno == orderItem && b.isTaken == true).ToList();
+            if (dtls.Count() == 0)
             {
-                orderHdr.FirstOrDefault(b => b.orderTrnHdrIntno == orderItem).startDubbing = DateTime.Today.Date;
+                orderHdr.startDubbing = DateTime.Today.Date;
                 db.SaveChanges();
             }
 
@@ -197,7 +197,7 @@ namespace dubbingApp.Controllers
             {
                 var y = db.scenes.Find(item);
                 short sceneNo = y.sceneNo;
-                var z = db.dubbingSheetDtls.FirstOrDefault(b => b.dubbSheetHdrIntno == sheetHdr && b.orderTrnHdrIntno == orderItem && b.sceneNo == sceneNo);
+                var z = db.dubbingSheetDtls.FirstOrDefault(b => b.dubbSheetHdrIntno == sheetHdr && b.sceneNo == sceneNo);
                 if (z == null)
                 {
                     dubbingSheetDtl dtl = new dubbingSheetDtl();
@@ -217,10 +217,10 @@ namespace dubbingApp.Controllers
             db.SaveChanges();
 
             // find if it is the last in episode dubbing
-            cnt = db.dubbingSheetDtls.Where(b => b.orderTrnHdrIntno == orderItem && b.isTaken == false).Count();
-            if (cnt == 0)
+            dtls = db.dubbingSheetDtls.Where(b => b.orderTrnHdrIntno == orderItem && b.isTaken == false).ToList();
+            if (dtls.Count() == 0)
             {
-                orderHdr.FirstOrDefault(b => b.orderTrnHdrIntno == orderItem).endDubbing = DateTime.Today.Date;
+                orderHdr.endDubbing = DateTime.Today.Date;
                 db.SaveChanges();
             }
 

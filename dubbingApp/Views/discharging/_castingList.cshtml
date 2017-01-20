@@ -43,7 +43,7 @@
                         foreach (var item in Model)
                         {
                             string rowColor = null;
-                            if(item.voiceActorIntno == 0 && item.actorName == "ANONYMOUS")
+                            if(item.voiceActorIntno == 0 && item.actorName.Contains("ANONYM"))
                             {
                                 rowColor = "bg-danger";
                             }
