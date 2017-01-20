@@ -17,49 +17,46 @@
             <div class="container-fluid" style="padding:0px">
                 <div class="panel panel-primary">
                     <div class="panel-heading">
-                        <div class="row">
-                            <div class="col-sm-12">
-                                <label>Scheduled</label> &nbsp; <small>Episodes that are Scheduled for Dubbing This Week</small>
-                            </div>
-                        </div>
+                        <label>Scheduled</label> &nbsp; <small>Episodes that are Scheduled for Dubbing This Week</small>
                     </div>
                     <div class="panel-body">
-                        <div class="row">
-                            @foreach (var work in Model.Where(b => b.status == "SCHEDULED").Select(b => new { b.workIntno, b.workName, b.studioEpisodeIntno, b.studioNo, b.schedule, b.dueDate }).Distinct())
-                            {
-                                <div class="col-sm-4">
-                                    <div class="container-fluid" style="padding:0px">
-                                        <div class="panel panel-default">
-                                            <div class="panel-heading">
-                                                <div class="row">
-                                                    <div class="col-sm-10">
-                                                        <label><small>@work.workName &nbsp; (Due Date: @work.dueDate)</small></label>
-                                                    </div>
-                                                    <div class="col-sm-2">
-                                                        @{ long oiDtl = Model.FirstOrDefault(b => b.workIntno == work.workIntno && b.dueDate == work.dueDate && b.status == "SCHEDULED").orderTrnDtlIntno; }
-                                                        <button class="btn btn-default btn-xs pull-right" onclick="onStartClick(@oiDtl, @work.studioEpisodeIntno)">
-                                                            Start
-                                                        </button>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="panel-body">
-                                                <p>
-                                                    <div class="row">
-                                                        <div class="col-sm-6"><small><label>Studio</label>@work.studioNo</small></div>
-                                                        <div class="col-sm-6"><small><label>Schedule</label>@work.schedule</small></div>
-                                                    </div>
-                                                </p>
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th></th>
+                                    <th><small>Work</small></th>
+                                    <th><small>Schedule</small></th>
+                                    <th><small>Studio</small></th>
+                                    <th><small>Due Date</small></th>
+                                    <th><small>Episodes</small></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @{
+                                    foreach (var work in Model.Where(b => b.status == "SCHEDULED").Select(b => new { b.workIntno, b.workName, b.studioEpisodeIntno, b.studioNo, b.schedule, b.dueDate }).Distinct())
+                                    {
+                                        <tr>
+                                            <td>
+                                                @{ long oiDtl = Model.FirstOrDefault(b => b.workIntno == work.workIntno && b.dueDate == work.dueDate && b.status == "SCHEDULED").orderTrnDtlIntno; }
+                                                <button class="btn btn-default btn-xs pull-right" onclick="onStartClick(@oiDtl, @work.studioEpisodeIntno)">
+                                                    Start
+                                                </button>
+                                            </td>
+                                            <td><small>@work.workName</small></td>
+                                            <td><small>@work.schedule</small></td>
+                                            <td><small>@work.studioNo</small></td>
+                                            <td><small>@work.dueDate</small></td>
+                                            <td>
                                                 @foreach (var ep in Model.Where(b => b.workIntno == work.workIntno && b.dueDate == work.dueDate && b.status == "SCHEDULED"))
                                                 {
                                                     <label class="badge alert-info">@ep.episodeNo</label>
                                                 }
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            }
-                        </div>
+                                            </td>
+                                        </tr>
+                                    }
+                                }
+                            </tbody>
+                        </table>
                     </div>
                 </div>
             </div>
@@ -79,36 +76,43 @@
                         </div>
                     </div>
                     <div class="panel-body">
-                        <div class="row">
-                            @foreach (var work in Model.Where(b => b.status == "DUE").Select(b => new { b.workIntno, b.workName, b.dueDate }).Distinct())
-                            {
-                                <div class="col-sm-4">
-                                    <div class="container-fluid" style="padding:0px">
-                                        <div class="panel panel-default">
-                                            <div class="panel-heading">
-                                                <div class="row">
-                                                    <div class="col-sm-10">
-                                                        <label><small>@work.workName &nbsp; (Due Date: @DateTime.Parse(@work.dueDate).ToString("dd/MM"))</small></label>
-                                                    </div>
-                                                    <div class="col-sm-2">
-                                                        @{ long oiDtl = Model.FirstOrDefault(b => b.workIntno == work.workIntno && b.dueDate == work.dueDate && b.status == "DUE").orderTrnDtlIntno; }
-                                                        <button class="btn btn-default btn-xs pull-right" onclick="onStartClick(@oiDtl, null)">
-                                                            Start
-                                                        </button>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="panel-body">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th></th>
+                                    <th><small>Work</small></th>
+                                    <th><small>Schedule</small></th>
+                                    <th><small>Studio</small></th>
+                                    <th><small>Due Date</small></th>
+                                    <th><small>Episodes</small></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @{
+                                    foreach (var work in Model.Where(b => b.status == "DUE").Select(b => new { b.workIntno, b.workName, b.studioEpisodeIntno, b.studioNo, b.schedule, b.dueDate }).Distinct())
+                                    {
+                                        <tr>
+                                            <td>
+                                                @{ long oiDtl = Model.FirstOrDefault(b => b.workIntno == work.workIntno && b.dueDate == work.dueDate && b.status == "DUE").orderTrnDtlIntno; }
+                                                <button class="btn btn-default btn-xs pull-right" onclick="onStartClick(@oiDtl, @work.studioEpisodeIntno)">
+                                                    Start
+                                                </button>
+                                            </td>
+                                            <td><small>@work.workName</small></td>
+                                            <td><small>@work.schedule</small></td>
+                                            <td><small>@work.studioNo</small></td>
+                                            <td><small>@DateTime.Parse(@work.dueDate).ToString("dd/MM")</small></td>
+                                            <td>
                                                 @foreach (var ep in Model.Where(b => b.workIntno == work.workIntno && b.dueDate == work.dueDate && b.status == "DUE"))
                                                 {
                                                     <label class="badge alert-info">@ep.episodeNo</label>
                                                 }
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            }
-                        </div>
+                                            </td>
+                                        </tr>
+                                    }
+                                }
+                            </tbody>
+                        </table>
                     </div>
                 </div>
             </div>
@@ -128,36 +132,43 @@
                         </div>
                     </div>
                     <div class="panel-body">
-                        <div class="row">
-                            @foreach (var work in Model.Where(b => b.status == "ASSIGNED").Select(b => new { b.workIntno, b.workName, b.dueDate }).Distinct())
-                            {
-                                <div class="col-sm-4">
-                                    <div class="container-fluid" style="padding:0px">
-                                        <div class="panel panel-default">
-                                            <div class="panel-heading">
-                                                <div class="row">
-                                                    <div class="col-sm-10">
-                                                        <label><small>@work.workName &nbsp; (Due Date: @work.dueDate)</small></label>
-                                                    </div>
-                                                    <div class="col-sm-2">
-                                                        @{ long oiDtl = Model.FirstOrDefault(b => b.workIntno == work.workIntno && b.dueDate == work.dueDate && b.status == "ASSIGNED").orderTrnDtlIntno; }
-                                                        <button class="btn btn-default btn-xs pull-right" onclick="onStartClick(@oiDtl, null)">
-                                                            Start
-                                                        </button>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="panel-body">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th></th>
+                                    <th><small>Work</small></th>
+                                    <th><small>Schedule</small></th>
+                                    <th><small>Studio</small></th>
+                                    <th><small>Due Date</small></th>
+                                    <th><small>Episodes</small></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @{
+                                    foreach (var work in Model.Where(b => b.status == "ASSIGNED").Select(b => new { b.workIntno, b.workName, b.studioEpisodeIntno, b.studioNo, b.schedule, b.dueDate }).Distinct())
+                                    {
+                                        <tr>
+                                            <td>
+                                                @{ long oiDtl = Model.FirstOrDefault(b => b.workIntno == work.workIntno && b.dueDate == work.dueDate && b.status == "ASSIGNED").orderTrnDtlIntno; }
+                                                <button class="btn btn-default btn-xs pull-right" onclick="onStartClick(@oiDtl, @work.studioEpisodeIntno)">
+                                                    Start
+                                                </button>
+                                            </td>
+                                            <td><small>@work.workName</small></td>
+                                            <td><small>@work.schedule</small></td>
+                                            <td><small>@work.studioNo</small></td>
+                                            <td><small>@work.dueDate</small></td>
+                                            <td>
                                                 @foreach (var ep in Model.Where(b => b.workIntno == work.workIntno && b.dueDate == work.dueDate && b.status == "ASSIGNED"))
                                                 {
                                                     <label class="badge alert-info">@ep.episodeNo</label>
                                                 }
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            }
-                        </div>
+                                            </td>
+                                        </tr>
+                                    }
+                                }
+                            </tbody>
+                        </table>
                     </div>
                 </div>
             </div>

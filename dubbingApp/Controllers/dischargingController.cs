@@ -30,35 +30,56 @@ namespace dubbingApp.Controllers
 
         public ActionResult episodesList()
         {
-            var model = db.orderTrnHdrs.Include(b => b.agreementWork).Where(b => b.endAdaptation.HasValue && !b.startDubbing.HasValue).OrderBy(b => new { b.workIntno, b.episodeNo });
+            var model = db.orderTrnHdrs.Include(b => b.agreementWork).Where(b => b.endAdaptation.HasValue && !b.endDubbing.HasValue).OrderBy(b => new { b.workIntno, b.episodeNo });
             return PartialView("_episodesList", model.ToList());
         }
 
         public ActionResult castingList(long orderItem)
         {
-            var sheetHdr = db.dubbingSheetHdrs.Include(b => b.workCharacter).Where(b => b.orderTrnHdrIntno == orderItem).OrderBy(b => b.workCharacter.characterType);
-            var sheetDtls = db.dubbingSheetDtls.Where(b => b.orderTrnHdrIntno == orderItem).ToList();
+            var sheetHdr = db.dubbingSheetHdrs.Include(b => b.workCharacter).Where(b => b.orderTrnHdrIntno == orderItem)
+                            .Select(b => new { b, scenesCount = b.dubbingSheetDtls.Count(), takenCount = b.dubbingSheetDtls.Where(c => c.isTaken == true).Count() })
+                            .OrderBy(b => b.b.workCharacter.characterType);
             List<ViewModels.castingListViewModel> model = new List<ViewModels.castingListViewModel>();
-            foreach (dubbingSheetHdr hdr in sheetHdr)
+            foreach (var hdr in sheetHdr)
             {
                 ViewModels.castingListViewModel item = new ViewModels.castingListViewModel();
-                item.dubbSheetHdrIntno = hdr.dubbSheetHdrIntno;
-                item.orderTrnHdrIntno = hdr.orderTrnHdrIntno;
-                item.workCharacterIntno = hdr.workCharacterIntno;
-                item.characterName = hdr.characterName;
-                item.voiceActorIntno = hdr.voiceActorIntno;
-                item.actorName = hdr.actorName;
-                item.totalScenes = db.subtitles.Include(b => b.dialog.scene).Where(b => b.dubbSheetHdrIntno == hdr.dubbSheetHdrIntno)
-                                    .Select(b => b.dialog.scene.sceneNo).Distinct().Count();
-                int totalCount = sheetDtls.Where(b => b.dubbSheetHdrIntno == hdr.dubbSheetHdrIntno).Count();
-                int takenCount = sheetDtls.Where(b => b.dubbSheetHdrIntno == hdr.dubbSheetHdrIntno && b.isTaken == true).Count();
-                if (totalCount != 0 && takenCount == totalCount)
+                item.dubbSheetHdrIntno = hdr.b.dubbSheetHdrIntno;
+                item.orderTrnHdrIntno = hdr.b.orderTrnHdrIntno;
+                item.workCharacterIntno = hdr.b.workCharacterIntno;
+                item.characterName = hdr.b.characterName;
+                item.voiceActorIntno = hdr.b.voiceActorIntno;
+                item.actorName = hdr.b.actorName;
+                item.totalScenes = hdr.scenesCount;
+
+                if (hdr.scenesCount != 0 && hdr.takenCount == hdr.scenesCount)
                     item.isEndorsed = true;
                 else
                     item.isEndorsed = false;
                 model.Add(item);
             }
 
+            var orderHdr = db.orderTrnHdrs.Find(orderItem);
+            long workId = orderHdr.workIntno;
+            
+            ViewBag.orderItem = orderItem;
+            ViewBag.workEpisode = db.agreementWorks.Find(workId).workName + " / Episode: " + orderHdr.episodeNo;
+
+            return PartialView("_castingList", model);
+        }
+
+        public ActionResult castingUpdate(long id)
+        {
+            var hdr = db.dubbingSheetHdrs.Find(id);
+            ViewModels.castingListViewModel item = new ViewModels.castingListViewModel();
+            item.dubbSheetHdrIntno = hdr.dubbSheetHdrIntno;
+            item.orderTrnHdrIntno = hdr.orderTrnHdrIntno;
+            item.workCharacterIntno = hdr.workCharacterIntno;
+            item.characterName = hdr.characterName;
+            item.voiceActorIntno = hdr.voiceActorIntno;
+            item.actorName = hdr.actorName;
+            item.totalScenes = hdr.dubbingSheetDtls.Count();
+
+            long orderItem = hdr.orderTrnHdrIntno;
             var orderHdr = db.orderTrnHdrs.Find(orderItem);
             long workId = orderHdr.workIntno;
             var x = (from A in db.voiceActors
@@ -70,9 +91,7 @@ namespace dubbingApp.Controllers
                             select new { C.voiceActorIntno, C.fullName });
             ViewBag.actorsList = new SelectList(x, "voiceActorIntno", "fullName");
             ViewBag.orderItem = orderItem;
-            ViewBag.workEpisode = db.agreementWorks.Find(workId).workName + " / Episode: " + orderHdr.episodeNo;
-
-            return PartialView("_castingList", model);
+            return PartialView("_castingUpdate", item);
         }
 
         [ValidateAntiForgeryToken]
@@ -118,10 +137,20 @@ namespace dubbingApp.Controllers
             var model = db.dubbingSheetDtls;
             var x = db.subtitles.Include(b => b.dialog).Where(b => b.dubbSheetHdrIntno == sheetHdr).Select(b => b.dialog.sceneIntno).Distinct();
             
-            foreach(var item in x)
+            long orderItem = model.Find(sheetHdr).orderTrnHdrIntno;
+            var orderHdr = db.orderTrnHdrs;
+
+            // find if it is the first in episode dubbing
+            int cnt = db.dubbingSheetDtls.Where(b => b.orderTrnHdrIntno == orderItem && b.isTaken == true).Count();
+            if(cnt == 0)
+            {
+                orderHdr.FirstOrDefault(b => b.orderTrnHdrIntno == orderItem).startDubbing = DateTime.Today.Date;
+                db.SaveChanges();
+            }
+
+            foreach (var item in x)
             {
                 var y = db.scenes.Find(item);
-                long orderItem = y.orderTrnHdrIntno;
                 short sceneNo = y.sceneNo;
                 var z = db.dubbingSheetDtls.FirstOrDefault(b => b.dubbSheetHdrIntno == sheetHdr && b.orderTrnHdrIntno == orderItem && b.sceneNo == sceneNo);
                 if (z == null)
@@ -141,6 +170,15 @@ namespace dubbingApp.Controllers
                 }
             }
             db.SaveChanges();
+
+            // find if it is the last in episode dubbing
+            cnt = db.dubbingSheetDtls.Where(b => b.orderTrnHdrIntno == orderItem && b.isTaken == false).Count();
+            if (cnt == 0)
+            {
+                orderHdr.FirstOrDefault(b => b.orderTrnHdrIntno == orderItem).endDubbing = DateTime.Today.Date;
+                db.SaveChanges();
+            }
+
             return Content("Dubbing Endorsed Successfully.", "text/html");
         }
 
@@ -152,6 +190,122 @@ namespace dubbingApp.Controllers
             var x = db.orderTrnHdrs.Include(b => b.agreementWork).FirstOrDefault(b => b.orderTrnHdrIntno == orderItem);
             ViewBag.episode = x.agreementWork.workName + " / Episode " + x.episodeNo;
             return PartialView("_exportDischargingTable", model.ToList());
+        }
+
+        public ActionResult scheduleDubbing(long id)
+        {
+            var orderItem = db.orderTrnHdrs.Find(id);
+            DateTime? startDate;
+            if (orderItem.startDubbing.HasValue)
+                startDate = orderItem.startDubbing.Value;
+            else if (orderItem.plannedUpload.HasValue)
+                startDate = orderItem.plannedUpload.Value.AddDays(-7);
+            else if (orderItem.plannedShipment.HasValue)
+                startDate = orderItem.plannedShipment.Value.AddDays(-14);
+            else
+                startDate = null;
+
+            if (startDate == null)
+                return Content("Unable to Schedule the given Episode! None of Dubbing/Upload/Shipment Scheduling date is given", "text/html");
+            else
+            {
+                //update order item with dubbing start date
+                orderItem.startDubbing = startDate.Value;
+                db.SaveChanges();
+
+                //identify supervisor(s) and insert assignments if not provided
+                var orderDtlsModel = db.orderTrnDtls;
+                var emp = db.workPersonnels.FirstOrDefault(b => b.workIntno == orderItem.workIntno && b.status == true);
+                var assignments = orderDtlsModel.Where(b => b.orderTrnHdrIntno == id && b.activityType == "04" && b.status == true);
+                var empAssign = assignments;
+                if (emp != null && assignments.Count() != 0)
+                    empAssign.FirstOrDefault(b => b.empIntno == emp.empIntno);
+                else
+                    empAssign.FirstOrDefault(b => b.empIntno == -10);
+                if ((assignments.Count() == 0 && emp != null) || (empAssign == null && emp != null))
+                {
+                    orderTrnDtl dtl = new orderTrnDtl();
+                    dtl.orderTrnHdrIntno = id;
+                    dtl.activityType = "04";
+                    dtl.empIntno = emp.empIntno;
+                    dtl.status = true;
+                    orderDtlsModel.Add(dtl);
+                    db.SaveChanges();
+                }
+                assignments = orderDtlsModel.Where(b => b.orderTrnHdrIntno == id && b.activityType == "04" && b.status == true);
+                if (assignments.Count() == 0)
+                    return Content("Unable to Schedule the given Episode! No Supervisor Assigned to Perform the Given Discharge Table.", "text/html");
+
+                //identify or create new schedule
+                string fdw = LookupModels.decodeDictionaryItem("settings", "fdw");
+                while (startDate.Value.DayOfWeek.ToString() != fdw)
+                {
+                    startDate.Value.AddDays(-1);
+                }
+
+                var sch = db.dubbingTrnHdrs.FirstOrDefault(b => b.fromDate == startDate.Value && b.status == true);
+                if(sch == null)
+                {
+                    var schHdrModel = db.dubbingTrnHdrs;
+                    dubbingTrnHdr schHdr = new dubbingTrnHdr();
+                    schHdr.fromDate = startDate.Value;
+                    schHdr.thruDate = startDate.Value.AddDays(7);
+                    schHdr.isPaid = false;
+                    schHdr.status = true;
+                    schHdrModel.Add(schHdr);
+
+                    var stdModel = db.studios;
+                    studio std = new studio();
+                    std.workIntno = orderItem.workIntno;
+                    std.studioNo = "01";
+                    stdModel.Add(std);
+
+                    var stdDtlsModel = db.studioEpisodes;
+                    foreach(var x in assignments)
+                    {
+                        studioEpisode stdDtl = new studioEpisode();
+                        stdDtl.orderTrnDtlIntno = x.orderTrnDtlIntno;
+                        stdDtlsModel.Add(stdDtl);
+                    }
+                    db.SaveChanges();
+                }
+                else
+                {
+                    var stdHdr = db.studios.FirstOrDefault(b => b.dubbTrnHdrIntno == sch.dubbTrnHdrIntno && b.workIntno == orderItem.workIntno);
+                    if (stdHdr == null)
+                    {
+                        var stdModel = db.studios;
+                        studio std = new studio();
+                        std.dubbTrnHdrIntno = sch.dubbTrnHdrIntno;
+                        std.workIntno = orderItem.workIntno;
+                        std.studioNo = "01";
+                        stdModel.Add(std);
+
+                        var stdDtlsModel = db.studioEpisodes;
+                        foreach (var x in assignments)
+                        {
+                            studioEpisode stdDtl = new studioEpisode();
+                            stdDtl.orderTrnDtlIntno = x.orderTrnDtlIntno;
+                            stdDtlsModel.Add(stdDtl);
+                        }
+                        db.SaveChanges();
+                    }
+                    else
+                    {
+                        var stdDtlsModel = db.studioEpisodes;
+                        foreach (var x in assignments)
+                        {
+                            var stdDtl = db.studioEpisodes.FirstOrDefault(b => b.studioIntno == stdHdr.studioIntno && b.orderTrnDtlIntno == x.orderTrnDtlIntno);
+                            studioEpisode stdDtlItem = new studioEpisode();
+                            stdDtlItem.studioIntno = stdHdr.studioIntno;
+                            stdDtlItem.orderTrnDtlIntno = x.orderTrnDtlIntno;
+                            stdDtlsModel.Add(stdDtlItem);
+                        }
+                        db.SaveChanges();
+                    }
+                }
+                return Content ("Schedule Successfully Generated for the given Discharge Table.", "text/html");
+            }
         }
     }
 }

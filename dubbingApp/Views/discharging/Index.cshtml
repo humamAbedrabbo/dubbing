@@ -20,7 +20,23 @@
             
         </div>
     </div>
+</div>
 
+<div class="modal fade" id="popupForm" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" id="modalClose" data-dismiss="modal">&times;</button>
+                <div class="modal-title">Cast ANONYMOUS</div>
+            </div>
+            <div class="modal-body" id="popupFormBody">
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default btn-xs" data-dismiss="modal">Cancel</button>
+            </div>
+        </div>
+    </div>
 </div>
 
 @section Scripts
@@ -105,6 +121,31 @@
                     $('#dischargeTable').show();
                 }
             });
+        }
+
+        function onCastClick(id1) {
+            $('#popupFormBody').html(null);
+            $.ajax({
+                url: '@Url.Action("castingUpdate", "discharging")',
+                type: 'GET',
+                data: { id: id1 },
+                success: function (result) {
+                    $('#popupFormBody').html(result);
+                }
+            })
+        }
+
+        function onScheduleClick(oi) {
+            if (confirm("Please Confirm! About to Generate a Schedule for the Episode.")) {
+                $.ajax({
+                    url: '@Url.Action("scheduleDubbing", "discharging")',
+                    type: 'GET',
+                    data: { id: oi },
+                    success: function (result) {
+                        alert(result);
+                    }
+                });
+            }
         }
 
         function onCloseClick() {
