@@ -3,8 +3,8 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<div class="container-fluid">
-    <div class="jumbotron" style="padding:5px">
+<div class="container-fluid" id="main">
+    <div class="jumbotron hidden-print" style="padding:5px">
         <h2>Payments</h2>
         <p class="lead"><h5>Given the List of Performed Casting / Assignments, Payment Vouchers can be "Generated" (One Voucher Per Dubbing Work), They Can be "Endorsed" (at Payment Time), and Finally They Can be "Exported" to the Accounting System.</h5></p>
     </div>
@@ -12,7 +12,7 @@
     <div class="row">
         <div class="col-sm-9">
             <div class="row">
-                <div class="col-sm-12" id="paymentsDueList">
+                <div class="col-sm-12 print-visible-block" id="paymentsDueList">
                     @Html.Action("paymentsDueList", "payment")
                 </div>
             </div>
@@ -20,7 +20,7 @@
                 <div class="col-sm-12" id="paidVouchersList"></div>
             </div>
         </div>
-        <div class="col-sm-3">
+        <div class="col-sm-3 hidden-print">
             <div>
                 <p>
                     <a class="btn btn-primary" href="#" onclick="onPaymentsDueClick()">&laquo; Show Payments Due</a>

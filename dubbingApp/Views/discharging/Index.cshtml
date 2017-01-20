@@ -94,6 +94,7 @@
                         type: 'GET',
                         data: { sheetHdr: sheetHdr1 },
                         success: function (result) {
+                            alert(result);
                             $.ajax({
                                 url: '@Url.Action("castingList", "discharging")',
                                 type: 'GET',
@@ -102,7 +103,6 @@
                                     $('#castingList').html(result);
                                 }
                             });
-                            alert(result);
                         }
                     });
                 }
@@ -143,6 +143,13 @@
                     data: { id: oi },
                     success: function (result) {
                         alert(result);
+                        $.ajax({
+                            url: '@Url.Action("episodesList", "discharging")',
+                            type: 'GET',
+                            success: function (result) {
+                                $('#episodesList').html(result);
+                            }
+                        });
                     }
                 });
             }

@@ -30,8 +30,41 @@ namespace dubbingApp.Controllers
 
         public ActionResult episodesList()
         {
-            var model = db.orderTrnHdrs.Include(b => b.agreementWork).Where(b => b.endAdaptation.HasValue && !b.endDubbing.HasValue).OrderBy(b => new { b.workIntno, b.episodeNo });
-            return PartialView("_episodesList", model.ToList());
+            var x = db.orderTrnHdrs.Include(b => b.agreementWork).Where(b => b.endAdaptation.HasValue && !b.endDubbing.HasValue).OrderBy(b => new { b.workIntno, b.episodeNo });
+            List<ViewModels.dischargeEpisodeViewModel> model = new List<ViewModels.dischargeEpisodeViewModel>();
+
+            foreach(var x1 in x)
+            {
+                ViewModels.dischargeEpisodeViewModel item = new ViewModels.dischargeEpisodeViewModel();
+                item.orderTrnHdrIntno = x1.orderTrnHdrIntno;
+                item.workName = x1.agreementWork.workName;
+                item.episodeNo = x1.episodeNo;
+
+                long orderItem = x1.orderTrnHdrIntno;
+                var sch = (from A in db.orderTrnDtls
+                           join B in db.studioEpisodes on A.orderTrnDtlIntno equals B.orderTrnDtlIntno
+                           join C in db.studios on B.studioIntno equals C.studioIntno
+                           join D in db.dubbingTrnHdrs on C.dubbTrnHdrIntno equals D.dubbTrnHdrIntno
+                           where A.orderTrnHdrIntno == orderItem && A.status == true && D.status == true
+                           select new { D.fromDate, D.thruDate }).Distinct().ToList();
+                if (sch.Count() != 0)
+                {
+                    item.isScheduled = true;
+                    var sch1 = sch.FirstOrDefault();
+                    if (DateTime.Today.Date >= sch1.fromDate && DateTime.Today.Date <= sch1.thruDate)
+                        item.isThisWeek = true;
+                    else
+                        item.isThisWeek = false;
+                }
+                else
+                {
+                    item.isScheduled = false;
+                    item.isThisWeek = false;
+                }
+                model.Add(item);
+            }
+            
+            return PartialView("_episodesList", model);
         }
 
         public ActionResult castingList(long orderItem)
@@ -55,12 +88,24 @@ namespace dubbingApp.Controllers
                     item.isEndorsed = true;
                 else
                     item.isEndorsed = false;
+
                 model.Add(item);
             }
 
             var orderHdr = db.orderTrnHdrs.Find(orderItem);
             long workId = orderHdr.workIntno;
-            
+
+            int sch = (from A in db.orderTrnDtls
+                       join B in db.studioEpisodes on A.orderTrnDtlIntno equals B.orderTrnDtlIntno
+                       join C in db.studios on B.studioIntno equals C.studioIntno
+                       join D in db.dubbingTrnHdrs on C.dubbTrnHdrIntno equals D.dubbTrnHdrIntno
+                       where A.orderTrnHdrIntno == orderItem && A.status == true && D.status == true
+                       select A).Distinct().Count();
+            if (sch != 0)
+                ViewBag.isScheduled = true;
+            else
+                ViewBag.isScheduled = false;
+
             ViewBag.orderItem = orderItem;
             ViewBag.workEpisode = db.agreementWorks.Find(workId).workName + " / Episode: " + orderHdr.episodeNo;
 
@@ -211,6 +256,7 @@ namespace dubbingApp.Controllers
             {
                 //update order item with dubbing start date
                 orderItem.startDubbing = startDate.Value;
+                orderItem.endDischarge = startDate;
                 db.SaveChanges();
 
                 //identify supervisor(s) and insert assignments if not provided
@@ -222,6 +268,7 @@ namespace dubbingApp.Controllers
                     empAssign.FirstOrDefault(b => b.empIntno == emp.empIntno);
                 else
                     empAssign.FirstOrDefault(b => b.empIntno == -10);
+
                 if ((assignments.Count() == 0 && emp != null) || (empAssign == null && emp != null))
                 {
                     orderTrnDtl dtl = new orderTrnDtl();
@@ -232,9 +279,10 @@ namespace dubbingApp.Controllers
                     orderDtlsModel.Add(dtl);
                     db.SaveChanges();
                 }
-                assignments = orderDtlsModel.Where(b => b.orderTrnHdrIntno == id && b.activityType == "04" && b.status == true);
-                if (assignments.Count() == 0)
+                else
                     return Content("Unable to Schedule the given Episode! No Supervisor Assigned to Perform the Given Discharge Table.", "text/html");
+
+                assignments = orderDtlsModel.Where(b => b.orderTrnHdrIntno == id && b.activityType == "04" && b.status == true);
 
                 //identify or create new schedule
                 string fdw = LookupModels.decodeDictionaryItem("settings", "fdw");
