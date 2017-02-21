@@ -5,7 +5,7 @@
     ViewBag.Title = "ActorSamples";
 }
 
-<h2>Audio Samples</h2>
+<h2>@ViewBag.ActorName Audio Samples</h2>
 <hr />
 <div class="sampleControls">
     <a class="btn btn-success" href="#" data-toggle="modal" data-target="#newSample">New Sample</a>
@@ -27,8 +27,14 @@
                         <input id="title" name="title" placeholder="Title" class="form-control" />
                     </div>
                     <div class="form-controls">
-                        <label for="templateId">Title</label>
-                        <input id="templateId" name="templateId" class="form-control" value="1"/>
+                        <label for="tagTemplateHdrIntno">Template</label>
+                        <!--<input id="templateId" name="templateId" class="form-control" value="1"/>-->
+                        <select class="form-control" id="tagTemplateHdrIntno" name="tagTemplateHdrIntno">
+                            @foreach(var tem in ViewBag.tagTemplates)
+                            {
+                                <option value="@tem.tagTemplateHdrIntno">@tem.Title</option>
+                            }
+                        </select>
                     </div>
                     <div class="form-controls">
                         <label for="description">Description</label>
@@ -39,24 +45,43 @@
                         <input type="file" id="fileInput" name="fileInput" class="form-control">
                         <p class="help-block"><small>Example wav or mp3 files.</small></p>
                     </div>
-                    <button type="submit" class="btn btn-default">Submit</button>
+                    <!--<button type="submit" class="btn btn-default">Submit</button>-->
 
                 </form>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary">Save</button>
+                <button id="btnSave" type="button" class="btn btn-primary" data-dismiss="modal">Save</button>
             </div>
         </div>
     </div>
 </div>
 
+<div class="modal fade" id="editSampleModal" tabindex="-1" role="dialog" aria-labelledby="editSampleModal-label">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="editSampleModal-label">Edit Sample</h4>
+            </div>
+            <div id="editBody" class="modal-body">
+                 
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                <button id="btnSaveDtl" type="button" class="btn btn-primary" data-dismiss="modal">Save</button>
+            </div>
+        </div>
+    </div>
+</div>
 <table class="table">
     <thead>
         <tr>
             <th>Title</th>
+            <th>Template</th>
             <th>Description</th>
             <th>Status</th>
+            <th></th>
             <th></th>
         </tr>
     </thead>
@@ -65,16 +90,57 @@
         {
             <tr>
                 <td>@hdr.Title</td>
+                <td>@hdr.tagTemplateHdr.Title</td>
                 <td>@hdr.Description</td>
                 <td>@hdr.Status</td>
                 <td>
                     <audio controls>
                         <source src="~/@hdr.FileUrl" type="audio/wav">
                         <source src="~/@hdr.FileUrl" type="audio/mpeg">
+                        <source src="~/@hdr.FileUrl" type="audio/mp3">
                         Your browser does not support the audio element.
                     </audio>
+                </td>
+                <td>
+                    <a class="btn btn-primary edit" href="#" data-id="@hdr.audioSampleHdrIntno" data-toggle="modal" data-target="#editSampleModal">Edit</a>
                 </td>
             </tr>
         }
     </tbody>
 </table>
+
+@section Scripts
+{
+    <script>
+        $('#btnSave').click(function() {
+
+            $('form').submit();
+        
+        });
+        $(document).on("click", ".edit", function () {
+            var sampleId = $(this).data('id');
+            // $("#editBody #sampleId").val( sampleId );
+            var url = '/samples/editSample';
+            $.ajax({
+                url: url,
+                data: { id: sampleId },
+                success: function (result) {
+                    $("#editBody").empty();
+                    $("#editBody").html(result);
+                }
+            });
+
+            // As pointed out in comments, 
+            // it is superfluous to have to manually call the modal.
+            // $('#addBookDialog').modal('show');
+        });
+
+        $('#btnSaveDtl').click(function() {
+            alert('jjj');
+            $('#editSampleForm').submit();
+        
+        });
+
+    </script>
+
+}

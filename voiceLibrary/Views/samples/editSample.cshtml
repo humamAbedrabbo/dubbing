@@ -1,0 +1,44 @@
+﻿
+@using dubbingModel
+@model audioSampleHdr
+
+<form id="editSampleForm" method="post" action="/samples/saveSampleDtl">
+    <input id="voiceActorIntno" name="voiceActorIntno" type="hidden" value="@Model.voiceActorIntno" />
+    <input id="audioSampleHdrIntno" name="audioSampleHdrIntno" type="hidden" value="@Model.audioSampleHdrIntno" />
+    <div class="form-controls">
+        <audio controls>
+            <source src="~/@Model.FileUrl" type="audio/wav">
+            <source src="~/@Model.FileUrl" type="audio/mpeg">
+            <source src="~/@Model.FileUrl" type="audio/mp3">
+            Your browser does not support the audio element.
+        </audio>
+    </div>
+    <br />
+    <div class="form-controls">
+        <label for="title">Title</label>
+        <input id="title" name="title" placeholder="Title" class="form-control" value="@Model.Title" />
+    </div>
+    <div class="form-controls">
+        <label for="tagTemplateHdrIntno">Template</label>
+        <!--<input id="templateId" name="templateId" class="form-control" value="1"/>-->
+        <select class="form-control" disabled id="tagTemplateHdrIntno" name="tagTemplateHdrIntno">
+            @foreach(var tem in ViewBag.tagTemplates)
+            {
+                if(tem.tagTemplateHdrIntno == Model.tagTemplateHdrIntno)
+                {
+                    <option selected value="@tem.tagTemplateHdrIntno">@tem.Title</option>
+                }
+                else
+                {
+                    <option value="@tem.tagTemplateHdrIntno">@tem.Title</option>
+                }
+                
+            }
+        </select>
+    </div>
+
+    <div class="form-controls">
+        <label for="description">Description</label>
+        <textarea id="description" name="description" rows="2" class="form-control">@Model.Description</textarea>
+    </div>
+</form>
