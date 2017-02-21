@@ -212,12 +212,12 @@ namespace dubbingApp.Controllers
                          join C in db.orderTrnHdrs on B.orderTrnHdrIntno equals C.orderTrnHdrIntno
                          join D in db.dubbingSheetHdrs on C.orderTrnHdrIntno equals D.orderTrnHdrIntno
                          join E in db.scenes on C.orderTrnHdrIntno equals E.orderTrnHdrIntno
-                         join F in db.dialogs on E.sceneIntno equals F.sceneIntno
-                         join G in db.subtitles on F.dialogIntno equals G.dialogIntno
-                         join H in db.subtitles on D.dubbSheetHdrIntno equals H.dubbSheetHdrIntno
+                         join F in db.dubbingSheetDtls on D.dubbSheetHdrIntno equals F.dubbSheetHdrIntno
+                         join H in db.dubbingSheetDtls on E.sceneNo equals H.sceneNo
                          where D.voiceActorIntno == actor && D.actorName == actorName && B.empIntno == sessionEntry.empIntno && B.forDueDate == sessionEntry.dueDate
                          select new { E.sceneIntno, C.workIntno, C.orderTrnHdrIntno, C.episodeNo, D.dubbSheetHdrIntno, E.sceneNo, E.startTimeCode }).Distinct()
                          .OrderBy(b => new { b.workIntno, b.episodeNo, b.sceneNo });
+            
             foreach (var item in model)
             {
                 ViewModels.dubbingSceneViewModel scn = new ViewModels.dubbingSceneViewModel();

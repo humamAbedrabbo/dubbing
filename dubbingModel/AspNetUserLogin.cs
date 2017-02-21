@@ -12,13 +12,12 @@ namespace dubbingModel
     using System;
     using System.Collections.Generic;
     
-    public partial class paymentsDueVW
+    public partial class AspNetUserLogin
     {
-        public long workIntno { get; set; }
-        public string workName { get; set; }
-        public long voiceActorIntno { get; set; }
-        public string actorName { get; set; }
-        public Nullable<System.DateTime> dubbingDate { get; set; }
-        public Nullable<int> totalUnits { get; set; }
+        public string LoginProvider { get; set; }
+        public string ProviderKey { get; set; }
+        public string UserId { get; set; }
+    
+        public virtual AspNetUser AspNetUser { get; set; }
     }
 }

@@ -5,6 +5,22 @@
     <!-- SSDL content -->
     <edmx:StorageModels>
     <Schema Namespace="DUBBDBModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2008" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="__MigrationHistory">
+          <Key>
+            <PropertyRef Name="MigrationId" />
+            <PropertyRef Name="ContextKey" />
+          </Key>
+          <Property Name="MigrationId" Type="nvarchar" MaxLength="150" Nullable="false" />
+          <Property Name="ContextKey" Type="nvarchar" MaxLength="300" Nullable="false" />
+          <Property Name="Model" Type="varbinary(max)" Nullable="false" />
+          <Property Name="ProductVersion" Type="nvarchar" MaxLength="32" Nullable="false" />
+        </EntityType>
+        <EntityType Name="__RefactorLog">
+          <Key>
+            <PropertyRef Name="OperationKey" />
+          </Key>
+          <Property Name="OperationKey" Type="uniqueidentifier" Nullable="false" />
+        </EntityType>
         <EntityType Name="agreements">
           <Key>
             <PropertyRef Name="agreementIntno" />
@@ -57,6 +73,57 @@
           <Property Name="totalWeekNbrEpisodes" Type="smallint" Nullable="false" />
           <Property Name="contactIntno" Type="bigint" />
           <Property Name="status" Type="nvarchar" MaxLength="50" Nullable="false" />
+        </EntityType>
+        <EntityType Name="AspNetRoles">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="nvarchar" MaxLength="128" Nullable="false" />
+          <Property Name="Name" Type="nvarchar" MaxLength="256" Nullable="false" />
+        </EntityType>
+        <EntityType Name="AspNetUserClaims">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="UserId" Type="nvarchar" MaxLength="128" Nullable="false" />
+          <Property Name="ClaimType" Type="nvarchar(max)" />
+          <Property Name="ClaimValue" Type="nvarchar(max)" />
+        </EntityType>
+        <EntityType Name="AspNetUserLogins">
+          <Key>
+            <PropertyRef Name="LoginProvider" />
+            <PropertyRef Name="ProviderKey" />
+            <PropertyRef Name="UserId" />
+          </Key>
+          <Property Name="LoginProvider" Type="nvarchar" MaxLength="128" Nullable="false" />
+          <Property Name="ProviderKey" Type="nvarchar" MaxLength="128" Nullable="false" />
+          <Property Name="UserId" Type="nvarchar" MaxLength="128" Nullable="false" />
+        </EntityType>
+        <EntityType Name="AspNetUserRoles">
+          <Key>
+            <PropertyRef Name="UserId" />
+            <PropertyRef Name="RoleId" />
+          </Key>
+          <Property Name="UserId" Type="nvarchar" MaxLength="128" Nullable="false" />
+          <Property Name="RoleId" Type="nvarchar" MaxLength="128" Nullable="false" />
+        </EntityType>
+        <EntityType Name="AspNetUsers">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="nvarchar" MaxLength="128" Nullable="false" />
+          <Property Name="Email" Type="nvarchar" MaxLength="256" />
+          <Property Name="EmailConfirmed" Type="bit" Nullable="false" />
+          <Property Name="PasswordHash" Type="nvarchar(max)" />
+          <Property Name="SecurityStamp" Type="nvarchar(max)" />
+          <Property Name="PhoneNumber" Type="nvarchar(max)" />
+          <Property Name="PhoneNumberConfirmed" Type="bit" Nullable="false" />
+          <Property Name="TwoFactorEnabled" Type="bit" Nullable="false" />
+          <Property Name="LockoutEndDateUtc" Type="datetime" />
+          <Property Name="LockoutEnabled" Type="bit" Nullable="false" />
+          <Property Name="AccessFailedCount" Type="int" Nullable="false" />
+          <Property Name="UserName" Type="nvarchar" MaxLength="256" Nullable="false" />
         </EntityType>
         <EntityType Name="audioSampleDtls">
           <Key>
@@ -250,6 +317,7 @@
           <Property Name="voiceActorIntno" Type="bigint" Nullable="false" />
           <Property Name="actorName" Type="nvarchar" MaxLength="50" Nullable="false" />
           <Property Name="characterName" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="isPaid" Type="bit" Nullable="false" />
         </EntityType>
         <EntityType Name="dubbingTrnHdrs">
           <Key>
@@ -638,22 +706,6 @@
           <Property Name="thruDate" Type="date" />
           <Property Name="status" Type="bit" Nullable="false" />
         </EntityType>
-        <!--Errors Found During Generation:
-warning 6002: The table/view 'DUBBDB.dbo.paymentsDueVW' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
-        <EntityType Name="paymentsDueVW">
-          <Key>
-            <PropertyRef Name="workIntno" />
-            <PropertyRef Name="workName" />
-            <PropertyRef Name="voiceActorIntno" />
-            <PropertyRef Name="actorName" />
-          </Key>
-          <Property Name="workIntno" Type="bigint" Nullable="false" />
-          <Property Name="workName" Type="nvarchar" MaxLength="100" Nullable="false" />
-          <Property Name="voiceActorIntno" Type="bigint" Nullable="false" />
-          <Property Name="actorName" Type="nvarchar" MaxLength="50" Nullable="false" />
-          <Property Name="dubbingDate" Type="date" />
-          <Property Name="totalUnits" Type="int" />
-        </EntityType>
         <Association Name="FK_agreements_agreements">
           <End Role="agreements" Type="Self.agreements" Multiplicity="0..1" />
           <End Role="agreements1" Type="Self.agreements" Multiplicity="*" />
@@ -909,6 +961,62 @@ warning 6002: The table/view 'DUBBDB.dbo.paymentsDueVW' does not have a primary 
             </Principal>
             <Dependent Role="clientClaims">
               <PropertyRef Name="orderTrnHdrIntno" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_dbo_AspNetUserClaims_dbo_AspNetUsers_UserId">
+          <End Role="AspNetUsers" Type="Self.AspNetUsers" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="AspNetUserClaims" Type="Self.AspNetUserClaims" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="AspNetUsers">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="AspNetUserClaims">
+              <PropertyRef Name="UserId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_dbo_AspNetUserLogins_dbo_AspNetUsers_UserId">
+          <End Role="AspNetUsers" Type="Self.AspNetUsers" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="AspNetUserLogins" Type="Self.AspNetUserLogins" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="AspNetUsers">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="AspNetUserLogins">
+              <PropertyRef Name="UserId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_dbo_AspNetUserRoles_dbo_AspNetRoles_RoleId">
+          <End Role="AspNetRoles" Type="Self.AspNetRoles" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="AspNetUserRoles" Type="Self.AspNetUserRoles" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="AspNetRoles">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="AspNetUserRoles">
+              <PropertyRef Name="RoleId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_dbo_AspNetUserRoles_dbo_AspNetUsers_UserId">
+          <End Role="AspNetUsers" Type="Self.AspNetUsers" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="AspNetUserRoles" Type="Self.AspNetUserRoles" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="AspNetUsers">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="AspNetUserRoles">
+              <PropertyRef Name="UserId" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -1495,10 +1603,17 @@ warning 6002: The table/view 'DUBBDB.dbo.paymentsDueVW' does not have a primary 
           <Parameter Name="respMsg" Type="nvarchar" Mode="In" />
         </Function>
         <EntityContainer Name="DUBBDBModelStoreContainer">
+          <EntitySet Name="__MigrationHistory" EntityType="Self.__MigrationHistory" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="__RefactorLog" EntityType="Self.__RefactorLog" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="agreements" EntityType="Self.agreements" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="agreementSpecs" EntityType="Self.agreementSpecs" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="agreementTerms" EntityType="Self.agreementTerms" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="agreementWorks" EntityType="Self.agreementWorks" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="AspNetRoles" EntityType="Self.AspNetRoles" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="AspNetUserClaims" EntityType="Self.AspNetUserClaims" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="AspNetUserLogins" EntityType="Self.AspNetUserLogins" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="AspNetUserRoles" EntityType="Self.AspNetUserRoles" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="AspNetUsers" EntityType="Self.AspNetUsers" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="audioSampleDtls" EntityType="Self.audioSampleDtls" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="audioSampleHdrs" EntityType="Self.audioSampleHdrs" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="carriers" EntityType="Self.carriers" Schema="dbo" store:Type="Tables" />
@@ -1541,16 +1656,6 @@ warning 6002: The table/view 'DUBBDB.dbo.paymentsDueVW' does not have a primary 
           <EntitySet Name="workCharges" EntityType="Self.workCharges" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="workOrders" EntityType="Self.workOrders" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="workPersonnels" EntityType="Self.workPersonnels" Schema="dbo" store:Type="Tables" />
-          <EntitySet Name="paymentsDueVW" EntityType="Self.paymentsDueVW" store:Type="Views" store:Schema="dbo">
-            <DefiningQuery>SELECT 
-    [paymentsDueVW].[workIntno] AS [workIntno], 
-    [paymentsDueVW].[workName] AS [workName], 
-    [paymentsDueVW].[voiceActorIntno] AS [voiceActorIntno], 
-    [paymentsDueVW].[actorName] AS [actorName], 
-    [paymentsDueVW].[dubbingDate] AS [dubbingDate], 
-    [paymentsDueVW].[totalUnits] AS [totalUnits]
-    FROM [dbo].[paymentsDueVW] AS [paymentsDueVW]</DefiningQuery>
-          </EntitySet>
           <AssociationSet Name="FK_agreements_agreements" Association="Self.FK_agreements_agreements">
             <End Role="agreements" EntitySet="agreements" />
             <End Role="agreements1" EntitySet="agreements" />
@@ -1630,6 +1735,22 @@ warning 6002: The table/view 'DUBBDB.dbo.paymentsDueVW' does not have a primary 
           <AssociationSet Name="FK_clientClaims_orderTrnHdrs" Association="Self.FK_clientClaims_orderTrnHdrs">
             <End Role="orderTrnHdrs" EntitySet="orderTrnHdrs" />
             <End Role="clientClaims" EntitySet="clientClaims" />
+          </AssociationSet>
+          <AssociationSet Name="FK_dbo_AspNetUserClaims_dbo_AspNetUsers_UserId" Association="Self.FK_dbo_AspNetUserClaims_dbo_AspNetUsers_UserId">
+            <End Role="AspNetUsers" EntitySet="AspNetUsers" />
+            <End Role="AspNetUserClaims" EntitySet="AspNetUserClaims" />
+          </AssociationSet>
+          <AssociationSet Name="FK_dbo_AspNetUserLogins_dbo_AspNetUsers_UserId" Association="Self.FK_dbo_AspNetUserLogins_dbo_AspNetUsers_UserId">
+            <End Role="AspNetUsers" EntitySet="AspNetUsers" />
+            <End Role="AspNetUserLogins" EntitySet="AspNetUserLogins" />
+          </AssociationSet>
+          <AssociationSet Name="FK_dbo_AspNetUserRoles_dbo_AspNetRoles_RoleId" Association="Self.FK_dbo_AspNetUserRoles_dbo_AspNetRoles_RoleId">
+            <End Role="AspNetRoles" EntitySet="AspNetRoles" />
+            <End Role="AspNetUserRoles" EntitySet="AspNetUserRoles" />
+          </AssociationSet>
+          <AssociationSet Name="FK_dbo_AspNetUserRoles_dbo_AspNetUsers_UserId" Association="Self.FK_dbo_AspNetUserRoles_dbo_AspNetUsers_UserId">
+            <End Role="AspNetUsers" EntitySet="AspNetUsers" />
+            <End Role="AspNetUserRoles" EntitySet="AspNetUserRoles" />
           </AssociationSet>
           <AssociationSet Name="FK_dialogs_To_scenes" Association="Self.FK_dialogs_To_scenes">
             <End Role="scenes" EntitySet="scenes" />
@@ -1829,11 +1950,23 @@ warning 6002: The table/view 'DUBBDB.dbo.paymentsDueVW' does not have a primary 
             <Parameter Name="workIntno" Mode="In" Type="Int64" />
             <Parameter Name="respMsg" Mode="In" Type="String" />
           </FunctionImport>
+          <EntitySet Name="C__MigrationHistory" EntityType="DUBBDBModel.C__MigrationHistory" />
+          <EntitySet Name="C__RefactorLog" EntityType="DUBBDBModel.C__RefactorLog" />
           <EntitySet Name="agreements" EntityType="DUBBDBModel.agreement" />
           <EntitySet Name="agreementSpecs" EntityType="DUBBDBModel.agreementSpec" />
           <EntitySet Name="agreementTerms" EntityType="DUBBDBModel.agreementTerm" />
           <EntitySet Name="agreementWorks" EntityType="DUBBDBModel.agreementWork" />
+          <EntitySet Name="AspNetRoles" EntityType="DUBBDBModel.AspNetRole" />
+          <EntitySet Name="AspNetUserClaims" EntityType="DUBBDBModel.AspNetUserClaim" />
+          <EntitySet Name="AspNetUserLogins" EntityType="DUBBDBModel.AspNetUserLogin" />
+          <EntitySet Name="AspNetUsers" EntityType="DUBBDBModel.AspNetUser" />
+          <EntitySet Name="audioSampleDtls" EntityType="DUBBDBModel.audioSampleDtl" />
+          <EntitySet Name="audioSampleHdrs" EntityType="DUBBDBModel.audioSampleHdr" />
           <EntitySet Name="carriers" EntityType="DUBBDBModel.carrier" />
+          <EntitySet Name="chrCastListDtls" EntityType="DUBBDBModel.chrCastListDtl" />
+          <EntitySet Name="chrCastListHdrs" EntityType="DUBBDBModel.chrCastListHdr" />
+          <EntitySet Name="chrTemplateDtls" EntityType="DUBBDBModel.chrTemplateDtl" />
+          <EntitySet Name="chrTemplateHdrs" EntityType="DUBBDBModel.chrTemplateHdr" />
           <EntitySet Name="clientClaims" EntityType="DUBBDBModel.clientClaim" />
           <EntitySet Name="clients" EntityType="DUBBDBModel.client" />
           <EntitySet Name="contacts" EntityType="DUBBDBModel.contact" />
@@ -1859,6 +1992,10 @@ warning 6002: The table/view 'DUBBDB.dbo.paymentsDueVW' does not have a primary 
           <EntitySet Name="studioEpisodes" EntityType="DUBBDBModel.studioEpisode" />
           <EntitySet Name="studios" EntityType="DUBBDBModel.studio" />
           <EntitySet Name="subtitles" EntityType="DUBBDBModel.subtitle" />
+          <EntitySet Name="tags" EntityType="DUBBDBModel.tag" />
+          <EntitySet Name="tagTemplateDtls" EntityType="DUBBDBModel.tagTemplateDtl" />
+          <EntitySet Name="tagTemplateHdrs" EntityType="DUBBDBModel.tagTemplateHdr" />
+          <EntitySet Name="tagTypes" EntityType="DUBBDBModel.tagType" />
           <EntitySet Name="voiceActors" EntityType="DUBBDBModel.voiceActor" />
           <EntitySet Name="workActors" EntityType="DUBBDBModel.workActor" />
           <EntitySet Name="workCharacters" EntityType="DUBBDBModel.workCharacter" />
@@ -1925,9 +2062,65 @@ warning 6002: The table/view 'DUBBDB.dbo.paymentsDueVW' does not have a primary 
             <End Role="agreementWork" EntitySet="agreementWorks" />
             <End Role="workPersonnel" EntitySet="workPersonnels" />
           </AssociationSet>
+          <AssociationSet Name="FK_dbo_AspNetUserClaims_dbo_AspNetUsers_UserId" Association="DUBBDBModel.FK_dbo_AspNetUserClaims_dbo_AspNetUsers_UserId">
+            <End Role="AspNetUser" EntitySet="AspNetUsers" />
+            <End Role="AspNetUserClaim" EntitySet="AspNetUserClaims" />
+          </AssociationSet>
+          <AssociationSet Name="FK_dbo_AspNetUserLogins_dbo_AspNetUsers_UserId" Association="DUBBDBModel.FK_dbo_AspNetUserLogins_dbo_AspNetUsers_UserId">
+            <End Role="AspNetUser" EntitySet="AspNetUsers" />
+            <End Role="AspNetUserLogin" EntitySet="AspNetUserLogins" />
+          </AssociationSet>
+          <AssociationSet Name="FK_audioSampleDtls_To_audioSampleHdrs" Association="DUBBDBModel.FK_audioSampleDtls_To_audioSampleHdrs">
+            <End Role="audioSampleHdr" EntitySet="audioSampleHdrs" />
+            <End Role="audioSampleDtl" EntitySet="audioSampleDtls" />
+          </AssociationSet>
+          <AssociationSet Name="FK_audioSampleDtls_To_tags" Association="DUBBDBModel.FK_audioSampleDtls_To_tags">
+            <End Role="tag" EntitySet="tags" />
+            <End Role="audioSampleDtl" EntitySet="audioSampleDtls" />
+          </AssociationSet>
+          <AssociationSet Name="FK_audioSampleHdrs_To_tagTemplateHdrs" Association="DUBBDBModel.FK_audioSampleHdrs_To_tagTemplateHdrs">
+            <End Role="tagTemplateHdr" EntitySet="tagTemplateHdrs" />
+            <End Role="audioSampleHdr" EntitySet="audioSampleHdrs" />
+          </AssociationSet>
+          <AssociationSet Name="FK_audioSampleHdrs_To_voiceActors" Association="DUBBDBModel.FK_audioSampleHdrs_To_voiceActors">
+            <End Role="voiceActor" EntitySet="voiceActors" />
+            <End Role="audioSampleHdr" EntitySet="audioSampleHdrs" />
+          </AssociationSet>
           <AssociationSet Name="FK_shipments_carriers" Association="DUBBDBModel.FK_shipments_carriers">
             <End Role="carrier" EntitySet="carriers" />
             <End Role="shipment" EntitySet="shipments" />
+          </AssociationSet>
+          <AssociationSet Name="FK_chrCastListDtls_To_chrCastListHdrs" Association="DUBBDBModel.FK_chrCastListDtls_To_chrCastListHdrs">
+            <End Role="chrCastListHdr" EntitySet="chrCastListHdrs" />
+            <End Role="chrCastListDtl" EntitySet="chrCastListDtls" />
+          </AssociationSet>
+          <AssociationSet Name="FK_chrCastListDtls_To_voiceActors" Association="DUBBDBModel.FK_chrCastListDtls_To_voiceActors">
+            <End Role="voiceActor" EntitySet="voiceActors" />
+            <End Role="chrCastListDtl" EntitySet="chrCastListDtls" />
+          </AssociationSet>
+          <AssociationSet Name="FK_chrCastListHdrs_To_clients" Association="DUBBDBModel.FK_chrCastListHdrs_To_clients">
+            <End Role="client" EntitySet="clients" />
+            <End Role="chrCastListHdr" EntitySet="chrCastListHdrs" />
+          </AssociationSet>
+          <AssociationSet Name="FK_chrCastListHdrs_To_workCharacters" Association="DUBBDBModel.FK_chrCastListHdrs_To_workCharacters">
+            <End Role="workCharacter" EntitySet="workCharacters" />
+            <End Role="chrCastListHdr" EntitySet="chrCastListHdrs" />
+          </AssociationSet>
+          <AssociationSet Name="FK_chrTemplateDtls_To_chrTemplateHdrs" Association="DUBBDBModel.FK_chrTemplateDtls_To_chrTemplateHdrs">
+            <End Role="chrTemplateHdr" EntitySet="chrTemplateHdrs" />
+            <End Role="chrTemplateDtl" EntitySet="chrTemplateDtls" />
+          </AssociationSet>
+          <AssociationSet Name="FK_chrTemplateDtls_To_tags" Association="DUBBDBModel.FK_chrTemplateDtls_To_tags">
+            <End Role="tag" EntitySet="tags" />
+            <End Role="chrTemplateDtl" EntitySet="chrTemplateDtls" />
+          </AssociationSet>
+          <AssociationSet Name="FK_chrTemplateHdrs_To_tagTemplateHdrs" Association="DUBBDBModel.FK_chrTemplateHdrs_To_tagTemplateHdrs">
+            <End Role="tagTemplateHdr" EntitySet="tagTemplateHdrs" />
+            <End Role="chrTemplateHdr" EntitySet="chrTemplateHdrs" />
+          </AssociationSet>
+          <AssociationSet Name="FK_chrTemplateHdrs_To_workCharacters" Association="DUBBDBModel.FK_chrTemplateHdrs_To_workCharacters">
+            <End Role="workCharacter" EntitySet="workCharacters" />
+            <End Role="chrTemplateHdr" EntitySet="chrTemplateHdrs" />
           </AssociationSet>
           <AssociationSet Name="FK_clientClaims_clients" Association="DUBBDBModel.FK_clientClaims_clients">
             <End Role="client" EntitySet="clients" />
@@ -2065,64 +2258,6 @@ warning 6002: The table/view 'DUBBDB.dbo.paymentsDueVW' does not have a primary 
             <End Role="studio" EntitySet="studios" />
             <End Role="studioEpisode" EntitySet="studioEpisodes" />
           </AssociationSet>
-          <AssociationSet Name="FK_workActors_voiceActors" Association="DUBBDBModel.FK_workActors_voiceActors">
-            <End Role="voiceActor" EntitySet="voiceActors" />
-            <End Role="workActor" EntitySet="workActors" />
-          </AssociationSet>
-          <AssociationSet Name="FK_workActors_workCharacters" Association="DUBBDBModel.FK_workActors_workCharacters">
-            <End Role="workCharacter" EntitySet="workCharacters" />
-            <End Role="workActor" EntitySet="workActors" />
-          </AssociationSet>
-          <EntitySet Name="paymentsDueVWs" EntityType="DUBBDBModel.paymentsDueVW" />
-          <EntitySet Name="audioSampleDtls" EntityType="DUBBDBModel.audioSampleDtl" />
-          <EntitySet Name="audioSampleHdrs" EntityType="DUBBDBModel.audioSampleHdr" />
-          <EntitySet Name="chrCastListDtls" EntityType="DUBBDBModel.chrCastListDtl" />
-          <EntitySet Name="chrCastListHdrs" EntityType="DUBBDBModel.chrCastListHdr" />
-          <EntitySet Name="chrTemplateDtls" EntityType="DUBBDBModel.chrTemplateDtl" />
-          <EntitySet Name="chrTemplateHdrs" EntityType="DUBBDBModel.chrTemplateHdr" />
-          <EntitySet Name="tags" EntityType="DUBBDBModel.tag" />
-          <EntitySet Name="tagTemplateDtls" EntityType="DUBBDBModel.tagTemplateDtl" />
-          <EntitySet Name="tagTypes" EntityType="DUBBDBModel.tagType" />
-          <AssociationSet Name="FK_audioSampleDtls_To_audioSampleHdrs" Association="DUBBDBModel.FK_audioSampleDtls_To_audioSampleHdrs">
-            <End Role="audioSampleHdr" EntitySet="audioSampleHdrs" />
-            <End Role="audioSampleDtl" EntitySet="audioSampleDtls" />
-          </AssociationSet>
-          <AssociationSet Name="FK_audioSampleDtls_To_tags" Association="DUBBDBModel.FK_audioSampleDtls_To_tags">
-            <End Role="tag" EntitySet="tags" />
-            <End Role="audioSampleDtl" EntitySet="audioSampleDtls" />
-          </AssociationSet>
-          <AssociationSet Name="FK_audioSampleHdrs_To_voiceActors" Association="DUBBDBModel.FK_audioSampleHdrs_To_voiceActors">
-            <End Role="voiceActor" EntitySet="voiceActors" />
-            <End Role="audioSampleHdr" EntitySet="audioSampleHdrs" />
-          </AssociationSet>
-          <AssociationSet Name="FK_chrCastListDtls_To_chrCastListHdrs" Association="DUBBDBModel.FK_chrCastListDtls_To_chrCastListHdrs">
-            <End Role="chrCastListHdr" EntitySet="chrCastListHdrs" />
-            <End Role="chrCastListDtl" EntitySet="chrCastListDtls" />
-          </AssociationSet>
-          <AssociationSet Name="FK_chrCastListDtls_To_voiceActors" Association="DUBBDBModel.FK_chrCastListDtls_To_voiceActors">
-            <End Role="voiceActor" EntitySet="voiceActors" />
-            <End Role="chrCastListDtl" EntitySet="chrCastListDtls" />
-          </AssociationSet>
-          <AssociationSet Name="FK_chrCastListHdrs_To_clients" Association="DUBBDBModel.FK_chrCastListHdrs_To_clients">
-            <End Role="client" EntitySet="clients" />
-            <End Role="chrCastListHdr" EntitySet="chrCastListHdrs" />
-          </AssociationSet>
-          <AssociationSet Name="FK_chrCastListHdrs_To_workCharacters" Association="DUBBDBModel.FK_chrCastListHdrs_To_workCharacters">
-            <End Role="workCharacter" EntitySet="workCharacters" />
-            <End Role="chrCastListHdr" EntitySet="chrCastListHdrs" />
-          </AssociationSet>
-          <AssociationSet Name="FK_chrTemplateDtls_To_chrTemplateHdrs" Association="DUBBDBModel.FK_chrTemplateDtls_To_chrTemplateHdrs">
-            <End Role="chrTemplateHdr" EntitySet="chrTemplateHdrs" />
-            <End Role="chrTemplateDtl" EntitySet="chrTemplateDtls" />
-          </AssociationSet>
-          <AssociationSet Name="FK_chrTemplateDtls_To_tags" Association="DUBBDBModel.FK_chrTemplateDtls_To_tags">
-            <End Role="tag" EntitySet="tags" />
-            <End Role="chrTemplateDtl" EntitySet="chrTemplateDtls" />
-          </AssociationSet>
-          <AssociationSet Name="FK_chrTemplateHdrs_To_workCharacters" Association="DUBBDBModel.FK_chrTemplateHdrs_To_workCharacters">
-            <End Role="workCharacter" EntitySet="workCharacters" />
-            <End Role="chrTemplateHdr" EntitySet="chrTemplateHdrs" />
-          </AssociationSet>
           <AssociationSet Name="FK_tags_To_tagTypes" Association="DUBBDBModel.FK_tags_To_tagTypes">
             <End Role="tagType" EntitySet="tagTypes" />
             <End Role="tag" EntitySet="tags" />
@@ -2131,20 +2266,39 @@ warning 6002: The table/view 'DUBBDB.dbo.paymentsDueVW' does not have a primary 
             <End Role="tag" EntitySet="tags" />
             <End Role="tagTemplateDtl" EntitySet="tagTemplateDtls" />
           </AssociationSet>
-          <EntitySet Name="tagTemplateHdrs" EntityType="DUBBDBModel.tagTemplateHdr" />
-          <AssociationSet Name="FK_audioSampleHdrs_To_tagTemplateHdrs" Association="DUBBDBModel.FK_audioSampleHdrs_To_tagTemplateHdrs">
-            <End Role="tagTemplateHdr" EntitySet="tagTemplateHdrs" />
-            <End Role="audioSampleHdr" EntitySet="audioSampleHdrs" />
-          </AssociationSet>
-          <AssociationSet Name="FK_chrTemplateHdrs_To_tagTemplateHdrs" Association="DUBBDBModel.FK_chrTemplateHdrs_To_tagTemplateHdrs">
-            <End Role="tagTemplateHdr" EntitySet="tagTemplateHdrs" />
-            <End Role="chrTemplateHdr" EntitySet="chrTemplateHdrs" />
-          </AssociationSet>
           <AssociationSet Name="FK_tagTemplateDtls_To_tagTemplateHdrs" Association="DUBBDBModel.FK_tagTemplateDtls_To_tagTemplateHdrs">
             <End Role="tagTemplateHdr" EntitySet="tagTemplateHdrs" />
             <End Role="tagTemplateDtl" EntitySet="tagTemplateDtls" />
           </AssociationSet>
+          <AssociationSet Name="FK_workActors_voiceActors" Association="DUBBDBModel.FK_workActors_voiceActors">
+            <End Role="voiceActor" EntitySet="voiceActors" />
+            <End Role="workActor" EntitySet="workActors" />
+          </AssociationSet>
+          <AssociationSet Name="FK_workActors_workCharacters" Association="DUBBDBModel.FK_workActors_workCharacters">
+            <End Role="workCharacter" EntitySet="workCharacters" />
+            <End Role="workActor" EntitySet="workActors" />
+          </AssociationSet>
+          <AssociationSet Name="AspNetUserRoles" Association="DUBBDBModel.AspNetUserRoles">
+            <End Role="AspNetRole" EntitySet="AspNetRoles" />
+            <End Role="AspNetUser" EntitySet="AspNetUsers" />
+          </AssociationSet>
           </EntityContainer>
+        <EntityType Name="C__MigrationHistory">
+          <Key>
+            <PropertyRef Name="MigrationId" />
+            <PropertyRef Name="ContextKey" />
+          </Key>
+          <Property Name="MigrationId" Type="String" Nullable="false" MaxLength="150" FixedLength="false" Unicode="true" />
+          <Property Name="ContextKey" Type="String" Nullable="false" MaxLength="300" FixedLength="false" Unicode="true" />
+          <Property Name="Model" Type="Binary" Nullable="false" MaxLength="Max" FixedLength="false" />
+          <Property Name="ProductVersion" Type="String" Nullable="false" MaxLength="32" FixedLength="false" Unicode="true" />
+        </EntityType>
+        <EntityType Name="C__RefactorLog">
+          <Key>
+            <PropertyRef Name="OperationKey" />
+          </Key>
+          <Property Name="OperationKey" Type="Guid" Nullable="false" />
+        </EntityType>
         <EntityType Name="agreement">
           <Key>
             <PropertyRef Name="agreementIntno" />
@@ -2217,6 +2371,85 @@ warning 6002: The table/view 'DUBBDB.dbo.paymentsDueVW' does not have a primary 
           <NavigationProperty Name="workOrders" Relationship="DUBBDBModel.FK_workOrders_agreementWorks" FromRole="agreementWork" ToRole="workOrder" />
           <NavigationProperty Name="workPersonnels" Relationship="DUBBDBModel.FK_workPersonnels_agreementWorks" FromRole="agreementWork" ToRole="workPersonnel" />
         </EntityType>
+        <EntityType Name="AspNetRole">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="String" Nullable="false" MaxLength="128" FixedLength="false" Unicode="true" />
+          <Property Name="Name" Type="String" Nullable="false" MaxLength="256" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="AspNetUsers" Relationship="DUBBDBModel.AspNetUserRoles" FromRole="AspNetRole" ToRole="AspNetUser" />
+        </EntityType>
+        <EntityType Name="AspNetUserClaim">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="UserId" Type="String" Nullable="false" MaxLength="128" FixedLength="false" Unicode="true" />
+          <Property Name="ClaimType" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="ClaimValue" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="AspNetUser" Relationship="DUBBDBModel.FK_dbo_AspNetUserClaims_dbo_AspNetUsers_UserId" FromRole="AspNetUserClaim" ToRole="AspNetUser" />
+        </EntityType>
+        <EntityType Name="AspNetUserLogin">
+          <Key>
+            <PropertyRef Name="LoginProvider" />
+            <PropertyRef Name="ProviderKey" />
+            <PropertyRef Name="UserId" />
+          </Key>
+          <Property Name="LoginProvider" Type="String" Nullable="false" MaxLength="128" FixedLength="false" Unicode="true" />
+          <Property Name="ProviderKey" Type="String" Nullable="false" MaxLength="128" FixedLength="false" Unicode="true" />
+          <Property Name="UserId" Type="String" Nullable="false" MaxLength="128" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="AspNetUser" Relationship="DUBBDBModel.FK_dbo_AspNetUserLogins_dbo_AspNetUsers_UserId" FromRole="AspNetUserLogin" ToRole="AspNetUser" />
+        </EntityType>
+        <EntityType Name="AspNetUser">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="String" Nullable="false" MaxLength="128" FixedLength="false" Unicode="true" />
+          <Property Name="Email" Type="String" MaxLength="256" FixedLength="false" Unicode="true" />
+          <Property Name="EmailConfirmed" Type="Boolean" Nullable="false" />
+          <Property Name="PasswordHash" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="SecurityStamp" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="PhoneNumber" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="PhoneNumberConfirmed" Type="Boolean" Nullable="false" />
+          <Property Name="TwoFactorEnabled" Type="Boolean" Nullable="false" />
+          <Property Name="LockoutEndDateUtc" Type="DateTime" Precision="3" />
+          <Property Name="LockoutEnabled" Type="Boolean" Nullable="false" />
+          <Property Name="AccessFailedCount" Type="Int32" Nullable="false" />
+          <Property Name="UserName" Type="String" Nullable="false" MaxLength="256" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="AspNetUserClaims" Relationship="DUBBDBModel.FK_dbo_AspNetUserClaims_dbo_AspNetUsers_UserId" FromRole="AspNetUser" ToRole="AspNetUserClaim" />
+          <NavigationProperty Name="AspNetUserLogins" Relationship="DUBBDBModel.FK_dbo_AspNetUserLogins_dbo_AspNetUsers_UserId" FromRole="AspNetUser" ToRole="AspNetUserLogin" />
+          <NavigationProperty Name="AspNetRoles" Relationship="DUBBDBModel.AspNetUserRoles" FromRole="AspNetUser" ToRole="AspNetRole" />
+        </EntityType>
+        <EntityType Name="audioSampleDtl">
+          <Key>
+            <PropertyRef Name="audioSampleDtlIntno" />
+          </Key>
+          <Property Name="audioSampleDtlIntno" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="audioSampleHdrIntno" Type="Int64" Nullable="false" />
+          <Property Name="tagId" Type="Int32" Nullable="false" />
+          <Property Name="TagScore" Type="Int32" Nullable="false" />
+          <Property Name="Match" Type="Double" Nullable="false" />
+          <NavigationProperty Name="audioSampleHdr" Relationship="DUBBDBModel.FK_audioSampleDtls_To_audioSampleHdrs" FromRole="audioSampleDtl" ToRole="audioSampleHdr" />
+          <NavigationProperty Name="tag" Relationship="DUBBDBModel.FK_audioSampleDtls_To_tags" FromRole="audioSampleDtl" ToRole="tag" />
+        </EntityType>
+        <EntityType Name="audioSampleHdr">
+          <Key>
+            <PropertyRef Name="audioSampleHdrIntno" />
+          </Key>
+          <Property Name="audioSampleHdrIntno" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Title" Type="String" Nullable="false" MaxLength="250" FixedLength="false" Unicode="true" />
+          <Property Name="voiceActorIntno" Type="Int64" Nullable="false" />
+          <Property Name="tagTemplateHdrIntno" Type="Int64" Nullable="false" />
+          <Property Name="SubmitDate" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="FileName" Type="String" MaxLength="250" FixedLength="false" Unicode="true" />
+          <Property Name="FileUrl" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Studio" Type="String" MaxLength="10" FixedLength="false" Unicode="true" />
+          <Property Name="Description" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Status" Type="String" MaxLength="10" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="audioSampleDtls" Relationship="DUBBDBModel.FK_audioSampleDtls_To_audioSampleHdrs" FromRole="audioSampleHdr" ToRole="audioSampleDtl" />
+          <NavigationProperty Name="tagTemplateHdr" Relationship="DUBBDBModel.FK_audioSampleHdrs_To_tagTemplateHdrs" FromRole="audioSampleHdr" ToRole="tagTemplateHdr" />
+          <NavigationProperty Name="voiceActor" Relationship="DUBBDBModel.FK_audioSampleHdrs_To_voiceActors" FromRole="audioSampleHdr" ToRole="voiceActor" />
+        </EntityType>
         <EntityType Name="carrier">
           <Key>
             <PropertyRef Name="carrierIntno" />
@@ -2228,6 +2461,56 @@ warning 6002: The table/view 'DUBBDB.dbo.paymentsDueVW' does not have a primary 
           <Property Name="schedule" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
           <Property Name="status" Type="Boolean" Nullable="false" />
           <NavigationProperty Name="shipments" Relationship="DUBBDBModel.FK_shipments_carriers" FromRole="carrier" ToRole="shipment" />
+        </EntityType>
+        <EntityType Name="chrCastListDtl">
+          <Key>
+            <PropertyRef Name="chrCastListDtlIntno" />
+          </Key>
+          <Property Name="chrCastListDtlIntno" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="chrCastListHdrIntno" Type="Int64" Nullable="false" />
+          <Property Name="voiceActorIntno" Type="Int64" Nullable="false" />
+          <Property Name="Match" Type="Double" Nullable="false" />
+          <Property Name="Rank" Type="Int32" />
+          <Property Name="Comments" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="ClientRank" Type="Int32" />
+          <Property Name="ClientComments" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="chrCastListHdr" Relationship="DUBBDBModel.FK_chrCastListDtls_To_chrCastListHdrs" FromRole="chrCastListDtl" ToRole="chrCastListHdr" />
+          <NavigationProperty Name="voiceActor" Relationship="DUBBDBModel.FK_chrCastListDtls_To_voiceActors" FromRole="chrCastListDtl" ToRole="voiceActor" />
+        </EntityType>
+        <EntityType Name="chrCastListHdr">
+          <Key>
+            <PropertyRef Name="chrCastListHdrIntno" />
+          </Key>
+          <Property Name="chrCastListHdrIntno" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="workCharacterIntno" Type="Int64" Nullable="false" />
+          <Property Name="clientIntno" Type="Int64" Nullable="false" />
+          <Property Name="Title" Type="String" Nullable="false" MaxLength="150" FixedLength="false" Unicode="true" />
+          <Property Name="Status" Type="String" Nullable="false" MaxLength="10" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="chrCastListDtls" Relationship="DUBBDBModel.FK_chrCastListDtls_To_chrCastListHdrs" FromRole="chrCastListHdr" ToRole="chrCastListDtl" />
+          <NavigationProperty Name="client" Relationship="DUBBDBModel.FK_chrCastListHdrs_To_clients" FromRole="chrCastListHdr" ToRole="client" />
+          <NavigationProperty Name="workCharacter" Relationship="DUBBDBModel.FK_chrCastListHdrs_To_workCharacters" FromRole="chrCastListHdr" ToRole="workCharacter" />
+        </EntityType>
+        <EntityType Name="chrTemplateDtl">
+          <Key>
+            <PropertyRef Name="chrTemplateDtlIntno" />
+          </Key>
+          <Property Name="chrTemplateDtlIntno" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="chrTemplateHdrIntno" Type="Int64" Nullable="false" />
+          <Property Name="tagId" Type="Int32" Nullable="false" />
+          <Property Name="Weight" Type="Int32" Nullable="false" />
+          <NavigationProperty Name="chrTemplateHdr" Relationship="DUBBDBModel.FK_chrTemplateDtls_To_chrTemplateHdrs" FromRole="chrTemplateDtl" ToRole="chrTemplateHdr" />
+          <NavigationProperty Name="tag" Relationship="DUBBDBModel.FK_chrTemplateDtls_To_tags" FromRole="chrTemplateDtl" ToRole="tag" />
+        </EntityType>
+        <EntityType Name="chrTemplateHdr">
+          <Key>
+            <PropertyRef Name="chrTemplateHdrIntno" />
+          </Key>
+          <Property Name="chrTemplateHdrIntno" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="workCharacterIntno" Type="Int64" Nullable="false" />
+          <Property Name="tagTemplateHdrIntno" Type="Int64" Nullable="false" />
+          <NavigationProperty Name="chrTemplateDtls" Relationship="DUBBDBModel.FK_chrTemplateDtls_To_chrTemplateHdrs" FromRole="chrTemplateHdr" ToRole="chrTemplateDtl" />
+          <NavigationProperty Name="tagTemplateHdr" Relationship="DUBBDBModel.FK_chrTemplateHdrs_To_tagTemplateHdrs" FromRole="chrTemplateHdr" ToRole="tagTemplateHdr" />
+          <NavigationProperty Name="workCharacter" Relationship="DUBBDBModel.FK_chrTemplateHdrs_To_workCharacters" FromRole="chrTemplateHdr" ToRole="workCharacter" />
         </EntityType>
         <EntityType Name="clientClaim">
           <Key>
@@ -2258,10 +2541,10 @@ warning 6002: The table/view 'DUBBDB.dbo.paymentsDueVW' does not have a primary 
           <Property Name="othClientShortName" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
           <Property Name="status" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
           <NavigationProperty Name="agreements" Relationship="DUBBDBModel.FK_agreements_clients" FromRole="client" ToRole="agreement" />
+          <NavigationProperty Name="chrCastListHdrs" Relationship="DUBBDBModel.FK_chrCastListHdrs_To_clients" FromRole="client" ToRole="chrCastListHdr" />
           <NavigationProperty Name="clientClaims" Relationship="DUBBDBModel.FK_clientClaims_clients" FromRole="client" ToRole="clientClaim" />
           <NavigationProperty Name="shipments" Relationship="DUBBDBModel.FK_shipments_clients" FromRole="client" ToRole="shipment" />
           <NavigationProperty Name="workOrders" Relationship="DUBBDBModel.FK_workOrders_clients" FromRole="client" ToRole="workOrder" />
-          <NavigationProperty Name="chrCastListHdrs" Relationship="DUBBDBModel.FK_chrCastListHdrs_To_clients" FromRole="client" ToRole="chrCastListHdr" />
         </EntityType>
         <EntityType Name="contact">
           <Key>
@@ -2346,12 +2629,12 @@ warning 6002: The table/view 'DUBBDB.dbo.paymentsDueVW' does not have a primary 
           <Property Name="soundTechnician" Type="Int64" />
           <Property Name="assistant" Type="Int64" />
           <Property Name="takenTimeStamp" Type="DateTime" Precision="3" />
+          <Property Name="dubbingDate" Type="DateTime" Precision="0" />
           <NavigationProperty Name="dubbingSheetHdr" Relationship="DUBBDBModel.FK_dubbingSheetDtls_dubbingSheetHdrs" FromRole="dubbingSheetDtl" ToRole="dubbingSheetHdr" />
           <NavigationProperty Name="employee" Relationship="DUBBDBModel.FK_dubbingSheetDtls_employees" FromRole="dubbingSheetDtl" ToRole="employee" />
           <NavigationProperty Name="employee1" Relationship="DUBBDBModel.FK_dubbingSheetDtls_employees1" FromRole="dubbingSheetDtl" ToRole="employee" />
           <NavigationProperty Name="employee2" Relationship="DUBBDBModel.FK_dubbingSheetDtls_employees2" FromRole="dubbingSheetDtl" ToRole="employee" />
           <NavigationProperty Name="orderTrnHdr" Relationship="DUBBDBModel.FK_dubbingSheetDtls_orderTrnHdrs" FromRole="dubbingSheetDtl" ToRole="orderTrnHdr" />
-          <Property Name="dubbingDate" Type="DateTime" Precision="0" />
         </EntityType>
         <EntityType Name="dubbingSheetHdr">
           <Key>
@@ -2363,6 +2646,7 @@ warning 6002: The table/view 'DUBBDB.dbo.paymentsDueVW' does not have a primary 
           <Property Name="voiceActorIntno" Type="Int64" Nullable="false" />
           <Property Name="actorName" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
           <Property Name="characterName" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="isPaid" Type="Boolean" Nullable="false" />
           <NavigationProperty Name="dubbingSheetDtls" Relationship="DUBBDBModel.FK_dubbingSheetDtls_dubbingSheetHdrs" FromRole="dubbingSheetHdr" ToRole="dubbingSheetDtl" />
           <NavigationProperty Name="orderTrnHdr" Relationship="DUBBDBModel.FK_dubbingSheetHdrs_orderTrnHdrs" FromRole="dubbingSheetHdr" ToRole="orderTrnHdr" />
           <NavigationProperty Name="voiceActor" Relationship="DUBBDBModel.FK_dubbingSheetHdrs_voiceActors" FromRole="dubbingSheetHdr" ToRole="voiceActor" />
@@ -2681,6 +2965,50 @@ warning 6002: The table/view 'DUBBDB.dbo.paymentsDueVW' does not have a primary 
           <NavigationProperty Name="dialog" Relationship="DUBBDBModel.FK_subtitles_To_dialogs" FromRole="subtitle" ToRole="dialog" />
           <NavigationProperty Name="dubbingSheetHdr" Relationship="DUBBDBModel.FK_subtitles_To_dubbingSheetHdrs" FromRole="subtitle" ToRole="dubbingSheetHdr" />
         </EntityType>
+        <EntityType Name="tag">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="TagTypeId" Type="Int32" Nullable="false" />
+          <Property Name="Name" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="audioSampleDtls" Relationship="DUBBDBModel.FK_audioSampleDtls_To_tags" FromRole="tag" ToRole="audioSampleDtl" />
+          <NavigationProperty Name="chrTemplateDtls" Relationship="DUBBDBModel.FK_chrTemplateDtls_To_tags" FromRole="tag" ToRole="chrTemplateDtl" />
+          <NavigationProperty Name="tagType" Relationship="DUBBDBModel.FK_tags_To_tagTypes" FromRole="tag" ToRole="tagType" />
+          <NavigationProperty Name="tagTemplateDtls" Relationship="DUBBDBModel.FK_tagTemplateDtls_To_tags" FromRole="tag" ToRole="tagTemplateDtl" />
+        </EntityType>
+        <EntityType Name="tagTemplateDtl">
+          <Key>
+            <PropertyRef Name="tagTemplateDtlIntno" />
+          </Key>
+          <Property Name="tagTemplateDtlIntno" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="tagTemplateHdrIntno" Type="Int64" Nullable="false" />
+          <Property Name="tagId" Type="Int32" Nullable="false" />
+          <Property Name="MinScore" Type="Int32" Nullable="false" />
+          <Property Name="Weight" Type="Int32" />
+          <NavigationProperty Name="tag" Relationship="DUBBDBModel.FK_tagTemplateDtls_To_tags" FromRole="tagTemplateDtl" ToRole="tag" />
+          <NavigationProperty Name="tagTemplateHdr" Relationship="DUBBDBModel.FK_tagTemplateDtls_To_tagTemplateHdrs" FromRole="tagTemplateDtl" ToRole="tagTemplateHdr" />
+        </EntityType>
+        <EntityType Name="tagTemplateHdr">
+          <Key>
+            <PropertyRef Name="tagTemplateHdrIntno" />
+          </Key>
+          <Property Name="tagTemplateHdrIntno" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Title" Type="String" Nullable="false" MaxLength="150" FixedLength="false" Unicode="true" />
+          <Property Name="Description" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Text" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="audioSampleHdrs" Relationship="DUBBDBModel.FK_audioSampleHdrs_To_tagTemplateHdrs" FromRole="tagTemplateHdr" ToRole="audioSampleHdr" />
+          <NavigationProperty Name="chrTemplateHdrs" Relationship="DUBBDBModel.FK_chrTemplateHdrs_To_tagTemplateHdrs" FromRole="tagTemplateHdr" ToRole="chrTemplateHdr" />
+          <NavigationProperty Name="tagTemplateDtls" Relationship="DUBBDBModel.FK_tagTemplateDtls_To_tagTemplateHdrs" FromRole="tagTemplateHdr" ToRole="tagTemplateDtl" />
+        </EntityType>
+        <EntityType Name="tagType">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" />
+          <Property Name="Name" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="tags" Relationship="DUBBDBModel.FK_tags_To_tagTypes" FromRole="tagType" ToRole="tag" />
+        </EntityType>
         <EntityType Name="voiceActor">
           <Key>
             <PropertyRef Name="voiceActorIntno" />
@@ -2693,12 +3021,12 @@ warning 6002: The table/view 'DUBBDB.dbo.paymentsDueVW' does not have a primary 
           <Property Name="email" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
           <Property Name="status" Type="Boolean" Nullable="false" />
           <Property Name="accountNo" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="audioSampleHdrs" Relationship="DUBBDBModel.FK_audioSampleHdrs_To_voiceActors" FromRole="voiceActor" ToRole="audioSampleHdr" />
+          <NavigationProperty Name="chrCastListDtls" Relationship="DUBBDBModel.FK_chrCastListDtls_To_voiceActors" FromRole="voiceActor" ToRole="chrCastListDtl" />
           <NavigationProperty Name="dubbingAppointments" Relationship="DUBBDBModel.FK_dubbingAppointments_voiceActors" FromRole="voiceActor" ToRole="dubbingAppointment" />
           <NavigationProperty Name="dubbingSheetHdrs" Relationship="DUBBDBModel.FK_dubbingSheetHdrs_voiceActors" FromRole="voiceActor" ToRole="dubbingSheetHdr" />
           <NavigationProperty Name="payments" Relationship="DUBBDBModel.FK_payments_voiceActors" FromRole="voiceActor" ToRole="payment" />
           <NavigationProperty Name="workActors" Relationship="DUBBDBModel.FK_workActors_voiceActors" FromRole="voiceActor" ToRole="workActor" />
-          <NavigationProperty Name="audioSampleHdrs" Relationship="DUBBDBModel.FK_audioSampleHdrs_To_voiceActors" FromRole="voiceActor" ToRole="audioSampleHdr" />
-          <NavigationProperty Name="chrCastListDtls" Relationship="DUBBDBModel.FK_chrCastListDtls_To_voiceActors" FromRole="voiceActor" ToRole="chrCastListDtl" />
         </EntityType>
         <EntityType Name="workActor">
           <Key>
@@ -2732,10 +3060,10 @@ warning 6002: The table/view 'DUBBDB.dbo.paymentsDueVW' does not have a primary 
           <Property Name="characterDesc" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
           <Property Name="remarks" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
           <NavigationProperty Name="agreementWork" Relationship="DUBBDBModel.FK_workCharacters_agreementWorks" FromRole="workCharacter" ToRole="agreementWork" />
-          <NavigationProperty Name="dubbingSheetHdrs" Relationship="DUBBDBModel.FK_dubbingSheetHdrs_workCharacters" FromRole="workCharacter" ToRole="dubbingSheetHdr" />
-          <NavigationProperty Name="workActors" Relationship="DUBBDBModel.FK_workActors_workCharacters" FromRole="workCharacter" ToRole="workActor" />
           <NavigationProperty Name="chrCastListHdrs" Relationship="DUBBDBModel.FK_chrCastListHdrs_To_workCharacters" FromRole="workCharacter" ToRole="chrCastListHdr" />
           <NavigationProperty Name="chrTemplateHdrs" Relationship="DUBBDBModel.FK_chrTemplateHdrs_To_workCharacters" FromRole="workCharacter" ToRole="chrTemplateHdr" />
+          <NavigationProperty Name="dubbingSheetHdrs" Relationship="DUBBDBModel.FK_dubbingSheetHdrs_workCharacters" FromRole="workCharacter" ToRole="dubbingSheetHdr" />
+          <NavigationProperty Name="workActors" Relationship="DUBBDBModel.FK_workActors_workCharacters" FromRole="workCharacter" ToRole="workActor" />
         </EntityType>
         <EntityType Name="workCharge">
           <Key>
@@ -2968,6 +3296,86 @@ warning 6002: The table/view 'DUBBDB.dbo.paymentsDueVW' does not have a primary 
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK_dbo_AspNetUserClaims_dbo_AspNetUsers_UserId">
+          <End Type="DUBBDBModel.AspNetUser" Role="AspNetUser" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Type="DUBBDBModel.AspNetUserClaim" Role="AspNetUserClaim" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="AspNetUser">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="AspNetUserClaim">
+              <PropertyRef Name="UserId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_dbo_AspNetUserLogins_dbo_AspNetUsers_UserId">
+          <End Type="DUBBDBModel.AspNetUser" Role="AspNetUser" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Type="DUBBDBModel.AspNetUserLogin" Role="AspNetUserLogin" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="AspNetUser">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="AspNetUserLogin">
+              <PropertyRef Name="UserId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_audioSampleDtls_To_audioSampleHdrs">
+          <End Type="DUBBDBModel.audioSampleHdr" Role="audioSampleHdr" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Type="DUBBDBModel.audioSampleDtl" Role="audioSampleDtl" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="audioSampleHdr">
+              <PropertyRef Name="audioSampleHdrIntno" />
+            </Principal>
+            <Dependent Role="audioSampleDtl">
+              <PropertyRef Name="audioSampleHdrIntno" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_audioSampleDtls_To_tags">
+          <End Type="DUBBDBModel.tag" Role="tag" Multiplicity="1" />
+          <End Type="DUBBDBModel.audioSampleDtl" Role="audioSampleDtl" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="tag">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="audioSampleDtl">
+              <PropertyRef Name="tagId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_audioSampleHdrs_To_tagTemplateHdrs">
+          <End Type="DUBBDBModel.tagTemplateHdr" Role="tagTemplateHdr" Multiplicity="1" />
+          <End Type="DUBBDBModel.audioSampleHdr" Role="audioSampleHdr" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="tagTemplateHdr">
+              <PropertyRef Name="tagTemplateHdrIntno" />
+            </Principal>
+            <Dependent Role="audioSampleHdr">
+              <PropertyRef Name="tagTemplateHdrIntno" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_audioSampleHdrs_To_voiceActors">
+          <End Type="DUBBDBModel.voiceActor" Role="voiceActor" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Type="DUBBDBModel.audioSampleHdr" Role="audioSampleHdr" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="voiceActor">
+              <PropertyRef Name="voiceActorIntno" />
+            </Principal>
+            <Dependent Role="audioSampleHdr">
+              <PropertyRef Name="voiceActorIntno" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK_shipments_carriers">
           <End Type="DUBBDBModel.carrier" Role="carrier" Multiplicity="0..1" />
           <End Type="DUBBDBModel.shipment" Role="shipment" Multiplicity="*" />
@@ -2977,6 +3385,116 @@ warning 6002: The table/view 'DUBBDB.dbo.paymentsDueVW' does not have a primary 
             </Principal>
             <Dependent Role="shipment">
               <PropertyRef Name="carrierIntno" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_chrCastListDtls_To_chrCastListHdrs">
+          <End Type="DUBBDBModel.chrCastListHdr" Role="chrCastListHdr" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Type="DUBBDBModel.chrCastListDtl" Role="chrCastListDtl" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="chrCastListHdr">
+              <PropertyRef Name="chrCastListHdrIntno" />
+            </Principal>
+            <Dependent Role="chrCastListDtl">
+              <PropertyRef Name="chrCastListHdrIntno" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_chrCastListDtls_To_voiceActors">
+          <End Type="DUBBDBModel.voiceActor" Role="voiceActor" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Type="DUBBDBModel.chrCastListDtl" Role="chrCastListDtl" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="voiceActor">
+              <PropertyRef Name="voiceActorIntno" />
+            </Principal>
+            <Dependent Role="chrCastListDtl">
+              <PropertyRef Name="voiceActorIntno" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_chrCastListHdrs_To_clients">
+          <End Type="DUBBDBModel.client" Role="client" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Type="DUBBDBModel.chrCastListHdr" Role="chrCastListHdr" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="client">
+              <PropertyRef Name="clientIntno" />
+            </Principal>
+            <Dependent Role="chrCastListHdr">
+              <PropertyRef Name="clientIntno" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_chrCastListHdrs_To_workCharacters">
+          <End Type="DUBBDBModel.workCharacter" Role="workCharacter" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Type="DUBBDBModel.chrCastListHdr" Role="chrCastListHdr" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="workCharacter">
+              <PropertyRef Name="workCharacterIntno" />
+            </Principal>
+            <Dependent Role="chrCastListHdr">
+              <PropertyRef Name="workCharacterIntno" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_chrTemplateDtls_To_chrTemplateHdrs">
+          <End Type="DUBBDBModel.chrTemplateHdr" Role="chrTemplateHdr" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Type="DUBBDBModel.chrTemplateDtl" Role="chrTemplateDtl" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="chrTemplateHdr">
+              <PropertyRef Name="chrTemplateHdrIntno" />
+            </Principal>
+            <Dependent Role="chrTemplateDtl">
+              <PropertyRef Name="chrTemplateHdrIntno" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_chrTemplateDtls_To_tags">
+          <End Type="DUBBDBModel.tag" Role="tag" Multiplicity="1" />
+          <End Type="DUBBDBModel.chrTemplateDtl" Role="chrTemplateDtl" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="tag">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="chrTemplateDtl">
+              <PropertyRef Name="tagId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_chrTemplateHdrs_To_tagTemplateHdrs">
+          <End Type="DUBBDBModel.tagTemplateHdr" Role="tagTemplateHdr" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Type="DUBBDBModel.chrTemplateHdr" Role="chrTemplateHdr" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="tagTemplateHdr">
+              <PropertyRef Name="tagTemplateHdrIntno" />
+            </Principal>
+            <Dependent Role="chrTemplateHdr">
+              <PropertyRef Name="tagTemplateHdrIntno" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_chrTemplateHdrs_To_workCharacters">
+          <End Type="DUBBDBModel.workCharacter" Role="workCharacter" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Type="DUBBDBModel.chrTemplateHdr" Role="chrTemplateHdr" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="workCharacter">
+              <PropertyRef Name="workCharacterIntno" />
+            </Principal>
+            <Dependent Role="chrTemplateHdr">
+              <PropertyRef Name="workCharacterIntno" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -3400,292 +3918,6 @@ warning 6002: The table/view 'DUBBDB.dbo.paymentsDueVW' does not have a primary 
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK_workActors_voiceActors">
-          <End Type="DUBBDBModel.voiceActor" Role="voiceActor" Multiplicity="1" />
-          <End Type="DUBBDBModel.workActor" Role="workActor" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="voiceActor">
-              <PropertyRef Name="voiceActorIntno" />
-            </Principal>
-            <Dependent Role="workActor">
-              <PropertyRef Name="voiceActorIntno" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK_workActors_workCharacters">
-          <End Type="DUBBDBModel.workCharacter" Role="workCharacter" Multiplicity="1" />
-          <End Type="DUBBDBModel.workActor" Role="workActor" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="workCharacter">
-              <PropertyRef Name="workCharacterIntno" />
-            </Principal>
-            <Dependent Role="workActor">
-              <PropertyRef Name="workCharacterIntno" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <EntityType Name="paymentsDueVW">
-          <Key>
-            <PropertyRef Name="workIntno" />
-            <PropertyRef Name="workName" />
-            <PropertyRef Name="voiceActorIntno" />
-            <PropertyRef Name="actorName" />
-          </Key>
-          <Property Name="workIntno" Type="Int64" Nullable="false" />
-          <Property Name="workName" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="true" />
-          <Property Name="voiceActorIntno" Type="Int64" Nullable="false" />
-          <Property Name="actorName" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
-          <Property Name="dubbingDate" Type="DateTime" Precision="0" />
-          <Property Name="totalUnits" Type="Int32" />
-        </EntityType>
-        <EntityType Name="audioSampleDtl">
-          <Key>
-            <PropertyRef Name="audioSampleDtlIntno" />
-          </Key>
-          <Property Name="audioSampleDtlIntno" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="audioSampleHdrIntno" Type="Int64" Nullable="false" />
-          <Property Name="tagId" Type="Int32" Nullable="false" />
-          <Property Name="TagScore" Type="Int32" Nullable="false" />
-          <Property Name="Match" Type="Double" Nullable="false" />
-          <NavigationProperty Name="audioSampleHdr" Relationship="DUBBDBModel.FK_audioSampleDtls_To_audioSampleHdrs" FromRole="audioSampleDtl" ToRole="audioSampleHdr" />
-          <NavigationProperty Name="tag" Relationship="DUBBDBModel.FK_audioSampleDtls_To_tags" FromRole="audioSampleDtl" ToRole="tag" />
-        </EntityType>
-        <EntityType Name="audioSampleHdr">
-          <Key>
-            <PropertyRef Name="audioSampleHdrIntno" />
-          </Key>
-          <Property Name="audioSampleHdrIntno" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="Title" Type="String" Nullable="false" MaxLength="250" FixedLength="false" Unicode="true" />
-          <Property Name="voiceActorIntno" Type="Int64" Nullable="false" />
-          <Property Name="tagTemplateHdrIntno" Type="Int64" Nullable="false" />
-          <Property Name="SubmitDate" Type="DateTime" Nullable="false" Precision="3" />
-          <Property Name="FileName" Type="String" MaxLength="250" FixedLength="false" Unicode="true" />
-          <Property Name="FileUrl" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
-          <Property Name="Studio" Type="String" MaxLength="10" FixedLength="false" Unicode="true" />
-          <Property Name="Description" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
-          <Property Name="Status" Type="String" MaxLength="10" FixedLength="false" Unicode="true" />
-          <NavigationProperty Name="audioSampleDtls" Relationship="DUBBDBModel.FK_audioSampleDtls_To_audioSampleHdrs" FromRole="audioSampleHdr" ToRole="audioSampleDtl" />
-          <NavigationProperty Name="voiceActor" Relationship="DUBBDBModel.FK_audioSampleHdrs_To_voiceActors" FromRole="audioSampleHdr" ToRole="voiceActor" />
-          <NavigationProperty Name="tagTemplateHdr" Relationship="DUBBDBModel.FK_audioSampleHdrs_To_tagTemplateHdrs" FromRole="audioSampleHdr" ToRole="tagTemplateHdr" />
-        </EntityType>
-        <EntityType Name="chrCastListDtl">
-          <Key>
-            <PropertyRef Name="chrCastListDtlIntno" />
-          </Key>
-          <Property Name="chrCastListDtlIntno" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="chrCastListHdrIntno" Type="Int64" Nullable="false" />
-          <Property Name="voiceActorIntno" Type="Int64" Nullable="false" />
-          <Property Name="Match" Type="Double" Nullable="false" />
-          <Property Name="Rank" Type="Int32" />
-          <Property Name="Comments" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
-          <Property Name="ClientRank" Type="Int32" />
-          <Property Name="ClientComments" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
-          <NavigationProperty Name="chrCastListHdr" Relationship="DUBBDBModel.FK_chrCastListDtls_To_chrCastListHdrs" FromRole="chrCastListDtl" ToRole="chrCastListHdr" />
-          <NavigationProperty Name="voiceActor" Relationship="DUBBDBModel.FK_chrCastListDtls_To_voiceActors" FromRole="chrCastListDtl" ToRole="voiceActor" />
-        </EntityType>
-        <EntityType Name="chrCastListHdr">
-          <Key>
-            <PropertyRef Name="chrCastListHdrIntno" />
-          </Key>
-          <Property Name="chrCastListHdrIntno" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="workCharacterIntno" Type="Int64" Nullable="false" />
-          <Property Name="clientIntno" Type="Int64" Nullable="false" />
-          <Property Name="Title" Type="String" Nullable="false" MaxLength="150" FixedLength="false" Unicode="true" />
-          <Property Name="Status" Type="String" Nullable="false" MaxLength="10" FixedLength="false" Unicode="true" />
-          <NavigationProperty Name="chrCastListDtls" Relationship="DUBBDBModel.FK_chrCastListDtls_To_chrCastListHdrs" FromRole="chrCastListHdr" ToRole="chrCastListDtl" />
-          <NavigationProperty Name="client" Relationship="DUBBDBModel.FK_chrCastListHdrs_To_clients" FromRole="chrCastListHdr" ToRole="client" />
-          <NavigationProperty Name="workCharacter" Relationship="DUBBDBModel.FK_chrCastListHdrs_To_workCharacters" FromRole="chrCastListHdr" ToRole="workCharacter" />
-        </EntityType>
-        <EntityType Name="chrTemplateDtl">
-          <Key>
-            <PropertyRef Name="chrTemplateDtlIntno" />
-          </Key>
-          <Property Name="chrTemplateDtlIntno" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="chrTemplateHdrIntno" Type="Int64" Nullable="false" />
-          <Property Name="tagId" Type="Int32" Nullable="false" />
-          <Property Name="Weight" Type="Int32" Nullable="false" />
-          <NavigationProperty Name="chrTemplateHdr" Relationship="DUBBDBModel.FK_chrTemplateDtls_To_chrTemplateHdrs" FromRole="chrTemplateDtl" ToRole="chrTemplateHdr" />
-          <NavigationProperty Name="tag" Relationship="DUBBDBModel.FK_chrTemplateDtls_To_tags" FromRole="chrTemplateDtl" ToRole="tag" />
-        </EntityType>
-        <EntityType Name="chrTemplateHdr">
-          <Key>
-            <PropertyRef Name="chrTemplateHdrIntno" />
-          </Key>
-          <Property Name="chrTemplateHdrIntno" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="workCharacterIntno" Type="Int64" Nullable="false" />
-          <Property Name="tagTemplateHdrIntno" Type="Int64" Nullable="false" />
-          <NavigationProperty Name="chrTemplateDtls" Relationship="DUBBDBModel.FK_chrTemplateDtls_To_chrTemplateHdrs" FromRole="chrTemplateHdr" ToRole="chrTemplateDtl" />
-          <NavigationProperty Name="workCharacter" Relationship="DUBBDBModel.FK_chrTemplateHdrs_To_workCharacters" FromRole="chrTemplateHdr" ToRole="workCharacter" />
-          <NavigationProperty Name="tagTemplateHdr" Relationship="DUBBDBModel.FK_chrTemplateHdrs_To_tagTemplateHdrs" FromRole="chrTemplateHdr" ToRole="tagTemplateHdr" />
-        </EntityType>
-        <EntityType Name="tag">
-          <Key>
-            <PropertyRef Name="Id" />
-          </Key>
-          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="TagTypeId" Type="Int32" Nullable="false" />
-          <Property Name="Name" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
-          <NavigationProperty Name="audioSampleDtls" Relationship="DUBBDBModel.FK_audioSampleDtls_To_tags" FromRole="tag" ToRole="audioSampleDtl" />
-          <NavigationProperty Name="chrTemplateDtls" Relationship="DUBBDBModel.FK_chrTemplateDtls_To_tags" FromRole="tag" ToRole="chrTemplateDtl" />
-          <NavigationProperty Name="tagType" Relationship="DUBBDBModel.FK_tags_To_tagTypes" FromRole="tag" ToRole="tagType" />
-          <NavigationProperty Name="tagTemplateDtls" Relationship="DUBBDBModel.FK_tagTemplateDtls_To_tags" FromRole="tag" ToRole="tagTemplateDtl" />
-        </EntityType>
-        <EntityType Name="tagTemplateDtl">
-          <Key>
-            <PropertyRef Name="tagTemplateDtlIntno" />
-          </Key>
-          <Property Name="tagTemplateDtlIntno" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="tagTemplateHdrIntno" Type="Int64" Nullable="false" />
-          <Property Name="tagId" Type="Int32" Nullable="false" />
-          <Property Name="MinScore" Type="Int32" Nullable="false" />
-          <Property Name="Weight" Type="Int32" />
-          <NavigationProperty Name="tag" Relationship="DUBBDBModel.FK_tagTemplateDtls_To_tags" FromRole="tagTemplateDtl" ToRole="tag" />
-          <NavigationProperty Name="tagTemplateHdr" Relationship="DUBBDBModel.FK_tagTemplateDtls_To_tagTemplateHdrs" FromRole="tagTemplateDtl" ToRole="tagTemplateHdr" />
-        </EntityType>
-        <EntityType Name="tagType">
-          <Key>
-            <PropertyRef Name="Id" />
-          </Key>
-          <Property Name="Id" Type="Int32" Nullable="false" />
-          <Property Name="Name" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
-          <NavigationProperty Name="tags" Relationship="DUBBDBModel.FK_tags_To_tagTypes" FromRole="tagType" ToRole="tag" />
-        </EntityType>
-        <Association Name="FK_audioSampleDtls_To_audioSampleHdrs">
-          <End Type="DUBBDBModel.audioSampleHdr" Role="audioSampleHdr" Multiplicity="1">
-            <OnDelete Action="Cascade" />
-          </End>
-          <End Type="DUBBDBModel.audioSampleDtl" Role="audioSampleDtl" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="audioSampleHdr">
-              <PropertyRef Name="audioSampleHdrIntno" />
-            </Principal>
-            <Dependent Role="audioSampleDtl">
-              <PropertyRef Name="audioSampleHdrIntno" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK_audioSampleDtls_To_tags">
-          <End Type="DUBBDBModel.tag" Role="tag" Multiplicity="1" />
-          <End Type="DUBBDBModel.audioSampleDtl" Role="audioSampleDtl" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="tag">
-              <PropertyRef Name="Id" />
-            </Principal>
-            <Dependent Role="audioSampleDtl">
-              <PropertyRef Name="tagId" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK_audioSampleHdrs_To_voiceActors">
-          <End Type="DUBBDBModel.voiceActor" Role="voiceActor" Multiplicity="1">
-            <OnDelete Action="Cascade" />
-          </End>
-          <End Type="DUBBDBModel.audioSampleHdr" Role="audioSampleHdr" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="voiceActor">
-              <PropertyRef Name="voiceActorIntno" />
-            </Principal>
-            <Dependent Role="audioSampleHdr">
-              <PropertyRef Name="voiceActorIntno" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK_chrCastListDtls_To_chrCastListHdrs">
-          <End Type="DUBBDBModel.chrCastListHdr" Role="chrCastListHdr" Multiplicity="1">
-            <OnDelete Action="Cascade" />
-          </End>
-          <End Type="DUBBDBModel.chrCastListDtl" Role="chrCastListDtl" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="chrCastListHdr">
-              <PropertyRef Name="chrCastListHdrIntno" />
-            </Principal>
-            <Dependent Role="chrCastListDtl">
-              <PropertyRef Name="chrCastListHdrIntno" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK_chrCastListDtls_To_voiceActors">
-          <End Type="DUBBDBModel.voiceActor" Role="voiceActor" Multiplicity="1">
-            <OnDelete Action="Cascade" />
-          </End>
-          <End Type="DUBBDBModel.chrCastListDtl" Role="chrCastListDtl" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="voiceActor">
-              <PropertyRef Name="voiceActorIntno" />
-            </Principal>
-            <Dependent Role="chrCastListDtl">
-              <PropertyRef Name="voiceActorIntno" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK_chrCastListHdrs_To_clients">
-          <End Type="DUBBDBModel.client" Role="client" Multiplicity="1">
-            <OnDelete Action="Cascade" />
-          </End>
-          <End Type="DUBBDBModel.chrCastListHdr" Role="chrCastListHdr" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="client">
-              <PropertyRef Name="clientIntno" />
-            </Principal>
-            <Dependent Role="chrCastListHdr">
-              <PropertyRef Name="clientIntno" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK_chrCastListHdrs_To_workCharacters">
-          <End Type="DUBBDBModel.workCharacter" Role="workCharacter" Multiplicity="1">
-            <OnDelete Action="Cascade" />
-          </End>
-          <End Type="DUBBDBModel.chrCastListHdr" Role="chrCastListHdr" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="workCharacter">
-              <PropertyRef Name="workCharacterIntno" />
-            </Principal>
-            <Dependent Role="chrCastListHdr">
-              <PropertyRef Name="workCharacterIntno" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK_chrTemplateDtls_To_chrTemplateHdrs">
-          <End Type="DUBBDBModel.chrTemplateHdr" Role="chrTemplateHdr" Multiplicity="1">
-            <OnDelete Action="Cascade" />
-          </End>
-          <End Type="DUBBDBModel.chrTemplateDtl" Role="chrTemplateDtl" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="chrTemplateHdr">
-              <PropertyRef Name="chrTemplateHdrIntno" />
-            </Principal>
-            <Dependent Role="chrTemplateDtl">
-              <PropertyRef Name="chrTemplateHdrIntno" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK_chrTemplateDtls_To_tags">
-          <End Type="DUBBDBModel.tag" Role="tag" Multiplicity="1" />
-          <End Type="DUBBDBModel.chrTemplateDtl" Role="chrTemplateDtl" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="tag">
-              <PropertyRef Name="Id" />
-            </Principal>
-            <Dependent Role="chrTemplateDtl">
-              <PropertyRef Name="tagId" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK_chrTemplateHdrs_To_workCharacters">
-          <End Type="DUBBDBModel.workCharacter" Role="workCharacter" Multiplicity="1">
-            <OnDelete Action="Cascade" />
-          </End>
-          <End Type="DUBBDBModel.chrTemplateHdr" Role="chrTemplateHdr" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="workCharacter">
-              <PropertyRef Name="workCharacterIntno" />
-            </Principal>
-            <Dependent Role="chrTemplateHdr">
-              <PropertyRef Name="workCharacterIntno" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
         <Association Name="FK_tags_To_tagTypes">
           <End Type="DUBBDBModel.tagType" Role="tagType" Multiplicity="1" />
           <End Type="DUBBDBModel.tag" Role="tag" Multiplicity="*" />
@@ -3710,44 +3942,6 @@ warning 6002: The table/view 'DUBBDB.dbo.paymentsDueVW' does not have a primary 
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <EntityType Name="tagTemplateHdr">
-          <Key>
-            <PropertyRef Name="tagTemplateHdrIntno" />
-          </Key>
-          <Property Name="tagTemplateHdrIntno" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="Title" Type="String" Nullable="false" MaxLength="150" FixedLength="false" Unicode="true" />
-          <Property Name="Description" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
-          <Property Name="Text" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
-          <NavigationProperty Name="audioSampleHdrs" Relationship="DUBBDBModel.FK_audioSampleHdrs_To_tagTemplateHdrs" FromRole="tagTemplateHdr" ToRole="audioSampleHdr" />
-          <NavigationProperty Name="chrTemplateHdrs" Relationship="DUBBDBModel.FK_chrTemplateHdrs_To_tagTemplateHdrs" FromRole="tagTemplateHdr" ToRole="chrTemplateHdr" />
-          <NavigationProperty Name="tagTemplateDtls" Relationship="DUBBDBModel.FK_tagTemplateDtls_To_tagTemplateHdrs" FromRole="tagTemplateHdr" ToRole="tagTemplateDtl" />
-        </EntityType>
-        <Association Name="FK_audioSampleHdrs_To_tagTemplateHdrs">
-          <End Type="DUBBDBModel.tagTemplateHdr" Role="tagTemplateHdr" Multiplicity="1" />
-          <End Type="DUBBDBModel.audioSampleHdr" Role="audioSampleHdr" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="tagTemplateHdr">
-              <PropertyRef Name="tagTemplateHdrIntno" />
-            </Principal>
-            <Dependent Role="audioSampleHdr">
-              <PropertyRef Name="tagTemplateHdrIntno" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK_chrTemplateHdrs_To_tagTemplateHdrs">
-          <End Type="DUBBDBModel.tagTemplateHdr" Role="tagTemplateHdr" Multiplicity="1">
-            <OnDelete Action="Cascade" />
-          </End>
-          <End Type="DUBBDBModel.chrTemplateHdr" Role="chrTemplateHdr" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="tagTemplateHdr">
-              <PropertyRef Name="tagTemplateHdrIntno" />
-            </Principal>
-            <Dependent Role="chrTemplateHdr">
-              <PropertyRef Name="tagTemplateHdrIntno" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
         <Association Name="FK_tagTemplateDtls_To_tagTemplateHdrs">
           <End Type="DUBBDBModel.tagTemplateHdr" Role="tagTemplateHdr" Multiplicity="1">
             <OnDelete Action="Cascade" />
@@ -3762,6 +3956,34 @@ warning 6002: The table/view 'DUBBDB.dbo.paymentsDueVW' does not have a primary 
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK_workActors_voiceActors">
+          <End Type="DUBBDBModel.voiceActor" Role="voiceActor" Multiplicity="1" />
+          <End Type="DUBBDBModel.workActor" Role="workActor" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="voiceActor">
+              <PropertyRef Name="voiceActorIntno" />
+            </Principal>
+            <Dependent Role="workActor">
+              <PropertyRef Name="voiceActorIntno" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_workActors_workCharacters">
+          <End Type="DUBBDBModel.workCharacter" Role="workCharacter" Multiplicity="1" />
+          <End Type="DUBBDBModel.workActor" Role="workActor" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="workCharacter">
+              <PropertyRef Name="workCharacterIntno" />
+            </Principal>
+            <Dependent Role="workActor">
+              <PropertyRef Name="workCharacterIntno" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="AspNetUserRoles">
+          <End Type="DUBBDBModel.AspNetRole" Role="AspNetRole" Multiplicity="*" />
+          <End Type="DUBBDBModel.AspNetUser" Role="AspNetUser" Multiplicity="*" />
+        </Association>
         </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -3769,6 +3991,23 @@ warning 6002: The table/view 'DUBBDB.dbo.paymentsDueVW' does not have a primary 
       <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
         <EntityContainerMapping StorageEntityContainer="DUBBDBModelStoreContainer" CdmEntityContainer="DUBBDBEntities">
           <FunctionImportMapping FunctionImportName="archiveEndorsedWork" FunctionName="DUBBDBModel.Store.archiveEndorsedWork" />
+          <EntitySetMapping Name="C__MigrationHistory">
+            <EntityTypeMapping TypeName="DUBBDBModel.C__MigrationHistory">
+              <MappingFragment StoreEntitySet="__MigrationHistory">
+                <ScalarProperty Name="ProductVersion" ColumnName="ProductVersion" />
+                <ScalarProperty Name="Model" ColumnName="Model" />
+                <ScalarProperty Name="ContextKey" ColumnName="ContextKey" />
+                <ScalarProperty Name="MigrationId" ColumnName="MigrationId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="C__RefactorLog">
+            <EntityTypeMapping TypeName="DUBBDBModel.C__RefactorLog">
+              <MappingFragment StoreEntitySet="__RefactorLog">
+                <ScalarProperty Name="OperationKey" ColumnName="OperationKey" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
           <EntitySetMapping Name="agreements">
             <EntityTypeMapping TypeName="DUBBDBModel.agreement">
               <MappingFragment StoreEntitySet="agreements">
@@ -3826,6 +4065,78 @@ warning 6002: The table/view 'DUBBDB.dbo.paymentsDueVW' does not have a primary 
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
+          <EntitySetMapping Name="AspNetRoles">
+            <EntityTypeMapping TypeName="DUBBDBModel.AspNetRole">
+              <MappingFragment StoreEntitySet="AspNetRoles">
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="AspNetUserClaims">
+            <EntityTypeMapping TypeName="DUBBDBModel.AspNetUserClaim">
+              <MappingFragment StoreEntitySet="AspNetUserClaims">
+                <ScalarProperty Name="ClaimValue" ColumnName="ClaimValue" />
+                <ScalarProperty Name="ClaimType" ColumnName="ClaimType" />
+                <ScalarProperty Name="UserId" ColumnName="UserId" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="AspNetUserLogins">
+            <EntityTypeMapping TypeName="DUBBDBModel.AspNetUserLogin">
+              <MappingFragment StoreEntitySet="AspNetUserLogins">
+                <ScalarProperty Name="UserId" ColumnName="UserId" />
+                <ScalarProperty Name="ProviderKey" ColumnName="ProviderKey" />
+                <ScalarProperty Name="LoginProvider" ColumnName="LoginProvider" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="AspNetUsers">
+            <EntityTypeMapping TypeName="DUBBDBModel.AspNetUser">
+              <MappingFragment StoreEntitySet="AspNetUsers">
+                <ScalarProperty Name="UserName" ColumnName="UserName" />
+                <ScalarProperty Name="AccessFailedCount" ColumnName="AccessFailedCount" />
+                <ScalarProperty Name="LockoutEnabled" ColumnName="LockoutEnabled" />
+                <ScalarProperty Name="LockoutEndDateUtc" ColumnName="LockoutEndDateUtc" />
+                <ScalarProperty Name="TwoFactorEnabled" ColumnName="TwoFactorEnabled" />
+                <ScalarProperty Name="PhoneNumberConfirmed" ColumnName="PhoneNumberConfirmed" />
+                <ScalarProperty Name="PhoneNumber" ColumnName="PhoneNumber" />
+                <ScalarProperty Name="SecurityStamp" ColumnName="SecurityStamp" />
+                <ScalarProperty Name="PasswordHash" ColumnName="PasswordHash" />
+                <ScalarProperty Name="EmailConfirmed" ColumnName="EmailConfirmed" />
+                <ScalarProperty Name="Email" ColumnName="Email" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="audioSampleDtls">
+            <EntityTypeMapping TypeName="DUBBDBModel.audioSampleDtl">
+              <MappingFragment StoreEntitySet="audioSampleDtls">
+                <ScalarProperty Name="Match" ColumnName="Match" />
+                <ScalarProperty Name="TagScore" ColumnName="TagScore" />
+                <ScalarProperty Name="tagId" ColumnName="tagId" />
+                <ScalarProperty Name="audioSampleHdrIntno" ColumnName="audioSampleHdrIntno" />
+                <ScalarProperty Name="audioSampleDtlIntno" ColumnName="audioSampleDtlIntno" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="audioSampleHdrs">
+            <EntityTypeMapping TypeName="DUBBDBModel.audioSampleHdr">
+              <MappingFragment StoreEntitySet="audioSampleHdrs">
+                <ScalarProperty Name="Status" ColumnName="Status" />
+                <ScalarProperty Name="Description" ColumnName="Description" />
+                <ScalarProperty Name="Studio" ColumnName="Studio" />
+                <ScalarProperty Name="FileUrl" ColumnName="FileUrl" />
+                <ScalarProperty Name="FileName" ColumnName="FileName" />
+                <ScalarProperty Name="SubmitDate" ColumnName="SubmitDate" />
+                <ScalarProperty Name="tagTemplateHdrIntno" ColumnName="tagTemplateHdrIntno" />
+                <ScalarProperty Name="voiceActorIntno" ColumnName="voiceActorIntno" />
+                <ScalarProperty Name="Title" ColumnName="Title" />
+                <ScalarProperty Name="audioSampleHdrIntno" ColumnName="audioSampleHdrIntno" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
           <EntitySetMapping Name="carriers">
             <EntityTypeMapping TypeName="DUBBDBModel.carrier">
               <MappingFragment StoreEntitySet="carriers">
@@ -3835,6 +4146,50 @@ warning 6002: The table/view 'DUBBDB.dbo.paymentsDueVW' does not have a primary 
                 <ScalarProperty Name="carrierName" ColumnName="carrierName" />
                 <ScalarProperty Name="carrierType" ColumnName="carrierType" />
                 <ScalarProperty Name="carrierIntno" ColumnName="carrierIntno" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="chrCastListDtls">
+            <EntityTypeMapping TypeName="DUBBDBModel.chrCastListDtl">
+              <MappingFragment StoreEntitySet="chrCastListDtls">
+                <ScalarProperty Name="ClientComments" ColumnName="ClientComments" />
+                <ScalarProperty Name="ClientRank" ColumnName="ClientRank" />
+                <ScalarProperty Name="Comments" ColumnName="Comments" />
+                <ScalarProperty Name="Rank" ColumnName="Rank" />
+                <ScalarProperty Name="Match" ColumnName="Match" />
+                <ScalarProperty Name="voiceActorIntno" ColumnName="voiceActorIntno" />
+                <ScalarProperty Name="chrCastListHdrIntno" ColumnName="chrCastListHdrIntno" />
+                <ScalarProperty Name="chrCastListDtlIntno" ColumnName="chrCastListDtlIntno" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="chrCastListHdrs">
+            <EntityTypeMapping TypeName="DUBBDBModel.chrCastListHdr">
+              <MappingFragment StoreEntitySet="chrCastListHdrs">
+                <ScalarProperty Name="Status" ColumnName="Status" />
+                <ScalarProperty Name="Title" ColumnName="Title" />
+                <ScalarProperty Name="clientIntno" ColumnName="clientIntno" />
+                <ScalarProperty Name="workCharacterIntno" ColumnName="workCharacterIntno" />
+                <ScalarProperty Name="chrCastListHdrIntno" ColumnName="chrCastListHdrIntno" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="chrTemplateDtls">
+            <EntityTypeMapping TypeName="DUBBDBModel.chrTemplateDtl">
+              <MappingFragment StoreEntitySet="chrTemplateDtls">
+                <ScalarProperty Name="Weight" ColumnName="Weight" />
+                <ScalarProperty Name="tagId" ColumnName="tagId" />
+                <ScalarProperty Name="chrTemplateHdrIntno" ColumnName="chrTemplateHdrIntno" />
+                <ScalarProperty Name="chrTemplateDtlIntno" ColumnName="chrTemplateDtlIntno" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="chrTemplateHdrs">
+            <EntityTypeMapping TypeName="DUBBDBModel.chrTemplateHdr">
+              <MappingFragment StoreEntitySet="chrTemplateHdrs">
+                <ScalarProperty Name="tagTemplateHdrIntno" ColumnName="tagTemplateHdrIntno" />
+                <ScalarProperty Name="workCharacterIntno" ColumnName="workCharacterIntno" />
+                <ScalarProperty Name="chrTemplateHdrIntno" ColumnName="chrTemplateHdrIntno" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
@@ -3954,6 +4309,7 @@ warning 6002: The table/view 'DUBBDB.dbo.paymentsDueVW' does not have a primary 
           <EntitySetMapping Name="dubbingSheetHdrs">
             <EntityTypeMapping TypeName="DUBBDBModel.dubbingSheetHdr">
               <MappingFragment StoreEntitySet="dubbingSheetHdrs">
+                <ScalarProperty Name="isPaid" ColumnName="isPaid" />
                 <ScalarProperty Name="characterName" ColumnName="characterName" />
                 <ScalarProperty Name="actorName" ColumnName="actorName" />
                 <ScalarProperty Name="voiceActorIntno" ColumnName="voiceActorIntno" />
@@ -4246,6 +4602,44 @@ warning 6002: The table/view 'DUBBDB.dbo.paymentsDueVW' does not have a primary 
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
+          <EntitySetMapping Name="tags">
+            <EntityTypeMapping TypeName="DUBBDBModel.tag">
+              <MappingFragment StoreEntitySet="tags">
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="TagTypeId" ColumnName="TagTypeId" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="tagTemplateDtls">
+            <EntityTypeMapping TypeName="DUBBDBModel.tagTemplateDtl">
+              <MappingFragment StoreEntitySet="tagTemplateDtls">
+                <ScalarProperty Name="Weight" ColumnName="Weight" />
+                <ScalarProperty Name="MinScore" ColumnName="MinScore" />
+                <ScalarProperty Name="tagId" ColumnName="tagId" />
+                <ScalarProperty Name="tagTemplateHdrIntno" ColumnName="tagTemplateHdrIntno" />
+                <ScalarProperty Name="tagTemplateDtlIntno" ColumnName="tagTemplateDtlIntno" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="tagTemplateHdrs">
+            <EntityTypeMapping TypeName="DUBBDBModel.tagTemplateHdr">
+              <MappingFragment StoreEntitySet="tagTemplateHdrs">
+                <ScalarProperty Name="Text" ColumnName="Text" />
+                <ScalarProperty Name="Description" ColumnName="Description" />
+                <ScalarProperty Name="Title" ColumnName="Title" />
+                <ScalarProperty Name="tagTemplateHdrIntno" ColumnName="tagTemplateHdrIntno" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="tagTypes">
+            <EntityTypeMapping TypeName="DUBBDBModel.tagType">
+              <MappingFragment StoreEntitySet="tagTypes">
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
           <EntitySetMapping Name="voiceActors">
             <EntityTypeMapping TypeName="DUBBDBModel.voiceActor">
               <MappingFragment StoreEntitySet="voiceActors">
@@ -4339,127 +4733,14 @@ warning 6002: The table/view 'DUBBDB.dbo.paymentsDueVW' does not have a primary 
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
-          <EntitySetMapping Name="paymentsDueVWs">
-            <EntityTypeMapping TypeName="DUBBDBModel.paymentsDueVW">
-              <MappingFragment StoreEntitySet="paymentsDueVW">
-                <ScalarProperty Name="totalUnits" ColumnName="totalUnits" />
-                <ScalarProperty Name="dubbingDate" ColumnName="dubbingDate" />
-                <ScalarProperty Name="actorName" ColumnName="actorName" />
-                <ScalarProperty Name="voiceActorIntno" ColumnName="voiceActorIntno" />
-                <ScalarProperty Name="workName" ColumnName="workName" />
-                <ScalarProperty Name="workIntno" ColumnName="workIntno" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="audioSampleDtls">
-            <EntityTypeMapping TypeName="DUBBDBModel.audioSampleDtl">
-              <MappingFragment StoreEntitySet="audioSampleDtls">
-                <ScalarProperty Name="Match" ColumnName="Match" />
-                <ScalarProperty Name="TagScore" ColumnName="TagScore" />
-                <ScalarProperty Name="tagId" ColumnName="tagId" />
-                <ScalarProperty Name="audioSampleHdrIntno" ColumnName="audioSampleHdrIntno" />
-                <ScalarProperty Name="audioSampleDtlIntno" ColumnName="audioSampleDtlIntno" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="audioSampleHdrs">
-            <EntityTypeMapping TypeName="DUBBDBModel.audioSampleHdr">
-              <MappingFragment StoreEntitySet="audioSampleHdrs">
-                <ScalarProperty Name="Status" ColumnName="Status" />
-                <ScalarProperty Name="Description" ColumnName="Description" />
-                <ScalarProperty Name="Studio" ColumnName="Studio" />
-                <ScalarProperty Name="FileUrl" ColumnName="FileUrl" />
-                <ScalarProperty Name="FileName" ColumnName="FileName" />
-                <ScalarProperty Name="SubmitDate" ColumnName="SubmitDate" />
-                <ScalarProperty Name="tagTemplateHdrIntno" ColumnName="tagTemplateHdrIntno" />
-                <ScalarProperty Name="voiceActorIntno" ColumnName="voiceActorIntno" />
-                <ScalarProperty Name="Title" ColumnName="Title" />
-                <ScalarProperty Name="audioSampleHdrIntno" ColumnName="audioSampleHdrIntno" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="chrCastListDtls">
-            <EntityTypeMapping TypeName="DUBBDBModel.chrCastListDtl">
-              <MappingFragment StoreEntitySet="chrCastListDtls">
-                <ScalarProperty Name="ClientComments" ColumnName="ClientComments" />
-                <ScalarProperty Name="ClientRank" ColumnName="ClientRank" />
-                <ScalarProperty Name="Comments" ColumnName="Comments" />
-                <ScalarProperty Name="Rank" ColumnName="Rank" />
-                <ScalarProperty Name="Match" ColumnName="Match" />
-                <ScalarProperty Name="voiceActorIntno" ColumnName="voiceActorIntno" />
-                <ScalarProperty Name="chrCastListHdrIntno" ColumnName="chrCastListHdrIntno" />
-                <ScalarProperty Name="chrCastListDtlIntno" ColumnName="chrCastListDtlIntno" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="chrCastListHdrs">
-            <EntityTypeMapping TypeName="DUBBDBModel.chrCastListHdr">
-              <MappingFragment StoreEntitySet="chrCastListHdrs">
-                <ScalarProperty Name="Status" ColumnName="Status" />
-                <ScalarProperty Name="Title" ColumnName="Title" />
-                <ScalarProperty Name="clientIntno" ColumnName="clientIntno" />
-                <ScalarProperty Name="workCharacterIntno" ColumnName="workCharacterIntno" />
-                <ScalarProperty Name="chrCastListHdrIntno" ColumnName="chrCastListHdrIntno" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="chrTemplateDtls">
-            <EntityTypeMapping TypeName="DUBBDBModel.chrTemplateDtl">
-              <MappingFragment StoreEntitySet="chrTemplateDtls">
-                <ScalarProperty Name="Weight" ColumnName="Weight" />
-                <ScalarProperty Name="tagId" ColumnName="tagId" />
-                <ScalarProperty Name="chrTemplateHdrIntno" ColumnName="chrTemplateHdrIntno" />
-                <ScalarProperty Name="chrTemplateDtlIntno" ColumnName="chrTemplateDtlIntno" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="chrTemplateHdrs">
-            <EntityTypeMapping TypeName="DUBBDBModel.chrTemplateHdr">
-              <MappingFragment StoreEntitySet="chrTemplateHdrs">
-                <ScalarProperty Name="tagTemplateHdrIntno" ColumnName="tagTemplateHdrIntno" />
-                <ScalarProperty Name="workCharacterIntno" ColumnName="workCharacterIntno" />
-                <ScalarProperty Name="chrTemplateHdrIntno" ColumnName="chrTemplateHdrIntno" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="tags">
-            <EntityTypeMapping TypeName="DUBBDBModel.tag">
-              <MappingFragment StoreEntitySet="tags">
-                <ScalarProperty Name="Name" ColumnName="Name" />
-                <ScalarProperty Name="TagTypeId" ColumnName="TagTypeId" />
-                <ScalarProperty Name="Id" ColumnName="Id" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="tagTemplateDtls">
-            <EntityTypeMapping TypeName="DUBBDBModel.tagTemplateDtl">
-              <MappingFragment StoreEntitySet="tagTemplateDtls">
-                <ScalarProperty Name="Weight" ColumnName="Weight" />
-                <ScalarProperty Name="MinScore" ColumnName="MinScore" />
-                <ScalarProperty Name="tagId" ColumnName="tagId" />
-                <ScalarProperty Name="tagTemplateHdrIntno" ColumnName="tagTemplateHdrIntno" />
-                <ScalarProperty Name="tagTemplateDtlIntno" ColumnName="tagTemplateDtlIntno" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="tagTypes">
-            <EntityTypeMapping TypeName="DUBBDBModel.tagType">
-              <MappingFragment StoreEntitySet="tagTypes">
-                <ScalarProperty Name="Name" ColumnName="Name" />
-                <ScalarProperty Name="Id" ColumnName="Id" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="tagTemplateHdrs">
-            <EntityTypeMapping TypeName="DUBBDBModel.tagTemplateHdr">
-              <MappingFragment StoreEntitySet="tagTemplateHdrs">
-                <ScalarProperty Name="Text" ColumnName="Text" />
-                <ScalarProperty Name="Description" ColumnName="Description" />
-                <ScalarProperty Name="Title" ColumnName="Title" />
-                <ScalarProperty Name="tagTemplateHdrIntno" ColumnName="tagTemplateHdrIntno" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
+          <AssociationSetMapping Name="AspNetUserRoles" TypeName="DUBBDBModel.AspNetUserRoles" StoreEntitySet="AspNetUserRoles">
+            <EndProperty Name="AspNetUser">
+              <ScalarProperty Name="Id" ColumnName="UserId" />
+            </EndProperty>
+            <EndProperty Name="AspNetRole">
+              <ScalarProperty Name="Id" ColumnName="RoleId" />
+            </EndProperty>
+          </AssociationSetMapping>
           </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>

@@ -12,21 +12,18 @@ namespace dubbingModel
     using System;
     using System.Collections.Generic;
     
-    public partial class chrTemplateHdr
+    public partial class AspNetRole
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public chrTemplateHdr()
+        public AspNetRole()
         {
-            this.chrTemplateDtls = new HashSet<chrTemplateDtl>();
+            this.AspNetUsers = new HashSet<AspNetUser>();
         }
     
-        public long chrTemplateHdrIntno { get; set; }
-        public long workCharacterIntno { get; set; }
-        public long tagTemplateHdrIntno { get; set; }
+        public string Id { get; set; }
+        public string Name { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<chrTemplateDtl> chrTemplateDtls { get; set; }
-        public virtual tagTemplateHdr tagTemplateHdr { get; set; }
-        public virtual workCharacter workCharacter { get; set; }
+        public virtual ICollection<AspNetUser> AspNetUsers { get; set; }
     }
 }

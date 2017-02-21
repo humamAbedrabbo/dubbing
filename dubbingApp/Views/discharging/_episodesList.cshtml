@@ -1,20 +1,60 @@
-﻿@model IEnumerable<dubbingModel.orderTrnHdr>
+﻿@model IEnumerable<dubbingApp.Models.ViewModels.dischargeEpisodeViewModel>
 
 <div class="container-fluid" style="padding:0px">
-    <div class="panel panel-default">
+    <div class="panel panel-primary">
         <div class="panel-heading">
             <div class="row">
                 <div class="col-sm-12">
-                    <label>Ready Episodes</label>
+                    <label>This Week Schedule</label>
                 </div>
             </div>
         </div>
         <div class="panel-body">
             <ul style="padding:5px">
-                @foreach(var oi in Model)
+                @foreach(var oi in Model.Where(b => b.isThisWeek))
                 {
                     <li>
-                        <small><a href="#" class="episodeLbl" id="@oi.orderTrnHdrIntno" onclick="onEpisodeSelectClick(@oi.orderTrnHdrIntno)">@oi.agreementWork.workName / @oi.episodeNo</a></small>
+                        <small><a href="#" class="episodeLbl" id="@oi.orderTrnHdrIntno" onclick="onEpisodeSelectClick(@oi.orderTrnHdrIntno)">@oi.workName / @oi.episodeNo</a></small>
+                    </li>
+                }
+            </ul>
+        </div>
+    </div>
+
+    <div class="panel panel-info">
+        <div class="panel-heading">
+            <div class="row">
+                <div class="col-sm-12">
+                    <label>Other Weeks Schedules</label>
+                </div>
+            </div>
+        </div>
+        <div class="panel-body">
+            <ul style="padding:5px">
+                @foreach (var oi in Model.Where(b => b.isScheduled && !b.isThisWeek))
+                {
+                    <li>
+                        <small><a href="#" class="episodeLbl" id="@oi.orderTrnHdrIntno" onclick="onEpisodeSelectClick(@oi.orderTrnHdrIntno)">@oi.workName / @oi.episodeNo</a></small>
+                    </li>
+                }
+            </ul>
+        </div>
+    </div>
+
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <div class="row">
+                <div class="col-sm-12">
+                    <label>Unscheduled</label>
+                </div>
+            </div>
+        </div>
+        <div class="panel-body">
+            <ul style="padding:5px">
+                @foreach (var oi in Model.Where(b => !b.isScheduled))
+                {
+                    <li>
+                        <small><a href="#" class="episodeLbl" id="@oi.orderTrnHdrIntno" onclick="onEpisodeSelectClick(@oi.orderTrnHdrIntno)">@oi.workName / @oi.episodeNo</a></small>
                     </li>
                 }
             </ul>

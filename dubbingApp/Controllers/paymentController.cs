@@ -31,7 +31,28 @@ namespace dubbingApp.Controllers
 
         public ActionResult paymentsDueList()
         {
-            var model = db.paymentsDueVWs;
+            //find discharge tables with entries having all scenes taken - no scene left
+            //List<long> IDs = new List<long>();
+            //var hdrs = db.dubbingSheetHdrs.Where(b => b.isPaid == false).Select(b => b.dubbSheetHdrIntno).ToList();
+            //foreach(long hdr1 in hdrs)
+            //{
+            //    int x = db.subtitles.Include(b => b.dialog).Where(b => b.dubbSheetHdrIntno == hdr1)
+            //            .Select(b => b.dialog.sceneIntno).Distinct().Count();
+            //    int y = db.dubbingSheetDtls.Where(b => b.dubbSheetHdrIntno == hdr1 && b.isTaken == true).Count();
+
+            //    if (x == y)
+            //    {
+            //        IDs.Add(hdr1);
+            //    }
+            //}
+
+            //var model = db.dubbingSheetDtls.Include(b => b.dubbingSheetHdr).Include(b => b.orderTrnHdr.agreementWork)
+            //            .Where(b => IDs.Contains(b.dubbSheetHdrIntno));
+
+            var model = (from A in db.dubbingSheetDtls
+                         join B in db.dubbingSheetHdrs on A.dubbSheetHdrIntno equals B.dubbSheetHdrIntno
+                         where B.isPaid == false && A.isTaken == true
+                         select A).Include(b => b.dubbingSheetHdr).Include(b => b.orderTrnHdr.agreementWork);
             return PartialView("_paymentsDueList", model.ToList());
         }
         
@@ -44,19 +65,23 @@ namespace dubbingApp.Controllers
         public ActionResult paymentsAddNew(long workIntno, string workName, long rscId, string rscName)
         {
             payment model = new payment();
-            int totalUnits = db.paymentsDueVWs.Where(b => b.workIntno == workIntno && b.voiceActorIntno == rscId && b.actorName == rscName)
-                                                .Sum(b => b.totalUnits).Value;
+            int totalUnits = (from A in db.dubbingSheetDtls
+                             join B in db.dubbingSheetHdrs on A.dubbSheetHdrIntno equals B.dubbSheetHdrIntno
+                             join C in db.orderTrnHdrs on B.orderTrnHdrIntno equals C.orderTrnHdrIntno
+                             where B.isPaid == false && A.isTaken == true && C.workIntno == workIntno && B.voiceActorIntno == rscId && B.actorName == rscName
+                             select A).Count();
 
             int unitRate = 0;
-            string currencyCode = null;
+            string currencyCode = "01";
             var charges = db.workCharges.FirstOrDefault(b => b.workIntno == workIntno && b.workPartyType == "01" && b.workPartyIntno == rscId && b.status == true);
             if (charges != null)
             {
                 unitRate = (int)charges.chargeAmount;
-                currencyCode = charges.currencyCode;
+                if(!string.IsNullOrEmpty(charges.currencyCode))
+                    currencyCode = charges.currencyCode;
             }
             var rsc = db.voiceActors.Find(rscId);
-
+            
             model.paymentDate = DateTime.Now.Date;
             model.workIntno = workIntno;
             model.voiceActorIntno = rscId;
@@ -87,20 +112,35 @@ namespace dubbingApp.Controllers
             var dtlModel = db.paymentDetails;
             if (ModelState.IsValid)
             {
+                if (string.IsNullOrEmpty(item.currencyCode))
+                    item.currencyCode = "01";
                 item.status = true;
                 item.isExported = false;
                 item.isPaid = true;
                 model.Add(item);
 
                 //insert payment details
-                var x = db.paymentsDueVWs.Where(b => b.workIntno == item.workIntno && b.voiceActorIntno == item.voiceActorIntno && b.actorName == item.fullName).ToList();
-                foreach(var x1 in x)
+                var x = (from A in db.dubbingSheetDtls
+                         join B in db.dubbingSheetHdrs on A.dubbSheetHdrIntno equals B.dubbSheetHdrIntno
+                         join C in db.orderTrnHdrs on B.orderTrnHdrIntno equals C.orderTrnHdrIntno
+                         where B.isPaid == false && A.isTaken == true && C.workIntno == item.workIntno && B.voiceActorIntno == item.voiceActorIntno && B.actorName == item.fullName
+                         select A).ToList();
+                var d = x.Select(b => b.dubbingDate).Distinct().ToList();
+                foreach (var x1 in d)
                 {
                     paymentDetail dtl = new paymentDetail();
-                    dtl.dubbingDate = x1.dubbingDate.Value;
-                    dtl.totalUnits = x1.totalUnits.Value;
+                    dtl.dubbingDate = x1.Value;
+                    dtl.totalUnits = x.Where(b => b.dubbingDate == x1.Value).Count();
                     dtlModel.Add(dtl);
                 }
+
+                var ds = x.Select(b => b.dubbSheetHdrIntno).Distinct().ToList();
+                foreach(var ds1 in ds)
+                {
+                    var hdr = db.dubbingSheetHdrs.Find(ds1);
+                    hdr.isPaid = true;
+                }
+
                 db.SaveChanges();
             }
 
@@ -138,6 +178,14 @@ namespace dubbingApp.Controllers
             }
             db.SaveChanges();
             return null;
+        }
+
+        public ActionResult printVouchersList(long actorId, string actorName)
+        {
+            var model = db.paymentDetails.Include(b => b.payment.agreementWork)
+                        .Where(b => b.payment.voiceActorIntno == actorId && b.payment.fullName == actorName && b.payment.status == true && b.payment.isPaid == true && b.payment.isExported == false);
+            ViewBag.actorName = actorName;
+            return PartialView("_printVouchersList", model.ToList());
         }
     }
 }

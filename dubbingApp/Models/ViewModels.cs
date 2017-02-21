@@ -62,6 +62,15 @@ namespace dubbingApp.Models
             public string roles { get; set; }
         }
         
+        public class dischargeEpisodeViewModel
+        {
+            public long orderTrnHdrIntno { get; set; }
+            public string workName { get; set; }
+            public int episodeNo { get; set; }
+            public bool isScheduled { get; set; }
+            public bool isThisWeek { get; set; }
+        }
+
         public class castingListViewModel
         {
             public long dubbSheetHdrIntno { get; set; }
@@ -71,6 +80,9 @@ namespace dubbingApp.Models
             public long voiceActorIntno { get; set; }
             public string actorName { get; set; }
             public int totalScenes { get; set; }
+            public bool isEndorsed { get; set; }
+            public bool isScheduled { get; set; }
+            public bool isThisWeek { get; set; }
         }
 
         public class assignmentViewModel

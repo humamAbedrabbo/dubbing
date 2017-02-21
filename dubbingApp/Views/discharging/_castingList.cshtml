@@ -1,7 +1,10 @@
 ﻿@model IEnumerable<dubbingApp.Models.ViewModels.castingListViewModel>
-@{ TempData["actorsList"] = ViewBag.actorsList;
-   TempData["orderItem"] = ViewBag.orderItem; }
 
+@{ 
+    string disable = null;
+    bool isScheduled = ViewBag.isScheduled;
+    if (isScheduled) { disable = "disabled"; }
+}
 <div class="container-fluid" style="padding:0px">
     <div class="panel panel-default">
         <div class="panel-heading">
@@ -12,10 +15,12 @@
                     </button>
                 </div>
                 <div class="col-sm-9">
-                    <label>Characters List For @ViewBag.workEpisode</label>
+                    <label>Casting For: &nbsp; @ViewBag.workEpisode</label>
                 </div>
-                
                 <div class="col-sm-2">
+                    <button class="btn btn-default btn-xs pull-right" onclick="onScheduleClick(@ViewBag.orderItem)" @disable title="Generate Schedule">
+                        <span class="glyphicon glyphicon-time" aria-hidden="true"></span>
+                    </button>
                     <button class="btn btn-default btn-xs pull-right" onclick="onDischargeClick(@ViewBag.orderItem)" title="Download Discharging Table">
                         <span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span>
                     </button>
@@ -23,37 +28,61 @@
             </div>
         </div>
         <div class="panel-body">
-            <div class="row" style="border-bottom-width:thin; border-bottom-style:solid; border-bottom-color:lightgray">
-                <div class="col-sm-3"><label><small>Character</small></label></div>
-                <div class="col-sm-1"><label><small>Total Scenes</small></label></div>
-                <div class="col-sm-3"><label><small>Cast</small></label></div>
-                <div class="col-sm-3"><label><small>Actor Name</small></label></div>
-                <div class="col-sm-1 pull-right"><label><small>#</small></label></div>
-            </div>
-            <br />
-            @foreach (var item in Model)
-            {
-                if (item.voiceActorIntno != 0)
-                {
-                    <div class="row">
-                        <div class="col-sm-3"><small>@item.characterName</small></div>
-                        <div class="col-sm-1"><small>@item.totalScenes</small></div>
-                        <div class="col-sm-3"><small>@item.actorName</small></div>
-                        <div class="col-sm-3"><small></small></div>
-                        <div class="col-sm-1 pull-right">
-                            <button type="button" class="btn btn-default btn-xs pull-right" onclick="onEndorseClick(@item.dubbSheetHdrIntno)" title="Endorse Dubbing">
-                                <span class="glyphicon glyphicon-thumbs-up" aria-hidden="true"></span>
-                            </button>
-                        </div>
-                    </div>
-                }
-                else
-                {
-                    <div class="row">
-                        @Html.Partial("_castingUpdate", item)
-                    </div>
-                }
-            }
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th><small>#</small></th>
+                        <th><small>Character</small></th>
+                        <th><small>Total Scenes</small></th>
+                        <th><small>Cast</small></th>
+                        <th><small>?</small></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @{
+                        foreach (var item in Model)
+                        {
+                            string rowColor = null;
+                            if(item.voiceActorIntno == 0 && item.actorName.Contains("ANONYM"))
+                            {
+                                rowColor = "bg-danger";
+                            }
+                            <tr class="@rowColor">
+                                <td>
+                                    @{
+                                        if (item.isEndorsed)
+                                        {
+                                            <button type="button" class="btn btn-success btn-xs pull-left" disabled title="Endorsed">
+                                                <span class="glyphicon glyphicon-thumbs-up" aria-hidden="true"></span>
+                                            </button>
+                                        }
+                                        else
+                                        {
+                                            <button type="button" class="btn btn-default btn-xs pull-left" onclick="onEndorseClick(@item.orderTrnHdrIntno, @item.dubbSheetHdrIntno, '@item.actorName')" title="Endorse Dubbing">
+                                                <span class="glyphicon glyphicon-thumbs-up" aria-hidden="true"></span>
+                                            </button>
+                                        }
+                                    }
+                                </td>
+                                <td><small>@item.characterName</small></td>
+                                <td><small>@item.totalScenes</small></td>
+                                <td><small>@item.actorName</small></td>
+                                <td>
+                                    @{
+                                        if (item.voiceActorIntno == 0 && !item.isEndorsed)
+                                        {
+                                            <button type="button" class="btn btn-default btn-xs pull-left" data-toggle="modal" data-target="#popupForm" onclick="onCastClick(@item.dubbSheetHdrIntno)" title="Cast">
+                                                <span class="glyphicon glyphicon-user" aria-hidden="true"></span>
+                                            </button>
+                                        }
+                                    }
+                                </td>
+                                <td></td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
         </div>
     </div>
 </div>

@@ -18,10 +18,10 @@ namespace dubbingModel
         public client()
         {
             this.agreements = new HashSet<agreement>();
+            this.chrCastListHdrs = new HashSet<chrCastListHdr>();
             this.clientClaims = new HashSet<clientClaim>();
             this.shipments = new HashSet<shipment>();
             this.workOrders = new HashSet<workOrder>();
-            this.chrCastListHdrs = new HashSet<chrCastListHdr>();
         }
     
         public long clientIntno { get; set; }
@@ -34,12 +34,12 @@ namespace dubbingModel
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<agreement> agreements { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<chrCastListHdr> chrCastListHdrs { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<clientClaim> clientClaims { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<shipment> shipments { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<workOrder> workOrders { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<chrCastListHdr> chrCastListHdrs { get; set; }
     }
 }

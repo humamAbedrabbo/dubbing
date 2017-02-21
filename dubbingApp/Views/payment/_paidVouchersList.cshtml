@@ -6,14 +6,19 @@
         <div class="panel panel-default">
             <div class="panel-heading">
                 <div class="row">
-                    <div class="col-sm-12"><label class="badge">@actor.fullName</label></div>
+                    <div class="col-sm-11"><label class="badge">@actor.fullName</label></div>
+                    <div class="col-sm-1">
+                        <a role="button" href="#" onclick="onPrintClick(@actor.voiceActorIntno, '@actor.fullName')" title="Print">
+                            <span class="glyphicon glyphicon-print" aria-hidden="true"></span>
+                        </a>
+                    </div>
                 </div>
             </div>
             <div class="panel-body">
                 <table class="table table-hover table-condensed">
                     <thead>
                         <tr>
-                            <th class="col-sm-4"><small>Work</small></th>
+                            <th class="col-sm-5"><small>Work</small></th>
                             <th class="col-sm-1"><small>Scenes</small></th>
                             <th class="col-sm-1"><small>Rate</small></th>
                             <th class="col-sm-1"><small>Amount</small></th>
@@ -27,7 +32,7 @@
                         {
                             string pDate = x.paymentDate.HasValue ? x.paymentDate.Value.ToShortDateString() : null;
                             <tr>
-                                <td class="col-sm-4"><small>@x.agreementWork.workName</small></td>
+                                <td class="col-sm-5"><small>@x.agreementWork.workName</small></td>
                                 <td class="col-sm-1"><small>@x.totalScenes</small></td>
                                 <td class="col-sm-1"><small>@x.unitRate</small></td>
                                 <td class="col-sm-1"><small>@x.totalAmount</small></td>
@@ -35,6 +40,8 @@
                                 <td class="col-sm-2"><small>@pDate</small></td>
                                 <td class="col-sm-1">
                                     <small><label class="badge alert-info">PAID</label></small>
+                                    &nbsp;
+                                    
                                 </td>
                             </tr>
                         }
