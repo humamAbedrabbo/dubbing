@@ -15,6 +15,7 @@ namespace voiceLibrary.Controllers
         // GET: templates
         public ActionResult Index()
         {
+            //ViewBag.TagNames = ctx.tags.OrderBy(x => x.Name).Select(x => x.Name).ToArray();
             return View();
         }
         public ActionResult templateList()
