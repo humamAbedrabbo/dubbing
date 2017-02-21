@@ -42,3 +42,25 @@
         <textarea id="description" name="description" rows="2" class="form-control">@Model.Description</textarea>
     </div>
 </form>
+
+<table class="table table-stripped">
+    <thead>
+        <tr>
+            <th>Tag</th>
+            <th>Score</th>
+            <th>Match</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach(var dtl in Model.audioSampleDtls)
+        {
+            <tr>
+                <td>@dtl.tag.Name</td>
+                <td><input class="form-control score" data-id="@dtl.audioSampleDtlIntno" value="@dtl.TagScore" /></td>
+                <td>@dtl.Match</td>
+                <td><a href="javascript:saveScore(@dtl.audioSampleDtlIntno);"><span class="glyphicon glyphicon-floppy-disk">&nbsp;</span></a></td>
+            </tr>
+        }
+    </tbody>
+</table>

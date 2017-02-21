@@ -102,7 +102,7 @@
                     </audio>
                 </td>
                 <td>
-                    <a class="btn btn-primary edit" href="#" data-id="@hdr.audioSampleHdrIntno" data-toggle="modal" data-target="#editSampleModal">Edit</a>
+                    <a class="edit" href="#" data-id="@hdr.audioSampleHdrIntno" data-toggle="modal" data-target="#editSampleModal"><span class="glyphicon glyphicon-edit">&nbsp;</span></a>
                 </td>
             </tr>
         }
@@ -136,10 +136,18 @@
         });
 
         $('#btnSaveDtl').click(function() {
-            alert('jjj');
+            
             $('#editSampleForm').submit();
         
         });
+        function saveScore(id) {
+            var score = $(".score[data-id='" + id + "']").val();
+            var url = '/samples/saveScore';
+            $.ajax({
+                url: url,
+                data: { id: id, score: score }
+            });
+        }
 
     </script>
 

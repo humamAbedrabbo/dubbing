@@ -84,8 +84,14 @@ namespace voiceLibrary.Controllers
 
         public ActionResult editSample(long id)
         {
-            var model = ctx.audioSampleHdrs.Find(id);
             
+            //var model1 = ctx.audioSampleHdrs.Include(x => x.audioSampleDtls).FirstOrDefault(x => x.audioSampleHdrIntno == id);
+            var model = (from h in ctx.audioSampleHdrs
+                         join d in ctx.audioSampleDtls on h.audioSampleHdrIntno equals d.audioSampleHdrIntno
+                         join t in ctx.tags on d.tagId equals t.Id
+                         select h
+                        
+                ).FirstOrDefault(x => x.audioSampleHdrIntno == id);
             ViewBag.tagTemplates = ctx.tagTemplateHdrs.OrderBy(x => x.Title).ToList();
             // ViewBag.tagTemplates = new SelectList(ctx.tagTemplateHdrs.OrderBy(x => x.Title).ToList(), "tagTemplateHdrIntno", "Title");
             return PartialView("editSample", model);
@@ -101,6 +107,16 @@ namespace voiceLibrary.Controllers
             ctx.SaveChanges();
 
             return RedirectToAction("ActorSamples", new { id = voiceActorIntno });
+        }
+
+        public void saveScore(long id, int score)
+        {
+            var model = ctx.audioSampleDtls.Find(id);
+
+            model.TagScore = score;
+            ctx.SaveChanges();
+
+            
         }
     }
 }
