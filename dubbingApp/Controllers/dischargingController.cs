@@ -70,7 +70,7 @@ namespace dubbingApp.Controllers
         public ActionResult castingList(long orderItem)
         {
             var sheetHdr = db.dubbingSheetHdrs.Include(b => b.workCharacter).Where(b => b.orderTrnHdrIntno == orderItem)
-                            .Select(b => new { b, scenesCount = b.dubbingSheetDtls.Count(), takenCount = b.dubbingSheetDtls.Where(c => c.isTaken == true).Count() })
+                            .Select(b => new { b, scenesCount = b.dubbingSheetDtls.Select(c => c.sceneNo).Distinct().Count(), takenCount = b.dubbingSheetDtls.Where(c => c.isTaken == true).Select(c => c.sceneNo).Distinct().Count() })
                             .OrderBy(b => b.b.workCharacter.characterType);
             List<ViewModels.castingListViewModel> model = new List<ViewModels.castingListViewModel>();
             foreach (var hdr in sheetHdr)
@@ -241,8 +241,8 @@ namespace dubbingApp.Controllers
         {
             var orderItem = db.orderTrnHdrs.Find(id);
             DateTime? startDate;
-            if (orderItem.startDubbing.HasValue)
-                startDate = orderItem.startDubbing.Value;
+            if (orderItem.plannedDubbing.HasValue)
+                startDate = orderItem.plannedDubbing.Value;
             else if (orderItem.plannedUpload.HasValue)
                 startDate = orderItem.plannedUpload.Value.AddDays(-7);
             else if (orderItem.plannedShipment.HasValue)
@@ -261,15 +261,10 @@ namespace dubbingApp.Controllers
 
                 //identify supervisor(s) and insert assignments if not provided
                 var orderDtlsModel = db.orderTrnDtls;
-                var emp = db.workPersonnels.FirstOrDefault(b => b.workIntno == orderItem.workIntno && b.status == true);
+                var emp = db.workPersonnels.FirstOrDefault(b => b.workIntno == orderItem.workIntno && b.titleType == "02" && b.status == true);
                 var assignments = orderDtlsModel.Where(b => b.orderTrnHdrIntno == id && b.activityType == "04" && b.status == true);
-                var empAssign = assignments;
-                if (emp != null && assignments.Count() != 0)
-                    empAssign.FirstOrDefault(b => b.empIntno == emp.empIntno);
-                else
-                    empAssign.FirstOrDefault(b => b.empIntno == -10);
-
-                if ((assignments.Count() == 0 && emp != null) || (empAssign == null && emp != null))
+                
+                if (assignments.Count() == 0 && emp != null)
                 {
                     orderTrnDtl dtl = new orderTrnDtl();
                     dtl.orderTrnHdrIntno = id;
@@ -279,10 +274,10 @@ namespace dubbingApp.Controllers
                     orderDtlsModel.Add(dtl);
                     db.SaveChanges();
                 }
-                else
-                    return Content("Unable to Schedule the given Episode! No Supervisor Assigned to Perform the Given Discharge Table.", "text/html");
 
                 assignments = orderDtlsModel.Where(b => b.orderTrnHdrIntno == id && b.activityType == "04" && b.status == true);
+                if (assignments.Count() == 0)
+                    return Content("Unable to Schedule the given Episode! No Default Supervisor Nor Assigned to Perform the Given Discharge Table.", "text/html");
 
                 //identify or create new schedule
                 string fdw = LookupModels.decodeDictionaryItem("settings", "fdw");

@@ -43,9 +43,8 @@
     </div>
 
     @Scripts.Render("~/bundles/jquery")
-    @Scripts.Render("~/bundles/bootstrap")
-    @RenderSection("scripts", required: false)
     
+    @RenderSection("scripts", required: false)
     <script src="~/Scripts/dubbing/busySpinner.js"></script>
     <script>
         //global ajax callback events handlers
@@ -56,6 +55,9 @@
             ajaxIndicatorStop();
         });
     </script>
+
+    @Scripts.Render("~/bundles/bootstrap")
+
 
 </body>
 </html>

@@ -93,10 +93,18 @@
                                     {
                                         <tr>
                                             <td>
-                                                @{ long oiDtl = Model.FirstOrDefault(b => b.workIntno == work.workIntno && b.dueDate == work.dueDate && b.status == "DUE").orderTrnDtlIntno; }
-                                                <button class="btn btn-default btn-xs pull-right" onclick="onStartClick(@oiDtl, @work.studioEpisodeIntno)">
-                                                    Start
-                                                </button>
+                                                @{
+                                                    long oiDtl = Model.FirstOrDefault(b => b.workIntno == work.workIntno && b.dueDate == work.dueDate && b.status == "DUE").orderTrnDtlIntno;
+                                                    if (work.studioEpisodeIntno.HasValue)
+                                                    {
+                                                        <button class="btn btn-default btn-xs pull-right" onclick="onStartClick(@oiDtl, @work.studioEpisodeIntno)">Start</button>
+                                                    }
+                                                    else
+                                                    {
+                                                        <button class="btn btn-default btn-xs pull-right" onclick="onStartClick(@oiDtl)">Start</button>
+                                                    }
+                                                }
+                                                
                                             </td>
                                             <td><small>@work.workName</small></td>
                                             <td><small>@work.schedule</small></td>

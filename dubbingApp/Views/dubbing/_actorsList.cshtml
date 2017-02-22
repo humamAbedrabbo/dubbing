@@ -3,13 +3,13 @@
 
 <div class="container-fluid" style="padding:0px">
     <ul style="padding-left:15px">
-        @foreach (var actor in Model.Select(b => new { b.voiceActorIntno, b.actorName }).Distinct())
+        @foreach (var actor in Model.Select(b => new { b.dubbSheetHdrIntno, b.voiceActorIntno, b.actorName }).Distinct())
         {
             id++;
             string actorId = "D" + id.ToString();
             string actorName = '"' + actor.actorName + '"';
             <li>
-                <a class="actorLbl" id="@actorId" onclick="onActorSelectClick(@actor.voiceActorIntno, @actorName)" href="#">@actor.actorName</a>
+                <a class="actorLbl" id="@actorId" onclick="onActorSelectClick(@actor.dubbSheetHdrIntno, @actor.voiceActorIntno, '@actor.actorName')" href="#">@actor.actorName</a>
             </li>
         }
     </ul>

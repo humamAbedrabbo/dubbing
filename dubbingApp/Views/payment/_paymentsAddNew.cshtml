@@ -19,6 +19,7 @@
             @using (Ajax.BeginForm("paymentsAddNew", "payment",
                                             new AjaxOptions()
                                             {
+                                                InsertionMode = InsertionMode.Replace,
                                                 HttpMethod = "POST",
                                                 UpdateTargetId = "paymentsDueList",
                                                 OnSuccess = "onSuccess",
@@ -32,7 +33,7 @@
                 <input type="hidden" name="workIntno" value="@Model.workIntno" />
                 <input type="hidden" name="voiceActorIntno" value="@Model.voiceActorIntno" />
                 <input type="hidden" name="costCenterType" value="@Model.costCenterType" />
-                
+
                 <div class="form-group-sm">
                     <small>@Html.LabelFor(model => model.paymentDate, "Payment Date", htmlAttributes: new { @class = "control-label" })</small>
                     <div>

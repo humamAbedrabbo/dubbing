@@ -93,7 +93,7 @@
             
         })
 
-        function onActorSelectClick(actor1, actorName1) {
+        function onActorSelectClick(sheet1, actor1, actorName1) {
             $('#currentActorHF').val(actor1);
             $('#dialogueControlHF').val(null);
             $('#dialoguesList').html(null);
@@ -101,7 +101,7 @@
             $.ajax({
                 url: '@Url.Action("scenesList", "dubbing")',
                 type: 'GET',
-                data: { actor: actor1, actorName: actorName1 },
+                data: { sheetHdr: sheet1 },
                 success: function (result) {
                     $('#scenesList').html(result);
                 }

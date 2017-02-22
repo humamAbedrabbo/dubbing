@@ -68,7 +68,7 @@ namespace dubbingApp.Controllers
             int totalUnits = (from A in db.dubbingSheetDtls
                              join B in db.dubbingSheetHdrs on A.dubbSheetHdrIntno equals B.dubbSheetHdrIntno
                              join C in db.orderTrnHdrs on B.orderTrnHdrIntno equals C.orderTrnHdrIntno
-                             where B.isPaid == false && A.isTaken == true && C.workIntno == workIntno && B.voiceActorIntno == rscId && B.actorName == rscName
+                             where B.isPaid == false && A.isTaken == true && C.workIntno == workIntno && B.voiceActorIntno == rscId
                              select A).Count();
 
             int unitRate = 0;
@@ -82,7 +82,7 @@ namespace dubbingApp.Controllers
             }
             var rsc = db.voiceActors.Find(rscId);
             
-            model.paymentDate = DateTime.Now.Date;
+            model.paymentDate = DateTime.Today.Date;
             model.workIntno = workIntno;
             model.voiceActorIntno = rscId;
             model.fullName = rscName;
@@ -112,12 +112,12 @@ namespace dubbingApp.Controllers
             var dtlModel = db.paymentDetails;
             if (ModelState.IsValid)
             {
-                if (string.IsNullOrEmpty(item.currencyCode))
-                    item.currencyCode = "01";
+                item.paymentDate = DateTime.Today.Date;
                 item.status = true;
                 item.isExported = false;
                 item.isPaid = true;
                 model.Add(item);
+                db.SaveChanges();
 
                 //insert payment details
                 var x = (from A in db.dubbingSheetDtls
@@ -126,25 +126,28 @@ namespace dubbingApp.Controllers
                          where B.isPaid == false && A.isTaken == true && C.workIntno == item.workIntno && B.voiceActorIntno == item.voiceActorIntno && B.actorName == item.fullName
                          select A).ToList();
                 var d = x.Select(b => b.dubbingDate).Distinct().ToList();
-                foreach (var x1 in d)
+                foreach (DateTime x1 in d)
                 {
                     paymentDetail dtl = new paymentDetail();
-                    dtl.dubbingDate = x1.Value;
-                    dtl.totalUnits = x.Where(b => b.dubbingDate == x1.Value).Count();
+                    dtl.paymentIntno = item.paymentIntno;
+                    dtl.dubbingDate = x1;
+                    dtl.totalUnits = x.Where(b => b.dubbingDate == x1).Count();
                     dtlModel.Add(dtl);
                 }
 
+                db.SaveChanges();
+
                 var ds = x.Select(b => b.dubbSheetHdrIntno).Distinct().ToList();
-                foreach(var ds1 in ds)
+                foreach(long ds1 in ds)
                 {
-                    var hdr = db.dubbingSheetHdrs.Find(ds1);
+                    var hdr = db.dubbingSheetHdrs.FirstOrDefault(b => b.dubbSheetHdrIntno == ds1);
                     hdr.isPaid = true;
                 }
 
                 db.SaveChanges();
             }
 
-            return RedirectToAction("paymentsDueList");
+            return paymentsDueList(); // RedirectToAction("paymentsDueList");
         }
 
         public ActionResult exportToExcel()

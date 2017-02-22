@@ -75,7 +75,7 @@ namespace dubbingApp.Controllers
 
             //get all assignments for the login supervisor
             var assignments = db.orderTrnDtls.Include(b => b.employee).Include(b => b.orderTrnHdr.agreementWork)
-                                    .Where(b => b.employee.email == loginUserName && b.status == true)
+                                    .Where(b => b.employee.empIntno == sessionEntry.empIntno && b.status == true)
                                     .OrderBy(b => new { b.forDueDate, b.orderTrnHdr.episodeNo }).ToList();
             foreach (var x in assignments)
             {
@@ -109,7 +109,6 @@ namespace dubbingApp.Controllers
                 }
                 model.Add(item);
             }
-            
             return View(model);
         }
 
@@ -205,35 +204,33 @@ namespace dubbingApp.Controllers
             return Json(result, JsonRequestBehavior.AllowGet);
         }
 
-        public ActionResult scenesList(long actor, string actorName)
+        public ActionResult scenesList(long sheetHdr)
         {
             List<ViewModels.dubbingSceneViewModel> scnList = new List<ViewModels.dubbingSceneViewModel>();
-            var model = (from B in db.orderTrnDtls
-                         join C in db.orderTrnHdrs on B.orderTrnHdrIntno equals C.orderTrnHdrIntno
+            var model = (from C in db.orderTrnHdrs
                          join D in db.dubbingSheetHdrs on C.orderTrnHdrIntno equals D.orderTrnHdrIntno
-                         join E in db.scenes on C.orderTrnHdrIntno equals E.orderTrnHdrIntno
                          join F in db.dubbingSheetDtls on D.dubbSheetHdrIntno equals F.dubbSheetHdrIntno
-                         join H in db.dubbingSheetDtls on E.sceneNo equals H.sceneNo
-                         where D.voiceActorIntno == actor && D.actorName == actorName && B.empIntno == sessionEntry.empIntno && B.forDueDate == sessionEntry.dueDate
-                         select new { E.sceneIntno, C.workIntno, C.orderTrnHdrIntno, C.episodeNo, D.dubbSheetHdrIntno, E.sceneNo, E.startTimeCode }).Distinct()
+                         where D.dubbSheetHdrIntno == sheetHdr
+                         select new { C.workIntno, C.orderTrnHdrIntno, C.episodeNo, D.dubbSheetHdrIntno, D.voiceActorIntno, D.actorName, F.sceneNo }).Distinct()
                          .OrderBy(b => new { b.workIntno, b.episodeNo, b.sceneNo });
             
             foreach (var item in model)
             {
                 ViewModels.dubbingSceneViewModel scn = new ViewModels.dubbingSceneViewModel();
-                scn.sceneIntno = item.sceneIntno;
+                var x = db.scenes.FirstOrDefault(b => b.orderTrnHdrIntno == item.orderTrnHdrIntno && b.sceneNo == item.sceneNo);
+                scn.sceneIntno = x.sceneIntno;
                 scn.orderTrnHdrIntno = item.orderTrnHdrIntno;
                 scn.dubbSheetHdrIntno = item.dubbSheetHdrIntno;
-                scn.actor = actor;
-                scn.actorName = actorName;
+                scn.actor = item.voiceActorIntno;
+                scn.actorName = item.actorName;
                 long work = item.workIntno;
                 scn.workIntno = work;
                 scn.workName = db.agreementWorks.Find(work).workName;
                 scn.episodeNo = item.episodeNo;
                 scn.sceneNo = item.sceneNo;
-                scn.startTimeCode = item.startTimeCode;
+                scn.startTimeCode = x.startTimeCode;
                 var z = db.subtitles.Include(b => b.dialog).Where(b => b.dubbSheetHdrIntno == item.dubbSheetHdrIntno
-                                    && b.dialog.sceneIntno == item.sceneIntno && b.dialog.isTaken == false);
+                                    && b.dialog.sceneIntno == x.sceneIntno && b.dialog.isTaken == false);
                 if (z.Count() == 0)
                     scn.isTaken = true;
                 else
