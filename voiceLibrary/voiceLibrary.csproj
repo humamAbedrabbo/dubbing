@@ -309,8 +309,9 @@
     <Content Include="Views\templates\_templateList.cshtml" />
     <Content Include="Views\templates\_editTemplate.cshtml" />
     <Content Include="Views\templates\_templateDtlList.cshtml" />
-    <Content Include="Views\samples\Index.cshtml" />
     <Content Include="Views\samples\ActorSamples.cshtml" />
+    <Content Include="Views\samples\Index.cshtml" />
+    <Content Include="Views\samples\editSample.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
