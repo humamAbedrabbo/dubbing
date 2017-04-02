@@ -4,6 +4,11 @@ using System.Data.Entity;
 using System.Web.Mvc;
 using dubbingModel;
 using dubbingApp.Models;
+using System.Data;
+using System.Reflection;
+using ClosedXML.Excel;
+using System.IO;
+using System.Web;
 
 namespace dubbingApp.Controllers
 {
@@ -144,7 +149,36 @@ namespace dubbingApp.Controllers
             return RedirectToAction("paymentsDueList");
         }
 
-        
+        public void exportToExcel()
+        {
+            var model = db.payments.Include(b => b.agreementWork).Where(b => b.status == true && b.isPaid == true && b.isExported == false).ToList();
+            DataTable dt = new DataTable();
+            dt.Columns.AddRange(new DataColumn[6] { new DataColumn("Actor", typeof(string)),
+                                                    new DataColumn("AccountNo", typeof(string)),
+                                                    new DataColumn("Cost Center",typeof(string)),
+                                                    new DataColumn("Total Scenes",typeof(int)),
+                                                    new DataColumn("Total Amount",typeof(int)),
+                                                    new DataColumn("Payment Date",typeof(DateTime)) });
+            foreach(var payment in model)
+            {
+                dt.Rows.Add(payment.fullName, payment.accountNo, payment.agreementWork.workName, payment.totalScenes, payment.totalAmount, payment.paymentDate);
+                payment.isExported = true;
+            }
+
+            var wb = new XLWorkbook();
+            wb.Worksheets.Add(dt, "Payments");
+
+            string file1 = "Payments" + "_" + DateTime.Now.ToShortDateString() + ".xlsx";
+            Response.Clear();
+            Response.Buffer = true;
+            Response.AddHeader("content-disposition", "attachment; filename=" + file1);
+            Response.ContentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+            MemoryStream stream = GetStream(wb);// The method is defined below
+            Response.BinaryWrite(stream.ToArray());
+            Response.End();
+
+            db.SaveChanges();
+        }
 
         public ActionResult printVouchersList(long actorId, string actorName)
         {
@@ -152,6 +186,14 @@ namespace dubbingApp.Controllers
                         .Where(b => b.payment.voiceActorIntno == actorId && b.payment.fullName == actorName && b.payment.status == true && b.payment.isPaid == true && b.payment.isExported == false);
             ViewBag.actorName = actorName;
             return PartialView("_printVouchersList", model.ToList());
+        }
+
+        public MemoryStream GetStream(XLWorkbook excelWorkbook)
+        {
+            MemoryStream fs = new MemoryStream();
+            excelWorkbook.SaveAs(fs);
+            fs.Position = 0;
+            return fs;
         }
     }
 }

@@ -29,8 +29,8 @@
     </tbody>
     <tfoot>
         @{ 
-            int grandTotal = Model.Select(b => b.payment.totalAmount).Sum();
-            int totalDeduction = Model.Select(b => b.payment.deduction).Sum();
+            int grandTotal = Model.Select(b => b.payment).Distinct().Select(c => c.totalAmount).Sum();
+            int totalDeduction = Model.Select(b => b.payment).Distinct().Select(c => c.deduction).Sum();
             int netAmount = grandTotal - totalDeduction;
         }
         <tr>

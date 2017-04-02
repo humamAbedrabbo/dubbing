@@ -29,7 +29,7 @@
                     <a class="btn btn-success" href="#" onclick="onPaidVouchersClick()">&laquo; Show Paid Vouchers</a>
                 </p>
                 <p>
-                    <a class="btn btn-info" id="exportBtn" href="#" onclick="onExportClick()">&laquo; Export All to Excel ...</a>
+                    <a class="btn btn-info" id="exportBtn" href="/payment/exportToExcel">&laquo; Export All to Excel ...</a>
                 </p>
             </div>
             <br />
@@ -81,16 +81,6 @@
                 type: 'GET',
                 success: function (result) {
                     $('#paymentsDueList').html(result);
-                }
-            });
-        }
-
-        function onExportClick() {
-            $.ajax({
-                url: '@Url.Action("exportToExcel", "payment")',
-                type: 'GET',
-                success: function (result) {
-                    alert("Vouchers Successfully Exported to Excel.");
                 }
             });
         }
