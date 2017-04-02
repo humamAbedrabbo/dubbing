@@ -1,13 +1,7 @@
-﻿using ClosedXML.Excel;
-using System;
-using System.Collections.Generic;
-using System.IO;
+﻿using System;
 using System.Linq;
 using System.Data.Entity;
-using System.Web;
 using System.Web.Mvc;
-using System.Web.UI;
-using System.Web.UI.WebControls;
 using dubbingModel;
 using dubbingApp.Models;
 
@@ -147,41 +141,10 @@ namespace dubbingApp.Controllers
                 db.SaveChanges();
             }
 
-            return paymentsDueList(); // RedirectToAction("paymentsDueList");
+            return RedirectToAction("paymentsDueList");
         }
 
-        public ActionResult exportToExcel()
-        {
-            var model = db.payments.Where(b => b.status == true && b.isPaid == true && b.isExported == false);
-            var grid = new GridView();
-            var exportModel = model.Select(b => new { Actor = b.fullName, AccountNo = b.accountNo, CostCenter = b.agreementWork.workName, TotalScenes = b.totalScenes, TotalAmount = b.totalAmount, PaymentDate = b.paymentDate });
-
-            grid.DataSource = exportModel.ToList();
-            grid.DataBind();
-
-            Response.ClearContent();
-            Response.Buffer = true;
-            Response.AddHeader("content-disposition", "attachment; filename=Payments-" + DateTime.Now.ToString() + ".xls");
-            //Response.AppendHeader("ContentType", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
-            Response.AppendHeader("ContentType", "application/vnd.ms-excel");
-
-            Response.Charset = "UTF-8";
-            StringWriter objStringWriter = new StringWriter();
-            HtmlTextWriter objHtmlTextWriter = new HtmlTextWriter(objStringWriter);
-
-            grid.RenderControl(objHtmlTextWriter);
-
-            Response.Output.Write(objStringWriter.ToString());
-            Response.Flush();
-            Response.End();
-
-            foreach (var x in model)
-            {
-                x.isExported = true;
-            }
-            db.SaveChanges();
-            return null;
-        }
+        
 
         public ActionResult printVouchersList(long actorId, string actorName)
         {
