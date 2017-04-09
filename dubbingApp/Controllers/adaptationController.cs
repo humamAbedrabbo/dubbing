@@ -55,8 +55,8 @@ namespace dubbingApp.Controllers
             short sNo = 0;
             long lastDlgId = 0;
             long lastSceneId = 0;
-            var subtitles = ctx.subtitles.Include(x => x.dialog).Include(x => x.dialog.scene).Where(x => x.dialog.scene.orderTrnHdrIntno == orderTrnHdrIntno).OrderBy(x => x.startSecond).ThenBy(x => x.endSecond).ToList();
-            foreach(var s in subtitles)
+            var subtitles = ctx.subtitles.Include(x => x.dialog).Include(x => x.dialog.scene).Where(x => x.dialog.scene.orderTrnHdrIntno == orderTrnHdrIntno).OrderBy(x => x.startSecond).ThenBy(x => x.subtitleIntno).ToList(); //.ThenBy(x => x.endSecond)
+            foreach (var s in subtitles)
             {
                 if(s.dialog.scene.sceneIntno == lastSceneId)
                 {
@@ -639,6 +639,22 @@ namespace dubbingApp.Controllers
 
         }
 
+        //added by wael
+        //to replace text in all subtitles belonging to an episode
+        public ActionResult ReplaceText(long id, string findText, string replaceWith)
+        {
+            if (string.IsNullOrEmpty(findText) || string.IsNullOrEmpty(replaceWith))
+                return Content("Please provide both Values!", "text/html");
+            findText = findText.Trim();
+            replaceWith = replaceWith.Trim();
 
+            var model = ctx.subtitles.Include(b => b.dialog.scene).Where(b => b.dialog.scene.orderTrnHdrIntno == id && b.scentence.Contains(findText)).ToList();
+            foreach(var item in model)
+            {
+                item.scentence = item.scentence.Replace(findText, replaceWith);
+            }
+            ctx.SaveChanges();
+            return Content(model.Count() + " Occurances Were found and Successfully Replaced!", "text/html");
+        }
     }    
 }
