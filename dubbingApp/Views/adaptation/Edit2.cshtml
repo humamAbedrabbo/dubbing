@@ -51,7 +51,6 @@
         <div class="box box-warning direct-chat direct-chat-warning" style="height:600px;">
             <div class="box-header with-border">
                 <h3 class="box-title">Subtitles</h3>
-                <a role="button" class="btn btn-xs btn-default pull-right" href="#" data-toggle="modal" data-target="#myModal"><small>Replace Text</small></a>
             </div>
             <div class="box-body"  style="height:600px;">
                 <div id="subtitlesContainer" class="direct-chat-messages"  style="height:600px;">
@@ -128,30 +127,6 @@
             </div>
         </div>
         <br />
-    </div>
-</div>
-
-<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModal-label">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                <h4 class="modal-title" id="myModal-label"><small>Replace Text in Subtitles</small></h4>
-            </div>
-            <div class="modal-body">
-                <div class="row">
-                    <label class="col-sm-3"><small>Find Text: </small></label><input id="findText" dir="rtl" required autofocus />
-                </div>
-                <div class="row">
-                    <label class="col-sm-3"><small>Replace With: </small></label><input id="replaceWith" dir="rtl" required />
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary" onclick="onReplaceClick()">Replace All</button>
-                <label class="pull-left" id="result"></label>
-            </div>
-        </div>
     </div>
 </div>
 
@@ -558,16 +533,6 @@
         subtitlesList2();
     });
 
-    //added by wael
-    function onReplaceClick() {
-        $.ajax({
-            url: '@Url.Action("ReplaceText", "adaptation")',
-            type: 'GET',
-            data: { id: @Model.OrderTrnHdrIntno, findText: $('#findText').val(), replaceWith: $('#replaceWith').val() },
-            success: function (result) {
-                $('#result').html(result);
-            }
-        })
-    }
+    
     </script>
 }

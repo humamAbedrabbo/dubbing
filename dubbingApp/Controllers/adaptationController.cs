@@ -130,7 +130,7 @@ namespace dubbingApp.Controllers
                 .ToList();
             ViewBag.Dialogs = model.Select(x => x.dialog).Distinct().OrderBy(x => x.scene.sceneNo).ThenBy(x => x.dialogNo).ToList();
             ViewBag.Scenes = model.Select(x => x.dialog.scene).Distinct().OrderBy(x => x.sceneNo).ToList();
-
+            ViewBag.order = orderTrnHdrIntno;
             return View("EditScenesAndDialogs", model);
         }
 
@@ -655,6 +655,29 @@ namespace dubbingApp.Controllers
             }
             ctx.SaveChanges();
             return Content(model.Count() + " Occurances Were found and Successfully Replaced!", "text/html");
+        }
+
+        public ActionResult RenameCharacter(long id, string characterName, string replaceWithName)
+        {
+            if (string.IsNullOrEmpty(characterName) || string.IsNullOrEmpty(replaceWithName))
+                return Content("Please provide both Values!", "text/html");
+            characterName = characterName.Trim();
+            replaceWithName = replaceWithName.Trim();
+
+            long workIntno = ctx.orderTrnHdrs.Find(id).workIntno;
+            long? replaceWithIntno = null;
+            var c2 = ctx.workCharacters.SingleOrDefault(b => b.workIntno == workIntno && b.characterName == replaceWithName);
+            if (c2 != null)
+                replaceWithIntno = c2.workCharacterIntno;
+
+            var model = ctx.dubbingSheetHdrs.Where(b => b.orderTrnHdrIntno == id && b.characterName == characterName).ToList();
+            foreach(var item in model)
+            {
+                item.workCharacterIntno = replaceWithIntno;
+                item.characterName = replaceWithName;
+            }
+
+            return Content(model.Count() + " Occurances Were found and Successfully Renamed!", "text/html");
         }
     }    
 }
