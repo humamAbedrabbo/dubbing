@@ -17,7 +17,8 @@
             @Html.Hidden("workIntnoHF")
             <div class="row">
                 <p>
-                    <a href="#" class="workLbl" id="all" onclick="onWorkSelectClick(null, null, 'all')"><small>All Works</small></a>
+                    <a href="#" class="workLbl" id="all" onclick="onWorkSelectClick(null, '01', 'all')"><small>Newly Received Episodes ...</small></a>
+                    <hr />
                 </p>
 
                 @foreach (SelectListItem item in ViewBag.worksList)

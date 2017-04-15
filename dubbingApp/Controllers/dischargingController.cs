@@ -30,7 +30,7 @@ namespace dubbingApp.Controllers
 
         public ActionResult episodesList()
         {
-            var x = db.orderTrnHdrs.Include(b => b.agreementWork).Where(b => b.endAdaptation.HasValue && !b.endDubbing.HasValue).OrderBy(b => new { b.workIntno, b.episodeNo });
+            var x = db.orderTrnHdrs.Include(b => b.agreementWork).Where(b => b.endAdaptation.HasValue && !b.endDubbing.HasValue && b.agreementWork.status == "01").OrderBy(b => new { b.workIntno, b.episodeNo });
             List<ViewModels.dischargeEpisodeViewModel> model = new List<ViewModels.dischargeEpisodeViewModel>();
 
             foreach(var x1 in x)

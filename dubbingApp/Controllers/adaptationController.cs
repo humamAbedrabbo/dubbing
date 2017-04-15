@@ -29,7 +29,7 @@ namespace dubbingApp.Controllers
         public ActionResult GetAdaptationWorks(bool isActive = true)
         {
             // Get list of episodes where adaptation is in progress
-            var model = ctx.orderTrnDtls.Include(x => x.employee).Include(x => x.orderTrnHdr).Include(x => x.orderTrnHdr.agreementWork).Where(x => (x.activityType == "01" || x.activityType == "02") && x.status == isActive).ToList();
+            var model = ctx.orderTrnDtls.Include(x => x.employee).Include(x => x.orderTrnHdr).Include(x => x.orderTrnHdr.agreementWork).Where(x => (x.activityType == "01" || x.activityType == "02") && x.status == isActive && x.orderTrnHdr.agreementWork.status == "01").ToList();
 
             if (User.IsInRole("EDITOR"))
             {
@@ -98,15 +98,15 @@ namespace dubbingApp.Controllers
 
             if (assignments.Count() == 0 && !order.orderTrnHdr.endAdaptation.HasValue)
             {
-                order.orderTrnHdr.endAdaptation = DateTime.Now;
-                ctx.SaveChanges();
-                
                 CleanSheetHdrsWithoutScenes(order.orderTrnHdrIntno);
                 CleanEmptyDialogs(order.orderTrnHdrIntno);
                 CleanEmptyScenes(order.orderTrnHdrIntno);
                 RenumberScenesAndDialogs(order.orderTrnHdrIntno);
                 //added by wael
                 CreateSheetDtls(order.orderTrnHdrIntno);
+
+                order.orderTrnHdr.endAdaptation = DateTime.Now;
+                ctx.SaveChanges();
             }
             return RedirectToAction("Index");
         }
@@ -534,7 +534,7 @@ namespace dubbingApp.Controllers
 
             foreach (var hdr in x)
             {
-                var z = ctx.dubbingSheetDtls.FirstOrDefault(b => b.dubbSheetHdrIntno == hdr.dubbSheetHdrIntno && b.orderTrnHdrIntno == orderTrnHdrIntno && b.sceneNo == hdr.sceneNo);
+                var z = ctx.dubbingSheetDtls.FirstOrDefault(b => b.dubbSheetHdrIntno == hdr.dubbSheetHdrIntno && b.sceneNo == hdr.sceneNo);
                 if (z == null)
                 {
                     dubbingSheetDtl dtl = new dubbingSheetDtl();
@@ -542,13 +542,12 @@ namespace dubbingApp.Controllers
                     dtl.orderTrnHdrIntno = orderTrnHdrIntno;
                     dtl.sceneNo = hdr.sceneNo;
                     dtl.isTaken = false;
-                    dtl.dubbingDate = DateTime.Today.Date;
-                    dtl.takenTimeStamp = DateTime.Now;
                     model.Add(dtl);
                 }
             }
             ctx.SaveChanges();
         }
+
         [HttpPost]
         public ActionResult ImportFile(long order)
         {

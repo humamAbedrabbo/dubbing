@@ -288,7 +288,7 @@ namespace dubbingApp.Controllers
         
         public ActionResult contractStatusChange(long? client, long? agreement, long work, string newStatus)
         {
-            if (newStatus == "03") //endorse contract(work)
+            if (newStatus == "99") //should be 03 to endorse contract(work) using stored procedure
             {
                 //call stored procedure to clean unecessary details
                 string resp = null;
