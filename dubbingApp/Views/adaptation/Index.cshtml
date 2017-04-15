@@ -22,10 +22,18 @@
 
 @section Scripts 
 {
+    <script src="~/Scripts/dubbing/busySpinner.js"></script>
+
     <script>
+        $(document).ajaxStart(function () {
+            ajaxIndicatorStart('Processing.. please wait..');
+        }).ajaxComplete(function () {
+            ajaxIndicatorStop();
+        });
+
         function filterActive() {
             updateWorks(true);
-            
+
             $("#filterCompleted").removeClass("active");
             $("#filterActive").addClass("active");
         }
@@ -46,6 +54,17 @@
             });
         }
 
+        function onCompleteAdaptation(id1) {
+            $.ajax({
+                url: '@Url.Action("CompleteAdaptation", "adaptation")',
+                type: 'GET',
+                data: { orderTrnDtlIntno: id1 },
+                success: function (result) {
+                    $('#worksContainer').html(result);
+                }
+            });
+        }
+
         function importAdaptationFile() {
             var fileName = $("#importFileName").val();
             var orderTrnHdrIntno = $("#order").val();
@@ -57,7 +76,7 @@
                     alert('File Imported!');
                 }
             });
-            
+
         }
 
         $(function () {

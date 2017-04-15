@@ -108,7 +108,7 @@ namespace dubbingApp.Controllers
                 order.orderTrnHdr.endAdaptation = DateTime.Now;
                 ctx.SaveChanges();
             }
-            return RedirectToAction("Index");
+            return RedirectToAction("GetAdaptationWorks", new { isActive = true });
         }
 
         public ActionResult EditScenesAndDialogs(long orderTrnHdrIntno)

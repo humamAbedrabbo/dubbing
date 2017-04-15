@@ -33,7 +33,7 @@
                 <td>@item.thruTimeCode</td>
                 <td><a class="btn btn-primary" href='@Url.Action("Edit2", "adaptation", new { id = item.orderTrnHdrIntno, fromTime = item.fromTimeCode, toTime = item.thruTimeCode})'>Edit</a></td>
                 <td><a class="btn btn-primary" href='@Url.Action("EditScenesAndDialogs", "adaptation", new { orderTrnHdrIntno = item.orderTrnHdrIntno})'>Modify</a></td>
-                <td><a class="btn btn-success" href='@Url.Action("CompleteAdaptation", "adaptation", new { orderTrnDtlIntno = item.orderTrnDtlIntno})'>Complete Work</a></td>
+                <td><a class="btn btn-success" href='#' onclick="onCompleteAdaptation(@item.orderTrnDtlIntno)">Complete Work</a></td>
                 <td><a class="btn btn-primary form-control" href='@Url.Action("downloadFile", new { item.orderTrnHdrIntno })'>Download SRT</a></td>
                 <td><a class="btn btn-primary form-control" href='@Url.Action("downloadTemplateFile", new { item.orderTrnHdrIntno })'>Download Template</a></td>
                 <td><a class="btn btn-primary form-control" data-toggle="modal" data-target="#importModal" data-order="@item.orderTrnHdrIntno">Import</a></td>
