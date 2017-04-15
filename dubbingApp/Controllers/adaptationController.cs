@@ -29,7 +29,7 @@ namespace dubbingApp.Controllers
         public ActionResult GetAdaptationWorks(bool isActive = true)
         {
             // Get list of episodes where adaptation is in progress
-            var model = ctx.orderTrnDtls.Include(x => x.employee).Include(x => x.orderTrnHdr).Include(x => x.orderTrnHdr.agreementWork).Where(x => (x.activityType == "01" || x.activityType == "02") && x.status == isActive && x.orderTrnHdr.agreementWork.status == "01").ToList();
+            var model = ctx.orderTrnDtls.Include(x => x.employee).Include(x => x.orderTrnHdr).Include(x => x.orderTrnHdr.agreementWork).Where(x => x.activityType == "02" && x.status == isActive && x.orderTrnHdr.agreementWork.status == "01").ToList();
 
             if (User.IsInRole("EDITOR"))
             {
