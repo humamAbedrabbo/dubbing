@@ -320,30 +320,21 @@ namespace dubbingApp.Controllers
 
         [ValidateAntiForgeryToken]
         [HttpPost, ValidateInput(false)]
-        public ActionResult scheduleAddNew(long orderItem, int fromEpisode, int thruEpisode, DateTime? dubbingDate, DateTime? uploadDate, DateTime? shipmentDate)
+        public ActionResult scheduleAddNew(long orderItem, int fromEpisode, int thruEpisode, DateTime uploadDate)
         {
-            if (dubbingDate.HasValue || uploadDate.HasValue || shipmentDate.HasValue)
+            var model = db.orderTrnHdrs;
+            long work = model.Find(orderItem).workIntno;
+            var oiList = model.Where(b => b.workIntno == work && b.episodeNo >= fromEpisode && b.episodeNo <= thruEpisode)
+                        .Select(b => b.orderTrnHdrIntno).ToList();
+            foreach (long item in oiList)
             {
-                var model = db.orderTrnHdrs;
-                long work = model.Find(orderItem).workIntno;
-                var oiList = model.Where(b => b.workIntno == work && b.episodeNo >= fromEpisode && b.episodeNo <= thruEpisode)
-                            .Select(b => b.orderTrnHdrIntno).ToList();
-                foreach (long item in oiList)
-                {
-                    var modelItem = model.Find(item);
-
-                    if (dubbingDate.HasValue)
-                        modelItem.plannedDubbing = dubbingDate;
-                    if (uploadDate.HasValue)
-                        modelItem.plannedUpload = uploadDate;
-                    if (shipmentDate.HasValue)
-                        modelItem.plannedShipment = shipmentDate;
-                }
-                db.SaveChanges();
-                return Content("Successfully Scheduled. ", "text/html");
+                var modelItem = model.Find(item);
+                modelItem.plannedDubbing = uploadDate.AddDays(-7);
+                modelItem.plannedUpload = uploadDate;
+                modelItem.plannedShipment = uploadDate.AddDays(7);
             }
-            else
-                return Content("Failed! At Least one scheduling date must be given. ", "text/html");
+            db.SaveChanges();
+            return Content("Successfully Scheduled. ", "text/html");
         }
 
         // order quality check

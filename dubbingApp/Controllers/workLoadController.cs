@@ -265,7 +265,7 @@ namespace dubbingApp.Controllers
                     {
                         epMin = model.Where(b => b.workIntno == w.workIntno).Select(b => b.episodeNo).Min().ToString();
                         epMax = model.Where(b => b.workIntno == w.workIntno).Select(b => b.episodeNo).Max().ToString();
-                        wList.Add(w.workName + "|" + epMin + " - " + epMax);
+                        wList.Add(w.workName + "|" + epMin + " - " + epMax + "|" + w.workIntno + "|" + activityType1);
                     }
                 }
             }
@@ -285,7 +285,7 @@ namespace dubbingApp.Controllers
                     {
                         epMin = model.Where(b => b.workIntno == w.workIntno).Select(b => b.episodeNo).Min().ToString();
                         epMax = model.Where(b => b.workIntno == w.workIntno).Select(b => b.episodeNo).Max().ToString();
-                        wList.Add(w.workName + "|" + epMin + " - " + epMax);
+                        wList.Add(w.workName + "|" + epMin + " - " + epMax + "|" + w.workIntno + "|" + activityType1);
                     }
                 }
             }
@@ -305,12 +305,20 @@ namespace dubbingApp.Controllers
                     {
                         epMin = model.Where(b => b.workIntno == w.workIntno).Select(b => b.episodeNo).Min().ToString();
                         epMax = model.Where(b => b.workIntno == w.workIntno).Select(b => b.episodeNo).Max().ToString();
-                        wList.Add(w.workName + "|" + epMin + " - " + epMax);
+                        wList.Add(w.workName + "|" + epMin + " - " + epMax + "|" + w.workIntno + "|" + activityType1);
                     }
                 }
             }
             
             return PartialView("_waitingList", wList);
+        }
+
+        public ActionResult uploadList(long workIntno, string activityType)
+        {
+            var model = db.orderTrnHdrs.Where(b => b.status == "04" && b.workIntno == workIntno
+                                    && !b.orderTrnDtls.Where(d => d.activityType == activityType).Select(d => d.orderTrnHdrIntno).Contains(b.orderTrnHdrIntno));
+            ViewBag.workName = db.agreementWorks.Find(workIntno).workName;
+            return PartialView("_uploadList", model.ToList());
         }
     }
 }

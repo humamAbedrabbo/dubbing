@@ -94,6 +94,7 @@ namespace dubbingApp.Models
             public string workName { get; set; }
             public short episodeNo { get; set; }
             public string dueDate { get; set; }
+            public string uploadDate { get; set; }
             public long? studioIntno { get; set; }
             public long? studioEpisodeIntno { get; set; }
             public string studioNo { get; set; }

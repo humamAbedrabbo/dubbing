@@ -603,6 +603,7 @@
     <Content Include="Views\accessRights\_usersList.cshtml" />
     <Content Include="Views\adaptation\EditScenesAndDialogs.cshtml" />
     <Content Include="Views\payment\_printVouchersList.cshtml" />
+    <Content Include="Views\workLoad\_uploadList.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

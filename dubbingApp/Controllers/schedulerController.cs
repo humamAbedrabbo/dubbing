@@ -277,6 +277,7 @@ namespace dubbingApp.Controllers
                 item.workName = dtl.orderTrnHdr.agreementWork.workName;
                 item.episodeNo = dtl.orderTrnHdr.episodeNo;
                 item.dueDate = dtl.forDueDate.HasValue ? dtl.forDueDate.Value.ToString("dd/MM") : DateTime.Today.Date.ToString("dd/MM");
+                item.uploadDate = dtl.orderTrnHdr.plannedUpload.HasValue ? dtl.orderTrnHdr.plannedUpload.Value.ToString("dd/MM") : "-";
                 item.status = "alert-default";
 
                 if (schedule.HasValue)

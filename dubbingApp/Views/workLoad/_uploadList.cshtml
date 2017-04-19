@@ -1,0 +1,35 @@
+﻿@model IEnumerable<dubbingModel.orderTrnHdr>
+
+<div class="container-fluid" style="padding:0px">
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <div>
+                <label>Upload Schedule</label>
+                <button class="btn btn-default btn-xs pull-right" onclick="onCloseClick()" title="Close">
+                    <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+                </button>
+            </div>
+            <div><small>@ViewBag.workName</small></div>
+        </div>
+        <div class="panel-body">
+            <table class="table table-hover table-condensed">
+                <thead>
+                    <tr>
+                        <th><small>Episode</small></th>
+                        <th><small>Upload</small></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var x in Model)
+                    {
+                        string uploadDate = x.plannedUpload.HasValue ? x.plannedUpload.Value.ToString("dd/MM") : "-";
+                        <tr>
+                            <td><small>@x.episodeNo</small></td>
+                            <td><small>@uploadDate</small></td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

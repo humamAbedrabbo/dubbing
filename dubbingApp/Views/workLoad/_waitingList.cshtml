@@ -5,7 +5,7 @@
         <div class="panel-heading">
             <div class="row">
                 <div class="col-sm-12">
-                    <small><label>Waiting ...</label></small>
+                    <small><label>Un Assigned ...</label></small>
                 </div>
             </div>
         </div>
@@ -18,7 +18,7 @@
                         if (rec[1] == "xxx")
                         {
                             <tr>
-                                <td class="col-sm-8"><small><label class="badge bg-info">@rec[0]</label></small></td>
+                                <td class="col-sm-8"><small><label class="badge alert-info">@rec[0]</label></small></td>
                                 <td class="col-sm-4"></td>
                             </tr>
                         }
@@ -27,6 +27,11 @@
                             <tr>
                                 <td class="col-sm-8"><small><label>@rec[0]</label></small></td>
                                 <td class="col-sm-4"><small>@rec[1]</small></td>
+                                <td>
+                                    <a role="button" class="btn btn-xs btn-default" href="javascript: getUploadList(@rec[2], '@rec[3]')" title="Upload Schedule">
+                                        <span class="glyphicon glyphicon-option-horizontal" aria-hidden="true"></span>
+                                    </a>
+                                </td>
                             </tr>
                         }
                     }

@@ -146,5 +146,16 @@
             });
             $('#activePanelHF').val(panelId);
         }
+
+        function getUploadList(work1, activity1) {
+            $.ajax({
+                url: '@Url.Action("uploadList", "workLoad")',
+                type: 'GET',
+                data: { workIntno: work1, activityType: activity1 },
+                success: function (result) {
+                    $('#allDetails').html(result);
+                }
+            })
+        }
     </script>
 }
