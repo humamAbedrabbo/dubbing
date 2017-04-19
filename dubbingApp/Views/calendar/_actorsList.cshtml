@@ -1,6 +1,11 @@
 ﻿<div class="container-fluid" style="padding:0px">
-    <ul>
-        @foreach (SelectListItem actor in new SelectList(ViewBag.actorsList, "voiceActorIntno", "fullName"))
+    <div>
+        <label style="padding:0px"><small>Actors List</small></label>
+        <div style="padding:0px"><small>Sorted by Total Scenes (Importance)</small></div>
+    </div>
+    <hr />
+    <ul style="padding:10px">
+        @foreach (SelectListItem actor in ViewBag.actorsList as SelectList)
         {
             string actor1 = actor.Value.ToString();
             <li>

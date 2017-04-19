@@ -8,7 +8,7 @@
             string btnColor;
             foreach (dubbingModel.dubbDomain item in Model)
             {
-                if (std.FirstOrDefault(b => b == item.domainCode) != null)
+                if (std != null && std.FirstOrDefault(b => b == item.domainCode) != null)
                 {
                     btnColor = "btn-success";
                 }

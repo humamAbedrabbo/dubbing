@@ -41,14 +41,14 @@ namespace dubbingApp.Controllers
         public ActionResult assignmentsList()
         {
             var model = db.orderTrnDtls.Include(b => b.orderTrnHdr.agreementWork).Include(b => b.employee)
-                        .Where(b => (b.activityType != "03" && b.activityType != "05") && b.status == true);
+                        .Where(b => (b.activityType != "03" && b.activityType != "05") && b.orderTrnHdr.agreementWork.status == "01" && b.status == true);
             return PartialView("_assignmentsList", model.ToList());
         }
 
         public ActionResult resourceAssignmentsList(long empIntno, long workIntno)
         {
             var model = db.orderTrnDtls.Include(b => b.orderTrnHdr.agreementWork).Include(b => b.employee)
-                        .Where(b => b.orderTrnHdr.workIntno == workIntno && b.empIntno == empIntno && b.status == true).ToList();
+                        .Where(b => b.orderTrnHdr.workIntno == workIntno && b.empIntno == empIntno && b.orderTrnHdr.agreementWork.status == "01" && b.status == true).ToList();
             var x = model.First();
             ViewBag.workName = x.orderTrnHdr.agreementWork.workName;
             ViewBag.empName = x.employee.fullName;

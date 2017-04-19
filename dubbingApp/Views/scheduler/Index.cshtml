@@ -6,12 +6,16 @@
 <div class="container-fluid">
     <div class="jumbotron" style="padding:5px">
         <h2>Dubbing Scheduler</h2>
-        <p class="lead"><h5>Optimize Dubbing Scheduling Through Balancing the Allocation of the Different Resources; Works, Studios &amp; Studio Teams. You can Reload a Schedule to reflect last changes on Dubbing Assignments or You can ReSchedule/Remove an Assignment from a Certain Schedule. When the Schedule is Completed, You can Publish it to allow making Actors' Appointments. For shortlisting, You can always use Studio or Supervisor Filters.</h5></p>
+        <p class="lead">
+            <h5>In this page, You will define new Schedules which will AUTOMATICALLY LOAD Dubbing assignments having 'Due Date' falling within the new Schedule Week Interval. However, You can Later Re-Schedule any Assignment. Publishing a Schedule will Generate an Initial Dubbing Calendar for Actors' Appointments.</h5>
+            <h5>It is Very IMPORTANT to Properly ENDORSE a Schedule after the Dubbing Week is Over. This will Endorse all related Assignments, Will mark Included Episodes as Dubbed, and Finally Will insert an appropriate log.</h5>
+            <h5>For shortlisting, You can always use Studio or Supervisor Filters.</h5>
+        </p>
         <span><label><a href="#" onclick="onSchedulesAddNewClick()">Create New Schedule ...</a></label></span>
     </div>
     
     <div class="row">
-        <div class="col-md-10 col-md-offset-2" id="stdList">
+        <div class="col-md-10 col-md-offset-2" style="padding:0px;padding-left:5px" id="stdList">
             @Html.Action("studiosList")
         </div>
     </div>
@@ -114,9 +118,17 @@
                     $('#supervisorsList').html(result);
                 }
             });
+            $.ajax({
+                url: '@Url.Action("studiosList", "scheduler")',
+                type: 'GET',
+                data: { sch: sch },
+                success: function (result) {
+                    $('#stdList').html(result);
+                }
+            });
         }
         function onSchedulesReloadClick(schedule1) {
-            if (confirm("Please Confirm! About to Reload the Selected Schedule.")) {
+            if (confirm("Please Confirm! About to Reload the Selected Schedule. This will UPDATE the Schedule with New Dubbing Assignments.")) {
                 $.ajax({
                     url: '@Url.Action("schedulesReload", "scheduler")',
                     type: 'GET',
@@ -204,16 +216,18 @@
         }
 
         function onRescheduleSuccess() {
-            $('#details').html(null);
-            $.ajax({
-                url: '@Url.Action("scheduleDetails", "scheduler")',
-                type: 'GET',
-                data: { schedule: schedule1 },
-                success: function (result) {
-                    $('#bulletin').html(result);
-                }
-            });
-            $('#bulletin').show();
+            if ($('#currentScheduleHF').val() !== '') {
+                $('#details').html(null);
+                $.ajax({
+                    url: '@Url.Action("scheduleDetails", "scheduler")',
+                    type: 'GET',
+                    data: { schedule: $('#currentScheduleHF').val() },
+                    success: function (result) {
+                        $('#bulletin').html(result);
+                    }
+                });
+                $('#bulletin').show();
+            }
         }
 
         //studios

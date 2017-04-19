@@ -11,12 +11,13 @@
 
     <div class="row">
         <div class="col-sm-3">
-            <div class="col-sm-12">
+            <div class="col-sm-12" style="padding:0px">
                 <small>
                     @Html.DropDownList("scheduleIntno", new SelectList(ViewBag.schedulesList, "Key", "Value"), "Select Schedule ...", htmlAttributes: new { @class = "form-control" })
                 </small>
             </div>
-            <br /><br />
+            <br />
+            <hr />
             <div class="col-sm-12" id="actorsList"></div>    
         </div>
         

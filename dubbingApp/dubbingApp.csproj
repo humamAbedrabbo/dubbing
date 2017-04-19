@@ -509,7 +509,6 @@
     <Content Include="Views\payment\_paymentsDueList.cshtml" />
     <Content Include="Views\payment\_paymentsList.cshtml" />
     <Content Include="Views\payment\_paymentsAddNew.cshtml" />
-    <Content Include="Views\dubbing\_scheduledWorksList.cshtml" />
     <Content Include="Views\adaptation\Edit.cshtml" />
     <Content Include="Views\adaptation\Index.cshtml" />
     <Content Include="Views\adaptation\_sceneList.cshtml" />

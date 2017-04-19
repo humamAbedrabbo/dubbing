@@ -22,7 +22,7 @@ namespace dubbingApp.Controllers
         // GET: calendar
         public ActionResult Index()
         {
-            var x = db.dubbingTrnHdrs.Where(b => b.status == true).ToList();
+            var x = db.dubbingTrnHdrs.Where(b => b.status == true).OrderBy(b => b.fromDate).ToList();
             var schedulesList = new List<KeyValuePair<long, string>>();
             foreach (dubbingTrnHdr hdr in x)
             {
@@ -40,8 +40,8 @@ namespace dubbingApp.Controllers
                          join C in db.dubbingSheetHdrs on B.voiceActorIntno equals C.voiceActorIntno
                          join D in db.voiceActors on C.voiceActorIntno equals D.voiceActorIntno
                          where A.dubbTrnHdrIntno == schedule
-                         select new { D.voiceActorIntno, D.fullName }).Distinct().OrderBy(b => b.fullName);
-            ViewBag.actorsList = model.ToList();
+                         select new { D.voiceActorIntno, D.fullName, B.totalScenes }).Distinct();
+            ViewBag.actorsList = new SelectList(model.OrderByDescending(b => b.totalScenes).ToList(), "voiceActorIntno", "fullName");
             ViewBag.schedule = schedule;
             return PartialView("_actorsList");
         }

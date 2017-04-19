@@ -68,14 +68,14 @@ namespace dubbingApp.Controllers
             sessionEntry.fromDate = tmp;
             sessionEntry.thruDate = tmp.AddDays(6);
             sessionEntry.empIntno = db.employees.FirstOrDefault(b => b.email == loginUserName).empIntno;
-
-            var s = db.dubbingTrnHdrs.FirstOrDefault(b => b.fromDate <= dToday && b.thruDate >= dToday);
-            if (s != null)
-                sessionEntry.schedule = s.dubbTrnHdrIntno;
-
+            
             //get all assignments for the login supervisor
-            var assignments = db.orderTrnDtls.Include(b => b.employee).Include(b => b.orderTrnHdr.agreementWork)
-                                    .Where(b => b.employee.empIntno == sessionEntry.empIntno && b.status == true)
+            var assignments = db.orderTrnDtls.Include(b => b.orderTrnHdr).Include(b => b.employee).Include(b => b.orderTrnHdr.agreementWork)
+                                    .Where(b => b.employee.empIntno == sessionEntry.empIntno
+                                    && b.orderTrnHdr.endAdaptation.HasValue
+                                    && !b.orderTrnHdr.endDubbing.HasValue
+                                    && b.orderTrnHdr.agreementWork.status == "01"
+                                    && b.status == true)
                                     .OrderBy(b => new { b.forDueDate, b.orderTrnHdr.episodeNo }).ToList();
             foreach (var x in assignments)
             {
@@ -86,11 +86,9 @@ namespace dubbingApp.Controllers
                 item.workIntno = x.orderTrnHdr.workIntno;
                 item.workName = x.orderTrnHdr.agreementWork.workName;
                 item.episodeNo = x.orderTrnHdr.episodeNo;
-                item.dueDate = x.forDueDate.Value.ToShortDateString();
+                item.dueDate = x.forDueDate.Value.ToString("dd/MM");
 
-                var std = db.studioEpisodes.Include(b => b.studio.dubbingTrnHdr)
-                            .FirstOrDefault(b => b.orderTrnDtlIntno == x.orderTrnDtlIntno 
-                            && b.studio.dubbingTrnHdr.fromDate <= dToday && b.studio.dubbingTrnHdr.thruDate >= dToday);
+                var std = db.studioEpisodes.FirstOrDefault(b => b.orderTrnDtlIntno == x.orderTrnDtlIntno);
                 if (std != null)
                 {
                     item.dubbTrnHdrIntno = std.studio.dubbTrnHdrIntno;
@@ -117,7 +115,7 @@ namespace dubbingApp.Controllers
             if (std.HasValue)
             {
                 var x = db.studioEpisodes.Include(b => b.studio.dubbingTrnHdr)
-                            .FirstOrDefault(b => b.studioEpisodeIntno == id);
+                            .FirstOrDefault(b => b.studioEpisodeIntno == std);
                 sessionEntry.schedule = x.studio.dubbTrnHdrIntno;
                 sessionEntry.studioIntno = x.studioIntno;
                 ViewBag.studioNo = "STUDIO " + x.studio.studioNo;
@@ -154,7 +152,7 @@ namespace dubbingApp.Controllers
                          join B in db.orderTrnHdrs on A.orderTrnHdrIntno equals B.orderTrnHdrIntno
                          join C in db.dubbingSheetHdrs on B.orderTrnHdrIntno equals C.orderTrnHdrIntno
                          where A.empIntno == sessionEntry.empIntno && B.workIntno == sessionEntry.workIntno && A.forDueDate == sessionEntry.dueDate
-                         select C);
+                         select C).Distinct();
             return PartialView("_actorsList", model.ToList());
         }
 
@@ -204,14 +202,17 @@ namespace dubbingApp.Controllers
             return Json(result, JsonRequestBehavior.AllowGet);
         }
 
-        public ActionResult scenesList(long sheetHdr)
+        public ActionResult scenesList(long actor)
         {
             List<ViewModels.dubbingSceneViewModel> scnList = new List<ViewModels.dubbingSceneViewModel>();
             var model = (from C in db.orderTrnHdrs
                          join D in db.dubbingSheetHdrs on C.orderTrnHdrIntno equals D.orderTrnHdrIntno
                          join F in db.dubbingSheetDtls on D.dubbSheetHdrIntno equals F.dubbSheetHdrIntno
-                         where D.dubbSheetHdrIntno == sheetHdr
-                         select new { C.workIntno, C.orderTrnHdrIntno, C.episodeNo, D.dubbSheetHdrIntno, D.voiceActorIntno, D.actorName, F.sceneNo }).Distinct()
+                         join G in db.orderTrnDtls on C.orderTrnHdrIntno equals G.orderTrnHdrIntno
+                         join H in db.studioEpisodes on G.orderTrnDtlIntno equals H.orderTrnDtlIntno
+                         join J in db.studios on H.studioIntno equals J.studioIntno
+                         where C.workIntno == sessionEntry.workIntno && (!sessionEntry.schedule.HasValue || J.dubbTrnHdrIntno == sessionEntry.schedule) && G.activityType == "04" && D.voiceActorIntno == actor
+                         select new { C.workIntno, C.orderTrnHdrIntno, C.episodeNo, D.dubbSheetHdrIntno, D.actorName, F.sceneNo }).Distinct()
                          .OrderBy(b => new { b.workIntno, b.episodeNo, b.sceneNo });
             
             foreach (var item in model)
@@ -221,7 +222,7 @@ namespace dubbingApp.Controllers
                 scn.sceneIntno = x.sceneIntno;
                 scn.orderTrnHdrIntno = item.orderTrnHdrIntno;
                 scn.dubbSheetHdrIntno = item.dubbSheetHdrIntno;
-                scn.actor = item.voiceActorIntno;
+                scn.actor = actor;
                 scn.actorName = item.actorName;
                 long work = item.workIntno;
                 scn.workIntno = work;

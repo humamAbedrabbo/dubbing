@@ -4,7 +4,6 @@
 @if(ViewBag.Status)
 {
 
-
 <table class="table">
     <thead>
         <tr>
@@ -25,18 +24,18 @@
         @foreach (var item in Model)
         {
             <tr>
-                <td>@item.orderTrnHdr.agreementWork.workName</td>
-                <td>@item.orderTrnHdr.episodeNo</td>
-                <td>@item.employee.fullName</td>
-                <td>@string.Format("{0:d}", item.assignedDate)</td>
-                <td>@item.fromTimeCode</td>
-                <td>@item.thruTimeCode</td>
-                <td><a class="btn btn-primary" href='@Url.Action("Edit2", "adaptation", new { id = item.orderTrnHdrIntno, fromTime = item.fromTimeCode, toTime = item.thruTimeCode})'>Edit</a></td>
-                <td><a class="btn btn-primary" href='@Url.Action("EditScenesAndDialogs", "adaptation", new { orderTrnHdrIntno = item.orderTrnHdrIntno})'>Modify</a></td>
-                <td><a class="btn btn-success" href='#' onclick="onCompleteAdaptation(@item.orderTrnDtlIntno)">Complete Work</a></td>
-                <td><a class="btn btn-primary form-control" href='@Url.Action("downloadFile", new { item.orderTrnHdrIntno })'>Download SRT</a></td>
-                <td><a class="btn btn-primary form-control" href='@Url.Action("downloadTemplateFile", new { item.orderTrnHdrIntno })'>Download Template</a></td>
-                <td><a class="btn btn-primary form-control" data-toggle="modal" data-target="#importModal" data-order="@item.orderTrnHdrIntno">Import</a></td>
+                <td><small>@item.orderTrnHdr.agreementWork.workName</small></td>
+                <td><small>@item.orderTrnHdr.episodeNo</small></td>
+                <td><small>@item.employee.fullName</small></td>
+                <td><small>@string.Format("{0:d}", item.assignedDate)</small></td>
+                <td><small>@item.fromTimeCode</small></td>
+                <td><small>@item.thruTimeCode</small></td>
+                <td><a class="btn btn-sm btn-primary" href='@Url.Action("Edit2", "adaptation", new { id = item.orderTrnHdrIntno, fromTime = item.fromTimeCode, toTime = item.thruTimeCode})'>Edit</a></td>
+                <td><a class="btn btn-sm btn-primary" href='@Url.Action("EditScenesAndDialogs", "adaptation", new { orderTrnHdrIntno = item.orderTrnHdrIntno})'>Modify</a></td>
+                <td><a class="btn btn-sm btn-success" href='#' onclick="onCompleteAdaptation(@item.orderTrnDtlIntno)">Complete Work</a></td>
+                <td><a class="btn btn-sm btn-primary" href='@Url.Action("downloadFile", new { item.orderTrnHdrIntno })'>Download SRT</a></td>
+                <td><a class="btn btn-sm btn-primary" href='@Url.Action("downloadTemplateFile", new { item.orderTrnHdrIntno })'>Download Template</a></td>
+                <td><a class="btn btn-sm btn-primary" data-toggle="modal" data-target="#importModal" data-order="@item.orderTrnHdrIntno">Import</a></td>
             </tr>
         }
     </tbody>
@@ -60,20 +59,20 @@ else
             @foreach (var item in Model)
             {
                 <tr>
-                    <td>@item.orderTrnHdr.agreementWork.workName</td>
-                    <td>@item.orderTrnHdr.episodeNo</td>
-                    <td>@item.employee.fullName</td>
-                    <td>@string.Format("{0:d}", item.orderTrnHdr.startAdaptation)</td>
-                    <td>@string.Format("{0:d}", item.orderTrnHdr.endAdaptation)</td>
+                    <td><small>@item.orderTrnHdr.agreementWork.workName</small></td>
+                    <td><small>@item.orderTrnHdr.episodeNo</small></td>
+                    <td><small>@item.employee.fullName</small></td>
+                    <td><small>@string.Format("{0:d}", item.orderTrnHdr.startAdaptation)</small></td>
+                    <td><small>@string.Format("{0:d}", item.orderTrnHdr.endAdaptation)</small></td>
                     @if (User.IsInRole("ADMIN") || User.IsInRole("GENERAL_MANAGER") || User.IsInRole("STUDIO_SUPERVISOR"))
                     {
-                        <td><a class="btn btn-primary" href='@Url.Action("Edit2", "adaptation", new { id = item.orderTrnHdrIntno, fromTime = item.fromTimeCode, toTime = item.thruTimeCode})'>Edit</a></td>
+                        <td><a class="btn btn-sm btn-primary" href='@Url.Action("Edit2", "adaptation", new { id = item.orderTrnHdrIntno, fromTime = item.fromTimeCode, toTime = item.thruTimeCode})'>Edit</a></td>
                     }
                     else
                     {
                         <td></td>
                     }
-                    <td><a class="btn btn-success form-control" href='@Url.Action("downloadFile", new { item.orderTrnHdrIntno })'>Subtitles</a></td>
+                    <td><a class="btn btn-sm btn-success" href='@Url.Action("downloadFile", new { item.orderTrnHdrIntno })'>Subtitles</a></td>
                 </tr>
             }
         </tbody>
