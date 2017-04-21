@@ -148,7 +148,7 @@
             }
         }
         function onSchedulesPublishClick(schedule1) {
-            if (confirm("Please Confirm! About to Generate Dubbing Calendar for the Selected Schedule.")) {
+            if (confirm("Please Confirm! About to Generate Dubbing Calendar for the Selected Schedule. Please Note that Calendar WILL NOT be Generated for ANONYMOUS Actors!!!")) {
                 $.ajax({
                     url: '@Url.Action("generateCalendar", "scheduler")',
                     type: 'GET',

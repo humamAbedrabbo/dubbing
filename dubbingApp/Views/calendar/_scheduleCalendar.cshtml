@@ -1,0 +1,93 @@
+﻿@model IEnumerable<dubbingModel.dubbingAppointment>
+
+@{ 
+    DateTime scheduleStartDate = ViewBag.scheduleStartDate;
+}
+<div class="container-fluid" style="padding:0px">
+    <table class="table table-condensed">
+        <thead>
+            <tr>
+                <th><small>Std</small></th>
+                <th><small>@scheduleStartDate.DayOfWeek</small></th>
+                <th><small>@scheduleStartDate.AddDays(1).DayOfWeek</small></th>
+                <th><small>@scheduleStartDate.AddDays(2).DayOfWeek</small></th>
+                <th><small>@scheduleStartDate.AddDays(3).DayOfWeek</small></th>
+                <th><small>@scheduleStartDate.AddDays(4).DayOfWeek</small></th>
+                <th><small>@scheduleStartDate.AddDays(5).DayOfWeek</small></th>
+                <th><small>@scheduleStartDate.AddDays(6).DayOfWeek</small></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach(var std in ViewBag.studiosList)
+            {
+                string[] aName;
+                <tr>
+                    <td style="background-color:silver"><label><small>@std.domainCode</small></label></td>
+                    <td>
+                        <ul style="padding:5px">
+                            @foreach(var item in Model.Where(b => b.appointmentDate == scheduleStartDate && b.studio.studioNo == std.domainCode))
+                            {
+                                aName = item.actorName.Split('|');
+                                <li title="@aName[1]"><small>@aName[0]</small></li>
+                            }
+                        </ul>
+                    </td>
+                    <td>
+                        <ul style="padding:0px">
+                            @foreach (var item in Model.Where(b => b.appointmentDate == scheduleStartDate.AddDays(1) && b.studio.studioNo == std.domainCode))
+                            {
+                                aName = item.actorName.Split('|');
+                                <li title="@aName[1]"><small>@aName[0]</small></li>
+                            }
+                        </ul>
+                    </td>
+                    <td>
+                        <ul style="padding:0px">
+                            @foreach (var item in Model.Where(b => b.appointmentDate == scheduleStartDate.AddDays(2) && b.studio.studioNo == std.domainCode))
+                            {
+                                aName = item.actorName.Split('|');
+                                <li title="@aName[1]"><small>@aName[0]</small></li>
+                            }
+                        </ul>
+                    </td>
+                    <td>
+                        <ul style="padding:0px">
+                            @foreach (var item in Model.Where(b => b.appointmentDate == scheduleStartDate.AddDays(3) && b.studio.studioNo == std.domainCode))
+                            {
+                                aName = item.actorName.Split('|');
+                                <li title="@aName[1]"><small>@aName[0]</small></li>
+                            }
+                        </ul>
+                    </td>
+                    <td>
+                        <ul style="padding:0px">
+                            @foreach (var item in Model.Where(b => b.appointmentDate == scheduleStartDate.AddDays(4) && b.studio.studioNo == std.domainCode))
+                            {
+                                aName = item.actorName.Split('|');
+                                <li title="@aName[1]"><small>@aName[0]</small></li>
+                            }
+                        </ul>
+                    </td>
+                    <td>
+                        <ul style="padding:0px">
+                            @foreach (var item in Model.Where(b => b.appointmentDate == scheduleStartDate.AddDays(5) && b.studio.studioNo == std.domainCode))
+                            {
+                                aName = item.actorName.Split('|');
+                                <li title="@aName[1]"><small>@aName[0]</small></li>
+                            }
+                        </ul>
+                    </td>
+                    <td>
+                        <ul style="padding:0px">
+                            @foreach (var item in Model.Where(b => b.appointmentDate == scheduleStartDate.AddDays(6) && b.studio.studioNo == std.domainCode))
+                            {
+                                aName = item.actorName.Split('|');
+                                <li title="@aName[1]"><small>@aName[0]</small></li>
+                            }
+                        </ul>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

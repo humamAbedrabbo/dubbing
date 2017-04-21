@@ -46,12 +46,46 @@ namespace dubbingApp.Controllers
             return PartialView("_actorsList");
         }
 
+        public ActionResult getCalendar(long schedule)
+        {
+            var model = db.dubbingAppointments.Include(b => b.voiceActor).Include(b => b.studio)
+                            .Where(b => b.studio.dubbTrnHdrIntno == schedule).OrderBy(b => b.appointmentDate).ThenBy(b => b.fromTime).ToList();
+            string fromTime;
+            string thruTime;
+            foreach(var item in model)
+            {
+                fromTime = item.fromTime.HasValue ? item.fromTime.Value.ToString("HH:mm") : null;
+                thruTime = item.thruTime.HasValue ? item.thruTime.Value.ToString("HH:mm") : null;
+                item.actorName = item.actorName + "|" + "(" + fromTime + " - " + thruTime + ")";
+            }
+            ViewBag.scheduleStartDate = db.dubbingTrnHdrs.Find(schedule).fromDate;
+            ViewBag.studiosList = db.dubbDomains.Where(b => b.domainName == "studio" && b.status == true).OrderBy(b => b.sortOrder).ToList();
+            return PartialView("_scheduleCalendar", model);
+        }
+
         public ActionResult appointmentsList(long actor, long schedule)
         {
             var model = db.dubbingAppointments.Include(b => b.studio).Include(b => b.agreementWork)
                         .Where(b => b.voiceActorIntno == actor && b.studio.dubbTrnHdrIntno == schedule)
                         .OrderBy(b => new { b.appointmentDate, b.fromTime });
             return PartialView("_appointmentsList", model.ToList());
+        }
+
+        public ActionResult appointmentAddNew(long id)
+        {
+            var x = db.dubbingAppointments.Include(b => b.studio).FirstOrDefault(b => b.dubbAppointIntno == id);
+            var model = db.dubbingAppointments.Create();
+            model.voiceActorIntno = x.voiceActorIntno;
+            model.actorName = x.actorName;
+            model.workIntno = x.workIntno;
+            model.studioIntno = x.studioIntno;
+            model.appointmentDate = x.appointmentDate;
+            model.totalScenes = x.totalScenes;
+            model.totalMinutes = x.totalMinutes;
+            db.dubbingAppointments.Add(model);
+            db.SaveChanges();
+
+            return RedirectToAction("appointmentsList", new { actor = x.voiceActorIntno, schedule = x.studio.dubbTrnHdrIntno });
         }
 
         public ActionResult appointmentUpdate(long apt)

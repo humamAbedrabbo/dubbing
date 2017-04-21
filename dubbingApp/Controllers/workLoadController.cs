@@ -238,75 +238,57 @@ namespace dubbingApp.Controllers
             return RedirectToAction("assignmentsList");
         }
         
-        public ActionResult waitingList(string activityType)
+        public ActionResult waitingList()
         {
-            var x = db.orderTrnHdrs.Include(b => b.agreementWork)
-                                    .Where(b => b.status == "04" && b.agreementWork.status == "01"
-                                    && !b.orderTrnDtls.Select(d => d.orderTrnHdrIntno).Contains(b.orderTrnHdrIntno));
+            var x = db.orderTrnHdrs.Include(b => b.agreementWork).Where(b => b.status == "04" && b.agreementWork.status == "01");
             var model = x;
 
             List<string> wList = new List<string>();
             string epMin;
             string epMax;
-            string activityType1;
 
-            //translation
-            if (activityType == "01" || string.IsNullOrEmpty(activityType))
+            //studio supervision
+            model = x.Where(b => !b.startDubbing.HasValue
+                                    && !b.orderTrnDtls.Where(d => d.activityType == "04" && d.status == true).Select(d => d.orderTrnHdrIntno).Contains(b.orderTrnHdrIntno));
+            var model3 = model.Select(b => new { b.workIntno, b.agreementWork.workName }).Distinct().ToList();
+            if (model3 != null)
             {
-                activityType1 = string.IsNullOrEmpty(activityType) ? "01" : activityType;
-                var y1 = db.orderTrnDtls.Where(d => d.activityType == activityType1 && d.status == false)
-                        .Select(d => d.orderTrnHdrIntno).ToList();
-                model = x.Where(b => !b.startTranslation.HasValue && !y1.Contains(b.orderTrnHdrIntno));
-                var model1 = model.Select(b => new { b.workIntno, b.agreementWork.workName }).Distinct();
-                if (model1 != null)
+                wList.Add("Supervision|xxx");
+                foreach (var w in model3)
                 {
-                    wList.Add("Translation|xxx");
-                    foreach (var w in model1)
-                    {
-                        epMin = model.Where(b => b.workIntno == w.workIntno).Select(b => b.episodeNo).Min().ToString();
-                        epMax = model.Where(b => b.workIntno == w.workIntno).Select(b => b.episodeNo).Max().ToString();
-                        wList.Add(w.workName + "|" + epMin + " - " + epMax + "|" + w.workIntno + "|" + activityType1);
-                    }
+                    epMin = model.Where(b => b.workIntno == w.workIntno).Select(b => b.episodeNo).Min().ToString();
+                    epMax = model.Where(b => b.workIntno == w.workIntno).Select(b => b.episodeNo).Max().ToString();
+                    wList.Add(w.workName + "|" + epMin + " - " + epMax + "|" + w.workIntno + "|04");
                 }
             }
 
             //adaptation
-            if (activityType == "02" || string.IsNullOrEmpty(activityType))
+            model = x.Where(b => !b.startAdaptation.HasValue
+                                    && !b.orderTrnDtls.Where(d => d.activityType == "02" && d.status == true).Select(d => d.orderTrnHdrIntno).Contains(b.orderTrnHdrIntno));
+            var model2 = model.Select(b => new { b.workIntno, b.agreementWork.workName }).Distinct().ToList();
+            if (model2 != null)
             {
-                activityType1 = string.IsNullOrEmpty(activityType) ? "02" : activityType;
-                var y2 = db.orderTrnDtls.Where(d => d.activityType == activityType1 && d.status == false)
-                        .Select(d => d.orderTrnHdrIntno).ToList();
-                model = x.Where(b => !b.startAdaptation.HasValue && !y2.Contains(b.orderTrnHdrIntno));
-                var model2 = model.Select(b => new { b.workIntno, b.agreementWork.workName }).Distinct();
-                if (model2 != null)
+                wList.Add("Adaptation|xxx");
+                foreach (var w in model2)
                 {
-                    wList.Add("Adaptation|xxx");
-                    foreach (var w in model2)
-                    {
-                        epMin = model.Where(b => b.workIntno == w.workIntno).Select(b => b.episodeNo).Min().ToString();
-                        epMax = model.Where(b => b.workIntno == w.workIntno).Select(b => b.episodeNo).Max().ToString();
-                        wList.Add(w.workName + "|" + epMin + " - " + epMax + "|" + w.workIntno + "|" + activityType1);
-                    }
+                    epMin = model.Where(b => b.workIntno == w.workIntno).Select(b => b.episodeNo).Min().ToString();
+                    epMax = model.Where(b => b.workIntno == w.workIntno).Select(b => b.episodeNo).Max().ToString();
+                    wList.Add(w.workName + "|" + epMin + " - " + epMax + "|" + w.workIntno + "|02");
                 }
             }
 
-            //studio supervision
-            if (activityType == "04" || string.IsNullOrEmpty(activityType))
+            //translation
+            model = x.Where(b => (!b.startTranslation.HasValue && !b.startAdaptation.HasValue)
+                                    && !b.orderTrnDtls.Where(d => d.activityType == "01" && d.status == true).Select(d => d.orderTrnHdrIntno).Contains(b.orderTrnHdrIntno));
+            var model1 = model.Select(b => new { b.workIntno, b.agreementWork.workName }).Distinct().ToList();
+            if (model1 != null)
             {
-                activityType1 = string.IsNullOrEmpty(activityType) ? "04" : activityType;
-                var y3 = db.orderTrnDtls.Where(d => d.activityType == activityType1 && d.status == false)
-                        .Select(d => d.orderTrnHdrIntno).ToList();
-                model = x.Where(b => !b.startDubbing.HasValue && !y3.Contains(b.orderTrnHdrIntno));
-                var model3 = model.Select(b => new { b.workIntno, b.agreementWork.workName }).Distinct();
-                if (model3 != null)
+                wList.Add("Translation|xxx");
+                foreach (var w in model1)
                 {
-                    wList.Add("Supervision|xxx");
-                    foreach (var w in model3)
-                    {
-                        epMin = model.Where(b => b.workIntno == w.workIntno).Select(b => b.episodeNo).Min().ToString();
-                        epMax = model.Where(b => b.workIntno == w.workIntno).Select(b => b.episodeNo).Max().ToString();
-                        wList.Add(w.workName + "|" + epMin + " - " + epMax + "|" + w.workIntno + "|" + activityType1);
-                    }
+                    epMin = model.Where(b => b.workIntno == w.workIntno).Select(b => b.episodeNo).Min().ToString();
+                    epMax = model.Where(b => b.workIntno == w.workIntno).Select(b => b.episodeNo).Max().ToString();
+                    wList.Add(w.workName + "|" + epMin + " - " + epMax + "|" + w.workIntno + "|01");
                 }
             }
             

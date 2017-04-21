@@ -6,24 +6,26 @@
 
 <div class="container-fluid">
     <div class="jumbotron" style="padding:5px">
-        <h2>Assignments Work Load</h2>
-        <p class="lead"><h5>Manage and Balance Translation and Adaptation tasks assignments.</h5></p>
+        <h2>Assignments &amp; Work Load</h2>
+        <p class="lead"><h5>With the help of the Un-Assigned Works list and their related Upload Schedule, this Page will help You Track and Manage Task Assignments for the Different Production Stages. Task Assignments will allow Personnel Properly Schedule and Execute Tasks to meet the Upload Due Date.</h5></p>
         <label><a href="#" onclick="onAssignmentAddNewClick()">Assign New Task ...</a></label>
     </div>
     <input type="hidden" id="activePanelHF" />
 
-    <div class="col-sm-5" id="assignmentsList" style="padding:0px">
-        @Html.Action("assignmentsList")
-    </div>
-
     <div class="col-sm-4" style="padding:0px">
-        <div id="resourceAssignmentsList"></div>
         <div id="waitingList">
             @Html.Action("waitingList")
         </div>
     </div>
 
-    <div class="col-sm-3" id="allDetails" style="padding:0px"></div>
+    <div class="col-sm-5" id="assignmentsList" style="padding:0px">
+        @Html.Action("assignmentsList")
+    </div>
+
+    <div class="col-sm-3" style="padding:0px">
+        <div id="resourceAssignmentsList" style="padding:0px"></div>
+        <div id="allDetails" style="padding:0px"></div>
+    </div>
 </div>
 
 @section Scripts
@@ -82,6 +84,7 @@
                     var p = $('#activePanelHF').val();
                     $('#' + p).addClass('in');
                     $('#' + p).removeClass('collapse');
+                    getWaitingList();
                 }
             })
         }
@@ -116,7 +119,8 @@
                     type: 'GET',
                     data: { id: id1 },
                     success: function (result) {
-                        $('#assignmentsList').html(result);
+                        $('#assignmentsList').html(result);;
+                        getWaitingList();
                     }
                 })
             }
@@ -136,15 +140,17 @@
         function onActivityClick(act, panelId) {
             $('#resourceAssignmentsList').html(null);
             $('#allDetails').html(null);
+            $('#activePanelHF').val(panelId);
+        }
+
+        function getWaitingList() {
             $.ajax({
                 url: '@Url.Action("waitingList", "workLoad")',
                 type: 'GET',
-                data: { activityType: act },
                 success: function (result) {
                     $('#waitingList').html(result);
                 }
             });
-            $('#activePanelHF').val(panelId);
         }
 
         function getUploadList(work1, activity1) {

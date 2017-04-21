@@ -437,47 +437,49 @@ namespace dubbingApp.Controllers
         {
             var model = db.dubbingAppointments;
             DateTime fromDate = db.dubbingTrnHdrs.Find(schedule).fromDate;
-            var z = (from A in db.studios
-                     join B in db.studioEpisodes on A.studioIntno equals B.studioIntno
-                     join C in db.orderTrnDtls on B.orderTrnDtlIntno equals C.orderTrnDtlIntno
-                     join D in db.orderTrnHdrs on C.orderTrnHdrIntno equals D.orderTrnHdrIntno
-                     join E in db.dubbingSheetHdrs on D.orderTrnHdrIntno equals E.orderTrnHdrIntno
-                     where A.dubbTrnHdrIntno == schedule
-                     select new { A.workIntno, A.studioIntno, E.voiceActorIntno, E.actorName, E.dubbSheetHdrIntno }).Distinct().ToList();
+            int totalScenes = 0;
+            int totalMinutes = 0;
 
-            var x = z.Select(b => new { b.workIntno, b.studioIntno, b.voiceActorIntno, b.actorName }).Distinct().ToList();
+            var episodes = (from A in db.studios
+                            join B in db.studioEpisodes on A.studioIntno equals B.studioIntno
+                            join C in db.orderTrnDtls on B.orderTrnDtlIntno equals C.orderTrnDtlIntno
+                            where A.dubbTrnHdrIntno == schedule
+                            select C.orderTrnHdrIntno).Distinct().ToList();
+            
+            var x = db.dubbingSheetHdrs.Include(b => b.orderTrnHdr).Where(b => episodes.Contains(b.orderTrnHdrIntno))
+                                        .Select(b => new { b.orderTrnHdr.workIntno, b.voiceActorIntno, b.actorName }).Distinct().ToList();
             foreach (var x1 in x)
             {
-                int totalScenes = 0;
-                int totalMinutes = 0;
-                var sheetHdrs = z.Where(b => b.workIntno == x1.workIntno && b.studioIntno == x1.studioIntno && b.voiceActorIntno == x1.voiceActorIntno && b.actorName == x1.actorName)
-                                    .Select(b => b.dubbSheetHdrIntno).Distinct().ToList();
-                totalScenes = db.subtitles.Include(b => b.dialog.scene).Where(b => sheetHdrs.Contains(b.dubbSheetHdrIntno))
-                                    .Select(b => b.dialog.scene.sceneNo).Distinct().Count();
-                
+                totalScenes = db.dubbingSheetDtls.Include(b => b.dubbingSheetHdr).Include(b => b.orderTrnHdr)
+                                                    .Where(b => b.orderTrnHdr.workIntno == x1.workIntno && b.dubbingSheetHdr.voiceActorIntno == x1.voiceActorIntno && b.dubbingSheetHdr.actorName == x1.actorName)
+                                                    .Select(b => b.sceneNo).Count();
                 var sph = db.workActors.FirstOrDefault(b => b.voiceActorIntno == x1.voiceActorIntno && b.workIntno == x1.workIntno && b.status == true);
                 if (sph != null && sph.scenesPerHour != 0)
                     totalMinutes = totalScenes * 60 / sph.scenesPerHour;
 
-                var y = db.dubbingAppointments.FirstOrDefault(b => b.voiceActorIntno == x1.voiceActorIntno && b.actorName == x1.actorName && b.studioIntno == x1.studioIntno && b.workIntno == x1.workIntno);
-                if (y == null)
+                var studios = db.studios.Where(b => b.dubbTrnHdrIntno == schedule && b.workIntno == x1.workIntno).ToList();
+                foreach (var std in studios)
                 {
-                    dubbingAppointment apt = new dubbingAppointment();
-                    apt.voiceActorIntno = x1.voiceActorIntno;
-                    apt.actorName = x1.actorName;
-                    apt.studioIntno = x1.studioIntno;
-                    apt.appointmentDate = fromDate;
-                    apt.workIntno = x1.workIntno;
-                    apt.totalScenes = totalScenes;
-                    apt.totalMinutes = totalMinutes;
-                    model.Add(apt);
+                    var y = db.dubbingAppointments.FirstOrDefault(b => b.voiceActorIntno == x1.voiceActorIntno && b.actorName == x1.actorName && b.studioIntno == std.studioIntno && b.workIntno == x1.workIntno);
+                    if (y == null)
+                    {
+                        dubbingAppointment apt = new dubbingAppointment();
+                        apt.voiceActorIntno = x1.voiceActorIntno;
+                        apt.actorName = x1.actorName;
+                        apt.studioIntno = std.studioIntno;
+                        apt.appointmentDate = fromDate;
+                        apt.workIntno = x1.workIntno;
+                        apt.totalScenes = totalScenes;
+                        apt.totalMinutes = totalMinutes;
+                        model.Add(apt);
+                    }
+                    else
+                    {
+                        y.totalScenes = totalScenes;
+                        y.totalMinutes = totalMinutes;
+                    }
+                    db.SaveChanges();
                 }
-                else
-                {
-                    y.totalScenes = totalScenes;
-                    y.totalMinutes = totalMinutes;
-                }
-                db.SaveChanges();
             }
             
             return Content("Calendar Generated / Updated Successfully.", "text/html");

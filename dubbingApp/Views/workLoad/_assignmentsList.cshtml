@@ -2,10 +2,10 @@
 
 <div class="panel-group" id="collapse" role="tablist" aria-multiselectable="true">
     <div class="panel panel-default">
-        <div class="panel-heading" role="tab" id="collapse-heading-one" onclick="onActivityClick('02', 'collapse-one')">
+        <div class="panel-heading" role="tab" id="collapse-heading-one" onclick="onActivityClick('collapse-one')">
             <h4 class="panel-title">
                 <a role="button" data-toggle="collapse" data-parent="#collapse" href="#collapse-one" aria-expanded="true" aria-controls="collapse-one">
-                    <small><label>Translation &amp; Adaptation</label></small>
+                    <small><label>Dubbing</label></small>
                 </a>
             </h4>
         </div>
@@ -14,13 +14,13 @@
                 <table class="table table-hover table-condensed">
                     <thead>
                         <tr>
-                            <th class="col-sm-4"><small>Editor</small></th>
+                            <th class="col-sm-4"><small>Supervisor</small></th>
                             <th class="col-sm-7"><small>Work</small></th>
                             <th class="col-sm-1"><small>Cnt</small></th>
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach (var emp in Model.Where(b => b.employee.empType == "02").Select(b => new { b.empIntno, b.employee.fullName }).Distinct())
+                        @foreach (var emp in Model.Where(b => b.employee.empType == "01").Select(b => new { b.empIntno, b.employee.fullName }).Distinct())
                         {
                             var x = Model.Where(b => b.empIntno == emp.empIntno).Select(b => new { b.empIntno, b.employee.fullName, b.orderTrnHdr.workIntno, b.orderTrnHdr.agreementWork.workName }).Distinct();
                             int r = x.Count() + 1;
@@ -38,19 +38,62 @@
                         }
                     </tbody>
                 </table>
+                
             </div>
         </div>
     </div>
 
     <div class="panel panel-default">
-        <div class="panel-heading" role="tab" id="collapse-heading-two" onclick="onActivityClick('01', 'collapse-two')">
+        <div class="panel-heading" role="tab" id="collapse-heading-two" onclick="onActivityClick('collapse-two')">
             <h4 class="panel-title">
                 <a class="collapsed" role="button" data-toggle="collapse" data-parent="#collapse" href="#collapse-two" aria-expanded="false" aria-controls="collapse-two">
-                    <small><label>Translation</label></small>
+                    <small><label>Editing</label></small>
                 </a>
             </h4>
         </div>
         <div id="collapse-two" class="panel-collapse collapse" role="tabpanel" aria-labelledby="collapse-heading-two">
+            <div class="panel-body">
+                <table class="table table-hover table-condensed">
+                    <thead>
+                        <tr>
+                            <th class="col-sm-4"><small>Editor</small></th>
+                            <th class="col-sm-7"><small>Work</small></th>
+                            <th class="col-sm-1"><small>Cnt</small></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var emp in Model.Where(b => b.employee.empType == "04").Select(b => new { b.empIntno, b.employee.fullName }).Distinct())
+                        {
+                            var x = Model.Where(b => b.empIntno == emp.empIntno).Select(b => new { b.empIntno, b.employee.fullName, b.orderTrnHdr.workIntno, b.orderTrnHdr.agreementWork.workName }).Distinct();
+                            int r = x.Count() + 1;
+                            <tr>
+                                <td rowspan="@r" class="col-sm-4"><small>@emp.fullName</small></td>
+                            </tr>
+                            foreach (var work in x)
+                            {
+                                int cnt = Model.Where(b => b.empIntno == emp.empIntno && b.orderTrnHdr.workIntno == work.workIntno).Count();
+                                <tr>
+                                    <td class="col-sm-7"><small><a href="#" onclick="onTaskSelectClick(@work.empIntno, @work.workIntno)">@work.workName</a></small></td>
+                                    <td class="col-sm-1"><small>@cnt</small></td>
+                                </tr>
+                            }
+                        }
+                    </tbody>
+                </table>
+                
+            </div>
+        </div>
+    </div>
+
+    <div class="panel panel-default">
+        <div class="panel-heading" role="tab" id="collapse-heading-three" onclick="onActivityClick('collapse-three')">
+            <h4 class="panel-title">
+                <a class="collapsed" role="button" data-toggle="collapse" data-parent="#collapse" href="#collapse-three" aria-expanded="false" aria-controls="collapse-three">
+                    <small><label>Translation Contractors</label></small>
+                </a>
+            </h4>
+        </div>
+        <div id="collapse-three" class="panel-collapse collapse" role="tabpanel" aria-labelledby="collapse-heading-three">
             <div class="panel-body">
                 <table class="table table-hover table-condensed">
                     <thead>
@@ -84,14 +127,14 @@
     </div>
 
     <div class="panel panel-default">
-        <div class="panel-heading" role="tab" id="collapse-heading-three" onclick="onActivityClick('02', 'collapse-three')">
+        <div class="panel-heading" role="tab" id="collapse-heading-four" onclick="onActivityClick('collapse-four')">
             <h4 class="panel-title">
-                <a class="collapsed" role="button" data-toggle="collapse" data-parent="#collapse" href="#collapse-three" aria-expanded="false" aria-controls="collapse-three">
-                    <small><label>Adaptation</label></small>
+                <a class="collapsed" role="button" data-toggle="collapse" data-parent="#collapse" href="#collapse-four" aria-expanded="false" aria-controls="collapse-four">
+                    <small><label>Translation &amp; Adaptation Contractors</label></small>
                 </a>
             </h4>
         </div>
-        <div id="collapse-three" class="panel-collapse collapse" role="tabpanel" aria-labelledby="collapse-heading-three">
+        <div id="collapse-four" class="panel-collapse collapse" role="tabpanel" aria-labelledby="collapse-heading-four">
             <div class="panel-body">
                 <table class="table table-hover table-condensed">
                     <thead>
@@ -102,48 +145,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach (var emp in Model.Where(b => b.employee.empType == "04").Select(b => new { b.empIntno, b.employee.fullName }).Distinct())
-                        {
-                            var x = Model.Where(b => b.empIntno == emp.empIntno).Select(b => new { b.empIntno, b.employee.fullName, b.orderTrnHdr.workIntno, b.orderTrnHdr.agreementWork.workName }).Distinct();
-                            int r = x.Count() + 1;
-                            <tr>
-                                <td rowspan="@r" class="col-sm-4"><small>@emp.fullName</small></td>
-                            </tr>
-                            foreach (var work in x)
-                            {
-                                int cnt = Model.Where(b => b.empIntno == emp.empIntno && b.orderTrnHdr.workIntno == work.workIntno).Count();
-                                <tr>
-                                    <td class="col-sm-7"><small><a href="#" onclick="onTaskSelectClick(@work.empIntno, @work.workIntno)">@work.workName</a></small></td>
-                                    <td class="col-sm-1"><small>@cnt</small></td>
-                                </tr>
-                            }
-                        }
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    </div>
-
-    <div class="panel panel-default">
-        <div class="panel-heading" role="tab" id="collapse-heading-four" onclick="onActivityClick('04', 'collapse-four')">
-            <h4 class="panel-title">
-                <a class="collapsed" role="button" data-toggle="collapse" data-parent="#collapse" href="#collapse-four" aria-expanded="false" aria-controls="collapse-four">
-                    <small><label>Dubbing</label></small>
-                </a>
-            </h4>
-        </div>
-        <div id="collapse-four" class="panel-collapse collapse" role="tabpanel" aria-labelledby="collapse-heading-four">
-            <div class="panel-body">
-                <table class="table table-hover table-condensed">
-                    <thead>
-                        <tr>
-                            <th class="col-sm-4"><small>Supervisor</small></th>
-                            <th class="col-sm-7"><small>Work</small></th>
-                            <th class="col-sm-1"><small>Cnt</small></th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach (var emp in Model.Where(b => b.employee.empType == "01").Select(b => new { b.empIntno, b.employee.fullName }).Distinct())
+                        @foreach (var emp in Model.Where(b => b.employee.empType == "02").Select(b => new { b.empIntno, b.employee.fullName }).Distinct())
                         {
                             var x = Model.Where(b => b.empIntno == emp.empIntno).Select(b => new { b.empIntno, b.employee.fullName, b.orderTrnHdr.workIntno, b.orderTrnHdr.agreementWork.workName }).Distinct();
                             int r = x.Count() + 1;
