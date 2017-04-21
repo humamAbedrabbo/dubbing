@@ -1,0 +1,8 @@
+﻿<div class="container-fluid" style="padding:0px">
+    @foreach (var std in ViewBag.supervisorsList as SelectList)
+    {
+        <div class="col-sm-3">
+            <label class="badge alert-info"><small>Studio &nbsp; @std.Value</small></label><small>@std.Text</small>
+        </div>
+    }
+</div>

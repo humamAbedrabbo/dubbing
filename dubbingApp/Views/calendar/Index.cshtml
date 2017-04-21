@@ -11,23 +11,22 @@
 
     <div class="row">
         <div class="col-sm-3">
-            <div class="col-sm-12" style="padding:0px">
-                <div class="input-group">
-                    <small>
-                        @Html.DropDownList("scheduleIntno", new SelectList(ViewBag.schedulesList, "Key", "Value"), "Select Schedule ...", htmlAttributes: new { @class = "form-control" })
-                    </small>
-                    <span class="input-group-btn">
-                        <button type="button" class="btn btn-info" onclick="onCalendarViewClick()" title="Calendar View">
-                            <span class="fa fa-calendar" aria-hidden="true"></span>
-                        </button>
-                    </span>    
-                </div>
+            <div class="input-group" style="padding:0px">
+                <small>
+                    @Html.DropDownList("scheduleIntno", new SelectList(ViewBag.schedulesList, "Key", "Value"), "Select Schedule ...", htmlAttributes: new { @class = "form-control" })
+                </small>
+                <span class="input-group-btn">
+                    <button type="button" class="btn btn-info" onclick="onCalendarViewClick()" title="Calendar View">
+                        <span class="fa fa-calendar" aria-hidden="true"></span>
+                    </button>
+                </span>
             </div>
-            <br />
-            <hr />
-            <div class="col-sm-12" id="actorsList"></div>    
         </div>
-        
+        <div class="col-sm-9" id="supervisorsList"></div>
+    </div>
+    <hr />
+    <div class="row">
+        <div class="col-sm-3" id="actorsList"></div>    
         <div class="col-sm-6" id="aptList"></div>
         <div class="col-sm-3" id="details"></div>
     </div>
@@ -48,7 +47,15 @@
                     success: function (result) {
                         $('#actorsList').html(result);
                     }
-                })
+                });
+                $.ajax({
+                    url: '@Url.Action("supervisorsList", "calendar")',
+                    data: { schedule: $('#scheduleIntno').val() },
+                    type: 'GET',
+                    success: function (result) {
+                        $('#supervisorsList').html(result);
+                    }
+                });
             });
         });
 

@@ -60,7 +60,20 @@ namespace dubbingApp.Controllers
             }
             ViewBag.scheduleStartDate = db.dubbingTrnHdrs.Find(schedule).fromDate;
             ViewBag.studiosList = db.dubbDomains.Where(b => b.domainName == "studio" && b.status == true).OrderBy(b => b.sortOrder).ToList();
+            
             return PartialView("_scheduleCalendar", model);
+        }
+
+        public ActionResult supervisorsList(long schedule)
+        {
+            var x = (from A in db.orderTrnDtls
+                     join B in db.studioEpisodes on A.orderTrnDtlIntno equals B.orderTrnDtlIntno
+                     join C in db.studios on B.studioIntno equals C.studioIntno
+                     join D in db.employees on A.empIntno equals D.empIntno
+                     where C.dubbTrnHdrIntno == schedule && A.status == true
+                     select new { C.studioNo, D.fullName }).Distinct().OrderBy(b => b.studioNo).ToList();
+            ViewBag.supervisorsList = new SelectList(x, "studioNo", "fullName");
+            return PartialView("_supervisorsList");
         }
 
         public ActionResult appointmentsList(long actor, long schedule)
