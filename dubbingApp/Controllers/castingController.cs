@@ -90,24 +90,39 @@ namespace dubbingApp.Controllers
 
         [ValidateAntiForgeryToken]
         [HttpPost, ValidateInput(false)]
-        public ActionResult characterUpdate(workCharacter item)
+        public ActionResult characterUpdate(workCharacter item, string submitBtn)
         {
             var model = db.workCharacters;
-            if (ModelState.IsValid)
+            if(submitBtn == "delete")
             {
-                try
-                {
-                    var modelItem = db.workCharacters.Find(item.workCharacterIntno);
-                    this.UpdateModel(modelItem);
-                    db.SaveChanges();
-                }
-                catch (Exception e)
-                {
-                    return Content("Failed! Please Correct All Data. " + e.Message, "text/html");
-                }
+                var x1 = db.workActors.Where(b => b.workCharacterIntno == item.workCharacterIntno);
+                var x2 = db.workCharges.Where(b => x1.Select(d => d.voiceActorIntno).Contains(b.workPartyIntno));
+                db.workActors.RemoveRange(x1);
+                db.workCharges.RemoveRange(x2);
+
+                var x = model.Find(item.workCharacterIntno);
+                model.Remove(x);
+                db.SaveChanges();
             }
             else
-                return Content("Failed! Please Enter All Data.", "text/html");
+            {
+                if (ModelState.IsValid)
+                {
+                    try
+                    {
+                        var modelItem = db.workCharacters.Find(item.workCharacterIntno);
+                        this.UpdateModel(modelItem);
+                        db.SaveChanges();
+                    }
+                    catch (Exception e)
+                    {
+                        return Content("Failed! Please Correct All Data. " + e.Message, "text/html");
+                    }
+                }
+                else
+                    return Content("Failed! Please Enter All Data.", "text/html");
+            }
+            
             long id1 = item.workIntno;
             return RedirectToAction("charactersList", new { id = id1 });
         }

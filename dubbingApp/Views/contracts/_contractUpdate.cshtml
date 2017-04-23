@@ -32,9 +32,23 @@
                 @Html.HiddenFor(model => model.agreementIntno)
 
                 <div class="form-group-sm">
+                    @Html.LabelFor(model => model.workName, "Name", htmlAttributes: new { @class = "control-label" })
+                    <div>
+                        @Html.EditorFor(model => model.workName, new { htmlAttributes = new { @class = "form-control", required = "true", autofocus = "" } })
+                    </div>
+                </div>
+
+                <div class="form-group-sm">
+                    @Html.LabelFor(model => model.othWorkName, "Arabic Name", htmlAttributes: new { @class = "control-label" })
+                    <div>
+                        @Html.EditorFor(model => model.othWorkName, new { htmlAttributes = new { @class = "form-control", required = "true" } })
+                    </div>
+                </div>
+
+                <div class="form-group-sm">
                     @Html.LabelFor(model => model.workType, "Type", htmlAttributes: new { @class = "control-label" })
                     <div>
-                        @Html.DropDownListFor(model => model.workType, new SelectList(ViewBag.workTypesList, "key", "value"), string.Empty, htmlAttributes: new { @class = "form-control", required = "true", autofocus = "" })
+                        @Html.DropDownListFor(model => model.workType, new SelectList(ViewBag.workTypesList, "key", "value"), string.Empty, htmlAttributes: new { @class = "form-control", required = "true" })
                     </div>
                 </div>
 
@@ -42,20 +56,6 @@
                     @Html.LabelFor(model => model.agreementIntno, "Agreement", htmlAttributes: new { @class = "control-label" })
                     <div>
                         @Html.DropDownListFor(model => model.agreementIntno, ViewBag.agreementsList as SelectList, string.Empty, htmlAttributes: new { @class = "form-control", required = "true" })
-                    </div>
-                </div>
-
-                <div class="form-group-sm">
-                    @Html.LabelFor(model => model.workName, "Name", htmlAttributes: new { @class = "control-label" })
-                    <div>
-                        @Html.EditorFor(model => model.workName, new { htmlAttributes = new { @class = "form-control", required = "true" } })
-                    </div>
-                </div>
-
-                <div class="form-group-sm">
-                    @Html.LabelFor(model => model.othWorkName, "Other Name", htmlAttributes: new { @class = "control-label" })
-                    <div>
-                        @Html.EditorFor(model => model.othWorkName, new { htmlAttributes = new { @class = "form-control", required = "true" } })
                     </div>
                 </div>
 

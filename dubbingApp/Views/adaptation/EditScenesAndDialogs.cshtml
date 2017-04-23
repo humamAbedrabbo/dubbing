@@ -9,7 +9,7 @@
 
 <div>
     <h2>@ViewBag.Episode</h2>
-    <a role="button" class="btn btn-xs btn-default pull-right" href="#" data-toggle="modal" data-target="#renameCharacterModal">Rename Character</a>
+    <a role="button" class="btn btn-xs btn-default pull-right" href="#" onclick="getCharactersList(@ViewBag.order)" data-toggle="modal" data-target="#renameCharacterModal">Rename Character</a>
     <a role="button" class="btn btn-xs btn-default pull-right" href="#" data-toggle="modal" data-target="#replaceTextModal">Replace Text</a>
 </div>
 <hr />
@@ -88,16 +88,22 @@
             </div>
             <div class="modal-body">
                 <div class="row">
-                    <label class="col-sm-3"><small>Find Text: </small></label><input id="findText" dir="rtl" required autofocus />
+                    <div class="col-sm-9 input-group" style="padding:10px">
+                        <span class="input-group-addon"><label><small>Find Text: </small></label></span>
+                        <input id="findText" class="form-control" dir="rtl" required autofocus />
+                    </div>
                 </div>
                 <div class="row">
-                    <label class="col-sm-3"><small>Replace With: </small></label><input id="replaceWith" dir="rtl" required />
+                    <div class="col-sm-9 input-group" style="padding:10px">
+                        <span class="input-group-addon"><label><small>Replace With: </small></label></span>
+                        <input id="replaceWith" class="form-control" dir="rtl" required />
+                    </div>
                 </div>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-default" data-dismiss="modal" onclick="onClose()">Done</button>
                 <button type="button" class="btn btn-primary" onclick="onReplaceClick()">Replace All</button>
-                <label class="pull-left" id="replaceTextModalResult"></label>
+                <div><label class="pull-left" id="replaceTextModalResult"></label></div>
             </div>
         </div>
     </div>
@@ -112,16 +118,30 @@
             </div>
             <div class="modal-body">
                 <div class="row">
-                    <label class="col-sm-3"><small>Character: </small></label><input id="characterName" dir="rtl" required autofocus />
+                    <div class="col-sm-9 input-group" style="padding:10px">
+                        <span class="input-group-addon"><label><small>Find Character: </small></label></span>
+                        @{ SelectList cList1 = new SelectList(Model.Select(b => new { b.dubbingSheetHdr.dubbSheetHdrIntno, b.dubbingSheetHdr.characterName }).Distinct(), "dubbSheetHdrIntno", "characterName"); }
+                        @Html.DropDownList("sheetHdrsList", cList1, "Select from list ...", htmlAttributes: new { @class = "form-control", required = "true", autofocus = "" })
+                    </div>
                 </div>
                 <div class="row">
-                    <label class="col-sm-3"><small>Replace With: </small></label><input id="replaceWithName" dir="rtl" required />
+                    <div class="col-sm-9 input-group" style="padding:10px">
+                        <span class="input-group-addon"><label><small>Replace With: </small></label></span>
+                        @{ SelectList cList2 = new SelectList("", "workCharacterIntno", "characterName"); }
+                        @Html.DropDownList("toCharacterList", cList2, "Select Character ...", htmlAttributes: new { @class = "form-control", required = "true" })
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-9" style="padding:10px">
+                        <input type="checkbox" id="isSubtitle" checked />
+                        <label><small>Replace Character Citations in Subtitles As Well.</small></label>
+                    </div>
                 </div>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-default" data-dismiss="modal" onclick="onClose()">Done</button>
                 <button type="button" class="btn btn-primary" onclick="onRenameClick()">Rename All</button>
-                <label class="pull-left" id="renameCharacterModalResult"></label>
+                <div><label class="pull-left" id="renameCharacterModalResult"></label></div>
             </div>
         </div>
     </div>
@@ -180,6 +200,21 @@
         });
 
         //added by wael
+        function getCharactersList(oi) {
+            $.ajax({
+                url: '@Url.Action("popoulateCharactersCombo", "adaptation")',
+                type: 'POST',
+                data: { id: oi },
+                dataType: 'json',
+                success: function (characters) {
+                    $.each(characters, function (i, item) {
+                        $("#toCharacterList").append('<option value="' + item.Value + '">' +
+                        item.Text + '</option>');
+                    });
+                }
+            });
+            return false;
+        }
         function onReplaceClick() {
             if(confirm("Please Confirm! About to perform permenant Text Replacement?")) {
                 $.ajax({
@@ -197,7 +232,7 @@
                 $.ajax({
                     url: '@Url.Action("RenameCharacter", "adaptation")',
                     type: 'GET',
-                    data: { id: @ViewBag.order, characterName: $('#characterName').val(), replaceWithName: $('#replaceWithName').val() },
+                    data: { dubbSheetHdrIntno: $('#sheetHdrsList').val(), toCharacterIntno: $('#toCharacterList').val(), isSubtitle: $('#isSubtitle').prop('checked') },
                     success: function (result) {
                         $('#renameCharacterModalResult').html(result);
                     }

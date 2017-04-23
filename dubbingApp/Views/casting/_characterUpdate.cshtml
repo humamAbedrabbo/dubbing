@@ -85,8 +85,9 @@
                 </div>
 
                 <div class="form-group-sm">
-                    <button type="submit" class="btn btn-default btn-sm">Submit</button>
-                    <label class="alert-success" id="formResult"></label>
+                    <button type="submit" name="submitBtn" value="save" class="btn btn-default btn-sm">Submit</button>
+                    <button type="submit" name="submitBtn" value="delete" class="btn btn-default btn-sm" onclick="return onCharacterDeleteClick(event);">Permenantly Delete</button>
+                    <div><label class="alert-success pull-left" id="formResult"></label></div>
                 </div>
             }
         </div>

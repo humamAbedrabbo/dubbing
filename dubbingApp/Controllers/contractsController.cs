@@ -205,12 +205,14 @@ namespace dubbingApp.Controllers
             ViewBag.originalLanguagesList = LookupModels.getDictionary("originalLanguage");
             var y = db.contacts.Where(b => b.partyIntno == client && b.contactParty == "01" && b.status == true).Select(b => new { b.contactIntno, b.contactName });
             ViewBag.contactsList = new SelectList(y, "contactIntno", "contactName");
+            var z = db.agreementWorks.Include(b => b.agreement).Where(b => b.agreement.clientIntno == client && b.agreement.status == "01");
+            ViewBag.worksList = new SelectList(z, "workIntno", "workName");
             return PartialView("_contractAddNew");
         }
 
         [HttpPost, ValidateInput(false)]
         [ValidateAntiForgeryToken]
-        public ActionResult contractAddNew(agreementWork item)
+        public ActionResult contractAddNew(agreementWork item, long? cloneWorkIntno)
         {
             var model = db.agreementWorks;
             var logModel = db.logWorks;
@@ -221,6 +223,71 @@ namespace dubbingApp.Controllers
                     item.status = "01";
                     model.Add(item);
                     db.SaveChanges();
+
+                    if (cloneWorkIntno.HasValue)
+                    {
+                        var wc = db.workCharacters.Where(b => b.workIntno == cloneWorkIntno && b.characterType != "03").ToList();
+                        foreach(var wc1 in wc)
+                        {
+                            var wcItem = db.workCharacters.Create();
+                            wcItem.workIntno = item.workIntno;
+                            wcItem.sortOrder = wc1.sortOrder;
+                            wcItem.characterType = wc1.characterType;
+                            wcItem.characterGender = wc1.characterGender;
+                            wcItem.characterName = wc1.characterName;
+                            wcItem.othCharacterName = wc1.othCharacterName;
+                            wcItem.nickName = wc1.nickName;
+                            wcItem.characterDesc = wc1.characterDesc;
+                            wcItem.remarks = wc1.remarks;
+                            db.workCharacters.Add(wcItem);
+                            db.SaveChanges();
+
+                            //if clone character is casted
+                            var actor = db.workActors.SingleOrDefault(b => b.workIntno == cloneWorkIntno && b.workCharacterIntno == wc1.workCharacterIntno && b.status == true);
+                            if(actor != null)
+                            {
+                                var waItem = db.workActors.Create();
+                                waItem.workIntno = item.workIntno;
+                                waItem.workCharacterIntno = wcItem.workCharacterIntno;
+                                waItem.voiceActorIntno = actor.voiceActorIntno;
+                                waItem.fromDate = DateTime.Today.Date;
+                                waItem.remarks = actor.remarks;
+                                waItem.scenesPerHour = actor.scenesPerHour;
+                                waItem.status = true;
+                                db.workActors.Add(waItem);
+                                db.SaveChanges();
+
+                                var charges = db.workCharges.SingleOrDefault(b => b.workIntno == cloneWorkIntno && b.workPartyType == "01" && b.workPartyIntno == actor.voiceActorIntno && b.status == true);
+                                if(charges != null)
+                                {
+                                    var chrgItem = db.workCharges.Create();
+                                    chrgItem.workIntno = item.workIntno;
+                                    chrgItem.workPartyType = "01";
+                                    chrgItem.workPartyIntno = actor.voiceActorIntno;
+                                    chrgItem.chargeAmount = charges.chargeAmount;
+                                    chrgItem.chargeUom = charges.chargeUom;
+                                    chrgItem.currencyCode = charges.currencyCode;
+                                    chrgItem.fromDate = DateTime.Today.Date;
+                                    chrgItem.remarks = charges.remarks;
+                                    chrgItem.status = true;
+                                    db.workCharges.Add(chrgItem);
+                                    db.SaveChanges();
+                                }
+                            }
+                        }
+                        var p = db.workPersonnels.Where(b => b.workIntno == cloneWorkIntno && b.status == true).ToList();
+                        foreach(var p1 in p)
+                        {
+                            var personnelItem = db.workPersonnels.Create();
+                            personnelItem.workIntno = item.workIntno;
+                            personnelItem.empIntno = p1.empIntno;
+                            personnelItem.titleType = p1.titleType;
+                            personnelItem.fromDate = DateTime.Today.Date;
+                            personnelItem.status = true;
+                            db.workPersonnels.Add(personnelItem);
+                        }
+                        db.SaveChanges();
+                    }
 
                     //insert new work in works log
                     logWork lw = new logWork();

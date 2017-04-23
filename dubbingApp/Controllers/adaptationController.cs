@@ -9,6 +9,7 @@ using System.Linq;
 using System.Text;
 using System.Web;
 using System.Web.Mvc;
+using System.Windows.Forms;
 
 namespace dubbingApp.Controllers
 {
@@ -580,12 +581,15 @@ namespace dubbingApp.Controllers
         public FileStreamResult downloadFile(long orderTrnHdrIntno)
         {
             var order = ctx.orderTrnHdrs.Find(orderTrnHdrIntno);
-            
 
             StringBuilder sb = new StringBuilder();
+            
             int line = 1;
-
-            foreach(var scene in order.scenes.OrderBy(x => x.sceneNo))
+            //sb.AppendFormat("{0}", line);
+            //sb.AppendFormat("{0}", @"{\rtf1\ansi\ansicpg1252\deff0\nouicompat\deflang14346{\fonttbl{\f0\fs20\fnil\fcharset0 Calibri;}} {\*\generator Riched20 10.0.10586}\viewkind4\uc1 \pard\sa200\sl276\slmult1\f0\fs22\lang10");
+            //sb.AppendLine();
+            //line++;
+            foreach (var scene in order.scenes.OrderBy(x => x.sceneNo))
             {
                 foreach(var dialog in scene.dialogs.OrderBy(x => x.dialogNo))
                 {
@@ -603,12 +607,20 @@ namespace dubbingApp.Controllers
                     }
                 }
             }
+            //sb.AppendFormat("{0}", @"\par}");
+            //sb.AppendLine();
 
-            string fileName =  order.agreementWork.workName + " - " + order.episodeNo + ".srt";
+            string fileName = order.agreementWork.workName + " - " + order.episodeNo + ".srt";
             UTF8Encoding encoding = new UTF8Encoding();
             byte[] contentAsBytes = encoding.GetBytes(sb.ToString());
             var stream = new MemoryStream(contentAsBytes);
 
+            //added by wael
+            //using (RichTextBox RTB = new RichTextBox())
+            //{
+            //    RTB.Rtf = sb.ToString();
+            //    RTB.SaveFile(stream, RichTextBoxStreamType.RichText);
+            //}
 
             //FileInfo info = new FileInfo(fileName);
             //if (!info.Exists)
@@ -656,27 +668,37 @@ namespace dubbingApp.Controllers
             return Content(model.Count() + " Occurances Were found and Successfully Replaced!", "text/html");
         }
 
-        public ActionResult RenameCharacter(long id, string characterName, string replaceWithName)
+        //added by wael
+        public JsonResult popoulateCharactersCombo(long id)
         {
-            if (string.IsNullOrEmpty(characterName) || string.IsNullOrEmpty(replaceWithName))
-                return Content("Please provide both Values!", "text/html");
-            characterName = characterName.Trim();
-            replaceWithName = replaceWithName.Trim();
+            var oi = ctx.orderTrnHdrs.Find(id);
+            var model = ctx.workCharacters.Where(b => b.workIntno == oi.workIntno);
+            SelectList cList = new SelectList(model, "workCharacterIntno", "characterName");
+            return Json(cList);
+        }
 
-            long workIntno = ctx.orderTrnHdrs.Find(id).workIntno;
-            long? replaceWithIntno = null;
-            var c2 = ctx.workCharacters.SingleOrDefault(b => b.workIntno == workIntno && b.characterName == replaceWithName);
-            if (c2 != null)
-                replaceWithIntno = c2.workCharacterIntno;
+        public ActionResult RenameCharacter(long dubbSheetHdrIntno, long toCharacterIntno, bool isSubtitle)
+        {
+            var c2 = ctx.workCharacters.Find(toCharacterIntno);
+            
+            var model = ctx.dubbingSheetHdrs.Find(dubbSheetHdrIntno);
+            string oldCharacterName = model.characterName.Trim();
+            model.workCharacterIntno = toCharacterIntno;
+            model.characterName = c2.characterName.Trim();
+            ctx.SaveChanges();
 
-            var model = ctx.dubbingSheetHdrs.Where(b => b.orderTrnHdrIntno == id && b.characterName == characterName).ToList();
-            foreach(var item in model)
+            if(isSubtitle)
             {
-                item.workCharacterIntno = replaceWithIntno;
-                item.characterName = replaceWithName;
+                var model1 = ctx.subtitles.Where(b => b.dubbSheetHdrIntno == dubbSheetHdrIntno && b.scentence.Contains(oldCharacterName)).ToList();
+                foreach (var item in model1)
+                {
+                    item.scentence = item.scentence.Replace(oldCharacterName, c2.characterName.Trim());
+                }
+                ctx.SaveChanges();
+                return Content("Character Successfully Renamed. " + model1.Count() + " Occurances Were found in Subtitles and Successfully Replaced!", "text/html");
             }
-
-            return Content(model.Count() + " Occurances Were found and Successfully Renamed!", "text/html");
+            else
+                return Content("Character Successfully Renamed.", "text/html");
         }
     }    
 }

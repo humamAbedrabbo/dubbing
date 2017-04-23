@@ -27,9 +27,23 @@
                 @Html.AntiForgeryToken()
 
                 <div class="form-group-sm">
+                    @Html.LabelFor(model => model.workName, "Name", htmlAttributes: new { @class = "control-label" })
+                    <div>
+                        @Html.EditorFor(model => model.workName, new { htmlAttributes = new { @class = "form-control", required = "true", autofocus = "" } })
+                    </div>
+                </div>
+
+                <div class="form-group-sm">
+                    @Html.LabelFor(model => model.othWorkName, "Arabic Name", htmlAttributes: new { @class = "control-label" })
+                    <div>
+                        @Html.EditorFor(model => model.othWorkName, new { htmlAttributes = new { @class = "form-control", required = "true" } })
+                    </div>
+                </div>
+
+                <div class="form-group-sm">
                     @Html.LabelFor(model => model.workType, "Type", htmlAttributes: new { @class = "control-label" })
                     <div>
-                        @Html.DropDownListFor(model => model.workType, new SelectList(ViewBag.workTypesList, "key", "value"), string.Empty, htmlAttributes: new { @class = "form-control", required = "true", autofocus = "" })
+                        @Html.DropDownListFor(model => model.workType, new SelectList(ViewBag.workTypesList, "key", "value"), string.Empty, htmlAttributes: new { @class = "form-control", required = "true" })
                     </div>
                 </div>
 
@@ -37,20 +51,6 @@
                     @Html.LabelFor(model => model.agreementIntno, "Agreement", htmlAttributes: new { @class = "control-label" })
                     <div>
                         @Html.DropDownListFor(model => model.agreementIntno, ViewBag.agreementsList as SelectList, string.Empty, htmlAttributes: new { @class = "form-control", required = "true" })
-                    </div>
-                </div>
-
-                <div class="form-group-sm">
-                    @Html.LabelFor(model => model.workName, "Name", htmlAttributes: new { @class = "control-label" })
-                    <div>
-                        @Html.EditorFor(model => model.workName, new { htmlAttributes = new { @class = "form-control", required = "true" } })
-                    </div>
-                </div>
-
-                <div class="form-group-sm">
-                    @Html.LabelFor(model => model.othWorkName, "Other Name", htmlAttributes: new { @class = "control-label" })
-                    <div>
-                        @Html.EditorFor(model => model.othWorkName, new { htmlAttributes = new { @class = "form-control", required = "true" } })
                     </div>
                 </div>
 
@@ -93,6 +93,13 @@
                     @Html.LabelFor(model => model.contactIntno, "Contacts", htmlAttributes: new { @class = "control-label" })
                     <div>
                         @Html.DropDownListFor(model => model.contactIntno, ViewBag.contactsList as SelectList, string.Empty, htmlAttributes: new { @class = "form-control", required = "true" })
+                    </div>
+                </div>
+
+                <div class="form-group-sm">
+                    <label style="color:orangered">If this is about defining a New SEASON, You can Copy MAIN Characters, Voice Actors and Personnel definitions from an EXISTING One. For Cloning, Please Select from the List:</label>
+                    <div>
+                        @Html.DropDownList("cloneWorkIntno", ViewBag.worksList as SelectList, "Select an Existing Season ...", htmlAttributes: new { @class = "form-control" })
                     </div>
                 </div>
 

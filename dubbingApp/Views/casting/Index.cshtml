@@ -85,6 +85,12 @@
                 }
             })
         }
+        function onCharacterDeleteClick(e) {
+            if(!confirm("Please Confirm! About to Permenantly Delete Work Character. This Operation CANNOT be Reversed.")) {
+                e.preventDefault();
+            }
+        }
+
         function onSuccess(ajaxContext) {
             $('#formResult').html('Successfully Added / Updated.');
             $('#cList').html(ajaxContext);
