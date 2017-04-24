@@ -23,6 +23,8 @@ namespace dubbingModel
         public string endTimeCode { get; set; }
         public long startSecond { get; set; }
         public long endSecond { get; set; }
+        public long startMillisecond { get; set; }
+        public long endMillisecond { get; set; }
     
         public virtual dialog dialog { get; set; }
         public virtual dubbingSheetHdr dubbingSheetHdr { get; set; }

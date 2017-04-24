@@ -584,6 +584,8 @@
           <Property Name="endTimeCode" Type="nvarchar" MaxLength="20" />
           <Property Name="startSecond" Type="bigint" Nullable="false" />
           <Property Name="endSecond" Type="bigint" Nullable="false" />
+          <Property Name="startMillisecond" Type="bigint" Nullable="false" />
+          <Property Name="endMillisecond" Type="bigint" Nullable="false" />
         </EntityType>
         <EntityType Name="tags">
           <Key>
@@ -2964,6 +2966,8 @@
           <Property Name="endSecond" Type="Int64" Nullable="false" />
           <NavigationProperty Name="dialog" Relationship="DUBBDBModel.FK_subtitles_To_dialogs" FromRole="subtitle" ToRole="dialog" />
           <NavigationProperty Name="dubbingSheetHdr" Relationship="DUBBDBModel.FK_subtitles_To_dubbingSheetHdrs" FromRole="subtitle" ToRole="dubbingSheetHdr" />
+          <Property Name="startMillisecond" Type="Int64" Nullable="false" />
+          <Property Name="endMillisecond" Type="Int64" Nullable="false" />
         </EntityType>
         <EntityType Name="tag">
           <Key>
@@ -4590,6 +4594,8 @@
           <EntitySetMapping Name="subtitles">
             <EntityTypeMapping TypeName="DUBBDBModel.subtitle">
               <MappingFragment StoreEntitySet="subtitles">
+                <ScalarProperty Name="endMillisecond" ColumnName="endMillisecond" />
+                <ScalarProperty Name="startMillisecond" ColumnName="startMillisecond" />
                 <ScalarProperty Name="endSecond" ColumnName="endSecond" />
                 <ScalarProperty Name="startSecond" ColumnName="startSecond" />
                 <ScalarProperty Name="endTimeCode" ColumnName="endTimeCode" />

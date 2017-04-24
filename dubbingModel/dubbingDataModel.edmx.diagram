@@ -4,7 +4,7 @@
   <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
     <!-- Diagram content (shape and connector positions) -->
     <edmx:Diagrams>
-      <Diagram DiagramId="f86500cc867247d1bfdf66221ad39a95" Name="Diagram1" ZoomLevel="111">
+      <Diagram DiagramId="f86500cc867247d1bfdf66221ad39a95" Name="Diagram1" ZoomLevel="72">
         <EntityTypeShape EntityType="DUBBDBModel.C__MigrationHistory" Width="1.5" PointX="0.75" PointY="6.75" />
         <EntityTypeShape EntityType="DUBBDBModel.C__RefactorLog" Width="1.5" PointX="2.75" PointY="6.75" />
         <EntityTypeShape EntityType="DUBBDBModel.agreement" Width="1.5" PointX="3" PointY="42.875" />

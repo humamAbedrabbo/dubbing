@@ -161,4 +161,11 @@
     <Property Name="ParentElementType" Value="SqlTable" />
     <Property Name="NewName" Value="chrCastListDtlIntno" />
   </Operation>
+  <Operation Name="Rename Refactor" Key="87e3e8d9-2ce7-4640-83e8-252c27099c7c" ChangeDateTime="04/24/2017 05:51:11">
+    <Property Name="ElementName" Value="[dbo].[subtitles].[startMiliSecond]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[subtitles]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="startMillisecond" />
+  </Operation>
 </Operations>

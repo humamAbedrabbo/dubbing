@@ -9,6 +9,8 @@
     [endTimeCode] NVARCHAR(20) NULL, 
     [startSecond] BIGINT NOT NULL DEFAULT 0, 
     [endSecond] BIGINT NOT NULL DEFAULT 0, 
+    [startMillisecond] BIGINT NOT NULL DEFAULT 0, 
+    [endMillisecond] BIGINT NOT NULL DEFAULT 0, 
     CONSTRAINT [FK_subtitles_To_dialogs] FOREIGN KEY ([dialogIntno]) REFERENCES [dialogs]([dialogIntno]) on delete cascade, 
     CONSTRAINT [FK_subtitles_To_dubbingSheetHdrs] FOREIGN KEY ([dubbSheetHdrIntno]) REFERENCES [dubbingSheetHdrs]([dubbSheetHdrIntno])
 )
