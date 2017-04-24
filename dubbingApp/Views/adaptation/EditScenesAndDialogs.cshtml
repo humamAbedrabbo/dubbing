@@ -119,18 +119,26 @@
             <div class="modal-body">
                 <div class="row">
                     <div class="col-sm-9 input-group" style="padding:10px">
-                        <span class="input-group-addon"><label><small>Find Character: </small></label></span>
+                        <span class="input-group-addon"><label><small>Find Character</small></label></span>
                         @{ SelectList cList1 = new SelectList(Model.Select(b => new { b.dubbingSheetHdr.dubbSheetHdrIntno, b.dubbingSheetHdr.characterName }).Distinct(), "dubbSheetHdrIntno", "characterName"); }
                         @Html.DropDownList("sheetHdrsList", cList1, "Select from list ...", htmlAttributes: new { @class = "form-control", required = "true", autofocus = "" })
                     </div>
                 </div>
                 <div class="row">
                     <div class="col-sm-9 input-group" style="padding:10px">
-                        <span class="input-group-addon"><label><small>Replace With: </small></label></span>
+                        <span class="input-group-addon"><label><small>Rename To*</small></label></span>
+                        <input type="text" class="form-control" id="toCharacterName" />
+                    </div>
+                </div>
+                <div><small>(*) Use this to Change the Name of a Secondary Character</small></div>
+                <div class="row">
+                    <div class="col-sm-9 input-group" style="padding:10px">
+                        <span class="input-group-addon"><label><small>Replace With**</small></label></span>
                         @{ SelectList cList2 = new SelectList("", "workCharacterIntno", "characterName"); }
                         @Html.DropDownList("toCharacterList", cList2, "Select Character ...", htmlAttributes: new { @class = "form-control", required = "true" })
                     </div>
                 </div>
+                <div><small>(**) Use this to Replace with an ALREADY DEFINED Main Character</small></div>
                 <div class="row">
                     <div class="col-sm-9" style="padding:10px">
                         <input type="checkbox" id="isSubtitle" checked />
@@ -232,7 +240,7 @@
                 $.ajax({
                     url: '@Url.Action("RenameCharacter", "adaptation")',
                     type: 'GET',
-                    data: { dubbSheetHdrIntno: $('#sheetHdrsList').val(), toCharacterIntno: $('#toCharacterList').val(), isSubtitle: $('#isSubtitle').prop('checked') },
+                    data: { dubbSheetHdrIntno: $('#sheetHdrsList').val(), toCharacterName: $('#toCharacterName').val(), toCharacterIntno: $('#toCharacterList').val(), isSubtitle: $('#isSubtitle').prop('checked') },
                     success: function (result) {
                         $('#renameCharacterModalResult').html(result);
                     }

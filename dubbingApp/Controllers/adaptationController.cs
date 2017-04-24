@@ -677,14 +677,29 @@ namespace dubbingApp.Controllers
             return Json(cList);
         }
 
-        public ActionResult RenameCharacter(long dubbSheetHdrIntno, long toCharacterIntno, bool isSubtitle)
+        public ActionResult RenameCharacter(long dubbSheetHdrIntno, string toCharacterName, long? toCharacterIntno, bool isSubtitle)
         {
-            var c2 = ctx.workCharacters.Find(toCharacterIntno);
-            
             var model = ctx.dubbingSheetHdrs.Find(dubbSheetHdrIntno);
             string oldCharacterName = model.characterName.Trim();
-            model.workCharacterIntno = toCharacterIntno;
-            model.characterName = c2.characterName.Trim();
+            string newCharacterName = toCharacterName;
+
+            if (toCharacterIntno.HasValue && string.IsNullOrEmpty(toCharacterName))
+            {
+                var c2 = ctx.workCharacters.Find(toCharacterIntno);
+                model.workCharacterIntno = toCharacterIntno;
+                model.characterName = c2.characterName;
+                newCharacterName = c2.characterName;
+            }
+            else if (!toCharacterIntno.HasValue && !string.IsNullOrEmpty(toCharacterName))
+            {
+                model.workCharacterIntno = null;
+                model.characterName = newCharacterName;
+            }
+            else
+            {
+                return Content("Failed to Rename Character! Only ONE Renaming Method SHOULD be given.", "text/html");
+            }
+            
             ctx.SaveChanges();
 
             if(isSubtitle)
@@ -692,7 +707,7 @@ namespace dubbingApp.Controllers
                 var model1 = ctx.subtitles.Where(b => b.dubbSheetHdrIntno == dubbSheetHdrIntno && b.scentence.Contains(oldCharacterName)).ToList();
                 foreach (var item in model1)
                 {
-                    item.scentence = item.scentence.Replace(oldCharacterName, c2.characterName.Trim());
+                    item.scentence = item.scentence.Replace(oldCharacterName, newCharacterName.Trim());
                 }
                 ctx.SaveChanges();
                 return Content("Character Successfully Renamed. " + model1.Count() + " Occurances Were found in Subtitles and Successfully Replaced!", "text/html");
