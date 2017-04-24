@@ -113,14 +113,32 @@ namespace dubbingApp.Utils
                     }
 
                     var subtitle = ctx.subtitles.Create();
+                    string[] startWithM = item.Start.Split(',');
+                    string startCode = startWithM[0];
+                    long startMilli = 0;
+                    if(startWithM.Length>1)
+                    {
+                        long.TryParse(startWithM[1], out startMilli);
+                    }
+
+                    string[] endWithM = item.End.Split(',');
+                    string endCode = endWithM[0];
+                    long endMilli = 0;
+                    if (endWithM.Length > 1)
+                    {
+                        long.TryParse(endWithM[1], out endMilli);
+                    }
+
                     subtitle.dubbSheetHdrIntno = item.SheetHdrId;
                     subtitle.dialogIntno = item.DialogId;
                     subtitle.scentence = item.Subtitle;
                     subtitle.subtitleNo = sno;
-                    subtitle.startTimeCode = item.Start;
-                    subtitle.endTimeCode = item.End;
-                    subtitle.startSecond = TimeConverter.StringToSeconds(item.Start);
-                    subtitle.endSecond = TimeConverter.StringToSeconds(item.End);
+                    subtitle.startTimeCode = startCode;
+                    subtitle.endTimeCode = endCode;
+                    subtitle.startSecond = TimeConverter.StringToSeconds(startCode);
+                    subtitle.endSecond = TimeConverter.StringToSeconds(endCode);
+                    subtitle.startMillisecond = startMilli;
+                    subtitle.endMillisecond = endMilli;
                     ctx.subtitles.Add(subtitle);
                     ctx.SaveChanges();
 

@@ -17,16 +17,19 @@
         font: bold;
         /*<c.customstyle>custom classname</c>*/
     }
+
     ::cue(.red) {
         color: red;
         font: bold;
         /*<c.customstyle>custom classname</c>*/
     }
+
     ::cue(.blue) {
         color: blue;
         font: bold;
         /*<c.customstyle>custom classname</c>*/
     }
+
     ::cue(.green) {
         color: green;
         font: bold;
@@ -52,9 +55,9 @@
             <div class="box-header with-border">
                 <h3 class="box-title">Subtitles</h3>
             </div>
-            <div class="box-body"  style="height:600px;">
-                <div id="subtitlesContainer" class="direct-chat-messages"  style="height:600px;">
-                    
+            <div class="box-body" style="height:600px;">
+                <div id="subtitlesContainer" class="direct-chat-messages" style="height:600px;">
+
 
                 </div>
             </div>
@@ -66,23 +69,30 @@
     <div class="col-md-4 text-center">
 
         <div id="video-container">
-            <video id="video" style="background-color: black !important; width:100%;" controls></video> 
+            <video id="video" style="background-color: black !important; width:100%;" controls></video>
         </div>
         <!-- Video Controls -->
         <div id="video-controls" class="hidden">
             <input type="text" id="vid_slider" name="vid_slider" value="" style="width: 100%; max-width:100%;" />
             <input type="text" id="vid_slider2" name="vid_slider2" value="" style="width: 100%; max-width:100%; margin-top: 5px;" />
-            
-            <div id="focused_names" class="form-inline" style="margin-top: 5px; margin-bottom: 5px;">                
+
+            <div id="focused_names" class="form-inline" style="margin-top: 5px; margin-bottom: 5px;">
                 <input id="characterName" name="characterName" type="text" class="form-control" placeholder="Character" />
                 <input type="checkbox" id="chk_new_scene" checked />
                 <label id="chk_new_scene_label" for="chk_new_scene">New Scene</label>
                 <input type="checkbox" id="chk_new_dlg" checked />
                 <label id="chk_new_dlg_label" for="chk_new_scene">New Dialog</label>
             </div>
-            
+
             <input class="form-control text-right" type="text" id="subtitle_text" name="subtitle_text" value="" placeholder="جملة جديدة" style="width: 100%; max-width: 100%; margin-top: 5px;" />
             <br />
+            <div class="form-inline">
+                <label for="fromM">Start ms.</label>
+                <input class="form-control" type="number" id="fromM" name="fromM" value="0" />
+                <label for="toM">End ms.</label>
+                <input class="form-control" type="number" id="toM" name="toM" value="0" />
+            </div>
+            <br/>
             <div class="form-inline">
                 <a id="deleteSubtitle" class="btn btn-danger" style="display:none;" href="javascript:deleteSubtitle();">Delete</a>
                 <a class="btn btn-primary" href="javascript:loadSubtitles();">Load Subtitles</a>
@@ -132,7 +142,7 @@
 
 @section Scripts
 {
-    
+
     <script src="~/Scripts/ion.rangeSlider.js"></script>
     <script src="~/Scripts/jquery-ui-1.12.0.js"></script>
     <script src="~/Scripts/dubbing/busySpinner.js"></script>
@@ -153,8 +163,7 @@
         function loadSubtitles() {
 
             var track = video.textTracks[0];
-            while(track.cues.length > 0)
-            {
+            while (track.cues.length > 0) {
                 var item = track.cues[0];
                 track.removeCue(item);
             }
@@ -195,6 +204,8 @@
                             var elem_text = $(this).text().trim();
                             var from = $(this).data("from");
                             var to = $(this).data("to");
+                            var fromM = $(this).data("fromm");
+                            var toM = $(this).data("tom");
                             var elem_char = $(this).siblings(".direct-chat-info").children(".direct-chat-name").text().trim();
                             var id = $(this).data("id");
                             var dur = to - from;
@@ -203,6 +214,8 @@
 
                             $("#characterName").val(elem_char);
                             $("#subtitle_text").val(elem_text);
+                            $("#fromM").val(fromM);
+                            $("#toM").val(toM);
 
                             var from1 = from - (dur * 2);
                             if (from1 < sceneMin)
@@ -250,6 +263,13 @@
             var toSecond = $("#slider_to2").val();
             var from = secondsToString(fromSecond);
             var to = secondsToString(toSecond);
+            var fromM = $("#fromM").val();
+            if (fromM == '')
+                fromM = 0;
+
+            var toM = $("#toM").val();
+            if (toM == '')
+                toM = 0;
             var characterName = $("#characterName").val();
             var newScene = $("#chk_new_scene").is(":checked");
             var newDlg = $("#chk_new_dlg").is(":checked");;
@@ -261,7 +281,7 @@
                 contentType: 'application/json',
                 method: 'GET',
                 url: url,
-                data: { orderTrnHdrIntno: orderTrnHdrIntno, name: characterName, from: from, to: to, text: text, newScene: newScene, newDlg: newDlg  },
+                data: { orderTrnHdrIntno: orderTrnHdrIntno, name: characterName, from: from, to: to, fromM: fromM, toM: toM, text: text, newScene: newScene, newDlg: newDlg },
                 success: function (result) {
                     subtitlesList2();
                     refreshCharacterNames();
@@ -275,6 +295,8 @@
             var toSecond = $("#slider_to2").val();
             var from = secondsToString(fromSecond);
             var to = secondsToString(toSecond);
+            var fromM = $("#fromM").val();
+            var toM = $("#toM").val();
             var characterName = $("#characterName").val();
             var orderTrnHdrIntno = $("#orderTrnHdrIntno").val();
             var text = $("#subtitle_text").val();
@@ -284,7 +306,7 @@
                 contentType: 'application/json',
                 method: 'GET',
                 url: url,
-                data: { id: id, orderTrnHdrIntno: orderTrnHdrIntno, name: characterName, from: from, to: to, text: text },
+                data: { id: id, orderTrnHdrIntno: orderTrnHdrIntno, name: characterName, from: from, to: to, fromM: fromM, toM: toM, text: text },
                 success: function (result) {
                     subtitlesList2();
                     refreshCharacterNames();
@@ -297,7 +319,7 @@
                 return;
             }
             var id = $("#deleteSubtitle").data("id");
-            
+
             var url = "/adaptation/DeleteSubtitle";
 
             $.ajax({
@@ -326,6 +348,8 @@
             $("#chk_new_dlg_label").show();
             $("#characterName").val('');
             $("#subtitle_text").val('');
+            $("#fromM").val('0');
+            $("#toM").val('0');
 
             var from1 = $("#slider_to2").val();
             from1 = parseInt(from1) + 1;
@@ -362,8 +386,7 @@
                 data: { orderTrnHdrIntno: orderTrnHdrIntno },
                 success: function (result) {
                     var x = 0;
-                    for(x = 0; x < result.length; x++)
-                    {
+                    for (x = 0; x < result.length; x++) {
                         availableNames.push(result[x]);
                     }
                     $("#characterName").autocomplete({
@@ -372,173 +395,173 @@
                 }
             });
         }
-    function nextScene() {
-        var currentScene = parseInt($("#current_scene_no").val());
-        var maxScene = parseInt($("#scene_max_no").val());
-        if (currentScene < maxScene) {
-            currentScene += 1;
-            $("#current_scene_no").val(currentScene);
-        }
-
-    }
-    function prevScene() {
-        var currentScene = parseInt($("#current_scene_no").val());
-        var minScene = parseInt($("#scene_min_no").val());
-        if (currentScene > minScene) {
-            currentScene -= 1;
-            $("#current_scene_no").val(currentScene);
-        }
-
-    }
-    function nextDlg() {
-        var currentDlg = parseInt($("#current_dlg_no").val());
-
-        currentDlg += 1;
-        $("#current_dlg_no").val(currentDlg);
-    }
-    function prevDlg() {
-        var currentDlg = parseInt($("#current_dlg_no").val());
-        if (currentDlg > 0)
-            currentDlg -= 1;
-        $("#current_dlg_no").val(currentDlg);
-    }
-    function testSubtitle() {
-        var text = $("#subtitle_text").val();
-        var track = video.textTracks[0];
-
-
-        var from = $("#slider_from2").val();
-        var to = $("#slider_to2").val();
-        var cue = new VTTCue(from, to, text);
-        track.addCue(cue);
-        video.currentTime = from;
-    }
-
-    function localFileVideoPlayer() {
-        'use strict'
-        var URL = window.URL || window.webkitURL
-        var displayMessage = function (message, isError) {
-            $("#message").val(message);
-        }
-        var playSelectedFile = function (event) {
-
-            var file = this.files[0]
-            var type = file.type
-            //var videoNode = $("#vid");
-            var canPlay = video.canPlayType(type)
-            if (canPlay === '') canPlay = 'no'
-            var message = 'Can play type "' + type + '": ' + canPlay
-            var isError = canPlay === 'no'
-            displayMessage(message, isError)
-
-            if (isError) {
-                return
+        function nextScene() {
+            var currentScene = parseInt($("#current_scene_no").val());
+            var maxScene = parseInt($("#scene_max_no").val());
+            if (currentScene < maxScene) {
+                currentScene += 1;
+                $("#current_scene_no").val(currentScene);
             }
 
-            var fileURL = URL.createObjectURL(file)
-            video.src = fileURL
-            $("#video-controls").removeClass("hidden");
         }
-        $("#vidFile").change(playSelectedFile);
+        function prevScene() {
+            var currentScene = parseInt($("#current_scene_no").val());
+            var minScene = parseInt($("#scene_min_no").val());
+            if (currentScene > minScene) {
+                currentScene -= 1;
+                $("#current_scene_no").val(currentScene);
+            }
 
-    }
-    function activateCharacterNames() {
-        var availableNames = [];
-        @foreach (var d in Model.Characters.Select(x => x.Name))
+        }
+        function nextDlg() {
+            var currentDlg = parseInt($("#current_dlg_no").val());
+
+            currentDlg += 1;
+            $("#current_dlg_no").val(currentDlg);
+        }
+        function prevDlg() {
+            var currentDlg = parseInt($("#current_dlg_no").val());
+            if (currentDlg > 0)
+                currentDlg -= 1;
+            $("#current_dlg_no").val(currentDlg);
+        }
+        function testSubtitle() {
+            var text = $("#subtitle_text").val();
+            var track = video.textTracks[0];
+
+
+            var from = $("#slider_from2").val();
+            var to = $("#slider_to2").val();
+            var cue = new VTTCue(from, to, text);
+            track.addCue(cue);
+            video.currentTime = from;
+        }
+
+        function localFileVideoPlayer() {
+            'use strict'
+            var URL = window.URL || window.webkitURL
+            var displayMessage = function (message, isError) {
+                $("#message").val(message);
+            }
+            var playSelectedFile = function (event) {
+
+                var file = this.files[0]
+                var type = file.type
+                //var videoNode = $("#vid");
+                var canPlay = video.canPlayType(type)
+                if (canPlay === '') canPlay = 'no'
+                var message = 'Can play type "' + type + '": ' + canPlay
+                var isError = canPlay === 'no'
+                displayMessage(message, isError)
+
+                if (isError) {
+                    return
+                }
+
+                var fileURL = URL.createObjectURL(file)
+                video.src = fileURL
+                $("#video-controls").removeClass("hidden");
+            }
+            $("#vidFile").change(playSelectedFile);
+
+        }
+        function activateCharacterNames() {
+            var availableNames = [];
+            @foreach (var d in Model.Characters.Select(x => x.Name))
             {
                 @:availableNames.push("@d");
+                                }
+            $("#characterName").autocomplete({
+                source: availableNames
+            });
+        }
+
+        $(function () {
+
+
+            $("div.container").css('width', '100%');
+            localFileVideoPlayer();
+            video.onloadedmetadata = function () {
+                var track = this.addTextTrack("subtitles", "Arabic", "ar");
+                track.mode = "showing";
+                //track.addCue(new VTTCue(5, 10.5, "This blade has a dark past."));
+                //var track1 = this.addTextTrack("captions", "Arabic", "ar");
+
+                //track1.addCue(new VTTCue(5, 10.5, "أهلا وسهلا <u>بكم</u> في القصر"));
+
+                var dur = Math.floor(video.duration);
+                if ($("#scene_max").val() == 0)
+                    $("#scene_max").val(dur);
+
+                var sceneMin = $("#scene_min").val();
+                var sceneMax = $("#scene_max").val();
+
+                secondsToString(dur);
+                $("#slider_from").val(0);
+                $("#slider_to").val(60);
+                $("#vid_slider2").ionRangeSlider({
+                    type: "double",
+                    grid: true,
+                    min: 0,
+                    max: dur,
+                    from: sceneMin,
+                    to: sceneMax,
+                    grid_num: 5,
+                    keyboard: true,
+                    drag_interval: true,
+                    prettify: function (num) {
+                        return secondsToString(num);
+                    },
+                    onChange: function (data) {
+                        if (data.from != $("#slider_from2").val())
+                            video.currentTime = data.from;
+                        else if (data.to != $("#slider_to2").val())
+                            video.currentTime = data.to;
+                        $("#slider_from2").val(data.from);
+                        $("#slider_to2").val(data.to);
                     }
-        $("#characterName").autocomplete({
-            source: availableNames
+                });
+                $("#vid_slider").ionRangeSlider({
+                    type: "double",
+                    grid: true,
+                    min: 0,
+                    max: dur,
+                    from_min: sceneMin,
+                    from_max: sceneMax,
+                    from_shadow: true,
+                    to_min: sceneMin,
+                    to_max: sceneMax,
+                    to_shadow: true,
+                    from: sceneMin,
+                    to: sceneMax,
+                    grid_num: 5,
+                    keyboard: true,
+                    keyboard_step: 100 / dur,
+                    drag_interval: true,
+                    prettify: function (num) {
+                        return secondsToString(num);
+                    },
+                    onChange: function (data) {
+                        if (data.from != $("#slider_from").val())
+                            video.currentTime = data.from;
+                        else if (data.to != $("#slider_to").val())
+                            video.currentTime = $("#slider_to").val();
+                        $("#slider_from").val(data.from);
+                        $("#slider_to").val(data.to);
+                        var slider2 = $("#vid_slider2").data("ionRangeSlider");
+                        slider2.update({
+                            min: data.from,
+                            max: data.to,
+                            from: data.from,
+                            to: data.to
+                        });
+                    }
+                });
+            };
+            activateCharacterNames();
+            subtitlesList2();
         });
-    }
-
-    $(function () {
 
 
-        $("div.container").css('width', '100%');
-        localFileVideoPlayer();
-        video.onloadedmetadata = function () {
-            var track = this.addTextTrack("subtitles", "Arabic", "ar");
-            track.mode = "showing";
-            //track.addCue(new VTTCue(5, 10.5, "This blade has a dark past."));
-            //var track1 = this.addTextTrack("captions", "Arabic", "ar");
-
-            //track1.addCue(new VTTCue(5, 10.5, "أهلا وسهلا <u>بكم</u> في القصر"));
-
-            var dur = Math.floor(video.duration);
-            if ($("#scene_max").val() == 0)
-                $("#scene_max").val(dur);
-
-            var sceneMin = $("#scene_min").val();
-            var sceneMax = $("#scene_max").val();
-
-            secondsToString(dur);
-            $("#slider_from").val(0);
-            $("#slider_to").val(60);
-            $("#vid_slider2").ionRangeSlider({
-                type: "double",
-                grid: true,
-                min: 0,
-                max: dur,
-                from: sceneMin,
-                to: sceneMax,
-                grid_num: 5,
-                keyboard: true,
-                drag_interval: true,
-                prettify: function (num) {
-                    return secondsToString(num);
-                },
-                onChange: function (data) {
-                    if (data.from != $("#slider_from2").val())
-                        video.currentTime = data.from;
-                    else if (data.to != $("#slider_to2").val())
-                        video.currentTime = data.to;
-                    $("#slider_from2").val(data.from);
-                    $("#slider_to2").val(data.to);
-                }
-            });
-            $("#vid_slider").ionRangeSlider({
-                type: "double",
-                grid: true,
-                min: 0,
-                max: dur,
-                from_min: sceneMin,
-                from_max: sceneMax,
-                from_shadow: true,
-                to_min: sceneMin,
-                to_max: sceneMax,
-                to_shadow: true,
-                from: sceneMin,
-                to: sceneMax,
-                grid_num: 5,
-                keyboard: true,
-                keyboard_step: 100 / dur,
-                drag_interval: true,
-                prettify: function (num) {
-                    return secondsToString(num);
-                },
-                onChange: function (data) {
-                    if (data.from != $("#slider_from").val())
-                        video.currentTime = data.from;
-                    else if (data.to != $("#slider_to").val())
-                        video.currentTime = $("#slider_to").val();
-                    $("#slider_from").val(data.from);
-                    $("#slider_to").val(data.to);
-                    var slider2 = $("#vid_slider2").data("ionRangeSlider");
-                    slider2.update({
-                        min: data.from,
-                        max: data.to,
-                        from: data.from,
-                        to: data.to
-                    });
-                }
-            });
-        };
-        activateCharacterNames();
-        subtitlesList2();
-    });
-
-    
     </script>
 }

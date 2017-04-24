@@ -9,7 +9,7 @@
     ViewBag.time_pull = "pull-right";
 
 }
-@foreach (var subtitle in Model.Subtitles.OrderBy(x=>x.Start).ThenBy(x=>x.End))
+@foreach (var subtitle in Model.Subtitles.OrderBy(x=>x.Start).ThenBy(x=>x.StartMilli).ThenBy(x=>x.End).ThenBy(x=>x.EndMilli))
 {
     if (ViewBag._IsLeft)
     {
@@ -28,10 +28,10 @@
     <div class="direct-chat-msg @ViewBag.msg_dir">
         <div class="direct-chat-info clearfix">
             <span class="direct-chat-name @ViewBag.char_pull">@subtitle.CharacterName</span>
-            <span class="direct-chat-timestamp @ViewBag.time_pull">@subtitle.StartTime - @subtitle.EndTime</span>
+            <span class="direct-chat-timestamp @ViewBag.time_pull">@subtitle.StartTimeM - @subtitle.EndTimeM</span>
         </div>
         <img class="direct-chat-img" src="~/Content/Images/user.svg" alt="Character">
-        <div class="direct-chat-text subtitle"  data-id="@subtitle.Id" data-from="@subtitle.Start" data-to="@subtitle.End">
+        <div class="direct-chat-text subtitle"  data-id="@subtitle.Id" data-from="@subtitle.Start" data-to="@subtitle.End" data-fromM="@subtitle.StartMilli" data-toM="@subtitle.EndMilli">
             @subtitle.Text
         </div>
     </div>

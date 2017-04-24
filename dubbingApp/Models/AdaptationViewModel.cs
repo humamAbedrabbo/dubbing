@@ -36,6 +36,9 @@ namespace dubbingApp.Models
         public int No { get; set; }
         public long Start { get; set; }
         public long End { get; set; }
+        public long StartMilli { get; set; }
+        public long EndMilli { get; set; }
+
         public string StartTime { get; set; }
         public string EndTime { get; set; }
         public string Text { get; set; }
@@ -45,5 +48,13 @@ namespace dubbingApp.Models
         public int DlgNo { get; set; }
         public long? CharacterId { get; set; }
         public string CharacterName { get; set; }
+        public string StartTimeM
+        {
+            get { return string.Format("{0}.{1}", StartTime, StartMilli); }
+        }
+        public string EndTimeM
+        {
+            get { return string.Format("{0}.{1}", EndTime, EndMilli); }
+        }
     }
 }

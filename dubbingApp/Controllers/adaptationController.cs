@@ -56,7 +56,7 @@ namespace dubbingApp.Controllers
             short sNo = 0;
             long lastDlgId = 0;
             long lastSceneId = 0;
-            var subtitles = ctx.subtitles.Include(x => x.dialog).Include(x => x.dialog.scene).Where(x => x.dialog.scene.orderTrnHdrIntno == orderTrnHdrIntno).OrderBy(x => x.startSecond).ThenBy(x => x.subtitleIntno).ToList(); //.ThenBy(x => x.endSecond)
+            var subtitles = ctx.subtitles.Include(x => x.dialog).Include(x => x.dialog.scene).Where(x => x.dialog.scene.orderTrnHdrIntno == orderTrnHdrIntno).OrderBy(x => x.startSecond).ThenBy(x => x.startMillisecond).ThenBy(x => x.endSecond).ThenBy(x => x.endMillisecond).ToList(); //.ThenBy(x => x.endSecond)
             foreach (var s in subtitles)
             {
                 if(s.dialog.scene.sceneIntno == lastSceneId)
@@ -127,7 +127,7 @@ namespace dubbingApp.Controllers
                 .Include(x => x.dialog.scene)
                 .Include(x => x.dubbingSheetHdr)
                 .Include(x => x.dubbingSheetHdr.workCharacter)
-                .Where(x => x.dialog.scene.orderTrnHdrIntno == orderTrnHdrIntno).OrderBy(x => x.startSecond).ThenBy(x => x.endSecond)
+                .Where(x => x.dialog.scene.orderTrnHdrIntno == orderTrnHdrIntno).OrderBy(x => x.startSecond).ThenBy(x => x.startMillisecond).ThenBy(x => x.endSecond).ThenBy(x => x.endMillisecond)
                 .ToList();
             ViewBag.Dialogs = model.Select(x => x.dialog).Distinct().OrderBy(x => x.scene.sceneNo).ThenBy(x => x.dialogNo).ToList();
             ViewBag.Scenes = model.Select(x => x.dialog.scene).Distinct().OrderBy(x => x.sceneNo).ToList();
@@ -221,7 +221,7 @@ namespace dubbingApp.Controllers
                 .Include(x => x.dialog.scene)
                 .Include(x => x.dubbingSheetHdr)
                 .Include(x => x.dubbingSheetHdr.workCharacter)
-                .Where(x => x.dialog.scene.orderTrnHdrIntno == order.orderTrnHdrIntno).OrderBy(x => x.startSecond).ThenBy(x => x.endSecond)
+                .Where(x => x.dialog.scene.orderTrnHdrIntno == order.orderTrnHdrIntno).OrderBy(x => x.startSecond).ThenBy(x => x.startMillisecond).ThenBy(x => x.endSecond).ThenBy(x => x.endMillisecond)
                 .ToList();
 
             model.Subtitles.Clear();
@@ -238,6 +238,8 @@ namespace dubbingApp.Controllers
                     No = s.subtitleNo,
                     StartTime = s.startTimeCode,
                     Start = s.startSecond,
+                    StartMilli = s.startMillisecond,
+                    EndMilli = s.endMillisecond,
                     EndTime = s.endTimeCode,
                     End = s.endSecond,
                     Text = s.scentence,
@@ -317,7 +319,7 @@ namespace dubbingApp.Controllers
         }
 
         
-        public void SubmitSubtitle(long orderTrnHdrIntno, string name, string from, string to, string text, bool newScene = true, bool newDlg = true)
+        public void SubmitSubtitle(long orderTrnHdrIntno, string name, string from, string to, long fromM, long toM, string text, bool newScene = true, bool newDlg = true)
         {
             var hdr = ctx.orderTrnHdrs.Find(orderTrnHdrIntno);
             // Find or add character
@@ -442,6 +444,8 @@ namespace dubbingApp.Controllers
             subtitle.dubbSheetHdrIntno = sheetHdr.dubbSheetHdrIntno;
             subtitle.startTimeCode = from;
             subtitle.endTimeCode = to;
+            subtitle.startMillisecond = fromM;
+            subtitle.endMillisecond = toM;
             subtitle.subtitleNo = 0;
             subtitle.startSecond = TimeConverter.StringToSeconds(from);
             subtitle.endSecond = TimeConverter.StringToSeconds(to);
@@ -451,7 +455,7 @@ namespace dubbingApp.Controllers
             ctx.SaveChanges();
         }
 
-        public void UpdateSubtitle(long id, long orderTrnHdrIntno, string name, string from, string to, string text)
+        public void UpdateSubtitle(long id, long orderTrnHdrIntno, string name, string from, string to, long fromM, long toM, string text)
         {
             var subtitle = ctx.subtitles.Find(id);
             if(subtitle.dubbingSheetHdr.characterName.ToUpper() != name.ToUpper())
@@ -488,6 +492,8 @@ namespace dubbingApp.Controllers
 
             subtitle.startTimeCode = from;
             subtitle.endTimeCode = to;
+            subtitle.startMillisecond = fromM;
+            subtitle.endMillisecond = toM;
             subtitle.startSecond = TimeConverter.StringToSeconds(from);
             subtitle.endSecond = TimeConverter.StringToSeconds(to);
             subtitle.scentence = text;
@@ -589,24 +595,43 @@ namespace dubbingApp.Controllers
             //sb.AppendFormat("{0}", @"{\rtf1\ansi\ansicpg1252\deff0\nouicompat\deflang14346{\fonttbl{\f0\fs20\fnil\fcharset0 Calibri;}} {\*\generator Riched20 10.0.10586}\viewkind4\uc1 \pard\sa200\sl276\slmult1\f0\fs22\lang10");
             //sb.AppendLine();
             //line++;
-            foreach (var scene in order.scenes.OrderBy(x => x.sceneNo))
+            var subtitles = ctx.subtitles.Include(XmlSiteMapProvider => XmlSiteMapProvider.dialog).Include(x => x.dialog.scene).Include(x => x.dialog.scene.orderTrnHdr)
+                .Where(x => x.dialog.scene.orderTrnHdrIntno == orderTrnHdrIntno)
+                .OrderBy(x => x.startSecond).ThenBy(x => x.startMillisecond).ThenBy(x => x.endSecond).ThenBy(x => x.endMillisecond)
+                .ToList();
+            foreach (var subtitle in subtitles)
             {
-                foreach(var dialog in scene.dialogs.OrderBy(x => x.dialogNo))
-                {
-                    foreach(var subtitle in dialog.subtitles.OrderBy(x => x.subtitleNo))
-                    {
-                        sb.AppendFormat("{0}", line);
-                        sb.AppendLine();
-                        sb.AppendFormat("{0},1 --> {1},1", subtitle.startTimeCode, subtitle.endTimeCode);
-                        sb.AppendLine();
-                        //sb.AppendFormat("<font size=\"36px\" color=\"white\">{0}</font>", subtitle.scentence);
-                        sb.AppendFormat("{0}", subtitle.scentence);
-                        sb.AppendLine();
-                        sb.AppendLine();
-                        line++;
-                    }
-                }
+                sb.AppendFormat("{0}", line);
+                sb.AppendLine();
+                sb.AppendFormat("{0},{2} --> {1},{3}", subtitle.startTimeCode, subtitle.endTimeCode, subtitle.startMillisecond, subtitle.endMillisecond);
+                sb.AppendLine();
+                //sb.AppendFormat("<font size=\"36px\" color=\"white\">{0}</font>", subtitle.scentence);
+                sb.AppendFormat("{0}", subtitle.scentence);
+                sb.AppendLine();
+                sb.AppendLine();
+                line++;
             }
+            //foreach (var scene in order.scenes.OrderBy(x => x.sceneNo))
+            //{
+            //    foreach(var dialog in scene.dialogs.OrderBy(x => x.dialogNo))
+            //    {
+            //        foreach(var subtitle in dialog.subtitles.OrderBy(x => x.startSecond).ThenBy(x => x.startMillisecond).ThenBy(x => x.endSecond).ThenBy(x=>x.endMillisecond))
+            //        {
+            //            sb.AppendFormat("{0}", line);
+            //            sb.AppendLine();
+            //            sb.AppendFormat("{0}.{2},1 --> {1}.{3},1", subtitle.startTimeCode, subtitle.endTimeCode, subtitle.startMillisecond, subtitle.endMillisecond);
+            //            sb.AppendLine();
+            //            //sb.AppendFormat("<font size=\"36px\" color=\"white\">{0}</font>", subtitle.scentence);
+            //            sb.AppendFormat("{0}", subtitle.scentence);
+            //            sb.AppendLine();
+            //            sb.AppendLine();
+            //            line++;
+            //        }
+            //    }
+            //}
+
+
+
             //sb.AppendFormat("{0}", @"\par}");
             //sb.AppendLine();
 
