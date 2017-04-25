@@ -78,13 +78,13 @@
             }
         }
 
-        function onActorClick(actor1, schedule1) {
+        function onActorClick(actor1, actorName1, schedule1) {
             $('.actorLbl').removeClass('badge');
             $('#' + actor1).addClass('badge');
 
             $.ajax({
                 url: '@Url.Action("appointmentsList", "calendar")',
-                data: { actor: actor1, schedule: schedule1 },
+                data: { actor: actor1, actorName: actorName1, schedule: schedule1 },
                 type: 'GET',
                 success: function (result) {
                     $('#aptList').removeClass('col-sm-9').addClass('col-sm-6');

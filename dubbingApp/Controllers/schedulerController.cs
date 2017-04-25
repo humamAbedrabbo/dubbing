@@ -435,16 +435,19 @@ namespace dubbingApp.Controllers
                             select C.orderTrnHdrIntno).Distinct().ToList();
             
             //find dubbing sheets for scheduled episodes
-            var x = db.dubbingSheetHdrs.Include(b => b.orderTrnHdr).Where(b => episodes.Contains(b.orderTrnHdrIntno) && b.voiceActorIntno != 0).ToList();
+            var x = db.dubbingSheetHdrs.Include(b => b.orderTrnHdr).Where(b => episodes.Contains(b.orderTrnHdrIntno) && !b.actorName.Contains("ANONYM")).ToList();
             
             foreach (var x1 in x.Select(b => new { b.orderTrnHdr.workIntno, b.voiceActorIntno, b.actorName }).Distinct().ToList())
             {
                 var hdrs = x.Where(b => b.orderTrnHdr.workIntno == x1.workIntno && b.voiceActorIntno == x1.voiceActorIntno && b.actorName == x1.actorName).Select(b => b.dubbSheetHdrIntno).Distinct().ToList();
                 totalScenes = db.dubbingSheetDtls.Where(b => hdrs.Contains(b.dubbSheetHdrIntno)).Count();
-                
-                var sph = db.workActors.FirstOrDefault(b => b.voiceActorIntno == x1.voiceActorIntno && b.workIntno == x1.workIntno && b.status == true);
-                if (sph != null && sph.scenesPerHour != 0)
-                    totalMinutes = totalScenes * 60 / sph.scenesPerHour;
+                totalMinutes = 0;
+                if (x1.voiceActorIntno != 0)
+                {
+                    var sph = db.workActors.FirstOrDefault(b => b.voiceActorIntno == x1.voiceActorIntno && b.workIntno == x1.workIntno && b.status == true);
+                    if (sph != null && sph.scenesPerHour != 0)
+                        totalMinutes = totalScenes * 60 / sph.scenesPerHour;
+                }
 
                 var studios = db.studios.Where(b => b.dubbTrnHdrIntno == schedule && b.workIntno == x1.workIntno).ToList();
                 foreach (var std in studios)

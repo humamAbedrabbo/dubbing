@@ -106,11 +106,22 @@ namespace dubbingApp.Controllers
             if (ModelState.IsValid)
             {
                 var modelItem = model.FirstOrDefault(b => b.dubbSheetHdrIntno == item.dubbSheetHdrIntno);
-                modelItem.voiceActorIntno = item.voiceActorIntno;
-                if (item.voiceActorIntno != 0)
-                    modelItem.actorName = db.voiceActors.Find(item.voiceActorIntno).fullName;
+                var x = db.workActors;
+                if (item.workCharacterIntno.HasValue)
+                {
+                    if(x.FirstOrDefault(b => b.workCharacterIntno == item.workCharacterIntno && b.status == true) != null) //if character has cast
+                    {
+                        long va = x.FirstOrDefault(b => b.workCharacterIntno == item.workCharacterIntno && b.status == true).voiceActorIntno;
+                        modelItem.voiceActorIntno = va;
+                        modelItem.actorName = db.voiceActors.Find(va).fullName;
+                    }
+                }
                 else
+                {
+                    modelItem.voiceActorIntno = item.voiceActorIntno;
                     modelItem.actorName = item.actorName;
+                }
+                
                 db.SaveChanges();
                 return Content("Successfully Updated.", "text/html");
             }

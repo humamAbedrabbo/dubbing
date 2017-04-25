@@ -2,14 +2,17 @@
     <div>
         <label style="padding:0px"><small>Actors List</small></label>
         <div style="padding:0px"><small>Sorted by Total Scenes (Importance)</small></div>
+        <div style="padding:0px"><small>(*) is for Secondary Role</small></div>
     </div>
     <hr />
     <ul style="padding:10px">
         @foreach (SelectListItem actor in ViewBag.actorsList as SelectList)
         {
             string actor1 = actor.Value.ToString();
+            string secondary = null;
+            if(actor.Value == "0") { secondary = " *"; }
             <li>
-                <a class="actorLbl" id="@actor1" href="#" onclick="onActorClick(@actor.Value, @ViewBag.schedule)" title="appointments">@actor.Text</a>
+                <a class="actorLbl" id="@actor1" href="#" onclick="onActorClick(@actor.Value, '@actor.Text', @ViewBag.schedule)" title="appointments">@actor.Text @secondary</a>
             </li>
         }
     </ul>

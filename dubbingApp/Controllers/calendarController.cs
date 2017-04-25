@@ -35,13 +35,9 @@ namespace dubbingApp.Controllers
 
         public ActionResult actorsList(long schedule)
         {
-            var model = (from A in db.studios
-                         join B in db.dubbingAppointments on A.studioIntno equals B.studioIntno
-                         join C in db.dubbingSheetHdrs on B.voiceActorIntno equals C.voiceActorIntno
-                         join D in db.voiceActors on C.voiceActorIntno equals D.voiceActorIntno
-                         where A.dubbTrnHdrIntno == schedule
-                         select new { D.voiceActorIntno, D.fullName, B.totalScenes }).Distinct();
-            ViewBag.actorsList = new SelectList(model.OrderByDescending(b => b.totalScenes).ToList(), "voiceActorIntno", "fullName");
+            var model = db.dubbingAppointments.Include(b => b.studio).Where(b => b.studio.dubbTrnHdrIntno == schedule)
+                                        .Select(b => new { b.voiceActorIntno, b.actorName, b.totalScenes }).Distinct();
+            ViewBag.actorsList = new SelectList(model.OrderByDescending(b => b.totalScenes).ToList(), "voiceActorIntno", "actorName");
             ViewBag.schedule = schedule;
             return PartialView("_actorsList");
         }
@@ -76,11 +72,11 @@ namespace dubbingApp.Controllers
             return PartialView("_supervisorsList");
         }
 
-        public ActionResult appointmentsList(long actor, long schedule)
+        public ActionResult appointmentsList(long actor, string actorName, long schedule)
         {
             var model = db.dubbingAppointments.Include(b => b.studio).Include(b => b.agreementWork)
-                        .Where(b => b.voiceActorIntno == actor && b.studio.dubbTrnHdrIntno == schedule)
-                        .OrderBy(b => new { b.appointmentDate, b.fromTime });
+                        .Where(b => b.voiceActorIntno == actor && b.actorName == actorName && b.studio.dubbTrnHdrIntno == schedule)
+                        .OrderBy(b => b.appointmentDate).ThenBy(b => b.fromTime);
             return PartialView("_appointmentsList", model.ToList());
         }
 
