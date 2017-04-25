@@ -37,21 +37,22 @@ namespace dubbingApp.Controllers
         public ActionResult castingList(long orderItem)
         {
             var sheetHdr = db.dubbingSheetHdrs.Include(b => b.workCharacter).Where(b => b.orderTrnHdrIntno == orderItem)
-                            .Select(b => new { b, scenesCount = b.dubbingSheetDtls.Select(c => c.sceneNo).Distinct().Count(), takenCount = b.dubbingSheetDtls.Where(c => c.isTaken == true).Select(c => c.sceneNo).Distinct().Count() })
-                            .OrderBy(b => b.b.workCharacter.characterType);
+                            .OrderBy(b => b.workCharacter.characterType).ThenBy(b => b.workCharacter.sortOrder).ToList();
             List<ViewModels.castingListViewModel> model = new List<ViewModels.castingListViewModel>();
             foreach (var hdr in sheetHdr)
             {
                 ViewModels.castingListViewModel item = new ViewModels.castingListViewModel();
-                item.dubbSheetHdrIntno = hdr.b.dubbSheetHdrIntno;
-                item.orderTrnHdrIntno = hdr.b.orderTrnHdrIntno;
-                item.workCharacterIntno = hdr.b.workCharacterIntno;
-                item.characterName = hdr.b.characterName;
-                item.voiceActorIntno = hdr.b.voiceActorIntno;
-                item.actorName = hdr.b.actorName;
-                item.totalScenes = hdr.scenesCount;
+                item.dubbSheetHdrIntno = hdr.dubbSheetHdrIntno;
+                item.orderTrnHdrIntno = hdr.orderTrnHdrIntno;
+                item.workCharacterIntno = hdr.workCharacterIntno;
+                item.characterName = hdr.characterName;
+                item.voiceActorIntno = hdr.voiceActorIntno;
+                item.actorName = hdr.actorName;
+                int totalScenes = db.dubbingSheetDtls.Where(b => b.dubbSheetHdrIntno == hdr.dubbSheetHdrIntno).Count();
+                int totalTaken = db.dubbingSheetDtls.Where(b => b.dubbSheetHdrIntno == hdr.dubbSheetHdrIntno && b.isTaken).Count();
+                item.totalScenes = totalScenes;
 
-                if (hdr.scenesCount != 0 && hdr.takenCount == hdr.scenesCount)
+                if (totalScenes != 0 && totalScenes == totalTaken)
                     item.isEndorsed = true;
                 else
                     item.isEndorsed = false;
@@ -61,17 +62,6 @@ namespace dubbingApp.Controllers
 
             var orderHdr = db.orderTrnHdrs.Find(orderItem);
             long workId = orderHdr.workIntno;
-
-            int sch = (from A in db.orderTrnDtls
-                       join B in db.studioEpisodes on A.orderTrnDtlIntno equals B.orderTrnDtlIntno
-                       join C in db.studios on B.studioIntno equals C.studioIntno
-                       join D in db.dubbingTrnHdrs on C.dubbTrnHdrIntno equals D.dubbTrnHdrIntno
-                       where A.orderTrnHdrIntno == orderItem && A.status == true && D.status == true
-                       select A).Distinct().Count();
-            if (sch != 0)
-                ViewBag.isScheduled = true;
-            else
-                ViewBag.isScheduled = false;
 
             ViewBag.orderItem = orderItem;
             ViewBag.workEpisode = db.agreementWorks.Find(workId).workName + " / Episode: " + orderHdr.episodeNo;
@@ -102,6 +92,8 @@ namespace dubbingApp.Controllers
                             where C.voiceActorIntno == 0
                             select new { C.voiceActorIntno, C.fullName });
             ViewBag.actorsList = new SelectList(x, "voiceActorIntno", "fullName");
+            var y = db.workCharacters.Where(b => b.workIntno == workId).OrderBy(b => b.sortOrder).ToList();
+            ViewBag.charactersList = new SelectList(y, "workCharacterIntno", "characterName");
             ViewBag.orderItem = orderItem;
             return PartialView("_castingUpdate", item);
         }
@@ -128,15 +120,15 @@ namespace dubbingApp.Controllers
 
         public ActionResult refreshCast(long orderItem)
         {
-            var model = db.dubbingSheetHdrs;
-            var x = (from A in db.dubbingSheetHdrs
-                     join B in db.workActors on A.workCharacterIntno equals B.workCharacterIntno
-                     where A.orderTrnHdrIntno == orderItem && A.voiceActorIntno == 0
-                     select new { A.dubbSheetHdrIntno, B.voiceActorIntno });
-            foreach (var item in x)
+            var model = db.dubbingSheetHdrs.Include(b => b.workCharacter).Where(b => b.orderTrnHdrIntno == orderItem && b.workCharacterIntno.HasValue && b.voiceActorIntno == 0).ToList();
+            foreach (var item in model)
             {
-                var modelItem = model.Find(item.dubbSheetHdrIntno);
-                modelItem.voiceActorIntno = item.voiceActorIntno;
+                var x = db.workActors.Include(b => b.voiceActor).FirstOrDefault(b => b.workCharacterIntno == item.workCharacterIntno && b.status == true);
+                if(x != null)
+                {
+                    item.voiceActorIntno = x.voiceActorIntno;
+                    item.actorName = x.voiceActor.fullName;
+                }
             }
             db.SaveChanges();
 

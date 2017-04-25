@@ -2964,10 +2964,10 @@
           <Property Name="endTimeCode" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
           <Property Name="startSecond" Type="Int64" Nullable="false" />
           <Property Name="endSecond" Type="Int64" Nullable="false" />
-          <NavigationProperty Name="dialog" Relationship="DUBBDBModel.FK_subtitles_To_dialogs" FromRole="subtitle" ToRole="dialog" />
-          <NavigationProperty Name="dubbingSheetHdr" Relationship="DUBBDBModel.FK_subtitles_To_dubbingSheetHdrs" FromRole="subtitle" ToRole="dubbingSheetHdr" />
           <Property Name="startMillisecond" Type="Int64" Nullable="false" />
           <Property Name="endMillisecond" Type="Int64" Nullable="false" />
+          <NavigationProperty Name="dialog" Relationship="DUBBDBModel.FK_subtitles_To_dialogs" FromRole="subtitle" ToRole="dialog" />
+          <NavigationProperty Name="dubbingSheetHdr" Relationship="DUBBDBModel.FK_subtitles_To_dubbingSheetHdrs" FromRole="subtitle" ToRole="dubbingSheetHdr" />
         </EntityType>
         <EntityType Name="tag">
           <Key>

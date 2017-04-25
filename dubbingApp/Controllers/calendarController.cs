@@ -49,14 +49,14 @@ namespace dubbingApp.Controllers
         public ActionResult getCalendar(long schedule)
         {
             var model = db.dubbingAppointments.Include(b => b.voiceActor).Include(b => b.studio)
-                            .Where(b => b.studio.dubbTrnHdrIntno == schedule).OrderBy(b => b.appointmentDate).ThenBy(b => b.fromTime).ToList();
+                            .Where(b => b.studio.dubbTrnHdrIntno == schedule && b.fromTime.HasValue).OrderBy(b => b.appointmentDate).ThenBy(b => b.fromTime).ToList();
             string fromTime;
             string thruTime;
             foreach(var item in model)
             {
                 fromTime = item.fromTime.HasValue ? item.fromTime.Value.ToString("HH:mm") : null;
                 thruTime = item.thruTime.HasValue ? item.thruTime.Value.ToString("HH:mm") : null;
-                item.actorName = item.actorName + "|" + "(" + fromTime + " - " + thruTime + ")";
+                item.actorName = fromTime + "-" + thruTime + ":|" + item.actorName;
             }
             ViewBag.scheduleStartDate = db.dubbingTrnHdrs.Find(schedule).fromDate;
             ViewBag.studiosList = db.dubbDomains.Where(b => b.domainName == "studio" && b.status == true).OrderBy(b => b.sortOrder).ToList();

@@ -16,7 +16,7 @@
     <div class="form-group-sm">
         <small>@Html.LabelFor(model => model.characterName, "Character", htmlAttributes: new { @class = "control-label" })</small>
         <div>
-            @Html.DisplayFor(model => model.characterName, new { htmlAttributes = new { @class = "form-control-static" } })
+            @Html.DropDownListFor(model => model.workCharacterIntno, ViewBag.charactersList as SelectList, htmlAttributes: new { @class = "form-control", required="" })
         </div>
     </div>
 

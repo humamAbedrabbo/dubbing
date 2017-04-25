@@ -46,7 +46,7 @@
     <script>
         function onEpisodeSelectClick(oi) {
             $('.episodeLbl').removeClass('badge');
-            $('#' + oi).addClass('badge');
+            $('#oi' + oi).addClass('badge');
 
             $.ajax({
                 url: '@Url.Action("castingList", "discharging")',

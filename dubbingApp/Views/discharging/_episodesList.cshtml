@@ -7,9 +7,10 @@
         <br />
         <ul>
             @foreach (var oi in Model.Where(b => b.workIntno == w.workIntno))
-            {
+                {
+                    string id = "oi" + oi.orderTrnHdrIntno;
                 <li>
-                    <small><a href="#" class="episodeLbl" id="@oi.orderTrnHdrIntno" onclick="onEpisodeSelectClick(@oi.orderTrnHdrIntno)">Episode: &nbsp; @oi.episodeNo</a></small>
+                    <small><a href="#" class="episodeLbl" id="'@id'" onclick="onEpisodeSelectClick(@oi.orderTrnHdrIntno)">Episode: &nbsp; @oi.episodeNo</a></small>
                 </li>
             }
         </ul>

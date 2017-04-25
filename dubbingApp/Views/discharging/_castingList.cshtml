@@ -1,10 +1,5 @@
 ﻿@model IEnumerable<dubbingApp.Models.ViewModels.castingListViewModel>
 
-@{ 
-    string disable = null;
-    bool isScheduled = ViewBag.isScheduled;
-    if (isScheduled) { disable = "disabled"; }
-}
 <div class="container-fluid" style="padding:0px">
     <div class="panel panel-default">
         <div class="panel-heading">
@@ -18,9 +13,6 @@
                     <label>Casting For: &nbsp; @ViewBag.workEpisode</label>
                 </div>
                 <div class="col-sm-2">
-                    @*<button class="btn btn-default btn-xs pull-right" onclick="onScheduleClick(@ViewBag.orderItem)" @disable title="Generate Schedule">
-                        <span class="glyphicon glyphicon-time" aria-hidden="true"></span>
-                    </button>*@
                     <button class="btn btn-default btn-xs pull-right" onclick="onDischargeClick(@ViewBag.orderItem)" title="Download Discharging Table">
                         <span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span>
                     </button>
@@ -68,16 +60,10 @@
                                 <td><small>@item.totalScenes</small></td>
                                 <td><small>@item.actorName</small></td>
                                 <td>
-                                    @{
-                                        if (item.voiceActorIntno == 0 && !item.isEndorsed)
-                                        {
-                                            <button type="button" class="btn btn-default btn-xs pull-left" data-toggle="modal" data-target="#popupForm" onclick="onCastClick(@item.dubbSheetHdrIntno)" title="Cast">
-                                                <span class="glyphicon glyphicon-user" aria-hidden="true"></span>
-                                            </button>
-                                        }
-                                    }
+                                    <button type="button" class="btn btn-default btn-xs pull-left" data-toggle="modal" data-target="#popupForm" onclick="onCastClick(@item.dubbSheetHdrIntno)" title="Cast">
+                                        <span class="glyphicon glyphicon-user" aria-hidden="true"></span>
+                                    </button>
                                 </td>
-                                <td></td>
                             </tr>
                         }
                     }

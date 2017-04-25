@@ -84,14 +84,14 @@ namespace dubbingApp.Controllers
                 var studioEpisodesModel = db.studioEpisodes;
                 var x = db.orderTrnDtls.Include(b => b.orderTrnHdr)
                                         .Where(b => b.activityType == "04" && b.status == true
-                                        && b.forDueDate >= item.fromDate && b.forDueDate <= item.thruDate
-                                        && !b.studioEpisodes.Select(s => s.orderTrnDtlIntno).Contains(b.orderTrnDtlIntno)).ToList();
+                                        && b.forDueDate >= item.fromDate && b.forDueDate <= item.thruDate).ToList();
                 var y = x.Select(b => new { b.empIntno, b.orderTrnHdr.workIntno }).Distinct();
                 foreach(var work in y)
                 {
                     studio std = new studio();
                     std.dubbTrnHdrIntno = item.dubbTrnHdrIntno;
                     std.workIntno = work.workIntno;
+                    std.sound = work.empIntno; //store supervisor here
                     studioModel.Add(std);
 
                     foreach(var dtl in x.Where(b => b.empIntno == work.empIntno && b.orderTrnHdr.workIntno == work.workIntno))
@@ -109,39 +109,30 @@ namespace dubbingApp.Controllers
 
         public ActionResult schedulesReload(long schedule)
         {
-            var studioModel = db.studios;
-            var studioEpisodesModel = db.studioEpisodes;
             var sch = db.dubbingTrnHdrs.Find(schedule);
             var x = db.orderTrnDtls.Include(b => b.orderTrnHdr)
                                     .Where(b => b.activityType == "04" && b.status == true
-                                    && b.forDueDate >= sch.fromDate && b.forDueDate <= sch.thruDate
-                                    && !b.studioEpisodes.Select(s => s.orderTrnDtlIntno).Contains(b.orderTrnDtlIntno)).ToList();
+                                    && b.forDueDate >= sch.fromDate && b.forDueDate <= sch.thruDate).ToList();
             var y = x.Select(b => new { b.empIntno, b.orderTrnHdr.workIntno }).Distinct();
             foreach (var work in y)
             {
-                long? studioIntno = null;
-                var w1 = studioModel.FirstOrDefault(b => b.dubbTrnHdrIntno == schedule && b.workIntno == work.workIntno);
-                if (w1 == null)
+                var s = db.studios.FirstOrDefault(b => b.dubbTrnHdrIntno == schedule && b.workIntno == work.workIntno && b.sound == work.empIntno);
+                if(s == null)
                 {
-                    studio std = new studio();
+                    var std = db.studios.Create();
                     std.dubbTrnHdrIntno = schedule;
                     std.workIntno = work.workIntno;
-                    studioModel.Add(std);
-                }
-                else
-                {
-                    studioIntno = w1.studioIntno;
-                }
+                    std.sound = work.empIntno;
+                    db.studios.Add(std);
 
-                foreach (var dtl in x.Where(b => b.empIntno == work.empIntno && b.orderTrnHdr.workIntno == work.workIntno))
-                {
-                    studioEpisode ep = new studioEpisode();
-                    ep.orderTrnDtlIntno = dtl.orderTrnDtlIntno;
-                    if (studioIntno.HasValue)
-                        ep.studioIntno = studioIntno.Value;
-                    studioEpisodesModel.Add(ep);
+                    foreach (var dtl in x.Where(b => b.empIntno == work.empIntno && b.orderTrnHdr.workIntno == work.workIntno))
+                    {
+                        var ep = db.studioEpisodes.Create();
+                        ep.orderTrnDtlIntno = dtl.orderTrnDtlIntno;
+                        db.studioEpisodes.Add(ep);
+                    }
+                    db.SaveChanges();
                 }
-                db.SaveChanges();
             }
             
             long schedule1 = schedule;
@@ -407,11 +398,7 @@ namespace dubbingApp.Controllers
         public ActionResult studioAllocation(long studioIntno)
         {
             var model = db.studios.Include(b => b.agreementWork).SingleOrDefault(b => b.studioIntno == studioIntno);
-
-            var emp = db.employees.Where(b => b.empType == "01" && b.status == true)
-                                .Select(b => new { b.empIntno, b.fullName }).ToList();
-            SelectList empList = new SelectList(emp, "empIntno", "fullName");
-            ViewBag.empList = empList;
+            
             SelectList stdList = new SelectList(LookupModels.getDictionary("studio"), "key", "value");
             ViewBag.stdList = stdList;
             
@@ -440,19 +427,21 @@ namespace dubbingApp.Controllers
             int totalScenes = 0;
             int totalMinutes = 0;
 
+            //find scheduled episodes
             var episodes = (from A in db.studios
                             join B in db.studioEpisodes on A.studioIntno equals B.studioIntno
                             join C in db.orderTrnDtls on B.orderTrnDtlIntno equals C.orderTrnDtlIntno
                             where A.dubbTrnHdrIntno == schedule
                             select C.orderTrnHdrIntno).Distinct().ToList();
             
-            var x = db.dubbingSheetHdrs.Include(b => b.orderTrnHdr).Where(b => episodes.Contains(b.orderTrnHdrIntno))
-                                        .Select(b => new { b.orderTrnHdr.workIntno, b.voiceActorIntno, b.actorName }).Distinct().ToList();
-            foreach (var x1 in x)
+            //find dubbing sheets for scheduled episodes
+            var x = db.dubbingSheetHdrs.Include(b => b.orderTrnHdr).Where(b => episodes.Contains(b.orderTrnHdrIntno) && b.voiceActorIntno != 0).ToList();
+            
+            foreach (var x1 in x.Select(b => new { b.orderTrnHdr.workIntno, b.voiceActorIntno, b.actorName }).Distinct().ToList())
             {
-                totalScenes = db.dubbingSheetDtls.Include(b => b.dubbingSheetHdr).Include(b => b.orderTrnHdr)
-                                                    .Where(b => b.orderTrnHdr.workIntno == x1.workIntno && b.dubbingSheetHdr.voiceActorIntno == x1.voiceActorIntno && b.dubbingSheetHdr.actorName == x1.actorName)
-                                                    .Select(b => b.sceneNo).Count();
+                var hdrs = x.Where(b => b.orderTrnHdr.workIntno == x1.workIntno && b.voiceActorIntno == x1.voiceActorIntno && b.actorName == x1.actorName).Select(b => b.dubbSheetHdrIntno).Distinct().ToList();
+                totalScenes = db.dubbingSheetDtls.Where(b => hdrs.Contains(b.dubbSheetHdrIntno)).Count();
+                
                 var sph = db.workActors.FirstOrDefault(b => b.voiceActorIntno == x1.voiceActorIntno && b.workIntno == x1.workIntno && b.status == true);
                 if (sph != null && sph.scenesPerHour != 0)
                     totalMinutes = totalScenes * 60 / sph.scenesPerHour;
