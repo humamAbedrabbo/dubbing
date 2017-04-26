@@ -28,7 +28,7 @@ namespace dubbingApp.Utils
             string result = string.Empty;
             int h = (int) Math.Floor(seconds / 3600f);
             int hs = h * 3600;
-            int m = (int)Math.Floor((seconds - hs) / 3600f);
+            int m = (int)Math.Floor((seconds - hs) / 60f);
             int ms = m * 60;
             int s = seconds - hs - ms;
             result = string.Format("{0:00}:{1:00}:{2:00}", h, m, s);

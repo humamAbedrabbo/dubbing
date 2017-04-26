@@ -16,7 +16,7 @@
         {
             <div class="row">
                 <div class="col-sm-2">
-                    <button class="btn btn-primary btn-lg" onclick="onEpisodeClick(@episode.episodeNo, @episode.dubbSheetHdrIntno)" title="Episode">@episode.episodeNo</button>
+                    <button class="btn btn-primary btn-lg" onclick="onEpisodeClick(@episode.episodeNo, @episode.dubbSheetHdrIntno)" title="Episode" tabindex="-1">@episode.episodeNo</button>
                 </div>
                 
                 <div class="col-sm-10">
@@ -26,7 +26,7 @@
                             string sceneId = scene.sceneIntno.ToString();
                             if (scene.isTaken) { sceneColor = "btn-success"; }
                             else { sceneColor = "btn-default"; }
-                            <button class="btn @sceneColor btn-xs" id="@sceneId" onclick="onSceneClick(@scene.sceneIntno, @episode.dubbSheetHdrIntno)" style="width:30px" title="Scene">@scene.sceneNo</button>
+                            <button class="btn @sceneColor btn-xs" id="@sceneId" onclick="onSceneClick(@scene.sceneIntno, @episode.dubbSheetHdrIntno)" style="width:30px" title="Scene" tabindex="-1">@scene.sceneNo</button>
                         }
                     </div>
                 </div>

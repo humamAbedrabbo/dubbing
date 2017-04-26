@@ -13,7 +13,7 @@ using System.Windows.Forms;
 
 namespace dubbingApp.Controllers
 {
-    [Authorize(Roles = "ADMIN, GENERAL_MANAGER, EDITOR, STUDIO_SUPERVISOR")]
+    [Authorize(Roles = "ADMIN, GENERAL_MANAGER, EDITOR")]
     public class adaptationController : Controller
     {
         DUBBDBEntities ctx = new DUBBDBEntities();

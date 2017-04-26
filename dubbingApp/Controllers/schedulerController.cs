@@ -290,6 +290,7 @@ namespace dubbingApp.Controllers
                 }
                 model.Add(item);
             }
+            ViewBag.schedule = schedule;
             return PartialView("_assignmentsList", model.OrderBy(b => b.dueDate));
         }
 
@@ -395,25 +396,26 @@ namespace dubbingApp.Controllers
             return PartialView("_studiosList", model.ToList());
         }
 
-        public ActionResult studioAllocation(long studioIntno)
+        public ActionResult studioAllocation(long studioIntno, long schedule)
         {
             var model = db.studios.Include(b => b.agreementWork).SingleOrDefault(b => b.studioIntno == studioIntno);
             
             SelectList stdList = new SelectList(LookupModels.getDictionary("studio"), "key", "value");
             ViewBag.stdList = stdList;
-            
+            ViewBag.schedule = schedule;
             return PartialView("_studioAllocation", model);
         }
 
         [ValidateAntiForgeryToken]
         [HttpPost, ValidateInput(false)]
-        public ActionResult studioAllocation(studio item)
+        public ActionResult studioAllocation(studio item, long schedule)
         {
             var model = db.studios;
             if (ModelState.IsValid)
             {
                 var modelItem = model.Find(item.studioIntno);
-                UpdateModel(modelItem);
+                modelItem.studioNo = item.studioNo;
+                modelItem.dubbTrnHdrIntno = schedule;
                 db.SaveChanges();
             }
             return RedirectToAction("assignmentsList", new { schedule = item.dubbTrnHdrIntno });

@@ -1,23 +1,38 @@
 ﻿@model IEnumerable<dubbingModel.subtitle>
-@{ long sheetHdr = ViewBag.sheetHdr; }
+@using dubbingApp.Utils;
 
-<div dir="rtl">
-    @foreach (var str in Model)
-    {
-        if (str.dubbSheetHdrIntno == sheetHdr)
-        {
-            <div class="row">
-                <div class="col-sm-9 scentence">@str.scentence</div>
-                <div class="col-sm-3"><strong>@str.dubbingSheetHdr.characterName:</strong></div>
-            </div>
-        }
-        else
-        {
-            <div class="row" style="color:lightgray">
-                <div class="col-sm-9">@str.scentence</div>
-                <div class="col-sm-3"><strong>@str.dubbingSheetHdr.characterName:</strong></div>
-            </div>
-        }
+<style>
+    .current{
+        background-color: silver;
     }
-</div>
+    .others{
+        background-color: white;
+    }
+</style>
+@{ long sheetHdr = ViewBag.sheetHdr; string color; }
 
+<div class="panel panel-default">
+    <div class="panel-heading">Subtitles</div>
+    <div class="panel-body" style="padding:0px" dir="rtl">
+        <table class="table table-condensed" style="padding:2px">
+            <tbody>
+                @foreach (var str in Model)
+                {
+                    if (str.dubbSheetHdrIntno == sheetHdr) {
+                        color = "current";
+                    } else {
+                        color = "others";
+                    }
+                    int x = (int)str.startSecond;
+                    string startTime = TimeConverter.SecondsToTime(x);
+                    
+                    <tr class="@color">
+                        <td><label class="badge">@startTime</label></td>
+                        <td><label>@str.dubbingSheetHdr.characterName:</label></td>
+                        <td class="scentence">@str.scentence</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

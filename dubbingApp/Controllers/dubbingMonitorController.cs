@@ -46,14 +46,14 @@ namespace dubbingApp.Controllers
         public ActionResult studiosList(long schedule)
         {
             var model = db.studioEpisodes.Include(b => b.studio.employee).Include(b => b.orderTrnDtl.employee).Include(b => b.orderTrnDtl.orderTrnHdr.agreementWork)
-                                        .Where(b => b.studio.dubbTrnHdrIntno == schedule);
+                                        .Where(b => b.studio.dubbTrnHdrIntno == schedule).OrderBy(b => b.studio.studioNo);
             return PartialView("_studiosList", model.ToList());
         }
 
         public ActionResult actorsList(long studioIntno)
         {
             DateTime dToday = DateTime.Today.Date;
-            var model = db.dubbingAppointments.Where(b => b.studioIntno == studioIntno && b.appointmentDate == dToday);
+            var model = db.dubbingAppointments.Where(b => b.studioIntno == studioIntno && b.appointmentDate == dToday).OrderBy(b => b.fromTime);
             return PartialView("_actorsList", model.ToList());
         }
 

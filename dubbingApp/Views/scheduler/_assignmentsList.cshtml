@@ -43,7 +43,7 @@
                             <td>
                                 @if (item.studioIntno.HasValue)
                                 {
-                                    <button class="btn btn-default btn-xs" onclick="onStudioAllocationClick(@item.studioIntno)" title="Allocation">
+                                    <button class="btn btn-default btn-xs" onclick="onStudioAllocationClick(@item.studioIntno, @ViewBag.schedule)" title="Allocation">
                                         @{ string allocation = string.IsNullOrEmpty(item.studioNo) ? "---" : item.studioNo; }
                                         @allocation
                                     </button>

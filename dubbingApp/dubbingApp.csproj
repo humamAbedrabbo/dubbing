@@ -489,7 +489,6 @@
     <Content Include="Views\calendar\_actorsList.cshtml" />
     <Content Include="Views\dubbing\Index.cshtml" />
     <Content Include="Views\dubbing\_actorsList.cshtml" />
-    <Content Include="Views\dubbing\_dialoguesList.cshtml" />
     <Content Include="Views\dubbing\_sceneHeader.cshtml" />
     <Content Include="Views\dubbing\_scenesList.cshtml" />
     <Content Include="Views\calendar\_appointmentsList.cshtml" />

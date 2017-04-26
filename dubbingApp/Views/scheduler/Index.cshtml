@@ -246,12 +246,12 @@
                 });
             }
         }
-        function onStudioAllocationClick(studio1) {
+        function onStudioAllocationClick(studio1, schedule1) {
             $('#bulletin').hide();
             $.ajax({
                 url: '@Url.Action("studioAllocation", "scheduler")',
                 type: 'GET',
-                data: { studioIntno: studio1 },
+                data: { studioIntno: studio1, schedule: schedule1 },
                 success: function (result) {
                     $('#details').html(result);
                 }

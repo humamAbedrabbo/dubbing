@@ -186,23 +186,23 @@ namespace dubbingApp.Controllers
 
         public ActionResult selectEpisodeFirstScene(long sheetHdr)
         {
+            var y = db.dubbingSheetDtls.Where(b => b.dubbSheetHdrIntno == sheetHdr && !b.isTaken).OrderBy(b => b.sceneNo).FirstOrDefault();
             var x = (from A in db.subtitles
                      join B in db.dialogs on A.dialogIntno equals B.dialogIntno
                      join C in db.scenes on B.sceneIntno equals C.sceneIntno
-                     where A.dubbSheetHdrIntno == sheetHdr && !B.isTaken
-                     select new { C.sceneIntno, C.sceneNo, C.startTimeCode }).Distinct();
+                     where A.dubbSheetHdrIntno == sheetHdr && C.sceneNo == y.sceneNo
+                     select new { C.sceneIntno, C.sceneNo, C.startTimeCode }).OrderBy(b => b.sceneNo).FirstOrDefault();
             studioUpdateResponse result = new studioUpdateResponse();
-            if (x.Count() != 0)
+            if (x != null)
             {
-                var z = x.OrderBy(b => b.sceneNo).First();
-                result.sceneNo = z.sceneNo;
-                result.sceneIntno = z.sceneIntno;
-                result.startTimeCode = z.startTimeCode;
+                result.sceneNo = x.sceneNo;
+                result.sceneIntno = x.sceneIntno;
+                result.startTimeCode = x.startTimeCode;
             }
             return Json(result, JsonRequestBehavior.AllowGet);
         }
 
-        public ActionResult scenesList(long actor)
+        public ActionResult scenesList(long actor, string actorName)
         {
             List<ViewModels.dubbingSceneViewModel> scnList = new List<ViewModels.dubbingSceneViewModel>();
             var model = (from C in db.orderTrnHdrs
@@ -211,9 +211,9 @@ namespace dubbingApp.Controllers
                          join G in db.orderTrnDtls on C.orderTrnHdrIntno equals G.orderTrnHdrIntno
                          join H in db.studioEpisodes on G.orderTrnDtlIntno equals H.orderTrnDtlIntno
                          join J in db.studios on H.studioIntno equals J.studioIntno
-                         where C.workIntno == sessionEntry.workIntno && (!sessionEntry.schedule.HasValue || J.dubbTrnHdrIntno == sessionEntry.schedule) && G.activityType == "04" && D.voiceActorIntno == actor
-                         select new { C.workIntno, C.orderTrnHdrIntno, C.episodeNo, D.dubbSheetHdrIntno, D.actorName, F.sceneNo }).Distinct()
-                         .OrderBy(b => new { b.workIntno, b.episodeNo, b.sceneNo });
+                         where C.workIntno == sessionEntry.workIntno && (!sessionEntry.schedule.HasValue || J.dubbTrnHdrIntno == sessionEntry.schedule) && G.activityType == "04" && D.voiceActorIntno == actor && D.actorName == actorName
+                         select new { C.workIntno, C.orderTrnHdrIntno, C.episodeNo, D.dubbSheetHdrIntno, F.sceneNo, F.isTaken }).Distinct()
+                         .OrderBy(b => new { b.workIntno, b.episodeNo, b.sceneNo }).ToList();
             
             foreach (var item in model)
             {
@@ -223,93 +223,65 @@ namespace dubbingApp.Controllers
                 scn.orderTrnHdrIntno = item.orderTrnHdrIntno;
                 scn.dubbSheetHdrIntno = item.dubbSheetHdrIntno;
                 scn.actor = actor;
-                scn.actorName = item.actorName;
+                scn.actorName = actorName;
                 long work = item.workIntno;
                 scn.workIntno = work;
                 scn.workName = db.agreementWorks.Find(work).workName;
                 scn.episodeNo = item.episodeNo;
                 scn.sceneNo = item.sceneNo;
                 scn.startTimeCode = x.startTimeCode;
-                var z = db.subtitles.Include(b => b.dialog).Where(b => b.dubbSheetHdrIntno == item.dubbSheetHdrIntno
-                                    && b.dialog.sceneIntno == x.sceneIntno && b.dialog.isTaken == false);
-                if (z.Count() == 0)
-                    scn.isTaken = true;
-                else
-                    scn.isTaken = false;
+                scn.isTaken = item.isTaken;
                 scnList.Add(scn);
             }
 
             return PartialView("_scenesList", scnList);
         }
 
-        public ActionResult dialoguesList(long sceneId, long sheetHdr, bool isReadOnly)
+        public ActionResult subtitlesList(long sceneId, long sheetHdr)
         {
-            var model = (from A in db.dialogs
-                         join B in db.subtitles on A.dialogIntno equals B.dialogIntno
-                         where B.dubbSheetHdrIntno == sheetHdr && A.sceneIntno == sceneId && (isReadOnly || A.isTaken == false)
-                         select A).Distinct().OrderBy(b => b.dialogNo);
+            var model = db.subtitles.Include(b => b.dialog).Include(b => b.dubbingSheetHdr).Where(b => b.dialog.sceneIntno == sceneId).OrderBy(b => b.subtitleNo);
             ViewBag.sheetHdr = sheetHdr;
-            return PartialView("_dialoguesList", model.ToList());
-        }
-
-        public ActionResult subtitlesList(long dialogId, long sheetHdr)
-        {
-            var model = db.subtitles.Include(b => b.dubbingSheetHdr).Where(b => b.dialogIntno == dialogId).OrderBy(b => b.subtitleNo);
-            ViewBag.sheetHdr = sheetHdr;
+            ViewBag.sceneId = sceneId;
+            ViewBag.sceneNo = db.scenes.Find(sceneId).sceneNo;
             return PartialView("_subtitlesList", model.ToList());
         }
 
-        public ActionResult dialogueTaken(long id, long sheetHdr)
+        public JsonResult sceneTaken(long id, long sheetHdr)
         {
-            var dialogItem = db.dialogs.Find(id);
-            long scn = dialogItem.sceneIntno;
-            var model = (from A in db.dialogs
-                         join B in db.scenes on A.sceneIntno equals B.sceneIntno
-                         join C in db.orderTrnHdrs on B.orderTrnHdrIntno equals C.orderTrnHdrIntno
-                         join D in db.agreementWorks on C.workIntno equals D.workIntno
-                         join E in db.subtitles on A.dialogIntno equals E.dialogIntno
-                         where B.sceneIntno == scn && A.isTaken == false && E.dubbSheetHdrIntno == sheetHdr
-                         select new { D.workName, C.orderTrnHdrIntno, C.episodeNo, B.sceneNo, A.dialogIntno }).Distinct();
+            var scn = db.scenes.Find(id);
+            short sceneNo = scn.sceneNo;
+            var oi = db.orderTrnHdrs.Find(scn.orderTrnHdrIntno);
+            if (!oi.startDubbing.HasValue)
+                oi.startDubbing = DateTime.Now.Date;
 
-            studioUpdateResponse result = new studioUpdateResponse();
-            var x = model.FirstOrDefault();
-            result.episodeNo = x.episodeNo;
-            result.sceneIntno = scn;
-
-            if (model.Count() == 1) //means the taken dialogue is the last one for the actor in the scene
+            string loginUserName = User.Identity.GetUserName();
+            long supervisor = db.employees.FirstOrDefault(b => b.email == loginUserName).empIntno;
+            var model = db.dubbingSheetDtls.SingleOrDefault(b => b.dubbSheetHdrIntno == sheetHdr && b.sceneNo == sceneNo);
+            if(model != null)
             {
-                //insert taken complete scene
-                result.sceneNo = x.sceneNo;
-
-                var y = model.First();
-                var trnModel = db.dubbingSheetDtls;
-
-                var hdr = db.orderTrnHdrs.FirstOrDefault(b => b.orderTrnHdrIntno == y.orderTrnHdrIntno);
-                if (!hdr.startDubbing.HasValue)
-                    hdr.startDubbing = DateTime.Now.Date;
-
-                dubbingSheetDtl dtl = new dubbingSheetDtl();
-                
-                dtl.orderTrnHdrIntno = y.orderTrnHdrIntno;
-                dtl.dubbSheetHdrIntno = sheetHdr;
-                dtl.sceneNo = y.sceneNo;
-                dtl.isTaken = true;
-                string loginUserName = User.Identity.GetUserName();
-                dtl.supervisor = db.employees.FirstOrDefault(b => b.email == loginUserName).empIntno;
-                if (sessionEntry.studioIntno.HasValue)
-                {
-                    var std = db.studios.Find(sessionEntry.studioIntno);
-                    dtl.studioNo = std.studioNo;
-                    dtl.soundTechnician = std.sound;
-                }
-                dtl.takenTimeStamp = DateTime.Now;
-                dtl.dubbingDate = DateTime.Now.Date;
-                trnModel.Add(dtl);
-                db.SaveChanges();
+                model.isTaken = true;
+                model.supervisor = supervisor;
+                model.takenTimeStamp = DateTime.Now;
+                model.dubbingDate = DateTime.Now.Date;
             }
-            
-            dialogItem.isTaken = true;
+            else
+            {
+                var item = db.dubbingSheetDtls.Create();
+                item.dubbSheetHdrIntno = sheetHdr;
+                item.orderTrnHdrIntno = scn.orderTrnHdrIntno;
+                item.sceneNo = sceneNo;
+                item.isTaken = true;
+                item.supervisor = supervisor;
+                item.takenTimeStamp = DateTime.Now;
+                item.dubbingDate = DateTime.Now.Date;
+                db.dubbingSheetDtls.Add(item);
+            }
             db.SaveChanges();
+            
+            studioUpdateResponse result = new studioUpdateResponse();
+            result.episodeNo = oi.episodeNo;
+            result.sceneIntno = id;
+            result.sceneNo = sceneNo;
 
             return Json(result, JsonRequestBehavior.AllowGet);
         }

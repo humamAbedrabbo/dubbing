@@ -4,7 +4,8 @@
 }
 
 <input type="hidden" id="currentActorHF" />
-<input type="hidden" id="dialogueControlHF" />
+<input type="hidden" id="currentSheetHF" />
+<input type="hidden" id="currentSceneHF" />
 
 <div class="container-fluid">
     <div class="jumbotron" style="padding:5px">
@@ -60,7 +61,7 @@
             </div>
         </div>
 
-        <div class="col-md-6" id="dialoguesList" style="padding-left:5px; padding-right:5px"></div>
+        <div class="col-md-6" id="subtitlesList" style="padding-left:5px; padding-right:5px"></div>
         <div class="col-md-4" id="scenesList" style="padding-left:5px"></div>
     </div>
 </div>
@@ -73,7 +74,6 @@
     <script>
         $(document).ready(function () {
             $(window).on('load', function () {
-                $('#dialogueControlHF').val('0');
                 $.ajax({
                     url: '@Url.Action("progressBarUpdate", "dubbing")',
                     type: 'GET',
@@ -84,24 +84,25 @@
                 });
             });
 
+            $('#takenBtn').attr('disabled', 'disabled');
+
             $(".actorLbl").click(function () {
                 $('.actorLbl').removeClass("badge");
                 var actor1 = $(this).attr('id');
                 $('#' + actor1).addClass("badge");
             });
-
-            
         })
 
         function onActorSelectClick(actor1, actorName1) {
             $('#currentActorHF').val(actor1);
-            $('#dialogueControlHF').val(null);
-            $('#dialoguesList').html(null);
+            $('#subtitlesList').html(null);
+            $('#takenBtn').attr('disabled', 'disabled');
+
             refreshStudio(null, null, null);
             $.ajax({
                 url: '@Url.Action("scenesList", "dubbing")',
                 type: 'GET',
-                data: { actor: actor1 },
+                data: { actor: actor1, actorName: actorName1 },
                 success: function (result) {
                     $('#scenesList').html(result);
                 }
@@ -117,6 +118,9 @@
         }
 
         function onEpisodeClick(episode1, sheetHdr1) {
+            $('#subtitlesList').html(null);
+            refreshStudio(episode1, null, null);
+            $('#takenBtn').attr('disabled', 'disabled');
             $.ajax({
                 url: '@Url.Action("selectEpisodeFirstScene", "dubbing")',
                 type: 'GET',
@@ -124,17 +128,18 @@
                 dataType: 'json',
                 cache: false,
                 success: function (result) {
-                    refreshStudio(episode1, result.sceneNo, result.startTimeCode);
+                    $('#currentSceneHF').val(result.sceneIntno);
+                    $('#currentSheetHF').val(sheetHdr1);
                     if (result.sceneIntno !== null) {
+                        refreshStudio(episode1, result.sceneNo, result.startTimeCode);
                         $.ajax({
-                            url: '@Url.Action("dialoguesList", "dubbing")',
+                            url: '@Url.Action("subtitlesList", "dubbing")',
                             type: 'GET',
-                            data: { sceneId: result.sceneIntno, sheetHdr: sheetHdr1, isReadOnly: false },
-                            success: function (result) {
-                                $('#dialoguesList').html(result);
-                                $('.startTaken').show();
-                                $('.endTaken').show();
+                            data: { sceneId: result.sceneIntno, sheetHdr: sheetHdr1 },
+                            success: function (result1) {
+                                $('#subtitlesList').html(result1);
                                 addTags();
+                                $('#takenBtn').removeAttr('disabled');
                             }
                         })
                     }
@@ -145,13 +150,12 @@
         //scenes
         function onSceneClick(id1, sheetHdr1) {
             $.ajax({
-                url: '@Url.Action("dialoguesList", "dubbing")',
+                url: '@Url.Action("subtitlesList", "dubbing")',
                 type: 'GET',
-                data: { sceneId: id1, sheetHdr: sheetHdr1, isReadOnly: true },
+                data: { sceneId: id1, sheetHdr: sheetHdr1 },
                 success: function (result) {
-                    $('#dialoguesList').html(result);
-                    $('.startTaken').hide();
-                    $('.endTaken').hide();
+                    $('#subtitlesList').html(result);
+                    $('#takenBtn').attr('disabled', 'disabled');
                     addTags();
                 }
             })
@@ -164,44 +168,19 @@
             });
         }
 
-        //dialogue taken events
-        function onStartTakenClick(dlg) {
-            $('#dialogueControlHF').val(dlg);
-            $('#' + dlg).removeClass("panel-default").addClass("panel-danger");
-        }
-        function onEndTakenClick(dlg, id1, sheetHdr1) {
-            if ($('#dialogueControlHF').val() === dlg) {
-                $.ajax({
-                    url: '@Url.Action("dialogueTaken", "dubbing")',
-                    type: 'GET',
-                    data: { id: id1, sheetHdr: sheetHdr1 },
-                    dataType: 'json',
-                    cache: false,
-                    success: function (result) {
-                        $('#dialogueControlHF').val('0');
-                        $('#' + dlg).remove();
-                        if (result.sceneNo !== null) {
-                            $('#' + result.sceneIntno).removeClass("btn-default").addClass("btn-success");
-                            onEpisodeClick(result.episodeNo, sheetHdr1);
-                        }
-                        else {
-                            $.ajax({
-                                url: '@Url.Action("dialoguesList", "dubbing")',
-                                type: 'GET',
-                                data: { sceneId: result.sceneIntno, sheetHdr: sheetHdr1, isReadOnly: false },
-                                success: function (result) {
-                                    $('#dialoguesList').html(result);
-                                    $('.startTaken').show();
-                                    $('.endTaken').show();
-                                }
-                            })
-                        }
-                    }
-                })
-            }
-            else {
-                alert('Dialogue Action Not Started Yet!.');
-            }
+        //scene taken
+        function onTakenClick() {
+            $.ajax({
+                url: '@Url.Action("sceneTaken", "dubbing")',
+                type: 'GET',
+                data: { id: $('#currentSceneHF').val(), sheetHdr: $('#currentSheetHF').val() },
+                dataType: 'json',
+                cache: false,
+                success: function (result) {
+                    $('#' + result.sceneIntno).removeClass("btn-default").addClass("btn-success");
+                    onEpisodeClick(result.episodeNo, $('#currentSheetHF').val());
+                }
+            })
         }
 
         // refresh studio
