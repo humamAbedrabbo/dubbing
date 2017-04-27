@@ -45,15 +45,8 @@ namespace dubbingApp.Controllers
         public ActionResult getCalendar(long schedule)
         {
             var model = db.dubbingAppointments.Include(b => b.voiceActor).Include(b => b.studio)
-                            .Where(b => b.studio.dubbTrnHdrIntno == schedule && b.fromTime.HasValue).OrderBy(b => b.appointmentDate).ThenBy(b => b.fromTime).ToList();
-            string fromTime;
-            string thruTime;
-            foreach(var item in model)
-            {
-                fromTime = item.fromTime.HasValue ? item.fromTime.Value.ToString("HH:mm") : null;
-                thruTime = item.thruTime.HasValue ? item.thruTime.Value.ToString("HH:mm") : null;
-                item.actorName = fromTime + "-" + thruTime + ":|" + item.actorName;
-            }
+                            .Where(b => b.studio.dubbTrnHdrIntno == schedule && b.fromTime.HasValue).ToList();
+            
             ViewBag.scheduleStartDate = db.dubbingTrnHdrs.Find(schedule).fromDate;
             ViewBag.studiosList = db.dubbDomains.Where(b => b.domainName == "studio" && b.status == true).OrderBy(b => b.sortOrder).ToList();
             
@@ -94,7 +87,7 @@ namespace dubbingApp.Controllers
             db.dubbingAppointments.Add(model);
             db.SaveChanges();
 
-            return RedirectToAction("appointmentsList", new { actor = x.voiceActorIntno, schedule = x.studio.dubbTrnHdrIntno });
+            return RedirectToAction("appointmentsList", new { actor = x.voiceActorIntno, actorName = x.actorName, schedule = x.studio.dubbTrnHdrIntno });
         }
 
         public ActionResult appointmentUpdate(long apt)
@@ -115,7 +108,9 @@ namespace dubbingApp.Controllers
             var model = db.dubbingAppointments;
             var modelItem = model.Find(item.dubbAppointIntno);
             long actor1 = modelItem.voiceActorIntno;
+            string actorName1 = modelItem.actorName;
             long std = modelItem.studioIntno;
+            long schedule1 = db.studios.Find(std).dubbTrnHdrIntno;
 
             // validate appointment date within the schedule range, and validate thru time
             var x = db.studios.Include(b => b.dubbingTrnHdr).FirstOrDefault(b => b.studioIntno == std);
@@ -129,8 +124,7 @@ namespace dubbingApp.Controllers
                 db.SaveChanges();
             }
             
-            long schedule1 = db.studios.Find(std).dubbTrnHdrIntno;
-            return RedirectToAction("appointmentsList", new { actor = actor1, schedule = schedule1 });
+            return RedirectToAction("appointmentsList", new { actor = actor1, actorName = actorName1,  schedule = schedule1 });
         }
 
         public ActionResult appointmentDelete(long apt)
@@ -138,13 +132,14 @@ namespace dubbingApp.Controllers
             var model = db.dubbingAppointments;
             var modelItem = model.Find(apt);
             long actor1 = modelItem.voiceActorIntno;
+            string actorName1 = modelItem.actorName;
             long std = modelItem.studioIntno;
+            long schedule1 = db.studios.Find(std).dubbTrnHdrIntno;
 
             model.Remove(modelItem);
             db.SaveChanges();
-
-            long schedule1 = db.studios.Find(std).dubbTrnHdrIntno;
-            return RedirectToAction("appointmentsList", new { actor = actor1, schedule = schedule1 });
+            
+            return RedirectToAction("appointmentsList", new { actor = actor1, actorName = actorName1, schedule = schedule1 });
         }
 
         public ActionResult studioCalendarPopup(long std)
