@@ -1,0 +1,25 @@
+﻿@model IEnumerable<dubbingModel.studio>
+
+<div class="container-fluid" style="padding:0px">
+    <div class="panel panel-default">
+        <div class="panel-heading" style="padding:5px"><label>Work Studios</label></div>
+        <div class="panel-body" style="padding:0px">
+            <table class="table table-condensed">
+                <tbody>
+                    @foreach (var work in Model.Select(b => new { b.workIntno, b.agreementWork.workName }).Distinct())
+                    {
+                        <tr>
+                            <td><small>@work.workName</small></td>
+                            <td>
+                                @foreach(var std in Model.Where(b => b.workIntno == work.workIntno).OrderBy(b => b.studioNo))
+                                {
+                                    <span><label class="badge alert-info">@std.studioNo</label></span>
+                                }
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

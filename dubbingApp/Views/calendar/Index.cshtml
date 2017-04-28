@@ -28,7 +28,11 @@
     <div class="row">
         <div class="col-sm-3" id="actorsList"></div>    
         <div class="col-sm-6" id="aptList"></div>
-        <div class="col-sm-3" id="details"></div>
+        <div class="col-sm-3" style="padding:0px">
+            <div id="worksList"></div>
+            <div id="details"></div>
+        </div>
+        
     </div>
 </div>
 
@@ -56,6 +60,14 @@
                         $('#supervisorsList').html(result);
                     }
                 });
+                $.ajax({
+                    url: '@Url.Action("workStudiosList", "calendar")',
+                    data: { schedule: $('#scheduleIntno').val() },
+                    type: 'GET',
+                    success: function (result) {
+                        $('#worksList').html(result);
+                    }
+                });
             });
         });
 
@@ -72,16 +84,16 @@
                     success: function (result) {
                         $('#aptList').removeClass('col-sm-6').addClass('col-sm-9');
                         $('#details').html(null);
+                        $('#worksList').hide();
                         $('#aptList').html(result);
                     }
                 })
             }
         }
 
-        function onActorClick(actor1, actorName1, schedule1) {
-            $('.actorLbl').removeClass('badge');
-            $('#' + actor1).addClass('badge');
-
+        function onActorClick(actor1, actorName1, schedule1, menuId) {
+            $('.actorLbl').removeClass("badge");
+            $('#' + menuId).addClass("badge");
             $.ajax({
                 url: '@Url.Action("appointmentsList", "calendar")',
                 data: { actor: actor1, actorName: actorName1, schedule: schedule1 },
@@ -89,12 +101,14 @@
                 success: function (result) {
                     $('#aptList').removeClass('col-sm-9').addClass('col-sm-6');
                     $('#aptList').html(result);
+                    $('#worksList').show();
                 }
             })
         }
 
         function onCloseClick() {
             $('#details').html(null);
+            $('#worksList').show();
         }
 
         function onAppointmentAddNewClick(id1) {
@@ -114,6 +128,7 @@
                 data: { apt: id },
                 type: 'GET',
                 success: function (result) {
+                    $('#worksList').hide();
                     $('#details').html(result);
                 }
             })
@@ -155,6 +170,32 @@
                     $('#calendarPopup').html(result);
                 }
             })
+        }
+
+        function onRemoveActorsClick(id1) {
+            if (confirm("Please Confirm! About to Remove ALL Actor's Appointments from this Schedule")) {
+                $.ajax({
+                    url: '@Url.Action("actorAppointmentsDelete", "calendar")',
+                    data: { id: id1 },
+                    type: 'GET',
+                    success: function (result) {
+                        if ($.isEmptyObject(result)) {
+                            $('#aptList').html(null);
+                            $.ajax({
+                                url: '@Url.Action("actorsList", "calendar")',
+                                data: { schedule: $('#scheduleIntno').val() },
+                                type: 'GET',
+                                success: function (result1) {
+                                    $('#actorsList').html(result1);
+                                }
+                            });
+                        }
+                        else {
+                            $('#aptList').html(result);
+                        }
+                    }
+                })
+            }
         }
     </script>
 }

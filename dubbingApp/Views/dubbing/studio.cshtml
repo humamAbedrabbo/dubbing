@@ -93,7 +93,9 @@
             });
         })
 
-        function onActorSelectClick(actor1, actorName1) {
+        function onActorSelectClick(actor1, actorName1, menuId) {
+            $('.actorLbl').removeClass("badge");
+            $('#' + menuId).addClass("badge");
             $('#currentActorHF').val(actor1);
             $('#subtitlesList').html(null);
             $('#takenBtn').attr('disabled', 'disabled');

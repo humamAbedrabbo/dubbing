@@ -4,69 +4,77 @@
     var hdr = Model.First();
     int totalHours = 0;
     int totalMinutes = 0;
-    if(hdr.totalMinutes >= 60)
-    {
-        totalHours = (int)(hdr.totalMinutes / 60);
-        totalMinutes = hdr.totalMinutes - totalHours * 60;
-    }
-    else
-    {
-        totalMinutes = hdr.totalMinutes;
-    }
+    
 }
 <div class="container-fluid" style="padding:0px">
-    <div class="panel panel-default">
-        <div class="panel-heading">
-            <div class="row">
-                <div class="col-sm-5">
-                    <label class="badge">@hdr.agreementWork.workName</label>
-                </div>
-                <div class="col-sm-3">
-                    <label><small>Total Scenes: </small></label>&nbsp;<small>@hdr.totalScenes</small>
-                </div>
-                <div class="col-sm-4">
-                    <label><small>Required Time: </small></label>&nbsp;<small>@totalHours h @totalMinutes m</small>
+    <div style="font-size:24px; text-align:center; background-color:silver"><label>@hdr.actorName</label></div>
+    <hr />
+    @foreach (var work in Model.Select(b => new { b.workIntno, b.agreementWork.workName }).Distinct())
+    {
+        hdr = Model.First(b => b.workIntno == work.workIntno);
+        if (hdr.totalMinutes >= 60)
+        {
+            totalHours = (int)(hdr.totalMinutes / 60);
+            totalMinutes = hdr.totalMinutes - totalHours * 60;
+        }
+        else
+        {
+            totalMinutes = hdr.totalMinutes;
+        }
+
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <div class="row">
+                    <div class="col-sm-5">
+                        <label class="badge">@work.workName</label>
+                    </div>
+                    <div class="col-sm-3">
+                        <label><small>Total Scenes: </small></label>&nbsp;<small>@hdr.totalScenes</small>
+                    </div>
+                    <div class="col-sm-4">
+                        <label><small>Required Time: </small></label>&nbsp;<small>@totalHours h @totalMinutes m</small>
+                    </div>
                 </div>
             </div>
-        </div>
-        <div class="panel-body">
-            <table class="table table-hover table-condensed">
-                <thead>
-                    <tr>
-                        <th><small>Date</small></th>
-                        <th><small>Studio</small></th>
-                        <th><small>Arrival</small></th>
-                        <th><small>Till</small></th>
-                        <th>
-                            <button class="btn btn-default btn-xs pull-right" onclick="onAppointmentAddNewClick(@hdr.dubbAppointIntno)" title="Add">
-                                <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
-                            </button>
-                        </th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach(var item in Model)
-                    {
-                        string fromTime = item.fromTime.HasValue ? item.fromTime.Value.ToString("HH:mm") : null;
-                        string thruTime = item.thruTime.HasValue ? item.thruTime.Value.ToString("HH:mm") : null;
+            <div class="panel-body">
+                <table class="table table-hover table-condensed">
+                    <thead>
                         <tr>
-                            <td><small>@item.appointmentDate.DayOfWeek</small></td>
-                            <td><small>@item.studio.studioNo</small></td>
-                            <td><small>@fromTime</small></td>
-                            <td><small>@thruTime</small></td>
-                            <td>
-                                <button class="btn btn-default btn-xs pull-right" onclick="onAppointmentUpdateClick(@item.dubbAppointIntno)" title="Modify">
-                                    <span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
+                            <th><small>Date</small></th>
+                            <th><small>Studio</small></th>
+                            <th><small>Arrival</small></th>
+                            <th><small>Till</small></th>
+                            <th>
+                                <button class="btn btn-default btn-xs pull-right" onclick="onAppointmentAddNewClick(@hdr.dubbAppointIntno)" title="Add">
+                                    <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
                                 </button>
-                                <button class="btn btn-default btn-xs pull-right" onclick="onAppointmentDeleteClick(@item.dubbAppointIntno)" title="Delete">
-                                    <span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
-                                </button>
-                            </td>
+                            </th>
                         </tr>
-                    }
-                </tbody>
-            </table>
-                
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model.Where(b => b.workIntno == work.workIntno))
+                        {
+                            string fromTime = item.fromTime.HasValue ? item.fromTime.Value.ToString("HH:mm") : null;
+                            string thruTime = item.thruTime.HasValue ? item.thruTime.Value.ToString("HH:mm") : null;
+                            <tr>
+                                <td><small>@item.appointmentDate.DayOfWeek</small></td>
+                                <td><small>@item.studio.studioNo</small></td>
+                                <td><small>@fromTime</small></td>
+                                <td><small>@thruTime</small></td>
+                                <td>
+                                    <button class="btn btn-default btn-xs pull-right" onclick="onAppointmentUpdateClick(@item.dubbAppointIntno)" title="Modify">
+                                        <span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
+                                    </button>
+                                    <button class="btn btn-default btn-xs pull-right" onclick="onAppointmentDeleteClick(@item.dubbAppointIntno)" title="Delete">
+                                        <span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
+                                    </button>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
         </div>
-    </div>
+        <small>To Remove ALL Actor's Appointments Related to this Work from Calendar ... <a href="javascript:onRemoveActorsClick(@hdr.dubbAppointIntno)">Click Here ...</a></small>
+    }
 </div>

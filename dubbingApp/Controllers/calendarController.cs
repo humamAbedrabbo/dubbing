@@ -53,6 +53,12 @@ namespace dubbingApp.Controllers
             return PartialView("_scheduleCalendar", model);
         }
 
+        public ActionResult workStudiosList(long schedule)
+        {
+            var model = db.studios.Include(b => b.agreementWork).Where(b => b.dubbTrnHdrIntno == schedule);
+            return PartialView("_workStudiosList", model.ToList());
+        }
+
         public ActionResult supervisorsList(long schedule)
         {
             var x = (from A in db.orderTrnDtls
@@ -70,6 +76,7 @@ namespace dubbingApp.Controllers
             var model = db.dubbingAppointments.Include(b => b.studio).Include(b => b.agreementWork)
                         .Where(b => b.voiceActorIntno == actor && b.actorName == actorName && b.studio.dubbTrnHdrIntno == schedule)
                         .OrderBy(b => b.appointmentDate).ThenBy(b => b.fromTime);
+            ViewBag.actorName = actorName;
             return PartialView("_appointmentsList", model.ToList());
         }
 
@@ -147,6 +154,21 @@ namespace dubbingApp.Controllers
             var model = db.dubbingAppointments.Include(b => b.voiceActor).Where(b => b.studioIntno == std)
                         .OrderBy(b => b.appointmentDate);
             return PartialView("_studioCalendarPopup", model.ToList());
+        }
+
+        public ActionResult actorAppointmentsDelete(long id)
+        {
+            var x = db.dubbingAppointments.Include(b => b.studio).SingleOrDefault(b => b.dubbAppointIntno == id);
+            long sch = x.studio.dubbTrnHdrIntno;
+            var model = db.dubbingAppointments.Where(b => b.workIntno == x.workIntno && b.voiceActorIntno == x.voiceActorIntno && b.actorName == x.actorName);
+            db.dubbingAppointments.RemoveRange(model);
+            db.SaveChanges();
+
+            var y = db.dubbingAppointments.Include(b => b.studio).Where(b => b.studio.dubbTrnHdrIntno == sch && b.voiceActorIntno == x.voiceActorIntno && b.actorName == x.actorName).ToList();
+            if (y.Count() == 0)
+                return null;
+            else
+                return RedirectToAction("appointmentsList", new { actor = x.voiceActorIntno, actorName = x.actorName, schedule = sch });
         }
     }
 }

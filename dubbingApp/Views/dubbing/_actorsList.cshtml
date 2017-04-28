@@ -1,4 +1,4 @@
-﻿@model IEnumerable <dubbingModel.dubbingSheetHdr>
+﻿@model IEnumerable <dubbingModel.dubbingAppointment>
 @{ int id = 0; }
 
 <div class="container-fluid" style="padding:0px">
@@ -6,9 +6,10 @@
         @foreach (var actor in Model.Select(b => new { b.voiceActorIntno, b.actorName }).Distinct())
         {
             id++;
-            string actorId = "D" + id.ToString();
+            string menuId = "D" + id.ToString();
+            string actorName = '"' + actor.actorName + '"';
             <li>
-                <a class="actorLbl" id="@actorId" onclick="onActorSelectClick(@actor.voiceActorIntno, '@actor.actorName')" href="#">@actor.actorName</a>
+                <a class="actorLbl" id="@menuId" href="javascript:onActorSelectClick(@actor.voiceActorIntno, @actorName, '@menuId')">@actor.actorName</a>
             </li>
         }
     </ul>

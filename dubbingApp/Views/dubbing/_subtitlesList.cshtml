@@ -12,7 +12,12 @@
 @{ long sheetHdr = ViewBag.sheetHdr; string color; }
 
 <div class="panel panel-default">
-    <div class="panel-heading">Subtitles</div>
+    <div class="panel-heading">
+        <div class="row">
+            <div class="col-sm-4"><label class="pull-left">Subtitles</label></div>
+            <div class="col-sm-8"><label class="pull-right">@ViewBag.actorName</label></div>
+        </div>
+    </div>
     <div class="panel-body" style="padding:0px" dir="rtl">
         <table class="table table-condensed" style="padding:2px">
             <tbody>
@@ -23,11 +28,9 @@
                     } else {
                         color = "others";
                     }
-                    int x = (int)str.startSecond;
-                    string startTime = TimeConverter.SecondsToTime(x);
                     
                     <tr class="@color">
-                        <td><label class="badge">@startTime</label></td>
+                        <td><label class="badge">@str.startTimeCode</label></td>
                         <td><label>@str.dubbingSheetHdr.characterName:</label></td>
                         <td class="scentence">@str.scentence</td>
                     </tr>

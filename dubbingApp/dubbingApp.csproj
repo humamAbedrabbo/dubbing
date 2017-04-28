@@ -606,6 +606,7 @@
     <Content Include="Views\workLoad\_uploadList.cshtml" />
     <Content Include="Views\calendar\_scheduleCalendar.cshtml" />
     <Content Include="Views\calendar\_supervisorsList.cshtml" />
+    <Content Include="Views\calendar\_workStudiosList.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

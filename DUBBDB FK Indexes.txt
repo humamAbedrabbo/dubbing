@@ -1,0 +1,20 @@
+USE [DUBBDB]
+GO
+
+CREATE NONCLUSTERED INDEX [IX_FK_dialogs_scenes] ON [dbo].[dialogs]([sceneIntno] ASC);
+GO
+
+CREATE NONCLUSTERED INDEX [IX_FK_dubbingAppointments_voiceActors] ON [dbo].[dubbingAppointments]([voiceActorIntno], [actorName] ASC);
+GO
+
+CREATE NONCLUSTERED INDEX [IX_FK_dubbingAppointments_studios] ON [dbo].[dubbingAppointments]([studioIntno] ASC);
+GO
+
+CREATE NONCLUSTERED INDEX [IX_FK_dubbingAppointments_agreementWorks] ON [dbo].[dubbingAppointments]([workIntno] ASC);
+GO
+
+CREATE NONCLUSTERED INDEX [IX_FK_dubbingSheetDtls_orderTrnHdrs] ON [dbo].[dubbingSheetDtls]([orderTrnHdrIntno] ASC);
+GO
+
+CREATE NONCLUSTERED INDEX [IX_FK_dubbingSheetDtls_orderTrnHdrs] ON [dbo].[dubbingSheetDtls]([orderTrnHdrIntno] ASC);
+GO

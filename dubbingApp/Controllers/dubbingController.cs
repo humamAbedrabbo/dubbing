@@ -148,11 +148,10 @@ namespace dubbingApp.Controllers
 
         public ActionResult actorsList()
         {
-            var model = (from A in db.orderTrnDtls
-                         join B in db.orderTrnHdrs on A.orderTrnHdrIntno equals B.orderTrnHdrIntno
-                         join C in db.dubbingSheetHdrs on B.orderTrnHdrIntno equals C.orderTrnHdrIntno
-                         where A.empIntno == sessionEntry.empIntno && B.workIntno == sessionEntry.workIntno && A.forDueDate == sessionEntry.dueDate
-                         select C).Distinct();
+            var model = db.dubbingAppointments.Include(b => b.studio)
+                        .Where(b => b.studio.dubbTrnHdrIntno == sessionEntry.schedule
+                        && b.studioIntno == sessionEntry.studioIntno);
+            
             return PartialView("_actorsList", model.ToList());
         }
 
@@ -233,16 +232,17 @@ namespace dubbingApp.Controllers
                 scn.isTaken = item.isTaken;
                 scnList.Add(scn);
             }
-
+            
             return PartialView("_scenesList", scnList);
         }
 
         public ActionResult subtitlesList(long sceneId, long sheetHdr)
         {
-            var model = db.subtitles.Include(b => b.dialog).Include(b => b.dubbingSheetHdr).Where(b => b.dialog.sceneIntno == sceneId).OrderBy(b => b.subtitleNo);
+            var model = db.subtitles.Include(b => b.dialog).Include(b => b.dubbingSheetHdr).Where(b => b.dialog.sceneIntno == sceneId).OrderBy(b => b.startSecond).ThenBy(b => b.startMillisecond);
             ViewBag.sheetHdr = sheetHdr;
             ViewBag.sceneId = sceneId;
             ViewBag.sceneNo = db.scenes.Find(sceneId).sceneNo;
+            ViewBag.actorName = db.dubbingSheetHdrs.Find(sheetHdr).actorName;
             return PartialView("_subtitlesList", model.ToList());
         }
 

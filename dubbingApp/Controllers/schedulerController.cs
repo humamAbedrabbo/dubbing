@@ -451,10 +451,10 @@ namespace dubbingApp.Controllers
                         totalMinutes = totalScenes * 60 / sph.scenesPerHour;
                 }
 
-                var studios = db.studios.Where(b => b.dubbTrnHdrIntno == schedule && b.workIntno == x1.workIntno).ToList();
-                foreach (var std in studios)
+                var std = db.studios.FirstOrDefault(b => b.dubbTrnHdrIntno == schedule && b.workIntno == x1.workIntno);
+                if (std != null)
                 {
-                    var y = db.dubbingAppointments.FirstOrDefault(b => b.voiceActorIntno == x1.voiceActorIntno && b.actorName == x1.actorName && b.studioIntno == std.studioIntno && b.workIntno == x1.workIntno);
+                    var y = db.dubbingAppointments.FirstOrDefault(b => b.voiceActorIntno == x1.voiceActorIntno && b.actorName == x1.actorName && b.studioIntno == std.studioIntno);
                     if (y == null)
                     {
                         dubbingAppointment apt = new dubbingAppointment();
@@ -469,6 +469,7 @@ namespace dubbingApp.Controllers
                     }
                     else
                     {
+                        y.appointmentDate = fromDate;
                         y.totalScenes = totalScenes;
                         y.totalMinutes = totalMinutes;
                     }
