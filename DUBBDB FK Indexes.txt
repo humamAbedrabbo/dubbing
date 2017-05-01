@@ -18,3 +18,87 @@ GO
 
 CREATE NONCLUSTERED INDEX [IX_FK_dubbingSheetDtls_orderTrnHdrs] ON [dbo].[dubbingSheetDtls]([orderTrnHdrIntno] ASC);
 GO
+
+CREATE NONCLUSTERED INDEX [IX_FK_dubbingSheetHdrs_orderTrnHdrs] ON [dbo].[dubbingSheetHdrs]([orderTrnHdrIntno] ASC);
+GO
+
+CREATE NONCLUSTERED INDEX [IX_FK_dubbingSheetHdrs_voiceActors] ON [dbo].[dubbingSheetHdrs]([voiceActorIntno] ASC);
+GO
+
+CREATE NONCLUSTERED INDEX [IX_FK_dubbingSheetHdrs_agreementWorks] ON [dbo].[dubbingSheetHdrs]([workIntno] ASC);
+GO
+
+CREATE NONCLUSTERED INDEX [IX_FK_orderBatchTrnHdrs_agreementWorks] ON [dbo].[orderBatchTrnHdrs]([workIntno] ASC);
+GO
+
+CREATE NONCLUSTERED INDEX [IX_FK_orderBatchTrnHdrs_employees] ON [dbo].[orderBatchTrnHdrs]([empIntno] ASC);
+GO
+
+CREATE NONCLUSTERED INDEX [IX_FK_orderBatchTrnHdrs_workOrders] ON [dbo].[orderBatchTrnHdrs]([orderIntno] ASC);
+GO
+
+CREATE NONCLUSTERED INDEX [IX_FK_orderChecks_orderTrnHdrs] ON [dbo].[orderChecks]([orderTrnHdrIntno] ASC);
+GO
+
+CREATE NONCLUSTERED INDEX [IX_FK_orderTrnDtls_orderTrnHdrs] ON [dbo].[orderTrnDtls]([orderTrnHdrIntno] ASC);
+GO
+
+CREATE NONCLUSTERED INDEX [IX_FK_orderTrnDtls_employees] ON [dbo].[orderTrnDtls]([empIntno] ASC);
+GO
+
+CREATE NONCLUSTERED INDEX [IX_FK_orderTrnHdrs_agreementWorks] ON [dbo].[orderTrnHdrs]([workIntno] ASC);
+GO
+
+CREATE NONCLUSTERED INDEX [IX_FK_orderTrnHdrs_workOrders] ON [dbo].[orderTrnHdrs]([orderIntno] ASC);
+GO
+
+CREATE NONCLUSTERED INDEX [IX_FK_paymentDetails_payments] ON [dbo].[paymentDetails]([paymentIntno] ASC);
+GO
+
+CREATE NONCLUSTERED INDEX [IX_FK_payments_agreementWorks] ON [dbo].[payments]([workIntno] ASC);
+GO
+
+CREATE NONCLUSTERED INDEX [IX_FK_payments_voiceActors] ON [dbo].[payments]([voiceActorIntno] ASC);
+GO
+
+CREATE NONCLUSTERED INDEX [IX_FK_scenes_orderTrnHdrs] ON [dbo].[scenes]([orderTrnHdrIntno] ASC);
+GO
+
+CREATE NONCLUSTERED INDEX [IX_FK_shipmentDetails_shipments] ON [dbo].[shipmentDetails]([shipmentIntno] ASC);
+GO
+
+CREATE NONCLUSTERED INDEX [IX_FK_shipmentDetails_orderTrnHdrs] ON [dbo].[shipmentDetails]([orderTrnHdrIntno] ASC);
+GO
+
+CREATE NONCLUSTERED INDEX [IX_FK_shipments_carriers] ON [dbo].[shipments]([carrierIntno] ASC);
+GO
+
+CREATE NONCLUSTERED INDEX [IX_FK_shipments_clients] ON [dbo].[shipments]([clientIntno] ASC);
+GO
+
+CREATE NONCLUSTERED INDEX [IX_FK_subtitles_dialogs] ON [dbo].[subtitles]([dialogIntno] ASC);
+GO
+
+CREATE NONCLUSTERED INDEX [IX_FK_subtitles_dubbingSheetHdrs] ON [dbo].[subtitles]([dubbSheetHdrIntno] ASC);
+GO
+
+CREATE NONCLUSTERED INDEX [IX_FK_workActors_voiceActors] ON [dbo].[workActors]([voiceActorIntno] ASC);
+GO
+
+CREATE NONCLUSTERED INDEX [IX_FK_workActors_agreementWorks] ON [dbo].[workActors]([workIntno] ASC);
+GO
+
+CREATE NONCLUSTERED INDEX [IX_FK_workActors_workCharacters] ON [dbo].[workActors]([workCharacterIntno] ASC);
+GO
+
+CREATE NONCLUSTERED INDEX [IX_FK_workOrders_clients] ON [dbo].[workOrders]([clientIntno] ASC);
+GO
+
+CREATE NONCLUSTERED INDEX [IX_FK_workOrders_agreementWorks] ON [dbo].[workOrders]([workIntno] ASC);
+GO
+
+CREATE NONCLUSTERED INDEX [IX_FK_workPersonnels_clients] ON [dbo].[worPersonnels]([empIntno] ASC);
+GO
+
+CREATE NONCLUSTERED INDEX [IX_FK_workPersonnels_agreementWorks] ON [dbo].[workPersonnels]([workIntno] ASC);
+GO

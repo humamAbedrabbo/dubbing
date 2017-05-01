@@ -158,10 +158,11 @@ namespace dubbingApp.Controllers
 
         public ActionResult actorAppointmentsDelete(long id)
         {
-            var x = db.dubbingAppointments.Include(b => b.studio).SingleOrDefault(b => b.dubbAppointIntno == id);
+            var model = db.dubbingAppointments.Include(b => b.studio);
+            var x = model.SingleOrDefault(b => b.dubbAppointIntno == id);
             long sch = x.studio.dubbTrnHdrIntno;
-            var model = db.dubbingAppointments.Where(b => b.workIntno == x.workIntno && b.voiceActorIntno == x.voiceActorIntno && b.actorName == x.actorName);
-            db.dubbingAppointments.RemoveRange(model);
+            var items = model.Where(b => b.workIntno == x.workIntno && b.studio.dubbTrnHdrIntno == sch && b.voiceActorIntno == x.voiceActorIntno && b.actorName == x.actorName);
+            db.dubbingAppointments.RemoveRange(items);
             db.SaveChanges();
 
             var y = db.dubbingAppointments.Include(b => b.studio).Where(b => b.studio.dubbTrnHdrIntno == sch && b.voiceActorIntno == x.voiceActorIntno && b.actorName == x.actorName).ToList();
