@@ -107,6 +107,7 @@ namespace dubbingApp.Controllers
                 CreateSheetDtls(order.orderTrnHdrIntno);
 
                 order.orderTrnHdr.endAdaptation = DateTime.Now;
+                order.orderTrnHdr.startDischarge = DateTime.Now;
                 ctx.SaveChanges();
             }
             return RedirectToAction("GetAdaptationWorks", new { isActive = true });

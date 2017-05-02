@@ -16,6 +16,8 @@
     @Html.Hidden("workHF")
     <div class="row">
         <div class="col-sm-4 col-xs-4">
+            <div style="text-align:center"><label>@ViewBag.clientName</label></div>
+            <hr />
             @Html.Action("worksList")
         </div>
         <div class="col-sm-5 col-xs-5" id="ordersList">

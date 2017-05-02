@@ -1,6 +1,3 @@
-USE [DUBBDB]
-GO
-
 CREATE NONCLUSTERED INDEX [IX_FK_dialogs_scenes] ON [dbo].[dialogs]([sceneIntno] ASC);
 GO
 
@@ -19,13 +16,7 @@ GO
 CREATE NONCLUSTERED INDEX [IX_FK_dubbingSheetDtls_orderTrnHdrs] ON [dbo].[dubbingSheetDtls]([orderTrnHdrIntno] ASC);
 GO
 
-CREATE NONCLUSTERED INDEX [IX_FK_dubbingSheetHdrs_orderTrnHdrs] ON [dbo].[dubbingSheetHdrs]([orderTrnHdrIntno] ASC);
-GO
-
-CREATE NONCLUSTERED INDEX [IX_FK_dubbingSheetHdrs_voiceActors] ON [dbo].[dubbingSheetHdrs]([voiceActorIntno] ASC);
-GO
-
-CREATE NONCLUSTERED INDEX [IX_FK_dubbingSheetHdrs_agreementWorks] ON [dbo].[dubbingSheetHdrs]([workIntno] ASC);
+CREATE NONCLUSTERED INDEX [IX_FK_dubbingSheetHdrs_voiceActors] ON [dbo].[dubbingSheetHdrs]([voiceActorIntno], [actorName] ASC);
 GO
 
 CREATE NONCLUSTERED INDEX [IX_FK_orderBatchTrnHdrs_agreementWorks] ON [dbo].[orderBatchTrnHdrs]([workIntno] ASC);
@@ -58,7 +49,7 @@ GO
 CREATE NONCLUSTERED INDEX [IX_FK_payments_agreementWorks] ON [dbo].[payments]([workIntno] ASC);
 GO
 
-CREATE NONCLUSTERED INDEX [IX_FK_payments_voiceActors] ON [dbo].[payments]([voiceActorIntno] ASC);
+CREATE NONCLUSTERED INDEX [IX_FK_payments_voiceActors] ON [dbo].[payments]([voiceActorIntno], [fullName] ASC);
 GO
 
 CREATE NONCLUSTERED INDEX [IX_FK_scenes_orderTrnHdrs] ON [dbo].[scenes]([orderTrnHdrIntno] ASC);
@@ -97,7 +88,7 @@ GO
 CREATE NONCLUSTERED INDEX [IX_FK_workOrders_agreementWorks] ON [dbo].[workOrders]([workIntno] ASC);
 GO
 
-CREATE NONCLUSTERED INDEX [IX_FK_workPersonnels_clients] ON [dbo].[worPersonnels]([empIntno] ASC);
+CREATE NONCLUSTERED INDEX [IX_FK_workPersonnels_employees] ON [dbo].[workPersonnels]([empIntno] ASC);
 GO
 
 CREATE NONCLUSTERED INDEX [IX_FK_workPersonnels_agreementWorks] ON [dbo].[workPersonnels]([workIntno] ASC);

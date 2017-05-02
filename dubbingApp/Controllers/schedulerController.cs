@@ -477,6 +477,13 @@ namespace dubbingApp.Controllers
                 }
             }
             
+            //close discharge and casting
+            foreach(long ep in episodes)
+            {
+                db.orderTrnHdrs.Find(ep).endDischarge = DateTime.Now;
+            }
+            db.SaveChanges();
+
             return Content("Calendar Generated / Updated Successfully.", "text/html");
         }
 

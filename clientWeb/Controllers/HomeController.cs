@@ -44,7 +44,10 @@ namespace clientWeb.Controllers
         {
             long clientId = getClientId();
             if (clientId != 0)
+            {
+                ViewBag.clientName = db.clients.Find(clientId).clientName;
                 return View();
+            }
             else
                 return View("accessDenied");
         }
@@ -98,6 +101,11 @@ namespace clientWeb.Controllers
                     oi.status = "Adaptation";
                     oi.since = x.startAdaptation.Value.ToString("dd-MM");
                 }
+                else if (x.startDischarge.HasValue && !x.endDischarge.HasValue)
+                {
+                    oi.status = "Casting";
+                    oi.since = x.startDischarge.Value.ToString("dd-MM");
+                }
                 else if (x.startDubbing.HasValue && !x.endDubbing.HasValue)
                 {
                     oi.status = "Dubbing";
@@ -130,11 +138,7 @@ namespace clientWeb.Controllers
             List<string> dtlList = new List<string>();
 
             dtlList.Add("Received|" + model.orderReceivedDate.Value.ToShortDateString());
-            if (model.expectedDeliveryDate.HasValue)
-                dtlList.Add("Airing Date|" + model.expectedDeliveryDate.Value.ToShortDateString());
-            else
-                dtlList.Add("Airing Date|Not Provided By Client.");
-
+            
             if (model.plannedDubbing.HasValue)
                 dtlList.Add("Dubbing|" + model.plannedDubbing.Value.ToShortDateString());
             else
