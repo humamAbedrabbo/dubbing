@@ -469,7 +469,6 @@ namespace dubbingApp.Controllers
                     }
                     else
                     {
-                        y.appointmentDate = fromDate;
                         y.totalScenes = totalScenes;
                         y.totalMinutes = totalMinutes;
                     }
