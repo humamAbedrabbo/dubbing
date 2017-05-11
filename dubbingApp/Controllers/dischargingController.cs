@@ -71,17 +71,9 @@ namespace dubbingApp.Controllers
 
         public ActionResult castingUpdate(long id)
         {
-            var hdr = db.dubbingSheetHdrs.Find(id);
-            ViewModels.castingListViewModel item = new ViewModels.castingListViewModel();
-            item.dubbSheetHdrIntno = hdr.dubbSheetHdrIntno;
-            item.orderTrnHdrIntno = hdr.orderTrnHdrIntno;
-            item.workCharacterIntno = hdr.workCharacterIntno;
-            item.characterName = hdr.characterName;
-            item.voiceActorIntno = hdr.voiceActorIntno;
-            item.actorName = hdr.actorName;
-            item.totalScenes = hdr.dubbingSheetDtls.Count();
+            var model = db.dubbingSheetHdrs.Find(id);
 
-            long orderItem = hdr.orderTrnHdrIntno;
+            long orderItem = model.orderTrnHdrIntno;
             var orderHdr = db.orderTrnHdrs.Find(orderItem);
             long workId = orderHdr.workIntno;
             var x = (from A in db.voiceActors
@@ -95,32 +87,22 @@ namespace dubbingApp.Controllers
             var y = db.workCharacters.Where(b => b.workIntno == workId).OrderBy(b => b.sortOrder).ToList();
             ViewBag.charactersList = new SelectList(y, "workCharacterIntno", "characterName");
             ViewBag.orderItem = orderItem;
-            return PartialView("_castingUpdate", item);
+            return PartialView("_castingUpdate", model);
         }
 
         [ValidateAntiForgeryToken]
         [HttpPost, ValidateInput(false)]
-        public ActionResult castingUpdate(ViewModels.castingListViewModel item)
+        public ActionResult castingUpdate(dubbingSheetHdr item)
         {
             var model = db.dubbingSheetHdrs;
             if (ModelState.IsValid)
             {
                 var modelItem = model.FirstOrDefault(b => b.dubbSheetHdrIntno == item.dubbSheetHdrIntno);
-                var x = db.workActors;
+                UpdateModel(modelItem);
                 if (item.workCharacterIntno.HasValue)
-                {
-                    if(x.FirstOrDefault(b => b.workCharacterIntno == item.workCharacterIntno && b.status == true) != null) //if character has cast
-                    {
-                        long va = x.FirstOrDefault(b => b.workCharacterIntno == item.workCharacterIntno && b.status == true).voiceActorIntno;
-                        modelItem.voiceActorIntno = va;
-                        modelItem.actorName = db.voiceActors.Find(va).fullName;
-                    }
-                }
-                else
-                {
-                    modelItem.voiceActorIntno = item.voiceActorIntno;
-                    modelItem.actorName = item.actorName;
-                }
+                    modelItem.characterName = db.workCharacters.SingleOrDefault(b => b.workCharacterIntno == item.workCharacterIntno).characterName;
+                if (item.voiceActorIntno != 0)
+                    modelItem.actorName = db.voiceActors.SingleOrDefault(b => b.voiceActorIntno == item.voiceActorIntno).fullName;
                 
                 db.SaveChanges();
                 return Content("Successfully Updated.", "text/html");

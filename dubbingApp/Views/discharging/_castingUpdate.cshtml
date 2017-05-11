@@ -1,4 +1,4 @@
-﻿@model dubbingApp.Models.ViewModels.castingListViewModel
+﻿@model dubbingModel.dubbingSheetHdr
 
 @using (Ajax.BeginForm("castingUpdate", "discharging",
                                 new AjaxOptions()
@@ -11,33 +11,27 @@
     @Html.AntiForgeryToken()
     @Html.HiddenFor(m => m.dubbSheetHdrIntno)
     @Html.HiddenFor(m => m.orderTrnHdrIntno)
-    @Html.HiddenFor(m => m.workCharacterIntno)
-    
+
+    <div><span>Casting for Character: </span> &nbsp; <label style="color:darkred">@Model.characterName</label></div>
     <div class="form-group-sm">
-        <small>@Html.LabelFor(model => model.characterName, "Character", htmlAttributes: new { @class = "control-label" })</small>
+        <small>@Html.LabelFor(model => model.workCharacterIntno, "Rename Character To", htmlAttributes: new { @class = "control-label" })</small>
         <div>
-            @Html.DropDownListFor(model => model.workCharacterIntno, ViewBag.charactersList as SelectList, htmlAttributes: new { @class = "form-control", required="" })
+            @Html.DropDownListFor(model => model.workCharacterIntno, ViewBag.charactersList as SelectList, "Main Characters List", htmlAttributes: new { @class = "form-control" })
         </div>
     </div>
-
-    <div class="form-group-sm">
-        <small>@Html.LabelFor(model => model.totalScenes, "Total Scenes", htmlAttributes: new { @class = "control-label" })</small>
-        <div>
-            @Html.DisplayFor(model => model.totalScenes, new { htmlAttributes = new { @class = "form-control-static" } })
-        </div>
-    </div>
-
+    <hr />
+    <div><label>Select ONLY ONE of the following Casting Methods:</label></div>
     <div class="form-group-sm">
         <small>@Html.LabelFor(model => model.voiceActorIntno, "Select Actor from List ...", htmlAttributes: new { @class = "control-label" })</small>
         <div>
-            @Html.DropDownListFor(model => model.voiceActorIntno, ViewBag.actorsList as SelectList, htmlAttributes: new { @class = "form-control" })
+            @Html.DropDownListFor(model => model.voiceActorIntno, ViewBag.actorsList as SelectList, htmlAttributes: new { @class = "form-control", @onchange = "onCastChange(this.value)", required="" })
         </div>
     </div>
 
     <div class="form-group-sm">
         <small>@Html.LabelFor(model => model.actorName, "Or Provide Cast Name", htmlAttributes: new { @class = "control-label" })</small>
         <div>
-            @Html.EditorFor(model => model.actorName, new { htmlAttributes = new { @class = "form-control" } })
+            @Html.EditorFor(model => model.actorName, new { htmlAttributes = new { @class = "form-control", @id="castName" } })
         </div>
     </div>
 

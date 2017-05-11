@@ -451,28 +451,23 @@ namespace dubbingApp.Controllers
                         totalMinutes = totalScenes * 60 / sph.scenesPerHour;
                 }
 
-                var std = db.studios.FirstOrDefault(b => b.dubbTrnHdrIntno == schedule && b.workIntno == x1.workIntno);
-                if (std != null)
+                var std = db.studios.Where(b => b.dubbTrnHdrIntno == schedule && b.workIntno == x1.workIntno).Select(b => b.studioIntno).ToList();
+                if (std.Count() != 0)
                 {
-                    var y = db.dubbingAppointments.FirstOrDefault(b => b.voiceActorIntno == x1.voiceActorIntno && b.actorName == x1.actorName && b.studioIntno == std.studioIntno);
-                    if (y == null)
+                    var y = db.dubbingAppointments.Where(b => std.Contains(b.studioIntno) && b.voiceActorIntno == x1.voiceActorIntno && b.actorName == x1.actorName).ToList();
+                    if (y.Count() == 0)
                     {
                         dubbingAppointment apt = new dubbingAppointment();
                         apt.voiceActorIntno = x1.voiceActorIntno;
                         apt.actorName = x1.actorName;
-                        apt.studioIntno = std.studioIntno;
+                        apt.studioIntno = std.First();
                         apt.appointmentDate = fromDate;
                         apt.workIntno = x1.workIntno;
                         apt.totalScenes = totalScenes;
                         apt.totalMinutes = totalMinutes;
                         model.Add(apt);
+                        db.SaveChanges();
                     }
-                    else
-                    {
-                        y.totalScenes = totalScenes;
-                        y.totalMinutes = totalMinutes;
-                    }
-                    db.SaveChanges();
                 }
             }
             

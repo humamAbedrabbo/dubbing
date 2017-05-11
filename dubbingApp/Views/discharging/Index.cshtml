@@ -69,6 +69,15 @@
             });
         }
 
+        function onCastChange(v) {
+            if (parseInt(v) !== 0) {
+                $('#castName').attr('disabled', 'disabled');
+            }
+            else {
+                $('#castName').removeAttr('disabled');
+            }
+        }
+
         function onRefreshCastClick(oi) {
             $.ajax({
                 url: '@Url.Action("refreshCast", "discharging")',
