@@ -107,7 +107,7 @@
                 <div class="form-group-sm">
                     <small>@Html.LabelFor(model => model.accountNo, "Account No", htmlAttributes: new { @class = "control-label" })</small>
                     <div>
-                        @if (Model.accountNo == "---")
+                        @if (Model.voiceActorIntno == 0)
                         {
                             <input type="text" name="accountNo" class="form-control" value="@Model.accountNo" required />
                         }

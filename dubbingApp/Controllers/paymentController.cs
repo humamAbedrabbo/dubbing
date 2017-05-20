@@ -91,7 +91,7 @@ namespace dubbingApp.Controllers
             model.currencyCode = currencyCode;
             model.deduction = 0;
             model.totalAmount = totalUnits * unitRate;
-            model.accountNo = rsc == null ? "---" : rsc.accountNo;
+            model.accountNo = rscId == 0 ? "000000" : rsc.accountNo;
 
             ViewBag.costCenterType = LookupModels.decodeDictionaryItem("costCenterType", model.costCenterType);
             ViewBag.currenciesList = new SelectList(LookupModels.getDictionary("currencyCode"), "key", "value");
@@ -109,7 +109,7 @@ namespace dubbingApp.Controllers
         {
             var model = db.payments;
             var dtlModel = db.paymentDetails;
-            if (ModelState.IsValid)
+            try
             {
                 item.paymentDate = DateTime.Today.Date;
                 item.status = true;
@@ -137,13 +137,17 @@ namespace dubbingApp.Controllers
                 db.SaveChanges();
 
                 var ds = x.Select(b => b.dubbSheetHdrIntno).Distinct().ToList();
-                foreach(long ds1 in ds)
+                foreach (long ds1 in ds)
                 {
                     var hdr = db.dubbingSheetHdrs.FirstOrDefault(b => b.dubbSheetHdrIntno == ds1);
                     hdr.isPaid = true;
                 }
 
                 db.SaveChanges();
+            }
+            catch (Exception e)
+            {
+                return Content("Error: " + e, "text/html");
             }
 
             return RedirectToAction("paymentsDueList");
@@ -159,7 +163,7 @@ namespace dubbingApp.Controllers
                                                     new DataColumn("Total Scenes",typeof(int)),
                                                     new DataColumn("Total Amount",typeof(int)),
                                                     new DataColumn("Payment Date",typeof(DateTime)) });
-            foreach(var payment in model)
+            foreach (var payment in model)
             {
                 dt.Rows.Add(payment.fullName, payment.accountNo, payment.agreementWork.workName, payment.totalScenes, payment.totalAmount, payment.paymentDate);
                 payment.isExported = true;
