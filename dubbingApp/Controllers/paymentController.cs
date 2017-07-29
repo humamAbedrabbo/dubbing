@@ -155,7 +155,8 @@ namespace dubbingApp.Controllers
 
         public void exportToExcel()
         {
-            var model = db.payments.Include(b => b.agreementWork).Where(b => b.status == true && b.isPaid == true && b.isExported == false).ToList();
+            var model = db.payments.Include(b =>b.voiceActor).Include(b => b.agreementWork).Where(b => b.status == true && b.isPaid == true && b.isExported == false).ToList();
+            string aName = null;
             DataTable dt = new DataTable();
             dt.Columns.AddRange(new DataColumn[6] { new DataColumn("Actor", typeof(string)),
                                                     new DataColumn("AccountNo", typeof(string)),
@@ -165,7 +166,11 @@ namespace dubbingApp.Controllers
                                                     new DataColumn("Payment Date",typeof(DateTime)) });
             foreach (var payment in model)
             {
-                dt.Rows.Add(payment.fullName, payment.accountNo, payment.agreementWork.workName, payment.totalScenes, payment.totalAmount, payment.paymentDate);
+                if (payment.voiceActorIntno.HasValue && !string.IsNullOrEmpty(payment.voiceActor.othFullName))
+                    aName = payment.accountNo + " - " + payment.voiceActor.othFullName;
+                else
+                    aName = payment.accountNo + " - " + payment.fullName;
+                dt.Rows.Add(payment.fullName, aName, payment.agreementWork.workName, payment.totalScenes, payment.totalAmount, payment.paymentDate);
                 payment.isExported = true;
             }
 
