@@ -18,13 +18,13 @@ namespace dubbingApp.Controllers
     {
         DUBBDBEntities ctx = new DUBBDBEntities();
 
-         // GET: adaptations
+        // GET: adaptations
         public ActionResult Index()
         {
 
 
             return View();
-            
+
         }
 
         public ActionResult GetAdaptationWorks(bool isActive = true)
@@ -59,7 +59,7 @@ namespace dubbingApp.Controllers
             var subtitles = ctx.subtitles.Include(x => x.dialog).Include(x => x.dialog.scene).Where(x => x.dialog.scene.orderTrnHdrIntno == orderTrnHdrIntno).OrderBy(x => x.startSecond).ThenBy(x => x.startMillisecond).ThenBy(x => x.endSecond).ThenBy(x => x.endMillisecond).ToList(); //.ThenBy(x => x.endSecond)
             foreach (var s in subtitles)
             {
-                if(s.dialog.scene.sceneIntno == lastSceneId)
+                if (s.dialog.scene.sceneIntno == lastSceneId)
                 {
                     s.dialog.scene.sceneNo = sceneNo;
                 }
@@ -73,7 +73,7 @@ namespace dubbingApp.Controllers
                     sNo = 0;
                 }
 
-                if(s.dialog.dialogIntno == lastDlgId)
+                if (s.dialog.dialogIntno == lastDlgId)
                 {
                     s.dialog.dialogNo = dlgNo;
                 }
@@ -95,7 +95,7 @@ namespace dubbingApp.Controllers
             var order = ctx.orderTrnDtls.Find(orderTrnDtlIntno);
             order.status = false;
             ctx.SaveChanges();
-            var assignments = order.orderTrnHdr.orderTrnDtls.Where(x =>x.activityType == order.activityType && x.status);
+            var assignments = order.orderTrnHdr.orderTrnDtls.Where(x => x.activityType == order.activityType && x.status);
 
             if (assignments.Count() == 0 && !order.orderTrnHdr.endAdaptation.HasValue)
             {
@@ -115,7 +115,7 @@ namespace dubbingApp.Controllers
 
         public ActionResult EditScenesAndDialogs(long orderTrnHdrIntno)
         {
-            
+
             CleanSheetHdrsWithoutScenes(orderTrnHdrIntno);
             CleanEmptyDialogs(orderTrnHdrIntno);
             CleanEmptyScenes(orderTrnHdrIntno);
@@ -182,7 +182,7 @@ namespace dubbingApp.Controllers
                     subtitle.dialogIntno = dialogIntno;
                     ctx.SaveChanges();
                 }
-            }           
+            }
         }
 
         public ActionResult Edit(long? id)
@@ -195,7 +195,7 @@ namespace dubbingApp.Controllers
         public ActionResult Edit2(long? id, string fromTime = "00:00:00", string toTime = "00:00:00")
         {
             var hdr = ctx.orderTrnHdrs.Include(x => x.agreementWork).First(x => x.orderTrnHdrIntno == id);
-            if(!hdr.startAdaptation.HasValue)
+            if (!hdr.startAdaptation.HasValue)
             {
                 hdr.startAdaptation = DateTime.Now;
                 ctx.SaveChanges();
@@ -252,7 +252,7 @@ namespace dubbingApp.Controllers
 
         private void RefreshCharacters(orderTrnHdr order, AdaptationViewModel model)
         {
-            
+
             var list = order.agreementWork.workCharacters.Select(x => x.characterName).ToList();
             var list2 = ctx.dubbingSheetHdrs.Where(x => x.orderTrnHdrIntno == order.orderTrnHdrIntno).Select(x => x.characterName).ToList();
             list.AddRange(list2);
@@ -291,7 +291,7 @@ namespace dubbingApp.Controllers
 
             // setup model
             model.OrderTrnHdrIntno = hdr.orderTrnHdrIntno;
-           
+
 
             RefreshSubtitles(hdr, model);
             return PartialView("_subtitlesList2", model);
@@ -299,7 +299,7 @@ namespace dubbingApp.Controllers
 
         public string FixAllSubtitles()
         {
-            foreach(var item in ctx.scenes)
+            foreach (var item in ctx.scenes)
             {
                 item.startSecond = TimeConverter.StringToSeconds(item.startTimeCode);
                 item.endSecond = TimeConverter.StringToSeconds(item.endTimeCode);
@@ -319,7 +319,7 @@ namespace dubbingApp.Controllers
             return "OK";
         }
 
-        
+
         public void SubmitSubtitle(long orderTrnHdrIntno, string name, string from, string to, long fromM, long toM, string text, bool newScene = true, bool newDlg = true)
         {
             var hdr = ctx.orderTrnHdrs.Find(orderTrnHdrIntno);
@@ -328,7 +328,7 @@ namespace dubbingApp.Controllers
 
             // Find or add dubbSheetHdr related to character
             var sheetHdr = hdr.dubbingSheetHdrs.FirstOrDefault(x => x.characterName.ToUpper() == name.ToUpper());
-            if(sheetHdr == null)
+            if (sheetHdr == null)
             {
                 sheetHdr = ctx.dubbingSheetHdrs.Create();
                 sheetHdr.orderTrnHdrIntno = orderTrnHdrIntno;
@@ -353,7 +353,7 @@ namespace dubbingApp.Controllers
             // Handle scene and dialog IDs
             long sceneId = 0;
             long dlgId = 0;
-            if(newScene)
+            if (newScene)
             {
                 var scene = ctx.scenes.Create();
                 scene.orderTrnHdrIntno = hdr.orderTrnHdrIntno;
@@ -363,7 +363,7 @@ namespace dubbingApp.Controllers
                 scene.startSecond = TimeConverter.StringToSeconds(from);
                 scene.endSecond = TimeConverter.StringToSeconds(to);
                 scene.isTaken = false;
-                
+
                 ctx.scenes.Add(scene);
                 ctx.SaveChanges();
                 sceneId = scene.sceneIntno;
@@ -383,7 +383,7 @@ namespace dubbingApp.Controllers
             else
             {
                 var scene = hdr.scenes.Where(x => x.startSecond <= TimeConverter.StringToSeconds(from)).OrderBy(x => x.startSecond).LastOrDefault();
-                if(scene == null)
+                if (scene == null)
                 {
                     // add new scene because the wanted is not exist
                     scene = ctx.scenes.Create();
@@ -396,26 +396,26 @@ namespace dubbingApp.Controllers
                     scene.isTaken = false;
 
                     ctx.scenes.Add(scene);
-                    ctx.SaveChanges();                    
+                    ctx.SaveChanges();
                 }
                 else
                 {
                     // Update scene end time
-                    if(scene.endSecond < TimeConverter.StringToSeconds(to))
+                    if (scene.endSecond < TimeConverter.StringToSeconds(to))
                     {
                         scene.endSecond = TimeConverter.StringToSeconds(to);
                         scene.endTimeCode = to;
-                        ctx.SaveChanges();    
+                        ctx.SaveChanges();
                     }
                 }
                 sceneId = scene.sceneIntno;
                 dialog dlg = null;
-                if(!newDlg)
+                if (!newDlg)
                 {
-                    dlg = scene.dialogs.Where(x => x.startSecond <= TimeConverter.StringToSeconds(from)).OrderBy(x => x.startSecond).LastOrDefault();                    
-                    if(dlg != null)
+                    dlg = scene.dialogs.Where(x => x.startSecond <= TimeConverter.StringToSeconds(from)).OrderBy(x => x.startSecond).LastOrDefault();
+                    if (dlg != null)
                     {
-                        if(dlg.endSecond < TimeConverter.StringToSeconds(to))
+                        if (dlg.endSecond < TimeConverter.StringToSeconds(to))
                         {
                             dlg.endSecond = TimeConverter.StringToSeconds(to);
                             dlg.endTimeCode = to;
@@ -423,7 +423,7 @@ namespace dubbingApp.Controllers
                         }
                     }
                 }
-                if(dlg == null)
+                if (dlg == null)
                 {
                     dlg = ctx.dialogs.Create();
                     dlg.sceneIntno = sceneId;
@@ -459,7 +459,7 @@ namespace dubbingApp.Controllers
         public void UpdateSubtitle(long id, long orderTrnHdrIntno, string name, string from, string to, long fromM, long toM, string text)
         {
             var subtitle = ctx.subtitles.Find(id);
-            if(subtitle.dubbingSheetHdr.characterName.ToUpper() != name.ToUpper())
+            if (subtitle.dubbingSheetHdr.characterName.ToUpper() != name.ToUpper())
             {
                 var hdr = ctx.orderTrnHdrs.Find(orderTrnHdrIntno);
                 // Find or add character
@@ -522,7 +522,7 @@ namespace dubbingApp.Controllers
         {
             var order = ctx.orderTrnHdrs.Find(orderTrnHdrIntno);
             var dialogs = ctx.dialogs.Include(x => x.scene).Include(x => x.subtitles).Where(x => x.scene.orderTrnHdrIntno == orderTrnHdrIntno && x.subtitles.Count == 0);
-            
+
             ctx.dialogs.RemoveRange(dialogs);
             ctx.SaveChanges();
         }
@@ -538,7 +538,7 @@ namespace dubbingApp.Controllers
         {
             var model = ctx.dubbingSheetDtls;
             var x = ctx.subtitles.Include(b => b.dialog.scene).Where(b => b.dialog.scene.orderTrnHdrIntno == orderTrnHdrIntno)
-                    .Select(b => new { dubbSheetHdrIntno = b.dubbSheetHdrIntno, sceneNo = b.dialog.scene.sceneNo}).Distinct().ToList();
+                    .Select(b => new { dubbSheetHdrIntno = b.dubbSheetHdrIntno, sceneNo = b.dialog.scene.sceneNo }).Distinct().ToList();
 
             foreach (var hdr in x)
             {
@@ -590,13 +590,14 @@ namespace dubbingApp.Controllers
             var order = ctx.orderTrnHdrs.Find(orderTrnHdrIntno);
 
             StringBuilder sb = new StringBuilder();
-            
+
             int line = 1;
             //sb.AppendFormat("{0}", line);
             //sb.AppendFormat("{0}", @"{\rtf1\ansi\ansicpg1252\deff0\nouicompat\deflang14346{\fonttbl{\f0\fs20\fnil\fcharset0 Calibri;}} {\*\generator Riched20 10.0.10586}\viewkind4\uc1 \pard\sa200\sl276\slmult1\f0\fs22\lang10");
             //sb.AppendLine();
             //line++;
             var subtitles = ctx.subtitles.Include(XmlSiteMapProvider => XmlSiteMapProvider.dialog).Include(x => x.dialog.scene).Include(x => x.dialog.scene.orderTrnHdr)
+                .Include(x => x.dubbingSheetHdr)
                 .Where(x => x.dialog.scene.orderTrnHdrIntno == orderTrnHdrIntno)
                 .OrderBy(x => x.startSecond).ThenBy(x => x.startMillisecond).ThenBy(x => x.endSecond).ThenBy(x => x.endMillisecond)
                 .ToList();
@@ -607,7 +608,7 @@ namespace dubbingApp.Controllers
                 sb.AppendFormat("{0},{2} --> {1},{3}", subtitle.startTimeCode, subtitle.endTimeCode, subtitle.startMillisecond, subtitle.endMillisecond);
                 sb.AppendLine();
                 //sb.AppendFormat("<font size=\"36px\" color=\"white\">{0}</font>", subtitle.scentence);
-                sb.AppendFormat("{0}", subtitle.scentence);
+                sb.AppendFormat("<font color=#00FFFF>{1}</font>: {0}", subtitle.scentence, subtitle.dubbingSheetHdr.characterName);
                 sb.AppendLine();
                 sb.AppendLine();
                 line++;
@@ -686,7 +687,7 @@ namespace dubbingApp.Controllers
             replaceWith = replaceWith.Trim();
 
             var model = ctx.subtitles.Include(b => b.dialog.scene).Where(b => b.dialog.scene.orderTrnHdrIntno == id && b.scentence.Contains(findText)).ToList();
-            foreach(var item in model)
+            foreach (var item in model)
             {
                 item.scentence = item.scentence.Replace(findText, replaceWith);
             }
@@ -725,10 +726,10 @@ namespace dubbingApp.Controllers
             {
                 return Content("Failed to Rename Character! Only ONE Renaming Method SHOULD be given.", "text/html");
             }
-            
+
             ctx.SaveChanges();
 
-            if(isSubtitle)
+            if (isSubtitle)
             {
                 var model1 = ctx.subtitles.Where(b => b.dubbSheetHdrIntno == dubbSheetHdrIntno && b.scentence.Contains(oldCharacterName)).ToList();
                 foreach (var item in model1)
